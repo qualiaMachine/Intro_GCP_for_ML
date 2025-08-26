@@ -42,7 +42,7 @@ In summary, Vertex AI is Google Cloud’s managed machine learning platform that
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
-### Discussion: Infrastructure Choices for ML  
+### Infrastructure Choices for ML  
 At your institution (or in your own work), what infrastructure options are currently available for running ML experiments?  
 - Do you typically use a laptop/desktop, HPC cluster, or cloud?  
 - What are the advantages and drawbacks of your current setup compared to a managed service like Vertex AI?  
