@@ -66,7 +66,15 @@ contact: 'endemann@wisc.edu' # FIXME
 
 # Order of episodes in your lesson
 episodes: 
-- introduction.md
+- Introduction.md
+- Data-storage.md
+- Notebooks-as-controllers.md
+- Accessing-and-managing-data.md
+- Interacting-with-code-repo.md
+- Training-models-in-VertexAI.md
+- Training-models-in-VertexAI-GPUs.md
+- Hyperparameter-tuning.md
+- Resource-management-cleanup.md
 
 # Information for Learners
 learners: 
