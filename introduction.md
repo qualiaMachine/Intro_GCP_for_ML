@@ -1,114 +1,61 @@
 ---
-title: "Using Markdown"
-teaching: 10 # teaching time in minutes
-exercises: 2 # exercise time in minutes
+title: "Overview of Google Cloud Vertex AI"
+teaching: 10
+exercises: 1
 ---
 
-:::::::::::::::::::::::::::::::::::::: questions 
+Google Cloud Vertex AI is a unified machine learning (ML) platform that enables users to build, train, tune, and deploy models at scale without needing to manage underlying infrastructure. By integrating data storage, training, tuning, and deployment workflows into one managed environment, Vertex AI supports researchers and practitioners in focusing on their ML models while leveraging Google Cloud’s compute and storage resources.
 
-- How do you write a lesson using Markdown and `{sandpaper}`?
+::::::::::::::::::::::::::::::::::::: questions
+
+- What problem does Google Cloud Vertex AI aim to solve?  
+- How does Vertex AI simplify machine learning workflows compared to running them on your own?  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: objectives
 
-- Explain how to use markdown with The Carpentries Workbench
-- Demonstrate how to include pieces of code, figures, and nested challenge blocks
+- Understand the basic purpose of Vertex AI in the ML lifecycle.  
+- Recognize how Vertex AI reduces infrastructure and orchestration overhead.  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-## Introduction
+### Why use Vertex AI for machine learning?
 
-This is a lesson created via The Carpentries Workbench. It is written in
-[Pandoc-flavored Markdown](https://pandoc.org/MANUAL.html) for static files and
-[R Markdown][r-markdown] for dynamic files that can render code into output. 
-Please refer to the [Introduction to The Carpentries 
-Workbench](https://carpentries.github.io/sandpaper-docs/) for full documentation.
+Vertex AI provides several advantages that make it an attractive option for research and applied ML:
 
-What you need to know is that there are three sections required for a valid
-Carpentries lesson:
+- **Streamlined ML/AI Pipelines**: Traditional HPC/HTC environments often require researchers to split workflows into many batch jobs, manually handling dependencies and orchestration. Vertex AI reduces this overhead by managing the end-to-end pipeline (data prep, training, evaluation, tuning, and deployment) within a single environment, making it easier to iterate and scale ML experiments.
 
- 1. `questions` are displayed at the beginning of the episode to prime the
-    learner for the content.
- 2. `objectives` are the learning objectives for an episode displayed with
-    the questions.
- 3. `keypoints` are displayed at the end of the episode to reinforce the
-    objectives.
+- **Flexible compute options**: Vertex AI lets you select the right hardware for your workload:
+  - **CPU (e.g., n1-standard-4, e2-standard-8)**: Good for small datasets, feature engineering, and inference tasks.  
+  - **GPU (e.g., NVIDIA T4, V100, A100)**: Optimized for deep learning training and large-scale experimentation.  
+  - **Memory-optimized machine types (e.g., m1-ultramem)**: Useful for workloads requiring large in-memory datasets, such as transformer models.  
 
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: instructor
+- **Parallelized training and tuning**: Vertex AI supports distributed training across multiple nodes and automated hyperparameter tuning (Bayesian or grid search). This makes it easier to explore many configurations with minimal custom code while leveraging scalable infrastructure.
 
-Inline instructor notes can help inform instructors of timing challenges
-associated with the lessons. They appear in the "Instructor View"
+- **Custom training support**: Vertex AI includes built-in algorithms and frameworks (e.g., scikit-learn, XGBoost, TensorFlow, PyTorch), but it also supports custom containers. Researchers can bring their own scripts or Docker images to run specialized workflows with full control.
 
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+- **Cost management and monitoring**: Google Cloud provides detailed cost tracking and monitoring via the Billing console and Vertex AI dashboard. Vertex AI also integrates with Cloud Monitoring to help track resource usage. With careful configuration, training 100 small-to-medium models (logistic regression, random forests, or lightweight neural networks on datasets under 10GB) can cost under $20, similar to AWS.
 
-::::::::::::::::::::::::::::::::::::: challenge 
-
-## Challenge 1: Can you do it?
-
-What is the output of this command?
-
-```r
-paste("This", "new", "lesson", "looks", "good")
-```
-
-:::::::::::::::::::::::: solution 
-
-## Output
- 
-```output
-[1] "This new lesson looks good"
-```
-
-:::::::::::::::::::::::::::::::::
+In summary, Vertex AI is Google Cloud’s managed machine learning platform that simplifies the end-to-end ML lifecycle. It eliminates the need for manual orchestration in research computing environments by offering integrated workflows, scalable compute, and built-in monitoring. With flexible options for CPUs, GPUs, and memory-optimized hardware, plus strong support for both built-in and custom training, Vertex AI enables researchers to move quickly from experimentation to production while keeping costs predictable and manageable.
 
 
-## Challenge 2: how do you nest solutions within challenge blocks?
+::::::::::::::::::::::::::::::::::::: challenge
 
-:::::::::::::::::::::::: solution 
+### Discussion: Infrastructure Choices for ML  
+At your institution (or in your own work), what infrastructure options are currently available for running ML experiments?  
+- Do you typically use a laptop/desktop, HPC cluster, or cloud?  
+- What are the advantages and drawbacks of your current setup compared to a managed service like Vertex AI?  
+- If you could offload one infrastructure challenge (e.g., provisioning GPUs, handling dependencies, monitoring costs), what would it be and why?  
 
-You can add a line with at least three colons and a `solution` tag.
-
-:::::::::::::::::::::::::::::::::
-::::::::::::::::::::::::::::::::::::::::::::::::
-
-## Figures
-
-You can use standard markdown for static figures with the following syntax:
-
-`![optional caption that appears below the figure](figure url){alt='alt text for
-accessibility purposes'}`
-
-![You belong in The Carpentries!](https://raw.githubusercontent.com/carpentries/logo/master/Badge_Carpentries.svg){alt='Blue Carpentries hex person logo with no text.'}
-
-::::::::::::::::::::::::::::::::::::: callout
-
-Callout sections can highlight information.
-
-They are sometimes used to emphasise particularly important points
-but are also used in some lessons to present "asides": 
-content that is not central to the narrative of the lesson,
-e.g. by providing the answer to a commonly-asked question.
+Take 3–5 minutes to discuss with a partner or share in the workshop chat.  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
+::::::::::::::::::::::::::::::::::::: keypoints
 
-## Math
-
-One of our episodes contains $\LaTeX$ equations when describing how to create
-dynamic reports with {knitr}, so we now use mathjax to describe this:
-
-`$\alpha = \dfrac{1}{(1 - \beta)^2}$` becomes: $\alpha = \dfrac{1}{(1 - \beta)^2}$
-
-Cool, right?
-
-::::::::::::::::::::::::::::::::::::: keypoints 
-
-- Use `.md` files for episodes when you want static content
-- Use `.Rmd` files for episodes when you need to generate output
-- Run `sandpaper::check_lesson()` to identify any issues with your lesson
-- Run `sandpaper::build_lesson()` to preview your lesson locally
+- Vertex AI simplifies ML workflows by integrating data, training, tuning, and deployment in one managed platform.  
+- It reduces the need for manual orchestration compared to traditional research computing environments.  
+- Cost monitoring and resource tracking help keep cloud usage affordable for research projects.  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
-
-[r-markdown]: https://rmarkdown.rstudio.com/
