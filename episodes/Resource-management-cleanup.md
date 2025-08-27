@@ -237,7 +237,9 @@ List your notebooks and identify any runtime/instance that has likely been idle 
 
 Use `gcloud notebooks runtimes list --location=REGION` (Managed) or `gcloud notebooks instances list --location=ZONE` (User‑Managed) to find candidates, then stop them with the corresponding `... stop` command.
 
-:::::::::::::::::::::::::
+::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::
 
 :::::::::::::::::::::::::::::::::::::::: challenge
 
@@ -251,6 +253,7 @@ Create and apply a lifecycle rule that (a) deletes objects under `tmp/` after 7 
 Use the JSON policy shown above, then run `gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET` and verify with `gsutil lifecycle get ...`.
 
 :::::::::::::::::::::::::
+::::::::::::::::::::::::::::::::::::::::
 
 :::::::::::::::::::::::::::::::::::::::: challenge
 
