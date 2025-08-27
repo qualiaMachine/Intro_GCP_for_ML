@@ -44,7 +44,6 @@ exercises: 20
 5) **Artifacts** — delete large intermediate artifacts you won’t reuse.  
 6) **GCS** — keep only one “source of truth”; avoid duplicate datasets in multiple buckets/regions.
 
----
 
 ## Shutting down Vertex AI Workbench notebooks
 
@@ -73,7 +72,6 @@ Vertex AI has two notebook flavors; follow the matching steps:
 
 > **Disks still cost money while the VM is stopped.** Delete old runtimes/instances *and* their disks if you’re done with them.
 
----
 
 ## Cleaning up training, tuning, and batch jobs
 
@@ -97,8 +95,6 @@ gcloud ai custom-jobs delete JOB_ID --region=us-central1
 
 > Tip: Keep one “golden” successful job per experiment, then remove the rest to reduce console clutter and artifact storage.
 
----
-
 ## Undeploy models and delete endpoints (major cost pitfall)
 
 ### Find endpoints and deployed models
@@ -118,7 +114,6 @@ gcloud ai endpoints delete ENDPOINT_ID --region=us-central1 --quiet
 
 > **Model Registry**: If you keep models registered but don’t serve them, you won’t pay endpoint node‑hours. Periodically prune stale model versions to reduce storage.
 
----
 
 ## GCS housekeeping (lifecycle policies, versioning, egress)
 
@@ -157,7 +152,7 @@ gsutil lifecycle get gs://YOUR_BUCKET
 ### Egress reminder
 Downloading out of GCP (to local machines) incurs egress charges. Prefer **in‑cloud** training/evaluation and share results via GCS links.
 
----
+
 
 ## Labels, budgets, and cost visibility
 
@@ -181,7 +176,7 @@ Use the same labels everywhere (notebooks, jobs, buckets) so billing exports can
 - Export billing to **BigQuery** to slice by service, label, or SKU.  
 - Build a simple Data Studio/Looker Studio dashboard for workshop visibility.
 
----
+
 
 ## Monitoring and alerts (catch leaks quickly)
 
@@ -193,7 +188,7 @@ Use the same labels everywhere (notebooks, jobs, buckets) so billing exports can
 
 > Keep alerts few and actionable. Route to email or Slack (via webhook) where your team will see them.
 
----
+
 
 ## Quotas and guardrails
 
@@ -201,7 +196,7 @@ Use the same labels everywhere (notebooks, jobs, buckets) so billing exports can
 - **IAM**: least privilege for service accounts used by notebooks and jobs; avoid wide `Editor` grants.  
 - **Org policies** (if available): disallow costly regions/accelerators you don’t plan to use.
 
----
+
 
 ## Automating the boring parts
 
@@ -219,7 +214,7 @@ gcloud scheduler jobs create http stop-runtime-job   --schedule="0 22 * * *"   -
 - List endpoints; undeploy any with zero recent traffic (check logs/metrics), then delete stale endpoints.  
 - Scriptable with `gcloud ai endpoints list/describe` in Cloud Run or Cloud Functions on a schedule.
 
----
+
 
 ## Common pitfalls and quick fixes
 
@@ -229,7 +224,7 @@ gcloud scheduler jobs create http stop-runtime-job   --schedule="0 22 * * *"   -
 - **Too many parallel HPT trials** → cap `parallel_trial_count` (2–4) and increase `max_trial_count` gradually.  
 - **Orphaned artifacts** in Artifact Registry/GCS → prune old images/artifacts after promoting a single “golden” run.
 
----
+
 
 :::::::::::::::::::::::::::::::::::::::: challenge
 
