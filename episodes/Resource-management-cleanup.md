@@ -4,7 +4,7 @@ teaching: 45
 exercises: 20
 ---
 
-:::::::::::::::::::::::::::::::::::::: questions 
+:::::::::::::::::::::::::::::::::::::: questions
 
 - How do I monitor and control Vertex AI, Workbench, and GCS costs day‑to‑day?
 - What *specifically* should I stop, delete, or schedule to avoid surprise charges?

@@ -4,7 +4,7 @@ teaching: 15
 exercises: 5
 ---
 
-:::::::::::::::::::::::::::::::::::::: questions 
+:::::::::::::::::::::::::::::::::::::: questions
 
 - How can I store and manage data effectively in GCP for Vertex AI workflows?  
 - What are the advantages of Google Cloud Storage (GCS) compared to local or VM storage for machine learning projects?  
