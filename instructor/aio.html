@@ -792,21 +792,18 @@ lower-cost classes based on activity. Useful if your usage is
 unpredictable, but can make cost tracking harder.</li>
 </ul>
 </li>
+<li>
+<strong>Choose how to control access to objects</strong>: By
+default, you should prevent public access to buckets used for ML
+projects. This ensures that only people you explicitly grant permissions
+to can read or write objects, which is almost always the right choice
+for research, hackathons, or internal collaboration. Public buckets are
+mainly for hosting datasets or websites that are intentionally shared
+with the world.</li>
 </ul>
 </div>
 <div class="section level5">
-<h5 id="set-bucket-permissions">4. Set bucket permissions<a class="anchor" aria-label="anchor" href="#set-bucket-permissions"></a>
-</h5>
-<ul>
-<li>By default, only project members can access.<br>
-</li>
-<li>To grant Vertex AI service accounts access, assign the
-<code>Storage Object Admin</code> or <code>Storage Object Viewer</code>
-role at the bucket level.</li>
-</ul>
-</div>
-<div class="section level5">
-<h5 id="upload-files-to-the-bucket">5. Upload files to the bucket<a class="anchor" aria-label="anchor" href="#upload-files-to-the-bucket"></a>
+<h5 id="upload-files-to-the-bucket">4. Upload files to the bucket<a class="anchor" aria-label="anchor" href="#upload-files-to-the-bucket"></a>
 </h5>
 <ul>
 <li>If you haven’t downloaded them yet, right-click and save as
@@ -824,17 +821,10 @@ role at the bucket level.</li>
 </li>
 <li>Select your Titanic CSVs and upload.</li>
 </ul>
-</div>
-<div class="section level5">
-<h5 id="note-the-gcs-uri-for-your-data">6. Note the GCS URI for your data<a class="anchor" aria-label="anchor" href="#note-the-gcs-uri-for-your-data"></a>
-</h5>
-<ul>
-<li>After uploading, click on a file and find its <strong>gs://
-URI</strong> (e.g.,
-<code>gs://yourname-titanic-gcs/titanic_train.csv</code>).<br>
-</li>
-<li>This URI will be used when launching Vertex AI training jobs.</li>
-</ul>
+<p><strong>Note the GCS URI for your data</strong> After uploading,
+click on a file and find its <strong>gs:// URI</strong> (e.g.,
+<code>gs://yourname-titanic-gcs/titanic_train.csv</code>). This URI will
+be used to access the data later.</p>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="gcs-bucket-costs">GCS bucket costs<a class="anchor" aria-label="anchor" href="#gcs-bucket-costs"></a>
@@ -853,14 +843,38 @@ retrieval costs.</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="data-transfer-costs">Data transfer costs<a class="anchor" aria-label="anchor" href="#data-transfer-costs"></a>
+<h3 id="data-transfer-costs-explained">Data transfer costs explained<a class="anchor" aria-label="anchor" href="#data-transfer-costs-explained"></a>
 </h3>
 <ul>
-<li>Uploading data into GCS is free.<br>
+<li>
+<strong>Uploading data (ingress):</strong> Copying data into a GCS
+bucket from your laptop, campus HPC, or another provider is free.<br>
 </li>
-<li>Downloading data out of GCP costs ~$0.12 per GB.<br>
+<li>
+<strong>Accessing data in the same region:</strong> If your bucket
+and your compute resources (VMs, Vertex AI jobs) are in the same region,
+you can read and stream data with no transfer fees. You only pay the
+storage cost per GB-month.<br>
 </li>
-<li>Accessing data within the same region is free.</li>
+<li>
+<strong>Cross-region access:</strong> If your bucket is in one
+region and your compute runs in another, you’ll pay an egress fee (about
+$0.01–0.02 per GB within North America, higher if crossing
+continents).<br>
+</li>
+<li>
+<strong>Downloading data out of GCP (egress):</strong> This refers
+to data leaving Google’s network to the public internet, such as
+downloading files to your laptop. Typical cost is around $0.12 per GB to
+the U.S. and North America, more for other continents.<br>
+</li>
+<li>
+<strong>Deleting data:</strong> Removing objects or buckets does not
+incur transfer costs. If you download data before deleting, you pay for
+the egress, but simply deleting in the console or CLI is free. For
+Nearline/Coldline/Archive storage classes, deleting before the minimum
+storage duration (30, 90, or 365 days) triggers an early deletion
+fee.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -1176,7 +1190,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it’s not meant for heavy computation.<br>
@@ -1746,7 +1760,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -1968,7 +1982,7 @@ discuss:</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>
