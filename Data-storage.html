@@ -357,7 +357,7 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Data Storage: Setting up GCS</h1>
-        <p>Last updated on 2025-08-27 |
+        <p>Last updated on 2025-09-22 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/Data-storage.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -510,7 +510,14 @@ log in with your credentials.</li>
 <h5 id="create-a-new-bucket">3. Create a new bucket<a class="anchor" aria-label="anchor" href="#create-a-new-bucket"></a></h5>
 <ul><li>Click <strong>Create bucket</strong>.<br></li>
 <li>Enter a globally unique name (e.g.,
-<code>yourname-titanic-gcs</code>).<br></li>
+<code>yourname-titanic-gcs</code>).</li>
+<li>
+<strong>Labels (tags)</strong>: Add labels to track resource usage
+and billing
+<ul><li><code>purpose=workshop</code></li>
+<li>
+<code>owner=lastname_firstname</code><br></li>
+</ul></li>
 <li>Choose a location type:
 <ul><li>
 <strong>Region</strong> (cheapest, good default).<br></li>
@@ -526,11 +533,7 @@ IAM.<br></li>
 explicitly needed.<br></li>
 <li>
 <strong>Versioning</strong>: Disable unless you want to keep
-multiple versions of files.<br></li>
-<li>
-<strong>Labels (tags)</strong>: Add labels to track project usage
-(e.g., <code>purpose=titanic-dataset</code>,
-<code>owner=yourname</code>).</li>
+multiple versions of files.</li>
 </ul></div>
 <div class="section level5">
 <h5 id="set-bucket-permissions">4. Set bucket permissions<a class="anchor" aria-label="anchor" href="#set-bucket-permissions"></a></h5>
@@ -610,7 +613,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>1 GB</strong>:<br></li>
@@ -729,7 +732,7 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/Data-storage.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/Data-storage.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2025-08-27",
+  "dateModified": "2025-09-22",
   "datePublished": "2025-09-22"
 }
 
