@@ -174,7 +174,11 @@ GCS costs are based on storage class, data transfer, and operations (requests).
 After you are done using your data, remove unused files/buckets to stop costs:  
 
 - **Option 1: Delete files only** – if you plan to reuse the bucket.  
-- **Option 2: Delete the bucket entirely** – if you no longer need it.  
+- **Option 2: Delete the bucket entirely** – if you no longer need it.
+
+## When does BigQuery come into play?
+
+For many ML workflows, especially smaller projects or those centered on image, text, or modest tabular datasets, BigQuery is overkill. GCS buckets are usually enough to store and access your data for training jobs. That said, BigQuery can be valuable when you are working with large tabular datasets and need a shared environment for exploration or collaboration. Instead of every team member downloading the same CSVs, BigQuery lets everyone query the data in place with SQL, share results through saved queries or views, and control access at the dataset or table level with IAM. BigQuery also integrates with Vertex AI, so if your data is already structured and stored there, you can connect it directly to training pipelines. The trade-off is cost: you pay not only for storage but also for the amount of data scanned by queries. For many ML research projects this is unnecessary, but when teams need a centralized, queryable workspace for large tabular data, BigQuery can simplify collaboration.  
 
 ::::::::::::::::::::::::::::::::::::: keypoints 
 
