@@ -23,7 +23,7 @@ exercises: 5
 Machine learning and AI projects rely on data, making efficient storage and management essential. Google Cloud offers several storage options, but the most common for ML workflows are **persistent disks** (attached to Compute Engine VMs or Vertex AI Workbench) and **Google Cloud Storage (GCS) buckets**.  
 
 > #### Consult your institution's IT before handling sensitive data in GCP
-> As with AWS, **do not upload restricted or sensitive data to GCP services unless explicitly approved by your institution’s IT or cloud security team**. For regulated datasets (HIPAA, FERPA, proprietary), work with your institution to ensure encryption, restricted access, and compliance with policies.
+> As with AWS, **do not upload restricted or sensitive data to GCP services unless explicitly approved by your institution's IT or cloud security team**. For regulated datasets (HIPAA, FERPA, proprietary), work with your institution to ensure encryption, restricted access, and compliance with policies.
 
 ## Options for storage: VM Disks or GCS
 
@@ -45,7 +45,7 @@ A persistent disk is the storage volume attached to a Compute Engine VM or a Ver
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ### What is a GCS bucket?
-For most ML workflows in Vertex AI, **Google Cloud Storage (GCS) buckets** are recommended. A GCS bucket is a container in Google’s object storage service where you can store an essentially unlimited number of files. Data in GCS can be accessed from Vertex AI training jobs, Workbench notebooks, and other GCP services using a **GCS URI** (e.g., `gs://your-bucket-name/your-file.csv`).  
+For most ML workflows in Vertex AI, **Google Cloud Storage (GCS) buckets** are recommended. A GCS bucket is a container in Google's object storage service where you can store an essentially unlimited number of files. Data in GCS can be accessed from Vertex AI training jobs, Workbench notebooks, and other GCP services using a **GCS URI** (e.g., `gs://your-bucket-name/your-file.csv`).  
 
 ::::::::::::::::::::::::::::::::::::: callout 
 
@@ -61,7 +61,7 @@ For most ML workflows in Vertex AI, **Google Cloud Storage (GCS) buckets** are r
 
 ## Recommended approach: GCS buckets
 
-To upload our Titanic dataset to a GCS bucket, we’ll follow these steps:
+To upload our Titanic dataset to a GCS bucket, we'll follow these steps:
 
 1. Log in to the Google Cloud Console.  
 2. Create a new bucket (or use an existing one).  
@@ -87,25 +87,20 @@ To upload our Titanic dataset to a GCS bucket, we’ll follow these steps:
 - **Choose a location type**:  When creating a storage bucket in Google Cloud, the best practice for most machine learning workflows is to use a regional bucket in the same region as your compute resources (for example, us-central1). This setup provides the lowest latency and avoids network egress charges when training jobs read from storage, while also keeping costs predictable. A multi-region bucket, on the other hand, can make sense if your primary goal is broad availability or if collaborators in different regions need reliable access to the same data; the trade-off is higher cost and the possibility of extra egress charges when pulling data into a specific compute region. For most research projects, a regional bucket with the Standard storage class, uniform access control, and public access prevention enabled offers a good balance of performance, security, and affordability.
   - **Region** (cheapest, good default). For instance, us-central1 (Iowa) costs $0.020 per GB-month.
   - **Multi-region** (higher redundancy, more expensive).  
-- **Choose storage class**: When creating a bucket, you'll be asked to choose a storage class, which determines how much you pay for storing data and how often you’re allowed to access it without extra fees.
+- **Choose storage class**: When creating a bucket, you'll be asked to choose a storage class, which determines how much you pay for storing data and how often you're allowed to access it without extra fees.
     - Standard – best for active ML workflows. Training data is read and written often, so this is the safest default.
     - Nearline / Coldline / Archive – designed for backups or rarely accessed files. These cost less per GB to store, but you pay retrieval fees if you read them during training. Not recommended for most ML projects where data access is frequent.
     - Autoclass – automatically moves objects between Standard and lower-cost classes based on activity. Useful if your usage is unpredictable, but can make cost tracking harder. 
-      
-##### 4. Set bucket permissions
-- By default, only project members can access.  
-- To grant Vertex AI service accounts access, assign the `Storage Object Admin` or `Storage Object Viewer` role at the bucket level.  
+- **Choose how to control access to objects**: By default, you should prevent public access to buckets used for ML projects. This ensures that only people you explicitly grant permissions to can read or write objects, which is almost always the right choice for research, hackathons, or internal collaboration. Public buckets are mainly for hosting datasets or websites that are intentionally shared with the world.
 
-##### 5. Upload files to the bucket
-- If you haven’t downloaded them yet, right-click and save as `.csv`:  
+##### 4. Upload files to the bucket
+- If you haven't downloaded them yet, right-click and save as `.csv`:  
   - [titanic_train.csv](https://raw.githubusercontent.com/UW-Madison-DataScience/ml-with-aws-sagemaker/main/data/titanic_train.csv)  
   - [titanic_test.csv](https://raw.githubusercontent.com/UW-Madison-DataScience/ml-with-aws-sagemaker/main/data/titanic_test.csv)  
 - In the bucket dashboard, click **Upload Files**.  
 - Select your Titanic CSVs and upload.  
 
-##### 6. Note the GCS URI for your data
-- After uploading, click on a file and find its **gs:// URI** (e.g., `gs://yourname-titanic-gcs/titanic_train.csv`).  
-- This URI will be used when launching Vertex AI training jobs.  
+**Note the GCS URI for your data** After uploading, click on a file and find its **gs:// URI** (e.g., `gs://yourname-titanic-gcs/titanic_train.csv`). This URI will be used to access the data later.
 
 ## GCS bucket costs
 
@@ -115,10 +110,12 @@ GCS costs are based on storage class, data transfer, and operations (requests).
 - Standard storage (us-central1): ~$0.02 per GB per month.  
 - Other classes (Nearline, Coldline, Archive) are cheaper but with retrieval costs.  
 
-### Data transfer costs
-- Uploading data into GCS is free.  
-- Downloading data out of GCP costs ~$0.12 per GB.  
-- Accessing data within the same region is free.  
+### Data transfer costs explained  
+- **Uploading data (ingress):** Copying data into a GCS bucket from your laptop, campus HPC, or another provider is free.  
+- **Accessing data in the same region:** If your bucket and your compute resources (VMs, Vertex AI jobs) are in the same region, you can read and stream data with no transfer fees. You only pay the storage cost per GB-month.  
+- **Cross-region access:** If your bucket is in one region and your compute runs in another, you'll pay an egress fee (about $0.01–0.02 per GB within North America, higher if crossing continents).  
+- **Downloading data out of GCP (egress):** This refers to data leaving Google's network to the public internet, such as downloading files to your laptop. Typical cost is around $0.12 per GB to the U.S. and North America, more for other continents.  
+- **Deleting data:** Removing objects or buckets does not incur transfer costs. If you download data before deleting, you pay for the egress, but simply deleting in the console or CLI is free. For Nearline/Coldline/Archive storage classes, deleting before the minimum storage duration (30, 90, or 365 days) triggers an early deletion fee.  
 
 ### Request costs
 - `GET` (read) requests: ~$0.004 per 10,000 requests.  
