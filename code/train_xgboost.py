@@ -7,16 +7,26 @@ from time import time
 import joblib
 
 def preprocess_data(df):
-    """Preprocess the Titanic dataset for model training."""
-    df['Age'].fillna(df['Age'].median(), inplace=True)
-    df['Embarked'].fillna(df['Embarked'].mode()[0], inplace=True)
-    df.drop(columns=["Name", "Ticket", "Cabin"], inplace=True)
-    df['Sex'] = df['Sex'].map({'male': 1, 'female': 0})
-    df['Embarked'] = df['Embarked'].map({'S': 0, 'C': 1, 'Q': 2})
+    """Preprocess the Titanic dataset for model training (pandas-3.0 safe)."""
+    df = df.copy()  # avoid chained-assignment issues
+
+    # fill missing values
+    df["Age"] = df["Age"].fillna(df["Age"].median())
+    embarked_mode = df["Embarked"].mode(dropna=True)
+    df["Embarked"] = df["Embarked"].fillna(embarked_mode.iloc[0] if not embarked_mode.empty else "S")
+
+    # drop unused columns (no inplace)
+    df = df.drop(columns=["Name", "Ticket", "Cabin"])
+
+    # encode categoricals
+    df["Sex"] = df["Sex"].map({"male": 1, "female": 0})
+    df["Embarked"] = df["Embarked"].map({"S": 0, "C": 1, "Q": 2})
+
+    # split features/target
     X = df.drop(columns=["Survived"])
     y = df["Survived"]
-    
     return X, y
+
 
 def train_model(dtrain, params, num_round):
     """Train the XGBoost model with the specified parameters."""
