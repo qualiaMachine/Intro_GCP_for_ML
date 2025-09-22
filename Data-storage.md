@@ -79,7 +79,7 @@ To upload our Titanic dataset to a GCS bucket, we'll follow these steps:
 
 ##### 3. Create a new bucket
 - Click **Create bucket**.  
-- Enter a globally unique name (e.g., `yourname-titanic-gcs`).
+- **Provide a bucket name**: Enter a globally unique name. For this workshop, we can use the following naming convention to easily locate our buckets: `lastname_titanic`
 - **Labels (tags)**: Add labels to track resource usage and billing. If you're working in a shared account, this step is *mandatory*. If not, it's still recommended to help you track your own costs!
     - `purpose=workshop`
     - `data=titanic`
