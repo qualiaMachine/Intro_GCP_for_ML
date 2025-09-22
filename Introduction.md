@@ -1,52 +1,51 @@
 ---
-title: "Overview of Google Cloud Vertex AI"
+title: "Overview of Google Cloud for Machine Learning"
 teaching: 10
 exercises: 1
 ---
 
-Google Cloud Vertex AI is a unified machine learning (ML) platform that enables users to build, train, tune, and deploy models at scale without needing to manage underlying infrastructure. By integrating data storage, training, tuning, and deployment workflows into one managed environment, Vertex AI supports researchers and practitioners in focusing on their ML models while leveraging Google Cloud’s compute and storage resources.
-
 ::::::::::::::::::::::::::::::::::::: questions
 
-- What problem does Google Cloud Vertex AI aim to solve?  
-- How does Vertex AI simplify machine learning workflows compared to running them on your own?  
+- What problem does GCP aim to solve for ML researchers?  
+- How does using a notebook as a controller help organize ML workflows in the cloud?  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: objectives
 
-- Understand the basic purpose of Vertex AI in the ML lifecycle.  
-- Recognize how Vertex AI reduces infrastructure and orchestration overhead.  
+- Understand the basic role of GCP in supporting ML research.  
+- Recognize how a notebook can serve as a controller for cloud resources.  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-### Why use Vertex AI for machine learning?
+Google Cloud Platform (GCP) provides the basic building blocks researchers need to run machine learning (ML) experiments at scale. Instead of working only on your laptop or a high-performance computing (HPC) cluster, you can spin up compute resources on demand, store datasets in the cloud, and run notebooks that act as a "controller" for larger training and tuning jobs.  
 
-Vertex AI provides several advantages that make it an attractive option for research and applied ML:
+This workshop focuses on *using a simple notebook environment as the control center* for your ML workflow. We will not rely on Google’s fully managed Vertex AI platform, but instead show how to use core GCP services (Compute Engine, storage buckets, and SDKs) so you can build and run experiments from scratch.
 
-- **Streamlined ML/AI Pipelines**: Traditional HPC/HTC environments often require researchers to split workflows into many batch jobs, manually handling dependencies and orchestration. Vertex AI reduces this overhead by managing the end-to-end pipeline (data prep, training, evaluation, tuning, and deployment) within a single environment, making it easier to iterate and scale ML experiments.
+### Why use GCP for machine learning?
 
-- **Flexible compute options**: Vertex AI lets you select the right hardware for your workload:
-  - **CPU (e.g., n1-standard-4, e2-standard-8)**: Good for small datasets, feature engineering, and inference tasks.  
-  - **GPU (e.g., NVIDIA T4, V100, A100)**: Optimized for deep learning training and large-scale experimentation.  
-  - **Memory-optimized machine types (e.g., m1-ultramem)**: Useful for workloads requiring large in-memory datasets, such as transformer models.  
+GCP provides several advantages that make it a strong option for applied ML:
 
-- **Parallelized training and tuning**: Vertex AI supports distributed training across multiple nodes and automated hyperparameter tuning (Bayesian or grid search). This makes it easier to explore many configurations with minimal custom code while leveraging scalable infrastructure.
+- **Flexible compute**: You can choose the hardware that fits your workload:  
+  - **CPUs** for lightweight models, preprocessing, or feature engineering.  
+  - **GPUs** (e.g., NVIDIA T4, V100, A100) for training deep learning models.  
+  - **High-memory machines** for workloads that need large datasets in memory.  
 
-- **Custom training support**: Vertex AI includes built-in algorithms and frameworks (e.g., scikit-learn, XGBoost, TensorFlow, PyTorch), but it also supports custom containers. Researchers can bring their own scripts or Docker images to run specialized workflows with full control.
+- **Data storage and access**: Google Cloud Storage (GCS) buckets act like S3 on AWS — an easy way to store and share datasets between experiments and collaborators.  
 
-- **Cost management and monitoring**: Google Cloud provides detailed cost tracking and monitoring via the Billing console and Vertex AI dashboard. Vertex AI also integrates with Cloud Monitoring to help track resource usage. With careful configuration, training 100 small-to-medium models (logistic regression, random forests, or lightweight neural networks on datasets under 10GB) can cost under $20, similar to AWS.
+- **From scratch workflows**: Instead of depending on a fully managed ML service, you bring your own frameworks (PyTorch, TensorFlow, scikit-learn, etc.) and run your code the same way you would on your laptop or HPC cluster, but with scalable cloud resources.  
 
-In summary, Vertex AI is Google Cloud’s managed machine learning platform that simplifies the end-to-end ML lifecycle. It eliminates the need for manual orchestration in research computing environments by offering integrated workflows, scalable compute, and built-in monitoring. With flexible options for CPUs, GPUs, and memory-optimized hardware, plus strong support for both built-in and custom training, Vertex AI enables researchers to move quickly from experimentation to production while keeping costs predictable and manageable.
+- **Cost visibility**: Billing dashboards and project-level budgets make it easier to track costs and stay within research budgets.  
 
+In short, GCP provides infrastructure that you control from a notebook environment, allowing you to build and run ML workflows just as you would locally, but with access to scalable hardware and storage.
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
-### Infrastructure Choices for ML  
-At your institution (or in your own work), what infrastructure options are currently available for running ML experiments?  
-- Do you typically use a laptop/desktop, HPC cluster, or cloud?  
-- What are the advantages and drawbacks of your current setup compared to a managed service like Vertex AI?  
-- If you could offload one infrastructure challenge (e.g., provisioning GPUs, handling dependencies, monitoring costs), what would it be and why?  
+### Comparing infrastructures  
+Think about your current research setup:  
+- Do you mostly use your laptop, HPC cluster, or cloud for ML experiments?  
+- What benefits would running a cloud-based notebook controller give you?  
+- If you could offload one infrastructure challenge (e.g., installing GPU drivers, managing storage, or setting up environments), what would it be and why?  
 
 Take 3–5 minutes to discuss with a partner or share in the workshop chat.  
 
@@ -54,8 +53,8 @@ Take 3–5 minutes to discuss with a partner or share in the workshop chat.
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
-- Vertex AI simplifies ML workflows by integrating data, training, tuning, and deployment in one managed platform.  
-- It reduces the need for manual orchestration compared to traditional research computing environments.  
-- Cost monitoring and resource tracking help keep cloud usage affordable for research projects.  
+- GCP provides the core building blocks (compute, storage, networking) for ML research.  
+- A notebook can act as a controller to organize cloud workflows and keep experiments reproducible.  
+- Using raw infrastructure instead of a fully managed platform gives researchers flexibility while still benefiting from scalable cloud resources.  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
