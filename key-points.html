@@ -430,8 +430,14 @@ expenses.<br>
 </ul></section><section id="Notebooks-as-controllers"><h2 class="section-heading"><a href="Notebooks-as-controllers.html">Notebooks as Controllers</a></h2>
 <hr class="half-width">
 <ul>
-<li>Use a small Vertex AI Workbench notebook instance as a controller to
-manage larger, resource-intensive tasks.<br>
+<li>Use a small Workbench Instance notebook as a controller to manage
+larger, resource-intensive tasks.<br>
+</li>
+<li>Always navigate to the “Instances” tab in Workbench, since older
+notebook types are deprecated.<br>
+</li>
+<li>Choose the same region for your Workbench Instance and storage
+bucket to avoid extra transfer costs.<br>
 </li>
 <li>Submit training and tuning jobs to scalable instances using the
 Vertex AI SDK.<br>
@@ -439,8 +445,11 @@ Vertex AI SDK.<br>
 <li>Labels help track costs effectively, especially in shared or
 multi-project environments.<br>
 </li>
-<li>Vertex AI Workbench integrates directly with GCS and Vertex AI
-services, making it a hub for ML workflows.</li>
+<li>Workbench Instances come with JupyterLab 3 and GPU frameworks
+preinstalled, making them an easy entry point for ML workflows.<br>
+</li>
+<li>Enable idle auto-stop to avoid unexpected charges when notebooks are
+left running.</li>
 </ul></section><section id="Accessing-and-managing-data"><h2 class="section-heading"><a href="Accessing-and-managing-data.html">Accessing and Managing Data in GCS with Vertex AI Notebooks</a></h2>
 <hr class="half-width">
 <ul>
