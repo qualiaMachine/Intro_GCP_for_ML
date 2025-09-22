@@ -115,16 +115,22 @@ For updated prices, see [GCS Pricing](https://cloud.google.com/storage/pricing).
 ## Writing output files to GCS
 
 ```python
-# Create a sample file
+# Create a sample file locally on the notebook VM
 with open("Notes.txt", "w") as f:
     f.write("This is a test note for GCS.")
 
-# Upload to bucket/docs/
+# Point to the right bucket
 bucket = client.bucket(bucket_name)
+
+# Create a *Blob* object, which represents a path inside the bucket
+# (here it will end up as gs://<bucket_name>/docs/Notes.txt)
 blob = bucket.blob("docs/Notes.txt")
+
+# Upload the local file into that blob (object) in GCS
 blob.upload_from_filename("Notes.txt")
 
 print("File uploaded successfully.")
+
 ```
 
 List bucket contents:
