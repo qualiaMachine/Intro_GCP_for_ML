@@ -80,16 +80,18 @@ To upload our Titanic dataset to a GCS bucket, we’ll follow these steps:
 ##### 3. Create a new bucket
 - Click **Create bucket**.  
 - Enter a globally unique name (e.g., `yourname-titanic-gcs`).
-- **Labels (tags)**: Add labels to track resource usage and billing
+- **Labels (tags)**: Add labels to track resource usage and billing. If you're working in a shared account, this step is *mandatory*. If not, it's still recommended to help you track your own costs!
     - `purpose=workshop`
+    - `data=titanic`
     - `owner=lastname_firstname`   
-- Choose a location type:  
-  - **Region** (cheapest, good default).  
+- **Choose a location type**:  When creating a storage bucket in Google Cloud, the best practice for most machine learning workflows is to use a regional bucket in the same region as your compute resources (for example, us-central1). This setup provides the lowest latency and avoids network egress charges when training jobs read from storage, while also keeping costs predictable. A multi-region bucket, on the other hand, can make sense if your primary goal is broad availability or if collaborators in different regions need reliable access to the same data; the trade-off is higher cost and the possibility of extra egress charges when pulling data into a specific compute region. For most research projects, a regional bucket with the Standard storage class, uniform access control, and public access prevention enabled offers a good balance of performance, security, and affordability.
+  - **Region** (cheapest, good default). For instance, us-central1 (Iowa) costs $0.020 per GB-month.
   - **Multi-region** (higher redundancy, more expensive).  
-- **Access Control**: Recommended: Uniform access with IAM.  
-- **Public Access**: Block public access unless explicitly needed.  
-- **Versioning**: Disable unless you want to keep multiple versions of files.  
-
+- **Choose storage class**: When creating a bucket, you'll be asked to choose a storage class, which determines how much you pay for storing data and how often you’re allowed to access it without extra fees.
+    - Standard – best for active ML workflows. Training data is read and written often, so this is the safest default.
+    - Nearline / Coldline / Archive – designed for backups or rarely accessed files. These cost less per GB to store, but you pay retrieval fees if you read them during training. Not recommended for most ML projects where data access is frequent.
+    - Autoclass – automatically moves objects between Standard and lower-cost classes based on activity. Useful if your usage is unpredictable, but can make cost tracking harder. 
+      
 ##### 4. Set bucket permissions
 - By default, only project members can access.  
 - To grant Vertex AI service accounts access, assign the `Storage Object Admin` or `Storage Object Viewer` role at the bucket level.  
