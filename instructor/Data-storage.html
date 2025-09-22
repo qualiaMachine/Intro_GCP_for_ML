@@ -515,27 +515,51 @@ log in with your credentials.</li>
 <code>yourname-titanic-gcs</code>).</li>
 <li>
 <strong>Labels (tags)</strong>: Add labels to track resource usage
-and billing
+and billing. If you’re working in a shared account, this step is
+<em>mandatory</em>. If not, it’s still recommended to help you track
+your own costs!
 <ul><li><code>purpose=workshop</code></li>
+<li><code>data=titanic</code></li>
 <li>
 <code>owner=lastname_firstname</code><br></li>
 </ul></li>
-<li>Choose a location type:
+<li>
+<strong>Choose a location type</strong>: When creating a storage
+bucket in Google Cloud, the best practice for most machine learning
+workflows is to use a regional bucket in the same region as your compute
+resources (for example, us-central1). This setup provides the lowest
+latency and avoids network egress charges when training jobs read from
+storage, while also keeping costs predictable. A multi-region bucket, on
+the other hand, can make sense if your primary goal is broad
+availability or if collaborators in different regions need reliable
+access to the same data; the trade-off is higher cost and the
+possibility of extra egress charges when pulling data into a specific
+compute region. For most research projects, a regional bucket with the
+Standard storage class, uniform access control, and public access
+prevention enabled offers a good balance of performance, security, and
+affordability.
 <ul><li>
-<strong>Region</strong> (cheapest, good default).<br></li>
+<strong>Region</strong> (cheapest, good default). For instance,
+us-central1 (Iowa) costs $0.020 per GB-month.</li>
 <li>
 <strong>Multi-region</strong> (higher redundancy, more
 expensive).<br></li>
 </ul></li>
 <li>
-<strong>Access Control</strong>: Recommended: Uniform access with
-IAM.<br></li>
-<li>
-<strong>Public Access</strong>: Block public access unless
-explicitly needed.<br></li>
-<li>
-<strong>Versioning</strong>: Disable unless you want to keep
-multiple versions of files.</li>
+<strong>Choose storage class</strong>: When creating a bucket,
+you’ll be asked to choose a storage class, which determines how much you
+pay for storing data and how often you’re allowed to access it without
+extra fees.
+<ul><li>Standard – best for active ML workflows. Training data is read and
+written often, so this is the safest default.</li>
+<li>Nearline / Coldline / Archive – designed for backups or rarely
+accessed files. These cost less per GB to store, but you pay retrieval
+fees if you read them during training. Not recommended for most ML
+projects where data access is frequent.</li>
+<li>Autoclass – automatically moves objects between Standard and
+lower-cost classes based on activity. Useful if your usage is
+unpredictable, but can make cost tracking harder.</li>
+</ul></li>
 </ul></div>
 <div class="section level5">
 <h5 id="set-bucket-permissions">4. Set bucket permissions<a class="anchor" aria-label="anchor" href="#set-bucket-permissions"></a></h5>
