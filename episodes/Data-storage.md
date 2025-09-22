@@ -79,14 +79,16 @@ To upload our Titanic dataset to a GCS bucket, we’ll follow these steps:
 
 ##### 3. Create a new bucket
 - Click **Create bucket**.  
-- Enter a globally unique name (e.g., `yourname-titanic-gcs`).  
+- Enter a globally unique name (e.g., `yourname-titanic-gcs`).
+- **Labels (tags)**: Add labels to track resource usage and billing
+    - `purpose=workshop`
+    - `owner=lastname_firstname`   
 - Choose a location type:  
   - **Region** (cheapest, good default).  
   - **Multi-region** (higher redundancy, more expensive).  
 - **Access Control**: Recommended: Uniform access with IAM.  
 - **Public Access**: Block public access unless explicitly needed.  
 - **Versioning**: Disable unless you want to keep multiple versions of files.  
-- **Labels (tags)**: Add labels to track project usage (e.g., `purpose=titanic-dataset`, `owner=yourname`).  
 
 ##### 4. Set bucket permissions
 - By default, only project members can access.  
