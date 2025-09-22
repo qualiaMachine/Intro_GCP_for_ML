@@ -30,28 +30,14 @@ Before interacting with GCS, we need to authenticate and initialize the client l
 
 ```python
 from google.cloud import storage
-from google.colab import auth
 import pandas as pd
-
-# Step 1: Authenticate your account (only prompts if needed)
-auth.authenticate_user()
-
-# Step 2: Initialize a GCS client
+import io
 client = storage.Client()
+print("Project:", client.project)
+print("Credentials:", client._credentials.service_account_email)
 
-# Step 3: List buckets in your current project to confirm access
-buckets = list(client.list_buckets())
-print("Buckets in project:")
-for b in buckets:
-    print("-", b.name)
 ```
 
-**Explanation of the pieces:**  
-- `auth.authenticate_user()`: Ensures you are logged in to your Google account and the notebook can act on your behalf. In Workbench, this usually auto-resolves.  
-- `storage.Client()`: Creates a connection to Google Cloud Storage. All read/write actions will use this client.  
-- `list_buckets()`: Confirms which storage buckets your account can see in the current project.  
-
-This setup block prepares the notebook environment to efficiently interact with GCS resources.
 
 ## Reading data from GCS
 
@@ -60,16 +46,14 @@ As with S3, you can either (A) read data directly from GCS into memory, or (B) d
 ### A) Reading data directly into memory  
 
 ```python
-bucket_name = "yourname-titanic-gcs"
-blob_name = "titanic_train.csv"
 
+bucket_name = "yourname_titanic"
 bucket = client.bucket(bucket_name)
-blob = bucket.blob(blob_name)
-data_bytes = blob.download_as_bytes()
-train_data = pd.read_csv(pd.io.common.BytesIO(data_bytes))
-
+blob = bucket.blob("titanic_train.csv")
+train_data = pd.read_csv(io.BytesIO(blob.download_as_bytes()))
 print(train_data.shape)
 train_data.head()
+
 ```
 
 ### B) Downloading a local copy  
