@@ -1207,7 +1207,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1259,7 +1259,7 @@ any links that you are not going to use.
 </div>
 </section></section><section id="aio-Accessing-and-managing-data"><p>Content from <a href="Accessing-and-managing-data.html">Accessing and Managing Data in GCS with Vertex AI Notebooks</a></p>
 <hr>
-<p>Last updated on 2025-08-27 |
+<p>Last updated on 2025-09-22 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/Accessing-and-managing-data.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -1426,16 +1426,21 @@ recommended approach is <strong>reading directly from GCS</strong>.</p>
 <div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Create a sample file</span></span>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Create a sample file locally on the notebook VM</span></span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"Notes.txt"</span>, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    f.write(<span class="st">"This is a test note for GCS."</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co"># Upload to bucket/docs/</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co"># Point to the right bucket</span></span>
 <span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"docs/Notes.txt"</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>blob.upload_from_filename(<span class="st">"Notes.txt"</span>)</span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a></span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"File uploaded successfully."</span>)</span></code></pre>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co"># Create a *Blob* object, which represents a path inside the bucket</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co"># (here it will end up as gs://&lt;bucket_name&gt;/docs/Notes.txt)</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"docs/Notes.txt"</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co"># Upload the local file into that blob (object) in GCS</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>blob.upload_from_filename(<span class="st">"Notes.txt"</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"File uploaded successfully."</span>)</span></code></pre>
 </div>
 <p>List bucket contents:</p>
 <div class="codewrapper sourceCode" id="cb7">
@@ -1468,7 +1473,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -1784,7 +1789,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
