@@ -503,19 +503,19 @@ Vertex AI Console.</li>
 </ul></section><section id="Training-models-in-VertexAI-GPUs"><h2 class="section-heading"><a href="Training-models-in-VertexAI-GPUs.html">Training Models in Vertex AI: PyTorch Example</a></h2>
 <hr class="half-width">
 <ul>
+<li>Use <strong>CustomTrainingJob</strong> with a prebuilt PyTorch
+container; let your script control outputs via
+<code>--model_out</code>.</li>
+<li>Keep artifacts <strong>together</strong> (model, metrics, history,
+log) in one folder for reproducibility.</li>
 <li>
-<code>.npz</code> files streamline PyTorch data handling and reduce
-I/O overhead.<br>
-</li>
-<li>GPUs may not speed up small models/datasets due to overhead.<br>
-</li>
-<li>Vertex AI supports both CPU and GPU training, with scaling via
-multiple replicas.<br>
-</li>
-<li>Data parallelism splits data, model parallelism splits layers —
-choose based on model size.<br>
-</li>
-<li>Test locally first before launching expensive training jobs.</li>
+<code>.npz</code> speeds up loading and plays nicely with
+PyTorch.</li>
+<li>Start on CPU for small datasets; use GPU only when profiling shows a
+clear win.</li>
+<li>Skip <code>base_output_dir</code> unless you specifically want
+Vertex’s default run directory; staging bucket is just for the SDK
+packaging tarball.</li>
 </ul></section><section id="Hyperparameter-tuning"><h2 class="section-heading"><a href="Hyperparameter-tuning.html">Hyperparameter Tuning in Vertex AI: Neural Network Example</a></h2>
 <hr class="half-width">
 <ul>
