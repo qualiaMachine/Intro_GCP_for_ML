@@ -56,19 +56,18 @@ aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCK
 - `staging_bucket`: A GCS bucket for storing datasets, model artifacts, and job outputs.  
 
 #### 4. Get code from GitHub repo (skip if already completed)
-If you didn’t complete earlier episodes, clone our code repo before moving forward. Check to make sure we’re in our Jupyter home folder first.  
+If you didn't complete earlier episodes, clone our code repo before moving forward. Check to make sure we're in our Jupyter home folder first.  
 
 ```python
 %cd /home/jupyter/
 ```
 
 ```python
-# Uncomment below line only if you still need to download the code repo (replace username with your GitHub username)
-#!git clone https://github.com/username/GCP_helpers.git
+!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
 ```
 
 ## Testing train.py locally in the notebook
-Before scaling training jobs onto managed resources, it’s essential to test your training script locally. This prevents wasting GPU/TPU time on bugs or misconfigured code.  
+Before scaling training jobs onto managed resources, it's essential to test your training script locally. This prevents wasting GPU/TPU time on bugs or misconfigured code.  
 
 ### Guidelines for testing ML pipelines before scaling
 - **Run tests locally first** with small datasets.  
@@ -81,7 +80,7 @@ Before scaling training jobs onto managed resources, it’s essential to test yo
 
 ### What tests should we do before scaling?  
 
-Before scaling to multiple or more powerful instances (e.g., GPUs or TPUs), it’s important to run a few sanity checks. **In your group, discuss:**  
+Before scaling to multiple or more powerful instances (e.g., GPUs or TPUs), it's important to run a few sanity checks. **In your group, discuss:**  
 
 - Which checks do you think are most critical before scaling up?  
 - What potential issues might we miss if we skip this step?  
@@ -92,8 +91,8 @@ Before scaling to multiple or more powerful instances (e.g., GPUs or TPUs), it�
 ::::::::::::::::::::::::::::::::::::::: solution
 
 - **Data loads correctly** – dataset loads without errors, expected columns exist, missing values handled.  
-- **Overfitting check** – train on a tiny dataset (e.g., 100 rows). If it doesn’t overfit, something is off.  
-- **Loss behavior** – verify training loss decreases and doesn’t diverge.  
+- **Overfitting check** – train on a tiny dataset (e.g., 100 rows). If it doesn't overfit, something is off.  
+- **Loss behavior** – verify training loss decreases and doesn't diverge.  
 - **Runtime estimate** – get a rough sense of training time on small data.  
 - **Memory estimate** – check approximate memory use.  
 - **Save & reload** – ensure model saves, reloads, and infers without errors.  
@@ -103,30 +102,19 @@ Skipping these can lead to: silent data bugs, runtime blowups at scale, ineffici
 :::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## Download data into notebook environment
-Sometimes it’s helpful to keep a copy of data in your notebook VM for quick iteration, even though **GCS is the preferred storage location**.  
+Sometimes it's helpful to keep a copy of data in your notebook VM for quick iteration, even though **GCS is the preferred storage location**.  
 
 ```python
 from google.cloud import storage
 
 client = storage.Client()
-bucket = client.bucket(BUCKET_NAME)
+bucket = client.bucket(bucket_name)
 
 blob = bucket.blob("titanic_train.csv")
 blob.download_to_filename("titanic_train.csv")
 
 print("Downloaded titanic_train.csv")
 ```
-
-Repeat for the test dataset as needed.  
-
-## Logging runtime & instance info
-When comparing runtimes later, it’s useful to know what instance type you ran on. For Workbench:  
-
-```python
-!cat /sys/class/dmi/id/product_name
-```
-
-This prints the machine type backing your notebook.  
 
 ## Local test run of train.py
 
@@ -141,13 +129,19 @@ start = t.time()
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
-Training on this small dataset should take <1 minute. Log runtime as a baseline.  
+Training on this small dataset should take <1 minute. Log runtime as a baseline.  You should see the following output files:
+
+- xgboost-model.joblib  # Python-serialized XGBoost model (Booster) via joblib; load with joblib.load for reuse.
+- eval_history.csv      # Per-iteration validation metrics; columns: iter,val_logloss (good for plotting learning curves).
+- training.log          # Full stdout/stderr from the run (params, dataset sizes, timings, warnings/errors) for audit/debug.
+- metrics.json          # Structured summary: final_val_logloss, num_boost_round, params, train_rows/val_rows, features[], model_uri.
+
 
 ## Training via Vertex AI custom training job
-Unlike “local” training, this launches a **managed training job** that runs on scalable compute. Vertex AI handles provisioning, scaling, logging, and saving outputs to GCS.  
+Unlike "local" training, this launches a **managed training job** that runs on scalable compute. Vertex AI handles provisioning, scaling, logging, and saving outputs to GCS.  
 
 ### Which machine type to start with?
-Start with a small CPU machine like `n1-standard-4`. Only scale up to GPUs/TPUs once you’ve verified your script. See [Instances for ML on GCP](../instances-for-ML.html) for guidance.  
+Start with a small CPU machine like `n1-standard-4`. Only scale up to GPUs/TPUs once you've verified your script. See [Instances for ML on GCP](../instances-for-ML.html) for guidance.  
 
 ### Creating a custom training job with the SDK
 
@@ -197,7 +191,7 @@ This launches a managed training job with Vertex AI.
 1. Go to the Google Cloud Console.  
 2. Navigate to **Vertex AI > Training > Custom Jobs**.  
 3. Click on your job name to see status, logs, and output model artifacts.  
-4. Cancel jobs from the console if needed (be careful not to stop jobs you don’t own in shared projects).
+4. Cancel jobs from the console if needed (be careful not to stop jobs you don't own in shared projects).
 
 #### Visit "training pipelines" to verify it's running. It may take around 5 minutes to finish.
 
