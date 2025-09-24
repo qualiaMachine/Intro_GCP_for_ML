@@ -920,7 +920,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1457,7 +1457,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -1774,7 +1774,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -1817,7 +1817,7 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-Training-models-in-VertexAI"><p>Content from <a href="Training-models-in-VertexAI.html">Training Models in Vertex AI: Intro</a></p>
 <hr>
-<p>Last updated on 2025-08-27 |
+<p>Last updated on 2025-09-24 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/Training-models-in-VertexAI.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 30 minutes</p>
@@ -2098,28 +2098,43 @@ guidance.</p>
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> aiplatform</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomJob(</span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>    display_name<span class="op">=</span><span class="st">"xgboost-train"</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"GCP_helpers/train_xgboost.py"</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.1-5:latest"</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"pandas"</span>, <span class="st">"scikit-learn"</span>, <span class="st">"joblib"</span>],</span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>    args<span class="op">=</span>[</span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>        <span class="st">"--max_depth=3"</span>,</span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>        <span class="st">"--eta=0.1"</span>,</span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>        <span class="st">"--subsample=0.8"</span>,</span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>        <span class="st">"--colsample_bytree=0.8"</span>,</span>
-<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>        <span class="st">"--num_round=100"</span>,</span>
-<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>        <span class="st">"--train=gs://</span><span class="sc">{}</span><span class="st">/titanic_train.csv"</span>.<span class="bu">format</span>(BUCKET_NAME),</span>
-<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>    ],</span>
-<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>    model_serving_container_image_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/prediction/xgboost-cpu.1-5:latest"</span>,</span>
-<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>)</span>
-<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a></span>
-<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co"># Run the training job</span></span>
-<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>model <span class="op">=</span> job.run(replica_count<span class="op">=</span><span class="dv">1</span>, machine_type<span class="op">=</span><span class="st">"n1-standard-4"</span>)</span></code></pre>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>PROJECT <span class="op">=</span> <span class="st">"doit-rci-mlm25-4626"</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>REGION <span class="op">=</span> <span class="st">"us-central1"</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>BUCKET <span class="op">=</span> bucket_name  <span class="co"># e.g., "endemann_titanic" (same region as REGION)</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>MODEL_URI <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET<span class="sc">}</span><span class="ss">/artifacts/xgb/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">/model.joblib"</span>  <span class="co"># everything will live beside this</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co"># Staging bucket is only for the SDK's temp code tarball (aiplatform-*.tar.gz)</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>aiplatform.init(project<span class="op">=</span>PROJECT, location<span class="op">=</span>REGION, staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"endemann_xgb_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_VertexAI/code/train_xgboost.py"</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest"</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"gcsfs"</span>],  <span class="co"># script writes gs://MODEL_URI and sidecar files</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>)</span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>job.run(</span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a>    args<span class="op">=</span>[</span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET<span class="sc">}</span><span class="ss">/titanic_train.csv"</span>,</span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>MODEL_URI<span class="sc">}</span><span class="ss">"</span>,      <span class="co"># model, metrics.json, eval_history.csv, training.log all go here</span></span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a>        <span class="st">"--max_depth=3"</span>,</span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a>        <span class="st">"--eta=0.1"</span>,</span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a>        <span class="st">"--subsample=0.8"</span>,</span>
+<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a>        <span class="st">"--colsample_bytree=0.8"</span>,</span>
+<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a>        <span class="st">"--num_round=100"</span>,</span>
+<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a>    ],</span>
+<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-4"</span>,</span>
+<span id="cb8-33"><a href="#cb8-33" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb8-34"><a href="#cb8-34" tabindex="-1"></a>)</span>
+<span id="cb8-35"><a href="#cb8-35" tabindex="-1"></a></span>
+<span id="cb8-36"><a href="#cb8-36" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Model + logs folder:"</span>, MODEL_URI.rsplit(<span class="st">"/"</span>, <span class="dv">1</span>)[<span class="dv">0</span>])</span></code></pre>
 </div>
-<p>This launches a managed training job with Vertex AI. Logs and trained
-models are automatically stored in your GCS bucket.</p>
+<p>This launches a managed training job with Vertex AI.</p>
 </div>
 </section><section><h2 class="section-heading" id="monitoring-training-jobs-in-the-console">Monitoring training jobs in the Console<a class="anchor" aria-label="anchor" href="#monitoring-training-jobs-in-the-console"></a>
 </h2>
@@ -2135,7 +2150,29 @@ artifacts.<br>
 </li>
 <li>Cancel jobs from the console if needed (be careful not to stop jobs
 you don’t own in shared projects).</li>
-</ol></section><section><h2 class="section-heading" id="when-training-takes-too-long">When training takes too long<a class="anchor" aria-label="anchor" href="#when-training-takes-too-long"></a>
+</ol>
+<div class="section level4">
+<h4 id="visit-training-pipelines-to-verify-its-running--it-may-take-around-5-minutes-to-finish-">Visit “training pipelines” to verify it’s running. It may take
+around 5 minutes to finish.<a class="anchor" aria-label="anchor" href="#visit-training-pipelines-to-verify-its-running--it-may-take-around-5-minutes-to-finish-"></a>
+</h4>
+<p><a href="https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link uri">https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626</a></p>
+<p>Should output the following files:</p>
+<ul>
+<li>endemann_titanic/artifacts/xgb/20250924-154740/xgboost-model.joblib
+# Python-serialized XGBoost model (Booster) via joblib; load with
+joblib.load for reuse.</li>
+<li>endemann_titanic/artifacts/xgb/20250924-154740/eval_history.csv #
+Per-iteration validation metrics; columns: iter,val_logloss (good for
+plotting learning curves).</li>
+<li>endemann_titanic/artifacts/xgb/20250924-154740/training.log # Full
+stdout/stderr from the run (params, dataset sizes, timings,
+warnings/errors) for audit/debug.</li>
+<li>endemann_titanic/artifacts/xgb/20250924-154740/metrics.json #
+Structured summary: final_val_logloss, num_boost_round, params,
+train_rows/val_rows, features[], model_uri.</li>
+</ul>
+</div>
+</section><section><h2 class="section-heading" id="when-training-takes-too-long">When training takes too long<a class="anchor" aria-label="anchor" href="#when-training-takes-too-long"></a>
 </h2>
 <hr class="half-width">
 <p>Two main options in Vertex AI:</p>
@@ -3171,7 +3208,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -3203,7 +3240,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -3233,7 +3270,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
