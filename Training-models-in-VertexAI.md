@@ -153,34 +153,62 @@ Start with a small CPU machine like `n1-standard-4`. Only scale up to GPUs/TPUs 
 
 ```python
 from google.cloud import aiplatform
+import datetime as dt
 
-job = aiplatform.CustomJob(
-    display_name="xgboost-train",
-    script_path="GCP_helpers/train_xgboost.py",
-    container_uri="us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.1-5:latest",
-    requirements=["pandas", "scikit-learn", "joblib"],
+PROJECT = "doit-rci-mlm25-4626"
+REGION = "us-central1"
+BUCKET = bucket_name  # e.g., "endemann_titanic" (same region as REGION)
+
+RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
+MODEL_URI = f"gs://{BUCKET}/artifacts/xgb/{RUN_ID}/model.joblib"  # everything will live beside this
+
+# Staging bucket is only for the SDK's temp code tarball (aiplatform-*.tar.gz)
+aiplatform.init(project=PROJECT, location=REGION, staging_bucket=f"gs://{BUCKET}")
+
+job = aiplatform.CustomTrainingJob(
+    display_name=f"endemann_xgb_{RUN_ID}",
+    script_path="Intro_GCP_VertexAI/code/train_xgboost.py",
+    container_uri="us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest",
+    requirements=["gcsfs"],  # script writes gs://MODEL_URI and sidecar files
+)
+
+job.run(
     args=[
+        f"--train=gs://{BUCKET}/titanic_train.csv",
+        f"--model_out={MODEL_URI}",      # model, metrics.json, eval_history.csv, training.log all go here
         "--max_depth=3",
         "--eta=0.1",
         "--subsample=0.8",
         "--colsample_bytree=0.8",
         "--num_round=100",
-        "--train=gs://{}/titanic_train.csv".format(BUCKET_NAME),
     ],
-    model_serving_container_image_uri="us-docker.pkg.dev/vertex-ai/prediction/xgboost-cpu.1-5:latest",
+    replica_count=1,
+    machine_type="n1-standard-4",
+    sync=True,
 )
 
-# Run the training job
-model = job.run(replica_count=1, machine_type="n1-standard-4")
+print("Model + logs folder:", MODEL_URI.rsplit("/", 1)[0])
+
 ```
 
-This launches a managed training job with Vertex AI. Logs and trained models are automatically stored in your GCS bucket.  
+This launches a managed training job with Vertex AI. 
 
 ## Monitoring training jobs in the Console
 1. Go to the Google Cloud Console.  
 2. Navigate to **Vertex AI > Training > Custom Jobs**.  
 3. Click on your job name to see status, logs, and output model artifacts.  
-4. Cancel jobs from the console if needed (be careful not to stop jobs you don’t own in shared projects).  
+4. Cancel jobs from the console if needed (be careful not to stop jobs you don’t own in shared projects).
+
+#### Visit "training pipelines" to verify it's running. It may take around 5 minutes to finish.
+
+https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&project=doit-rci-mlm25-4626
+
+Should output the following files:
+
+- endemann_titanic/artifacts/xgb/20250924-154740/xgboost-model.joblib  # Python-serialized XGBoost model (Booster) via joblib; load with joblib.load for reuse.
+- endemann_titanic/artifacts/xgb/20250924-154740/eval_history.csv      # Per-iteration validation metrics; columns: iter,val_logloss (good for plotting learning curves).
+- endemann_titanic/artifacts/xgb/20250924-154740/training.log          # Full stdout/stderr from the run (params, dataset sizes, timings, warnings/errors) for audit/debug.
+- endemann_titanic/artifacts/xgb/20250924-154740/metrics.json          # Structured summary: final_val_logloss, num_boost_round, params, train_rows/val_rows, features[], model_uri.
 
 ## When training takes too long
 
