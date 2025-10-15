@@ -859,13 +859,19 @@ that only authorized users can read or write data. This keeps research
 datasets private and avoids accidental exposure.</p>
 <p>When prompted to choose an access control method, choose
 <strong>uniform access</strong> unless you have a very specific reason
-to manage object-level permissions. - <strong>Uniform access
-(recommended):</strong> Simplifies management by enforcing permissions
-at the bucket level using IAM roles. It’s the safer and more
-maintainable choice for teams and becomes permanent after 90 days.<br>
-- <strong>Fine-grained access:</strong> Allows per-file permissions
+to manage object-level permissions.</p>
+<ul>
+<li>
+<strong>Uniform access (recommended):</strong> Simplifies management
+by enforcing permissions at the bucket level using IAM roles. It’s the
+safer and more maintainable choice for teams and becomes permanent after
+90 days.<br>
+</li>
+<li>
+<strong>Fine-grained access:</strong> Allows per-file permissions
 using ACLs, but adds complexity and is rarely needed outside of web
-hosting or mixed-access datasets.</p>
+hosting or mixed-access datasets.</li>
+</ul>
 </div>
 <div class="section level4">
 <h4 id="e--choose-how-to-protect-object-data">3e. Choose how to protect object data<a class="anchor" aria-label="anchor" href="#e--choose-how-to-protect-object-data"></a>
@@ -1016,7 +1022,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1551,7 +1557,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -1867,7 +1873,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
