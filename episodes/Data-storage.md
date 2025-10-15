@@ -79,11 +79,14 @@ To upload our Titanic dataset to a GCS bucket, we'll follow these steps:
 
 ##### 3. Create a new bucket
 - Click **Create bucket**.  
-- **Provide a bucket name**: Enter a globally unique name. For this workshop, we can use the following naming convention to easily locate our buckets: `lastname_titanic`
+- **Provide a bucket name**: Enter a globally unique name. For this workshop, we can use the following naming convention to easily locate our buckets: `teamname_first-lastname_titanic` (e.g., sinkorswim_john-doe_titanic)
 - **Labels (tags)**: Add labels to track resource usage and billing. If you're working in a shared account, this step is *mandatory*. If not, it's still recommended to help you track your own costs!
     - `purpose=workshop`
     - `data=titanic`
-    - `owner=lastname_firstname`   
+    - `owner=lastname_firstname`
+ 
+![Example of Tags for a GCP Bucket](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket_tags.png){alt="Screenshot showing required tags for an S3 bucket"}
+
 - **Choose a location type**:  When creating a storage bucket in Google Cloud, the best practice for most machine learning workflows is to use a regional bucket in the same region as your compute resources (for example, us-central1). This setup provides the lowest latency and avoids network egress charges when training jobs read from storage, while also keeping costs predictable. A multi-region bucket, on the other hand, can make sense if your primary goal is broad availability or if collaborators in different regions need reliable access to the same data; the trade-off is higher cost and the possibility of extra egress charges when pulling data into a specific compute region. For most research projects, a regional bucket with the Standard storage class, uniform access control, and public access prevention enabled offers a good balance of performance, security, and affordability.
   - **Region** (cheapest, good default). For instance, us-central1 (Iowa) costs $0.020 per GB-month.
   - **Multi-region** (higher redundancy, more expensive).  
