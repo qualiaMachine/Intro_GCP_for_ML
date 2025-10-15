@@ -406,7 +406,7 @@
         
 <section id="aio-Introduction"><p>Content from <a href="Introduction.html">Overview of Google Cloud for Machine Learning</a></p>
 <hr>
-<p>Last updated on 2025-09-22 |
+<p>Last updated on 2025-10-15 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/Introduction.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 11 minutes</p>
@@ -424,7 +424,9 @@
 <li>What problem does GCP aim to solve for ML researchers?<br>
 </li>
 <li>How does using a notebook as a controller help organize ML workflows
-in the cloud?</li>
+in the cloud?<br>
+</li>
+<li>How does GCP compare to AWS for ML workflows?</li>
 </ul>
 </div>
 </div>
@@ -437,7 +439,10 @@ in the cloud?</li>
 <li>Understand the basic role of GCP in supporting ML research.<br>
 </li>
 <li>Recognize how a notebook can serve as a controller for cloud
-resources.</li>
+resources.<br>
+</li>
+<li>Compare GCP and AWS approaches to building and managing ML
+workflows.</li>
 </ul>
 </div>
 </div>
@@ -448,8 +453,8 @@ resources.</li>
 researchers need to run machine learning (ML) experiments at scale.
 Instead of working only on your laptop or a high-performance computing
 (HPC) cluster, you can spin up compute resources on demand, store
-datasets in the cloud, and run notebooks that act as a “controller” for
-larger training and tuning jobs.</p>
+datasets in the cloud, and run low-cost notebooks that act as a
+“controller” for larger training and tuning jobs.</p>
 <p>This workshop focuses on <em>using a simple notebook environment as
 the control center</em> for your ML workflow. We will not rely on
 Google’s fully managed Vertex AI platform, but instead show how to use
@@ -474,8 +479,16 @@ feature engineering.<br>
 deep learning models.<br>
 </li>
 <li>
-<strong>High-memory machines</strong> for workloads that need large
-datasets in memory.</li>
+<strong>TPUs (Tensor Processing Units)</strong> for TensorFlow or
+JAX-based deep learning. TPUs are custom Google hardware optimized for
+matrix operations and can provide strong performance and energy
+efficiency for compatible workloads. Google has reported better
+performance-per-watt compared to GPUs in many TensorFlow benchmarks,
+though <em>these gains depend heavily on model type and
+implementation</em>.<br>
+Historically, TPU support has been limited for PyTorch users, and while
+Google is improving PyTorch integration, the TPU ecosystem still works
+best for TensorFlow and JAX workflows.</li>
 </ul>
 </li>
 <li><p><strong>Data storage and access</strong>: Google Cloud Storage
@@ -489,10 +502,38 @@ resources.</p></li>
 <li><p><strong>Cost visibility</strong>: Billing dashboards and
 project-level budgets make it easier to track costs and stay within
 research budgets.</p></li>
+<li><p><strong>Sustainability focus</strong>: Google aims to operate
+entirely on <em>carbon-free energy by 2030</em>. Combined with the TPU’s
+focus on efficient matrix computation, this gives GCP a potential edge
+for researchers interested in energy-conscious ML — though
+<em>real-world energy efficiency varies by workload and
+utilization</em>.</p></li>
 </ul>
 <p>In short, GCP provides infrastructure that you control from a
 notebook environment, allowing you to build and run ML workflows just as
 you would locally, but with access to scalable hardware and storage.</p>
+<div id="what-about-aws" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="what-about-aws" class="callout-inner">
+<h3 class="callout-title">What about AWS?</h3>
+<div class="callout-content">
+<p>In many respects, GCP and AWS offer comparable capabilities for ML
+research. Both provide scalable compute, storage, and tooling to support
+everything from quick experiments to production pipelines.<br>
+AWS typically offers a broader range of GPU and CPU instance types,
+along with mature managed services like SageMaker and tighter
+integration with enterprise infrastructure. GCP, on the other hand,
+emphasizes the use of TensorFlow and JAX, and the availability of TPUs —
+which may offer energy advantages for certain workloads.</p>
+<p>Ultimately, the choice often comes down to framework preference,
+familiarity, and existing resources, rather than major functional
+differences between the two platforms.</p>
+</div>
+</div>
+</div>
 <div id="comparing-infrastructures" class="callout discussion">
 <div class="callout-square">
 <i class="callout-icon" data-feather="message-circle"></i>
@@ -502,10 +543,10 @@ you would locally, but with access to scalable hardware and storage.</p>
 <h3 class="callout-title">Comparing infrastructures</h3>
 <div class="callout-content">
 <p>Think about your current research setup:<br>
-- Do you mostly use your laptop, HPC cluster, or cloud for ML
+- Do you mostly use your laptop, HPC cluster, AWS, or GCP for ML
 experiments?<br>
-- What benefits would running a cloud-based notebook controller give
-you?<br>
+- Which environment feels most transparent for understanding costs and
+reproducibility?<br>
 - If you could offload one infrastructure challenge (e.g., installing
 GPU drivers, managing storage, or setting up environments), what would
 it be and why?</p>
@@ -522,15 +563,21 @@ chat.</p>
 <div class="callout-inner">
 <div class="callout-content">
 <ul>
-<li>GCP provides the core building blocks (compute, storage, networking)
-for ML research.<br>
+<li>GCP and AWS both provide the essential components for running ML
+workloads at scale.<br>
 </li>
-<li>A notebook can act as a controller to organize cloud workflows and
-keep experiments reproducible.<br>
+<li>GCP emphasizes simplicity, open frameworks, and TPU access; AWS
+offers broader hardware and automation options.<br>
 </li>
-<li>Using raw infrastructure instead of a fully managed platform gives
-researchers flexibility while still benefiting from scalable cloud
-resources.</li>
+<li>TPUs are efficient for TensorFlow and JAX, but GPU-based workflows
+(common on AWS) remain more flexible across frameworks.<br>
+</li>
+<li>Both platforms now provide strong cost tracking and sustainability
+tools, with only minor differences in interface and ecosystem
+integration.<br>
+</li>
+<li>Using a notebook as a controller provides reproducibility and helps
+manage compute and storage resources consistently across clouds.</li>
 </ul>
 </div>
 </div>
@@ -1212,7 +1259,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1774,7 +1821,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -1995,7 +2042,7 @@ discuss:</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>
@@ -3378,7 +3425,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -3410,7 +3457,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -3440,7 +3487,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
@@ -3525,8 +3572,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/aio.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/aio.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2025-10-14",
-  "datePublished": "2025-10-14"
+  "dateModified": "2025-10-15",
+  "datePublished": "2025-10-15"
 }
 
   </script><script>
