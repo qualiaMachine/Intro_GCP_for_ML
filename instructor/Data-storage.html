@@ -528,7 +528,7 @@ your own costs!
 </ul></li>
 </ul><figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-tags.jpg" alt="Screenshot showing required tags for a GCP bucket" class="figure mx-auto d-block"><div class="figcaption">Example of Tags for a GCP Bucket</div>
 </figure><ul><li>
-<strong>Choose where to store your data</strong>: When creating a
+<p><strong>Choose where to store your data</strong>: When creating a
 storage bucket in Google Cloud, the best practice for most machine
 learning workflows is to use a regional bucket in the same region as
 your compute resources (for example, us-central1). This setup provides
@@ -541,7 +541,7 @@ possibility of extra egress charges when pulling data into a specific
 compute region. For most research projects, a regional bucket with the
 Standard storage class, uniform access control, and public access
 prevention enabled offers a good balance of performance, security, and
-affordability.
+affordability.</p>
 <ul><li>
 <strong>Region</strong> (cheapest, good default). For instance,
 us-central1 (Iowa) costs $0.020 per GB-month.</li>
@@ -550,10 +550,10 @@ us-central1 (Iowa) costs $0.020 per GB-month.</li>
 expensive).<br></li>
 </ul></li>
 <li>
-<strong>Choose how to store your data (storage class)</strong>: When
-creating a bucket, you’ll be asked to choose a storage class, which
+<p><strong>Choose how to store your data (storage class)</strong>:
+When creating a bucket, you’ll be asked to choose a storage class, which
 determines how much you pay for storing data and how often you’re
-allowed to access it without extra fees.
+allowed to access it without extra fees.</p>
 <ul><li>
 <strong>Standard</strong> – best for active ML/AI workflows.
 Training data is read and written often, so this is the safest
@@ -570,13 +570,23 @@ workflows, the standard flat namespace is simpler and fully
 compatible—so it’s best to leave this option off.</li>
 </ul></li>
 <li>
-<strong>Choose how to control access to objects</strong>: By
-default, you should prevent public access to buckets used for ML
-projects. This ensures that only people you explicitly grant permissions
-to can read or write objects, which is almost always the right choice
-for research, hackathons, or internal collaboration. Public buckets are
-mainly for hosting datasets or websites that are intentionally shared
-with the world.</li>
+<p><strong>Choose how to control access to objects:</strong><br>
+For ML projects, you should <strong>prevent public access</strong> so
+that only authorized users can read or write data. This keeps research
+datasets private and avoids accidental exposure.</p>
+<p>When prompted to choose an access control method, choose
+<strong>uniform access</strong> unless you have a very specific reason
+to manage object-level permissions.</p>
+<ul><li>
+<strong>Uniform access (recommended):</strong> Simplifies management
+by enforcing permissions at the bucket level using IAM roles. It’s the
+safer and more maintainable choice for teams and becomes permanent after
+90 days.<br></li>
+<li>
+<strong>Fine-grained access:</strong> Allows per-file permissions
+using ACLs, but adds complexity and is rarely needed outside of web
+hosting or mixed-access datasets.</li>
+</ul></li>
 </ul></div>
 <div class="section level5">
 <h5 id="upload-files-to-the-bucket">4. Upload files to the bucket<a class="anchor" aria-label="anchor" href="#upload-files-to-the-bucket"></a></h5>
