@@ -19,7 +19,6 @@ exercises: 5
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-## Storing data on GCP
 Machine learning and AI projects rely on data, making efficient storage and management essential. Google Cloud offers several storage options, but the most common for ML workflows are **Virtual Machine (VM) disks** and **Google Cloud Storage (GCS) buckets**.  
 
 > #### Consult your institution's IT before handling sensitive data in GCP
@@ -85,7 +84,7 @@ To upload our Titanic dataset to a GCS bucket, we'll follow these steps:
     - `name=first-lastname`
     - `purpose=bucket-dataname`
  
-![Example of Tags for a GCP Bucket](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-tags.jpg){alt="Screenshot showing required tags for a GCP bucket"}
+![Example of Tags for a GCS Bucket](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-tags.jpg){alt="Screenshot showing required tags for a GCS bucket"}
 
 #### 3b. Choose where to store your data 
 When creating a storage bucket in Google Cloud, the best practice for most machine learning workflows is to use a regional bucket in the same region as your compute resources (for example, us-central1). This setup provides the lowest latency and avoids network egress charges when training jobs read from storage, while also keeping costs predictable. A multi-region bucket, on the other hand, can make sense if your primary goal is broad availability or if collaborators in different regions need reliable access to the same data; the trade-off is higher cost and the possibility of extra egress charges when pulling data into a specific compute region. For most research projects, a regional bucket with the Standard storage class, uniform access control, and public access prevention enabled offers a good balance of performance, security, and affordability.
@@ -93,7 +92,7 @@ When creating a storage bucket in Google Cloud, the best practice for most machi
   - **Region** (cheapest, good default). For instance, us-central1 (Iowa) costs $0.020 per GB-month.
   - **Multi-region** (higher redundancy, more expensive).
 
-![Example of Tags for a GCP Bucket](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-location.jpg){alt="Choose where to store your data"}
+![Example of Tags for a GCS bucket](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-location.jpg){alt="Choose where to store your data"}
 
 #### 3c. Choose how to store your data (storage class)
 When creating a bucket, you'll be asked to choose a storage class, which determines how much you pay for storing data and how often you're allowed to access it without extra fees.
@@ -107,17 +106,22 @@ When creating a bucket, you'll be asked to choose a storage class, which determi
 For ML projects, you should **prevent public access** so that only authorized users can read or write data. This keeps research datasets private and avoids accidental exposure.
 
 When prompted to choose an access control method, choose **uniform access** unless you have a very specific reason to manage object-level permissions.
+
 - **Uniform access (recommended):** Simplifies management by enforcing permissions at the bucket level using IAM roles. It's the safer and more maintainable choice for teams and becomes permanent after 90 days.  
 - **Fine-grained access:** Allows per-file permissions using ACLs, but adds complexity and is rarely needed outside of web hosting or mixed-access datasets.
 
 #### 3e. Choose how to protect object data
-GCP automatically protects all stored data, but you can enable additional layers of protection depending on your project’s needs. For most ML or research workflows, you’ll want to balance safety with cost. 
+GCP automatically protects all stored data, but you can enable additional layers of protection depending on your project's needs. For most ML or research workflows, you'll want to balance safety with cost. 
 
 - **Soft delete policy (recommended for shared projects):** Keeps deleted objects recoverable for a short period (default is 7 days). This is useful if team members might accidentally remove data. You can set a custom retention duration, but longer windows increase storage costs.
-- **Object versioning:** Creates new versions of files when they’re modified or overwritten. This can be helpful for tracking model outputs or experiment logs but may quickly increase costs. Enable only if you expect frequent overwrites and need rollback capability.
+- **Object versioning:** Creates new versions of files when they're modified or overwritten. This can be helpful for tracking model outputs or experiment logs but may quickly increase costs. Enable only if you expect frequent overwrites and need rollback capability.
 - **Retention policy (for compliance use only):** Prevents deletion or modification of objects for a fixed time window. This is typically required for regulated data but should be avoided for active ML projects, since it can block normal cleanup and retraining workflows.
   
 > In short: keep the **default soft delete** unless you have specific compliance requirements. Use **object versioning** sparingly, and avoid **retention locks** unless mandated by policy.
+
+#### Final check
+After configuring all settings, your bucket settings preview should look similar to the screenshot below (with the bucket name adjusted for your name).
+![Standard GCS Bucket Settings](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-fullyconfigured.jpg){alt="Recommended GCS bucket settings."}
 
 ### 4. Upload files to the bucket
 - If you haven't downloaded them yet, right-click and save as `.csv`:  
@@ -202,9 +206,14 @@ After you are done using your data, remove unused files/buckets to stop costs:
 - **Option 1: Delete files only** – if you plan to reuse the bucket.  
 - **Option 2: Delete the bucket entirely** – if you no longer need it.
 
+
 ## When does BigQuery come into play?
 
-For many ML workflows, especially smaller projects or those centered on image, text, or modest tabular datasets, BigQuery is overkill. GCS buckets are usually enough to store and access your data for training jobs. That said, BigQuery can be valuable when you are working with large tabular datasets and need a shared environment for exploration or collaboration. Instead of every team member downloading the same CSVs, BigQuery lets everyone query the data in place with SQL, share results through saved queries or views, and control access at the dataset or table level with IAM. BigQuery also integrates with Vertex AI, so if your data is already structured and stored there, you can connect it directly to training pipelines. The trade-off is cost: you pay not only for storage but also for the amount of data scanned by queries. For many ML research projects this is unnecessary, but when teams need a centralized, queryable workspace for large tabular data, BigQuery can simplify collaboration.  
+BigQuery is Google Cloud's managed data warehouse for storing and analyzing large tabular datasets using SQL. It's designed for interactive querying and analytics rather than file storage. For most ML workflows—especially smaller projects or those focused on images, text, or modest tabular data—BigQuery isn't needed. Cloud Storage (GCS) buckets are usually enough: they can store data efficiently and let you stream files directly into your training code without downloading them locally.
+
+BigQuery becomes useful when you're working with large, structured datasets that multiple team members need to query or explore collaboratively. Instead of reading entire files, you can use SQL to retrieve only the subset of data you need. Teams can share results through saved queries or views and control access at the dataset or table level with IAM. BigQuery also integrates with Vertex AI, allowing structured data stored there to connect directly to training pipelines. The main trade-off is cost: you pay for both storage and the amount of data scanned by queries.
+
+> In short, use GCS buckets for storing and streaming files into typical ML workflows, and consider BigQuery when you need a shared, queryable workspace for large tabular datasets.
 
 ::::::::::::::::::::::::::::::::::::: keypoints 
 
