@@ -20,17 +20,17 @@ exercises: 5
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## Storing data on GCP
-Machine learning and AI projects rely on data, making efficient storage and management essential. Google Cloud offers several storage options, but the most common for ML workflows are **persistent disks** (attached to Compute Engine VMs or Vertex AI Workbench) and **Google Cloud Storage (GCS) buckets**.  
+Machine learning and AI projects rely on data, making efficient storage and management essential. Google Cloud offers several storage options, but the most common for ML workflows are **Virtual Machine (VM) disks** and **Google Cloud Storage (GCS) buckets**.  
 
 > #### Consult your institution's IT before handling sensitive data in GCP
 > As with AWS, **do not upload restricted or sensitive data to GCP services unless explicitly approved by your institution's IT or cloud security team**. For regulated datasets (HIPAA, FERPA, proprietary), work with your institution to ensure encryption, restricted access, and compliance with policies.
 
 ## Options for storage: VM Disks or GCS
 
-### What is a VM persistent disk?
-A persistent disk is the storage volume attached to a Compute Engine VM or a Vertex AI Workbench notebook. It can store datasets and intermediate results, but it is tied to the lifecycle of the VM.  
+### What is a VM  disk?
+A VM disk is the storage volume attached to a Compute Engine VM or a Vertex AI Workbench notebook. It can store datasets and intermediate results, but it is tied to the lifecycle of the VM.  
 
-### When to store data directly on a persistent disk
+### When to store data directly on a VM disk
 - Useful for small, temporary datasets processed interactively.  
 - Data persists if the VM is stopped, but storage costs continue as long as the disk exists.  
 - Not ideal for collaboration, scaling, or long-term dataset storage.  
@@ -45,14 +45,14 @@ A persistent disk is the storage volume attached to a Compute Engine VM or a Ver
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ### What is a GCS bucket?
-For most ML workflows in Vertex AI, **Google Cloud Storage (GCS) buckets** are recommended. A GCS bucket is a container in Google's object storage service where you can store an essentially unlimited number of files. Data in GCS can be accessed from Vertex AI training jobs, Workbench notebooks, and other GCP services using a **GCS URI** (e.g., `gs://your-bucket-name/your-file.csv`).  
+For most ML workflows in GCP, **Google Cloud Storage (GCS) buckets** are recommended. A GCS bucket is a container in Google's object storage service where you can store an essentially unlimited number of files. Data in GCS can be accessed from Vertex AI training jobs, Workbench notebooks, and other GCP services using a *GCS URI* (e.g., `gs://your-bucket-name/your-file.csv`).  
 
 ::::::::::::::::::::::::::::::::::::: callout 
 
 ### Benefits of using GCS (recommended for ML workflows)
 - **Separation of storage and compute**: Data remains available even if VMs or notebooks are deleted.  
 - **Easy sharing**: Buckets can be accessed by collaborators with the right IAM roles.  
-- **Integration with Vertex AI and BigQuery**: Read and write data directly in pipelines.  
+- **Integration with Vertex AI and BigQuery**: Read and write data directly using other GCP tools.  
 - **Scalability**: Handles datasets of any size without disk limits.  
 - **Cost efficiency**: Lower cost than persistent disks for long-term storage.  
 - **Data persistence**: Durable and highly available across regions.  
