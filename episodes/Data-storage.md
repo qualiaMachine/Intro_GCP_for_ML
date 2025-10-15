@@ -107,6 +107,7 @@ When creating a bucket, you'll be asked to choose a storage class, which determi
 For ML projects, you should **prevent public access** so that only authorized users can read or write data. This keeps research datasets private and avoids accidental exposure.
 
 When prompted to choose an access control method, choose **uniform access** unless you have a very specific reason to manage object-level permissions.
+
 - **Uniform access (recommended):** Simplifies management by enforcing permissions at the bucket level using IAM roles. It's the safer and more maintainable choice for teams and becomes permanent after 90 days.  
 - **Fine-grained access:** Allows per-file permissions using ACLs, but adds complexity and is rarely needed outside of web hosting or mixed-access datasets.
 
