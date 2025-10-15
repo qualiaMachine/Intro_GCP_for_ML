@@ -119,6 +119,10 @@ GCP automatically protects all stored data, but you can enable additional layers
   
 > In short: keep the **default soft delete** unless you have specific compliance requirements. Use **object versioning** sparingly, and avoid **retention locks** unless mandated by policy.
 
+#### Final check
+After configuring all settings, your bucket settings preview should look similar to the screenshot below (with the bucket name adjusted for your name).
+![Standard GCS Bucket Settings](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-fullyconfigured.jpg){alt="Recommended GCS bucket settings."}
+
 ### 4. Upload files to the bucket
 - If you haven't downloaded them yet, right-click and save as `.csv`:  
   - [titanic_train.csv](https://raw.githubusercontent.com/UW-Madison-DataScience/ml-with-aws-sagemaker/main/data/titanic_train.csv)  
