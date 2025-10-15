@@ -657,10 +657,9 @@ restricted access, and compliance with policies.</p>
 <p>A VM disk is the storage volume attached to a Compute Engine VM or a
 Vertex AI Workbench notebook. It can store datasets and intermediate
 results, but it is tied to the lifecycle of the VM.</p>
-</div>
-<div class="section level3">
-<h3 id="when-to-store-data-directly-on-a-vm-disk">When to store data directly on a VM disk<a class="anchor" aria-label="anchor" href="#when-to-store-data-directly-on-a-vm-disk"></a>
-</h3>
+<div class="section level4">
+<h4 id="when-to-store-data-directly-on-a-vm-disk">When to store data directly on a VM disk<a class="anchor" aria-label="anchor" href="#when-to-store-data-directly-on-a-vm-disk"></a>
+</h4>
 <ul>
 <li>Useful for small, temporary datasets processed interactively.<br>
 </li>
@@ -670,13 +669,13 @@ long as the disk exists.<br>
 <li>Not ideal for collaboration, scaling, or long-term dataset
 storage.</li>
 </ul>
-<div id="limitations-of-persistent-disk-storage" class="callout">
+<div id="limitations-of-vm-disk-storage" class="callout">
 <div class="callout-square">
 <i class="callout-icon" data-feather="bell"></i>
 </div>
 <span class="callout-header">Callout</span>
-<div id="limitations-of-persistent-disk-storage" class="callout-inner">
-<h3 class="callout-title">Limitations of persistent disk storage</h3>
+<div id="limitations-of-vm-disk-storage" class="callout-inner">
+<h3 class="callout-title">Limitations of VM disk storage</h3>
 <div class="callout-content">
 <ul>
 <li>
@@ -690,6 +689,7 @@ members.<br>
 <strong>Cost</strong>: More expensive per GB compared to GCS for
 long-term storage.</li>
 </ul>
+</div>
 </div>
 </div>
 </div>
@@ -757,41 +757,42 @@ steps:</p>
 <li>Use the GCS URI to reference your data in Vertex AI workflows.</li>
 </ol>
 <div class="section level3">
-<h3 id="detailed-procedure">Detailed procedure<a class="anchor" aria-label="anchor" href="#detailed-procedure"></a>
+<h3 id="sign-in-to-google-cloud-console">1. Sign in to Google Cloud Console<a class="anchor" aria-label="anchor" href="#sign-in-to-google-cloud-console"></a>
 </h3>
-<div class="section level5">
-<h5 id="sign-in-to-google-cloud-console">1. Sign in to Google Cloud Console<a class="anchor" aria-label="anchor" href="#sign-in-to-google-cloud-console"></a>
-</h5>
 <ul>
 <li>Go to <a href="https://console.cloud.google.com" class="external-link">console.cloud.google.com</a> and
 log in with your credentials.</li>
 </ul>
 </div>
-<div class="section level5">
-<h5 id="navigate-to-cloud-storage">2. Navigate to Cloud Storage<a class="anchor" aria-label="anchor" href="#navigate-to-cloud-storage"></a>
-</h5>
+<div class="section level3">
+<h3 id="navigate-to-cloud-storage">2. Navigate to Cloud Storage<a class="anchor" aria-label="anchor" href="#navigate-to-cloud-storage"></a>
+</h3>
 <ul>
 <li>In the search bar, type <strong>Storage</strong>.<br>
 </li>
 <li>Click <strong>Cloud Storage &gt; Buckets</strong>.</li>
 </ul>
 </div>
-<div class="section level5">
-<h5 id="create-a-new-bucket">3. Create a new bucket<a class="anchor" aria-label="anchor" href="#create-a-new-bucket"></a>
-</h5>
+<div class="section level3">
+<h3 id="create-a-new-bucket">3. Create a new bucket<a class="anchor" aria-label="anchor" href="#create-a-new-bucket"></a>
+</h3>
 <ul>
-<li>Click <strong>Create bucket</strong>.<br>
-</li>
+<li>Click <strong>Create bucket</strong>.</li>
+</ul>
+<div class="section level4">
+<h4 id="a--getting-started-bucket-name-and-tags">3a. Getting Started (bucket name and tags)<a class="anchor" aria-label="anchor" href="#a--getting-started-bucket-name-and-tags"></a>
+</h4>
+<ul>
 <li>
-<strong>A) Provide a bucket name</strong>: Enter a globally unique
+<strong>Provide a bucket name</strong>: Enter a globally unique
 name. For this workshop, we can use the following naming convention to
 easily locate our buckets: <code>teamname_first-lastname_titanic</code>
 (e.g., sinkorswim_john-doe_titanic)</li>
 <li>
-<strong>B) Add Labels (tags)</strong>: Add labels to track resource
-usage and billing. If you’re working in a shared account, this step is
-<em>mandatory</em>. If not, it’s still recommended to help you track
-your own costs!
+<strong>Add labels (tags) to track costs</strong>: Add labels to
+track resource usage and billing. If you’re working in a shared account,
+this step is <em>mandatory</em>. If not, it’s still recommended to help
+you track your own costs!
 <ul>
 <li><code>project=teamname</code></li>
 <li><code>name=first-lastname</code></li>
@@ -800,17 +801,19 @@ your own costs!
 </li>
 </ul>
 <figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-tags.jpg" alt="Screenshot showing required tags for a GCP bucket" class="figure mx-auto d-block"><div class="figcaption">Example of Tags for a GCP Bucket</div>
-</figure><ul>
-<li>
-<p><strong>Choose where to store your data</strong>: When creating a
-storage bucket in Google Cloud, the best practice for most machine
-learning workflows is to use a regional bucket in the same region as
-your compute resources (for example, us-central1). This setup provides
-the lowest latency and avoids network egress charges when training jobs
-read from storage, while also keeping costs predictable. A multi-region
-bucket, on the other hand, can make sense if your primary goal is broad
-availability or if collaborators in different regions need reliable
-access to the same data; the trade-off is higher cost and the
+</figure>
+</div>
+<div class="section level4">
+<h4 id="b--choose-where-to-store-your-data">3b. Choose where to store your data<a class="anchor" aria-label="anchor" href="#b--choose-where-to-store-your-data"></a>
+</h4>
+<p>When creating a storage bucket in Google Cloud, the best practice for
+most machine learning workflows is to use a regional bucket in the same
+region as your compute resources (for example, us-central1). This setup
+provides the lowest latency and avoids network egress charges when
+training jobs read from storage, while also keeping costs predictable. A
+multi-region bucket, on the other hand, can make sense if your primary
+goal is broad availability or if collaborators in different regions need
+reliable access to the same data; the trade-off is higher cost and the
 possibility of extra egress charges when pulling data into a specific
 compute region. For most research projects, a regional bucket with the
 Standard storage class, uniform access control, and public access
@@ -822,14 +825,14 @@ affordability.</p>
 us-central1 (Iowa) costs $0.020 per GB-month.</li>
 <li>
 <strong>Multi-region</strong> (higher redundancy, more
-expensive).<br>
-</li>
+expensive).</li>
 </ul>
-</li>
-<li>
-<p><strong>Choose how to store your data (storage class)</strong>:
-When creating a bucket, you’ll be asked to choose a storage class, which
-determines how much you pay for storing data and how often you’re
+</div>
+<div class="section level4">
+<h4 id="c--choose-how-to-store-your-data-storage-class">3c. Choose how to store your data (storage class)<a class="anchor" aria-label="anchor" href="#c--choose-how-to-store-your-data-storage-class"></a>
+</h4>
+<p>When creating a bucket, you’ll be asked to choose a storage class,
+which determines how much you pay for storing data and how often you’re
 allowed to access it without extra fees.</p>
 <ul>
 <li>
@@ -841,39 +844,35 @@ default.</li>
 backups or rarely accessed files. These cost less per GB to store, but
 you pay retrieval fees if you read them during training. Not recommended
 for most ML projects where data access is frequent.</li>
-<li>You may see an option to “Enable hierarchical namespace”. GCP now
+</ul>
+<blockquote>
+<p>You may see an option to “Enable hierarchical namespace”. GCP now
 offers an option to enable a hierarchical namespace for buckets, but
 this is mainly useful for large-scale analytics pipelines. For most ML
 workflows, the standard flat namespace is simpler and fully
-compatible—so it’s best to leave this option off.</li>
-</ul>
-</li>
-<li>
-<p><strong>Choose how to control access to objects:</strong><br>
-For ML projects, you should <strong>prevent public access</strong> so
+compatible—so it’s best to leave this option off.</p>
+</blockquote>
+</div>
+<div class="section level4">
+<h4 id="d--choose-how-to-control-access-to-objects">3d. Choose how to control access to objects<a class="anchor" aria-label="anchor" href="#d--choose-how-to-control-access-to-objects"></a>
+</h4>
+<p>For ML projects, you should <strong>prevent public access</strong> so
 that only authorized users can read or write data. This keeps research
 datasets private and avoids accidental exposure.</p>
 <p>When prompted to choose an access control method, choose
 <strong>uniform access</strong> unless you have a very specific reason
-to manage object-level permissions.</p>
-<ul>
-<li>
-<strong>Uniform access (recommended):</strong> Simplifies management
-by enforcing permissions at the bucket level using IAM roles. It’s the
-safer and more maintainable choice for teams and becomes permanent after
-90 days.<br>
-</li>
-<li>
-<strong>Fine-grained access:</strong> Allows per-file permissions
+to manage object-level permissions. - <strong>Uniform access
+(recommended):</strong> Simplifies management by enforcing permissions
+at the bucket level using IAM roles. It’s the safer and more
+maintainable choice for teams and becomes permanent after 90 days.<br>
+- <strong>Fine-grained access:</strong> Allows per-file permissions
 using ACLs, but adds complexity and is rarely needed outside of web
-hosting or mixed-access datasets.</li>
-</ul>
-</li>
-</ul>
+hosting or mixed-access datasets.</p>
 </div>
-<div class="section level5">
-<h5 id="upload-files-to-the-bucket">4. Upload files to the bucket<a class="anchor" aria-label="anchor" href="#upload-files-to-the-bucket"></a>
-</h5>
+</div>
+<div class="section level3">
+<h3 id="upload-files-to-the-bucket">4. Upload files to the bucket<a class="anchor" aria-label="anchor" href="#upload-files-to-the-bucket"></a>
+</h3>
 <ul>
 <li>If you haven’t downloaded them yet, right-click and save as
 <code>.csv</code>:
@@ -894,7 +893,6 @@ hosting or mixed-access datasets.</li>
 click on a file and find its <strong>gs:// URI</strong> (e.g.,
 <code>gs://yourname-titanic-gcs/titanic_train.csv</code>). This URI will
 be used to access the data later.</p>
-</div>
 </div>
 </section><section><h2 class="section-heading" id="gcs-bucket-costs">GCS bucket costs<a class="anchor" aria-label="anchor" href="#gcs-bucket-costs"></a>
 </h2>
@@ -1840,7 +1838,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -3444,7 +3442,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -3476,7 +3474,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -3506,7 +3504,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
