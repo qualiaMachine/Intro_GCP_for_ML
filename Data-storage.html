@@ -358,7 +358,7 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Data Storage: Setting up GCS</h1>
-        <p>Last updated on 2025-09-22 |
+        <p>Last updated on 2025-10-15 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/Data-storage.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -402,9 +402,9 @@ AI.</li>
 <section><h2 class="section-heading" id="storing-data-on-gcp">Storing data on GCP<a class="anchor" aria-label="anchor" href="#storing-data-on-gcp"></a></h2>
 <hr class="half-width"><p>Machine learning and AI projects rely on data, making efficient
 storage and management essential. Google Cloud offers several storage
-options, but the most common for ML workflows are <strong>persistent
-disks</strong> (attached to Compute Engine VMs or Vertex AI Workbench)
-and <strong>Google Cloud Storage (GCS) buckets</strong>.</p>
+options, but the most common for ML workflows are <strong>Virtual
+Machine (VM) disks</strong> and <strong>Google Cloud Storage (GCS)
+buckets</strong>.</p>
 <blockquote>
 <h4 id="consult-your-institutions-it-before-handling-sensitive-data-in-gcp">Consult
 your institution’s IT before handling sensitive data in GCP</h4>
@@ -416,13 +416,13 @@ restricted access, and compliance with policies.</p>
 </blockquote>
 </section><section><h2 class="section-heading" id="options-for-storage-vm-disks-or-gcs">Options for storage: VM Disks or GCS<a class="anchor" aria-label="anchor" href="#options-for-storage-vm-disks-or-gcs"></a></h2>
 <hr class="half-width"><div class="section level3">
-<h3 id="what-is-a-vm-persistent-disk">What is a VM persistent disk?<a class="anchor" aria-label="anchor" href="#what-is-a-vm-persistent-disk"></a></h3>
-<p>A persistent disk is the storage volume attached to a Compute Engine
-VM or a Vertex AI Workbench notebook. It can store datasets and
-intermediate results, but it is tied to the lifecycle of the VM.</p>
+<h3 id="what-is-a-vm-disk">What is a VM disk?<a class="anchor" aria-label="anchor" href="#what-is-a-vm-disk"></a></h3>
+<p>A VM disk is the storage volume attached to a Compute Engine VM or a
+Vertex AI Workbench notebook. It can store datasets and intermediate
+results, but it is tied to the lifecycle of the VM.</p>
 </div>
 <div class="section level3">
-<h3 id="when-to-store-data-directly-on-a-persistent-disk">When to store data directly on a persistent disk<a class="anchor" aria-label="anchor" href="#when-to-store-data-directly-on-a-persistent-disk"></a></h3>
+<h3 id="when-to-store-data-directly-on-a-vm-disk">When to store data directly on a VM disk<a class="anchor" aria-label="anchor" href="#when-to-store-data-directly-on-a-vm-disk"></a></h3>
 <ul><li>Useful for small, temporary datasets processed interactively.<br></li>
 <li>Data persists if the VM is stopped, but storage costs continue as
 long as the disk exists.<br></li>
@@ -450,12 +450,12 @@ long-term storage.</li>
 </div>
 <div class="section level3">
 <h3 id="what-is-a-gcs-bucket">What is a GCS bucket?<a class="anchor" aria-label="anchor" href="#what-is-a-gcs-bucket"></a></h3>
-<p>For most ML workflows in Vertex AI, <strong>Google Cloud Storage
-(GCS) buckets</strong> are recommended. A GCS bucket is a container in
+<p>For most ML workflows in GCP, <strong>Google Cloud Storage (GCS)
+buckets</strong> are recommended. A GCS bucket is a container in
 Google’s object storage service where you can store an essentially
 unlimited number of files. Data in GCS can be accessed from Vertex AI
 training jobs, Workbench notebooks, and other GCP services using a
-<strong>GCS URI</strong> (e.g.,
+<em>GCS URI</em> (e.g.,
 <code>gs://your-bucket-name/your-file.csv</code>).</p>
 <div id="benefits-of-using-gcs-recommended-for-ml-workflows" class="callout">
 <div class="callout-square">
@@ -474,7 +474,7 @@ available even if VMs or notebooks are deleted.<br></li>
 collaborators with the right IAM roles.<br></li>
 <li>
 <strong>Integration with Vertex AI and BigQuery</strong>: Read and
-write data directly in pipelines.<br></li>
+write data directly using other GCP tools.<br></li>
 <li>
 <strong>Scalability</strong>: Handles datasets of any size without
 disk limits.<br></li>
@@ -661,7 +661,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>1 GB</strong>:<br></li>
@@ -796,7 +796,7 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/Data-storage.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/Data-storage.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2025-09-22",
+  "dateModified": "2025-10-15",
   "datePublished": "2025-10-15"
 }
 
