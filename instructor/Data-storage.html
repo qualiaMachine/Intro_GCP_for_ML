@@ -549,7 +549,8 @@ us-central1 (Iowa) costs $0.020 per GB-month.</li>
 <li>
 <strong>Multi-region</strong> (higher redundancy, more
 expensive).</li>
-</ul></div>
+</ul><figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-location.jpg" alt="Choose where to store your data" class="figure mx-auto d-block"><div class="figcaption">Example of Tags for a GCP Bucket</div>
+</figure></div>
 <div class="section level4">
 <h4 id="c--choose-how-to-store-your-data-storage-class">3c. Choose how to store your data (storage class)<a class="anchor" aria-label="anchor" href="#c--choose-how-to-store-your-data-storage-class"></a></h4>
 <p>When creating a bucket, you’ll be asked to choose a storage class,
@@ -586,6 +587,37 @@ maintainable choice for teams and becomes permanent after 90 days.<br>
 - <strong>Fine-grained access:</strong> Allows per-file permissions
 using ACLs, but adds complexity and is rarely needed outside of web
 hosting or mixed-access datasets.</p>
+</div>
+<div class="section level4">
+<h4 id="e--choose-how-to-protect-object-data">3e. Choose how to protect object data<a class="anchor" aria-label="anchor" href="#e--choose-how-to-protect-object-data"></a></h4>
+<p>GCP automatically protects all stored data, but you can enable
+additional layers of protection depending on your project’s needs. For
+most ML or research workflows, you’ll want to balance safety with
+cost.</p>
+<ul><li>
+<strong>Soft delete policy (recommended for shared
+projects):</strong> Keeps deleted objects recoverable for a short period
+(default is 7 days). This is useful if team members might accidentally
+remove data. You can set a custom retention duration, but longer windows
+increase storage costs.</li>
+<li>
+<strong>Object versioning:</strong> Creates new versions of files
+when they’re modified or overwritten. This can be helpful for tracking
+model outputs or experiment logs but may quickly increase costs. Enable
+only if you expect frequent overwrites and need rollback
+capability.</li>
+<li>
+<strong>Retention policy (for compliance use only):</strong>
+Prevents deletion or modification of objects for a fixed time window.
+This is typically required for regulated data but should be avoided for
+active ML projects, since it can block normal cleanup and retraining
+workflows.</li>
+</ul><blockquote>
+<p>In short: keep the <strong>default soft delete</strong> unless you
+have specific compliance requirements. Use <strong>object
+versioning</strong> sparingly, and avoid <strong>retention
+locks</strong> unless mandated by policy.</p>
+</blockquote>
 </div>
 </div>
 <div class="section level3">
