@@ -93,9 +93,15 @@ To upload our Titanic dataset to a GCS bucket, we'll follow these steps:
 - **Choose how to store your data (storage class)**: When creating a bucket, you'll be asked to choose a storage class, which determines how much you pay for storing data and how often you're allowed to access it without extra fees.
     - **Standard** – best for active ML/AI workflows. Training data is read and written often, so this is the safest default.
     - **Nearline / Coldline / Archive** – designed for backups or rarely accessed files. These cost less per GB to store, but you pay retrieval fees if you read them during training. Not recommended for most ML projects where data access is frequent.
-    - You may see an option to "Enable hierarchical namespace". GCP now offers an option to enable a hierarchical namespace for buckets, but this is mainly useful for large-scale analytics pipelines. For most ML workflows, the standard flat namespace is simpler and fully compatible—so it’s best to leave this option off.
+    - You may see an option to "Enable hierarchical namespace". GCP now offers an option to enable a hierarchical namespace for buckets, but this is mainly useful for large-scale analytics pipelines. For most ML workflows, the standard flat namespace is simpler and fully compatible—so it's best to leave this option off.
       
-- **Choose how to control access to objects**: By default, you should prevent public access to buckets used for ML projects. This ensures that only people you explicitly grant permissions to can read or write objects, which is almost always the right choice for research, hackathons, or internal collaboration. Public buckets are mainly for hosting datasets or websites that are intentionally shared with the world.
+- **Choose how to control access to objects:**  
+  For ML projects, you should **prevent public access** so that only authorized users can read or write data. This keeps research datasets private and avoids accidental exposure.
+  
+  When prompted to choose an access control method, choose **uniform access** unless you have a very specific reason to manage object-level permissions.
+  - **Uniform access (recommended):** Simplifies management by enforcing permissions at the bucket level using IAM roles. It's the safer and more maintainable choice for teams and becomes permanent after 90 days.  
+  - **Fine-grained access:** Allows per-file permissions using ACLs, but adds complexity and is rarely needed outside of web hosting or mixed-access datasets.
+    
 
 ##### 4. Upload files to the bucket
 - If you haven't downloaded them yet, right-click and save as `.csv`:  
