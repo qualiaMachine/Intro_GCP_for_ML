@@ -524,7 +524,7 @@ you track your own costs!
 <li><code>name=first-lastname</code></li>
 <li><code>purpose=bucket-dataname</code></li>
 </ul></li>
-</ul><figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-tags.jpg" alt="Screenshot showing required tags for a GCP bucket" class="figure mx-auto d-block"><div class="figcaption">Example of Tags for a GCP Bucket</div>
+</ul><figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-tags.jpg" alt="Screenshot showing required tags for a GCS bucket" class="figure mx-auto d-block"><div class="figcaption">Example of Tags for a GCS Bucket</div>
 </figure></div>
 <div class="section level4">
 <h4 id="b--choose-where-to-store-your-data">3b. Choose where to store your data<a class="anchor" aria-label="anchor" href="#b--choose-where-to-store-your-data"></a></h4>
@@ -547,7 +547,7 @@ us-central1 (Iowa) costs $0.020 per GB-month.</li>
 <li>
 <strong>Multi-region</strong> (higher redundancy, more
 expensive).</li>
-</ul><figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-location.jpg" alt="Choose where to store your data" class="figure mx-auto d-block"><div class="figcaption">Example of Tags for a GCP Bucket</div>
+</ul><figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-location.jpg" alt="Choose where to store your data" class="figure mx-auto d-block"><div class="figcaption">Example of Tags for a GCS bucket</div>
 </figure></div>
 <div class="section level4">
 <h4 id="c--choose-how-to-store-your-data-storage-class">3c. Choose how to store your data (storage class)<a class="anchor" aria-label="anchor" href="#c--choose-how-to-store-your-data-storage-class"></a></h4>
@@ -710,7 +710,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>1 GB</strong>:<br></li>
@@ -751,21 +751,28 @@ the bucket.<br></li>
 <strong>Option 2: Delete the bucket entirely</strong> – if you no
 longer need it.</li>
 </ul></section><section><h2 class="section-heading" id="when-does-bigquery-come-into-play">When does BigQuery come into play?<a class="anchor" aria-label="anchor" href="#when-does-bigquery-come-into-play"></a></h2>
-<hr class="half-width"><p>For many ML workflows, especially smaller projects or those centered
-on image, text, or modest tabular datasets, BigQuery is overkill. GCS
-buckets are usually enough to store and access your data for training
-jobs. That said, BigQuery can be valuable when you are working with
-large tabular datasets and need a shared environment for exploration or
-collaboration. Instead of every team member downloading the same CSVs,
-BigQuery lets everyone query the data in place with SQL, share results
-through saved queries or views, and control access at the dataset or
-table level with IAM. BigQuery also integrates with Vertex AI, so if
-your data is already structured and stored there, you can connect it
-directly to training pipelines. The trade-off is cost: you pay not only
-for storage but also for the amount of data scanned by queries. For many
-ML research projects this is unnecessary, but when teams need a
-centralized, queryable workspace for large tabular data, BigQuery can
-simplify collaboration.</p>
+<hr class="half-width"><p>BigQuery is Google Cloud’s managed data warehouse for storing and
+analyzing large tabular datasets using SQL. It’s designed for
+interactive querying and analytics rather than file storage. For most ML
+workflows—especially smaller projects or those focused on images, text,
+or modest tabular data—BigQuery isn’t needed. Cloud Storage (GCS)
+buckets are usually enough: they can store data efficiently and let you
+stream files directly into your training code without downloading them
+locally.</p>
+<p>BigQuery becomes useful when you’re working with large, structured
+datasets that multiple team members need to query or explore
+collaboratively. Instead of reading entire files, you can use SQL to
+retrieve only the subset of data you need. Teams can share results
+through saved queries or views and control access at the dataset or
+table level with IAM. BigQuery also integrates with Vertex AI, allowing
+structured data stored there to connect directly to training pipelines.
+The main trade-off is cost: you pay for both storage and the amount of
+data scanned by queries.</p>
+<blockquote>
+<p>In short, use GCS buckets for storing and streaming files into
+typical ML workflows, and consider BigQuery when you need a shared,
+queryable workspace for large tabular datasets.</p>
+</blockquote>
 <div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
 <i class="callout-icon" data-feather="key"></i>
