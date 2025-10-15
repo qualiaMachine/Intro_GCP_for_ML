@@ -19,7 +19,6 @@ exercises: 5
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-## Storing data on GCP
 Machine learning and AI projects rely on data, making efficient storage and management essential. Google Cloud offers several storage options, but the most common for ML workflows are **Virtual Machine (VM) disks** and **Google Cloud Storage (GCS) buckets**.  
 
 > #### Consult your institution's IT before handling sensitive data in GCP
