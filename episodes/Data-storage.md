@@ -92,7 +92,9 @@ When creating a storage bucket in Google Cloud, the best practice for most machi
 
   - **Region** (cheapest, good default). For instance, us-central1 (Iowa) costs $0.020 per GB-month.
   - **Multi-region** (higher redundancy, more expensive).
-    
+
+![Example of Tags for a GCP Bucket](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-location.jpg){alt="Choose where to store your data"}
+
 #### 3c. Choose how to store your data (storage class)
 When creating a bucket, you'll be asked to choose a storage class, which determines how much you pay for storing data and how often you're allowed to access it without extra fees.
 
@@ -107,6 +109,15 @@ For ML projects, you should **prevent public access** so that only authorized us
 When prompted to choose an access control method, choose **uniform access** unless you have a very specific reason to manage object-level permissions.
 - **Uniform access (recommended):** Simplifies management by enforcing permissions at the bucket level using IAM roles. It's the safer and more maintainable choice for teams and becomes permanent after 90 days.  
 - **Fine-grained access:** Allows per-file permissions using ACLs, but adds complexity and is rarely needed outside of web hosting or mixed-access datasets.
+
+#### 3e. Choose how to protect object data
+GCP automatically protects all stored data, but you can enable additional layers of protection depending on your project’s needs. For most ML or research workflows, you’ll want to balance safety with cost. 
+
+- **Soft delete policy (recommended for shared projects):** Keeps deleted objects recoverable for a short period (default is 7 days). This is useful if team members might accidentally remove data. You can set a custom retention duration, but longer windows increase storage costs.
+- **Object versioning:** Creates new versions of files when they’re modified or overwritten. This can be helpful for tracking model outputs or experiment logs but may quickly increase costs. Enable only if you expect frequent overwrites and need rollback capability.
+- **Retention policy (for compliance use only):** Prevents deletion or modification of objects for a fixed time window. This is typically required for regulated data but should be avoided for active ML projects, since it can block normal cleanup and retraining workflows.
+  
+> In short: keep the **default soft delete** unless you have specific compliance requirements. Use **object versioning** sparingly, and avoid **retention locks** unless mandated by policy.
 
 ### 4. Upload files to the bucket
 - If you haven't downloaded them yet, right-click and save as `.csv`:  
