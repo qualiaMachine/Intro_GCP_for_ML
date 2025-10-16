@@ -108,6 +108,22 @@ The notebook serves as a lightweight control plane.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
+
+### Load pre-filled Jupyter notebooks
+Once your newly created *instance* shows as `Active` (green checkmark), click **Open JupyterLab** to open the instance in Jupyter Lab. From there, we can create as many Jupyter notebooks as we would like within the instance environment. 
+
+We will then select the standard python3 environment to start our first .ipynb notebook (Jupyter notebook). We can use this environment since we aren't doing any training/tuning just yet.
+
+##### Load pre-filled Jupyter notebooks
+Within the Jupyter notebook, run the following command to clone the lesson repo into our Jupyter environment:
+
+```sh
+!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
+```
+
+Then, navigate to `/Intro_GCP_for_ML/notebooks/Accessing-and-managing-data.ipynb` to begin the first notebook.
+
+
 ::::::::::::::::::::::::::::::::::::: keypoints 
 
 - Use a small Workbench Instance notebook as a controller to manage larger, resource-intensive tasks.  
@@ -119,3 +135,4 @@ The notebook serves as a lightweight control plane.
 - Enable idle auto-stop to avoid unexpected charges when notebooks are left running.  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
+
