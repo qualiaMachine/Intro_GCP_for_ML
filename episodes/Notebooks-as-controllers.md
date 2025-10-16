@@ -55,7 +55,7 @@ We will follow these steps to create our first Workbench Instance:
 - **Network / Subnetwork:**  Leave as pre-filled.
 ![Notebook settings (part 1)](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-settings1.jpg){alt="Notebook settings (part1)"}
 
-##### Advanced settings: Details (Tagging)
+##### Advanced settings: Details (tagging)
 
 - **IMPORTANT:** Open the "Advanced optoins menu next
   -  **Labels (required for cost tracking):**  Under the Details menu, add the following tags so that you can track the total cost of your activity on GCP later:
@@ -66,14 +66,19 @@ We will follow these steps to create our first Workbench Instance:
 ![Required tags for notebook.](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-tags.jpg){alt="Screenshot showing required tags for notebook"}
 
 
-##### Advanced settings: Machine Type
+##### Advanced settings: Machine Type 
 
 - **Machine type**: Select a small machine (e.g., `e2-standard-2`) to act as the controller.  
   - This keeps costs low while you delegate heavy lifting to training jobs.  
   - For guidance on common machine types for ML, refer to [Instances for ML on GCP](../instances-for-ML.html).
 
+- **Set idle shutdown**: To save on costs when you aren't doing anything in your notebook, lower the default idle shutdown time to 60 (minutes).
+
+![Enable Idle Shutdown](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-idleshutdown.jpg){alt="Set Idle Shutdown"}
+
+
 ##### Create notebook 
-- Click **Create** to create the intance. Your notebook instance will start in a few minutes. When its status is "Running," you can open JupyterLab and begin working.  
+- Click **Create** to create the instance. Your notebook instance will start in a few minutes. When its status is "Running," you can open JupyterLab and begin working.  
 
 ### Managing training and tuning with the controller notebook
 In the following episodes, we will use the **Vertex AI Python SDK (`google-cloud-aiplatform`)** from this notebook to submit compute-heavy tasks on more powerful machines. Examples include:  
