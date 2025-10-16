@@ -121,7 +121,9 @@ GCP automatically protects all stored data, but you can enable additional layers
 
 #### Final check
 After configuring all settings, your bucket settings preview should look similar to the screenshot below (with the bucket name adjusted for your name).
+
 ![Final GCS Bucket Settings](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-fullyconfigured.jpg){alt="Recommended GCS bucket settings."}
+
 
 ### 4. Upload files to the bucket
 - If you haven't yet, download the data for this workshop (Right-click → Save as):  
