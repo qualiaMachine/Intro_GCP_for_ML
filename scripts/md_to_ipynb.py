@@ -9,9 +9,8 @@ notebooks_dir = "notebooks"
 
 # List of Markdown files to ignore (no conversion needed)
 ignore_list = [
-    "SageMaker-overview.md",
-    "Data-storage-setting-up-S3.md",
-    "SageMaker-notebooks-as-controllers.md",
+    "Introduction.md",
+    "Data-storage.md",
     "Resource-management-cleanup.md"
 ]
 
