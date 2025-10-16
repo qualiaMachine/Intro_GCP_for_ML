@@ -37,19 +37,42 @@ We will follow these steps to create our first Workbench Instance:
 - Pin Workbench to your navigation bar for quick access.  
 
 #### 2. Create a new Workbench Instance
-- Click "Create New" under Instances.  
-- **Notebook name**: For this workshop, we can use the following naming convention to easily locate our notebooks: `teamname_first-lastname_purpose` (e.g., sinkorswim_john-doe_train)
-- **Region**: Choose the same region as your storage bucket (e.g., `us-central1`).  
-  - This avoids cross-region transfer charges and keeps data access latency low.  
-- **GPUs**: Leave disabled for now (training jobs will request them separately).  
-- **Labels**: Add labels for cost tracking
-    - `purpose=workshop`
-    - `owner=lastname_firstname`
-      
+
+##### Initial settings
+- Click **Create New** near the top of the Workbench page
+- **Name**: For this workshop, we can use the following naming convention to easily locate our notebooks: `teamname-yourname-purpose` (e.g., sinkorswim-johndoe-train)
+- **Region**: Choose the same region as your storage bucket (e.g., `us-central1`). This avoids cross-region transfer charges and keeps data access latency low.
+    - If you are unsure, check your bucket's location in the Cloud Storage console (click the bucket name → look under "Location").
+- **Zone:** `us-central1-a` (or another zone in `us-central1`, like `-b` or `-c`)  
+  - If capacity or GPU availability is limited in one zone, switch to another zone in the same region.
+- **NVIDIA T4 GPU:** Leave unchecked for now  
+  - We will request GPUs for training jobs separately. Attaching here increases idle costs.
+- **Apache Spark and BigQuery Kernels:** Leave unchecked  
+  - Enable only if you specifically need Spark or BigQuery notebooks; otherwise, it adds unnecessary images.
+- **Network in this project:** Required selection  
+  - This option must be selected; shared environments do not allow using external or default networks.  
+  - This ensures your instance connects to the shared VPC for the workshop.
+- **Network / Subnetwork:**  Leave as pre-filled.
+![Notebook settings (part 1)](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-settings1.jpg){alt="Notebook settings (part1)"}
+
+##### Advanced settings: Details (Tagging)
+
+- **IMPORTANT:** Open the "Advanced optoins menu next
+  -  **Labels (required for cost tracking):**  Under the Details menu, add the following tags so that you can track the total cost of your activity on GCP later:
+      - `Project = Team Name`
+      - `Name = Your Name`
+      - `Purpose = Notebook Purpose (train, tune, RAG, etc.)`
+        
+![Required tags for notebook.](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-tags.jpg){alt="Screenshot showing required tags for notebook"}
+
+
+##### Advanced settings: Machine Type
+
 - **Machine type**: Select a small machine (e.g., `e2-standard-2`) to act as the controller.  
   - This keeps costs low while you delegate heavy lifting to training jobs.  
   - For guidance on common machine types for ML, refer to [Instances for ML on GCP](../instances-for-ML.html).
-    
+
+##### Create notebook 
 - Click **Create** to create the intance. Your notebook instance will start in a few minutes. When its status is "Running," you can open JupyterLab and begin working.  
 
 ### Managing training and tuning with the controller notebook
