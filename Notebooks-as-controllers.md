@@ -38,7 +38,7 @@ We will follow these steps to create our first Workbench Instance:
 
 #### 2. Create a new Workbench Instance
 - Click "Create New" under Instances.  
-- **Notebook name**: For this workshop, we can use the following naming convention to easily locate our notebooks: `lastname-titanic`
+- **Notebook name**: For this workshop, we can use the following naming convention to easily locate our notebooks: `teamname_first-lastname_purpose` (e.g., sinkorswim_john-doe_train)
 - **Region**: Choose the same region as your storage bucket (e.g., `us-central1`).  
   - This avoids cross-region transfer charges and keeps data access latency low.  
 - **GPUs**: Leave disabled for now (training jobs will request them separately).  
