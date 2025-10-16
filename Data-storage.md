@@ -92,7 +92,7 @@ When creating a storage bucket in Google Cloud, the best practice for most machi
   - **Region** (cheapest, good default). For instance, us-central1 (Iowa) costs $0.020 per GB-month.
   - **Multi-region** (higher redundancy, more expensive).
 
-![Example of Tags for a GCS bucket](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-location.jpg){alt="Choose where to store your data"}
+![Choose where to store your data](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-location.jpg){alt="Choose where to store your data"}
 
 #### 3c. Choose how to store your data (storage class)
 When creating a bucket, you'll be asked to choose a storage class, which determines how much you pay for storing data and how often you're allowed to access it without extra fees.
@@ -121,7 +121,7 @@ GCP automatically protects all stored data, but you can enable additional layers
 
 #### Final check
 After configuring all settings, your bucket settings preview should look similar to the screenshot below (with the bucket name adjusted for your name).
-![Standard GCS Bucket Settings](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-fullyconfigured.jpg){alt="Recommended GCS bucket settings."}
+![Final GCS Bucket Settings](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-fullyconfigured.jpg){alt="Recommended GCS bucket settings."}
 
 ### 4. Upload files to the bucket
 - If you haven't downloaded them yet, right-click and save as `.csv`:  
