@@ -72,7 +72,7 @@ We will follow these steps to create our first Workbench Instance:
   - This keeps costs low while you delegate heavy lifting to training jobs.  
   - For guidance on common machine types for ML, refer to [Instances for ML on GCP](../instances-for-ML.html).
 
-- **Set idle shutdown**: To save on costs when you aren't doing anything in your notebook, lower the default idle shutdown time to 60 (minutes).
+- **Set idle shutdown**: To save on costs when you aren't doing anything in your notebook, lower the default idle shutdown time to **60 (minutes)**.
 
 ![Enable Idle Shutdown](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-idleshutdown.jpg){alt="Set Idle Shutdown"}
 
