@@ -51,7 +51,6 @@ For this workshop, you will need the **Titanic dataset**, which can be used to t
 
 1. Please download the following zip file (Right-click → Save as):  
    [data.zip](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/data/data.zip)  
-   *(same dataset used in the AWS workshop)*  
 
 2. Extract the zip folder contents (Right-click → Extract all on Windows; double-click on macOS).  
 
