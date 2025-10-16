@@ -1025,7 +1025,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1239,34 +1239,90 @@ forward).<br>
 <div class="section level4">
 <h4 id="create-a-new-workbench-instance">2. Create a new Workbench Instance<a class="anchor" aria-label="anchor" href="#create-a-new-workbench-instance"></a>
 </h4>
+<div class="section level5">
+<h5 id="initial-settings">Initial settings<a class="anchor" aria-label="anchor" href="#initial-settings"></a>
+</h5>
 <ul>
-<li>Click “Create New” under Instances.<br>
-</li>
+<li>Click <strong>Create New</strong> near the top of the Workbench
+page</li>
 <li>
-<strong>Notebook name</strong>: For this workshop, we can use the
-following naming convention to easily locate our notebooks:
-<code>teamname_first-lastname_purpose</code> (e.g.,
-sinkorswim_john-doe_train)</li>
+<strong>Name</strong>: For this workshop, we can use the following
+naming convention to easily locate our notebooks:
+<code>teamname-yourname-purpose</code> (e.g.,
+sinkorswim-johndoe-train)</li>
 <li>
 <strong>Region</strong>: Choose the same region as your storage
-bucket (e.g., <code>us-central1</code>).
+bucket (e.g., <code>us-central1</code>). This avoids cross-region
+transfer charges and keeps data access latency low.
 <ul>
-<li>This avoids cross-region transfer charges and keeps data access
-latency low.<br>
-</li>
+<li>If you are unsure, check your bucket’s location in the Cloud Storage
+console (click the bucket name → look under “Location”).</li>
 </ul>
 </li>
 <li>
-<strong>GPUs</strong>: Leave disabled for now (training jobs will
-request them separately).<br>
-</li>
-<li>
-<strong>Labels</strong>: Add labels for cost tracking
+<strong>Zone:</strong> <code>us-central1-a</code> (or another zone
+in <code>us-central1</code>, like <code>-b</code> or <code>-c</code>)
 <ul>
-<li><code>purpose=workshop</code></li>
-<li><code>owner=lastname_firstname</code></li>
+<li>If capacity or GPU availability is limited in one zone, switch to
+another zone in the same region.</li>
 </ul>
 </li>
+<li>
+<strong>NVIDIA T4 GPU:</strong> Leave unchecked for now
+<ul>
+<li>We will request GPUs for training jobs separately. Attaching here
+increases idle costs.</li>
+</ul>
+</li>
+<li>
+<strong>Apache Spark and BigQuery Kernels:</strong> Leave unchecked
+<ul>
+<li>Enable only if you specifically need Spark or BigQuery notebooks;
+otherwise, it adds unnecessary images.</li>
+</ul>
+</li>
+<li>
+<strong>Network in this project:</strong> Required selection
+<ul>
+<li>This option must be selected; shared environments do not allow using
+external or default networks.<br>
+</li>
+<li>This ensures your instance connects to the shared VPC for the
+workshop.</li>
+</ul>
+</li>
+<li>
+<strong>Network / Subnetwork:</strong> Leave as pre-filled. <img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-settings1.jpg" alt="Notebook settings (part1)" class="figure">
+</li>
+</ul>
+</div>
+<div class="section level5">
+<h5 id="advanced-settings-details-tagging">Advanced settings: Details (Tagging)<a class="anchor" aria-label="anchor" href="#advanced-settings-details-tagging"></a>
+</h5>
+<ul>
+<li>
+<strong>IMPORTANT:</strong> Open the “Advanced optoins menu next
+<ul>
+<li>
+<strong>Labels (required for cost tracking):</strong> Under the
+Details menu, add the following tags so that you can track the total
+cost of your activity on GCP later:
+<ul>
+<li><code>Project = Team Name</code></li>
+<li><code>Name = Your Name</code></li>
+<li><code>Purpose = Notebook Purpose (train, tune, RAG, etc.)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-tags.jpg" alt="Screenshot showing required tags for notebook" class="figure mx-auto d-block"><div class="figcaption">Required tags for notebook.</div>
+</figure>
+</div>
+<div class="section level5">
+<h5 id="advanced-settings-machine-type">Advanced settings: Machine Type<a class="anchor" aria-label="anchor" href="#advanced-settings-machine-type"></a>
+</h5>
+<ul>
 <li>
 <strong>Machine type</strong>: Select a small machine (e.g.,
 <code>e2-standard-2</code>) to act as the controller.
@@ -1277,10 +1333,17 @@ jobs.<br>
 <li>For guidance on common machine types for ML, refer to <a href="instances-for-ML.html">Instances for ML on GCP</a>.</li>
 </ul>
 </li>
+</ul>
+</div>
+<div class="section level5">
+<h5 id="create-notebook">Create notebook<a class="anchor" aria-label="anchor" href="#create-notebook"></a>
+</h5>
+<ul>
 <li>Click <strong>Create</strong> to create the intance. Your notebook
 instance will start in a few minutes. When its status is “Running,” you
 can open JupyterLab and begin working.</li>
 </ul>
+</div>
 </div>
 </div>
 <div class="section level3">
@@ -1323,7 +1386,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1883,7 +1946,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
