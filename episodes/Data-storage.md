@@ -124,9 +124,9 @@ After configuring all settings, your bucket settings preview should look similar
 ![Final GCS Bucket Settings](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-fullyconfigured.jpg){alt="Recommended GCS bucket settings."}
 
 ### 4. Upload files to the bucket
-- If you haven't downloaded them yet, right-click and save as `.csv`:  
-  - [titanic_train.csv](https://raw.githubusercontent.com/UW-Madison-DataScience/ml-with-aws-sagemaker/main/data/titanic_train.csv)  
-  - [titanic_test.csv](https://raw.githubusercontent.com/UW-Madison-DataScience/ml-with-aws-sagemaker/main/data/titanic_test.csv)  
+- If you haven't yet, download the data for this workshop (Right-click → Save as):  
+   [data.zip](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/data/data.zip)  
+  - Extract the zip folder contents (Right-click → Extract all on Windows; double-click on macOS).
 - In the bucket dashboard, click **Upload Files**.  
 - Select your Titanic CSVs and upload.  
 
