@@ -76,9 +76,9 @@ We will follow these steps to create our first Workbench Instance:
 
 ![Enable Idle Shutdown](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-idleshutdown.jpg){alt="Set Idle Shutdown"}
 
-##### Advanced settings: Networking 
+##### Advanced settings: Networking - Remove External IP Access
 
-- Remove **External IP**: Set to **None**.  
+- *Don't* **Assign External IP address**: Uncheck this option
   - This ensures your instance is only accessible through secure internal channels rather than the open internet.  
   - Removing the external IP reduces your attack surface and aligns with campus cybersecurity guidance.  
 
