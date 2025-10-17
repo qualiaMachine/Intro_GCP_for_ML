@@ -76,6 +76,15 @@ We will follow these steps to create our first Workbench Instance:
 
 ![Enable Idle Shutdown](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-idleshutdown.jpg){alt="Set Idle Shutdown"}
 
+##### Advanced settings: Networking 
+
+- Remove **External IP**: Set to **None**.  
+  - This ensures your instance is only accessible through secure internal channels rather than the open internet.  
+  - Removing the external IP reduces your attack surface and aligns with campus cybersecurity guidance.  
+
+![Remove External IP](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-networking.jpg){alt="Remove External IP"}
+
+> **Note:** Managed Workbench instances do not allow you to modify network settings after creation.  Be sure to complete this step or you may need to delete the instance and recreate one from scratch.
 
 ##### Create notebook 
 - Click **Create** to create the instance. Your notebook instance will start in a few minutes. When its status is "Running," you can open JupyterLab and begin working.  
