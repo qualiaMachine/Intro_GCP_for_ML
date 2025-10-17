@@ -353,7 +353,7 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Notebooks as Controllers</h1>
-        <p>Last updated on 2025-10-16 |
+        <p>Last updated on 2025-10-17 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/Notebooks-as-controllers.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -503,6 +503,22 @@ doing anything in your notebook, lower the default idle shutdown time to
 </ul><figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-idleshutdown.jpg" alt="Set Idle Shutdown" class="figure mx-auto d-block"><div class="figcaption">Enable Idle Shutdown</div>
 </figure></div>
 <div class="section level5">
+<h5 id="advanced-settings-networking">Advanced settings: Networking<a class="anchor" aria-label="anchor" href="#advanced-settings-networking"></a></h5>
+<ul><li>Remove <strong>External IP</strong>: Set to <strong>None</strong>.
+<ul><li>This ensures your instance is only accessible through secure
+internal channels rather than the open internet.<br></li>
+<li>Removing the external IP reduces your attack surface and aligns with
+campus cybersecurity guidance.</li>
+</ul></li>
+</ul><figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-networking.jpg" alt="Remove External IP" class="figure mx-auto d-block"><div class="figcaption">Remove External IP</div>
+</figure><blockquote>
+<p><strong>Note:</strong> Managed Workbench instances do not allow you
+to modify network settings after creation. Be sure to complete this step
+or you may need to delete the instance and recreate one from
+scratch.</p>
+</blockquote>
+</div>
+<div class="section level5">
 <h5 id="create-notebook">Create notebook<a class="anchor" aria-label="anchor" href="#create-notebook"></a></h5>
 <ul><li>Click <strong>Create</strong> to create the instance. Your notebook
 instance will start in a few minutes. When its status is “Running,” you
@@ -543,7 +559,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -667,8 +683,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/Notebooks-as-controllers.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/Notebooks-as-controllers.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2025-10-16",
-  "datePublished": "2025-10-16"
+  "dateModified": "2025-10-17",
+  "datePublished": "2025-10-17"
 }
 
   </script><script>
