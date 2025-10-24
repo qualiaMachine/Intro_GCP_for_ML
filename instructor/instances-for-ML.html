@@ -356,11 +356,18 @@
 
         
 
-<p>The below table provides general recommendations for selecting
-<strong>Google Cloud Platform (GCP)</strong> instances when using
-<strong>Vertex AI Workbench Notebooks</strong> (user-managed or
-managed). These are direct compute instances that underlie notebook
-environments — <strong>not AutoML or training jobs</strong>.</p>
+<p>The below table provides general recommendations for selecting Google
+Cloud Platform (GCP) instances when using <em>Vertex AI Workbench
+Notebooks</em> (user-managed or managed).</p>
+<p><strong>All pricing estimates</strong> are based on public rates for
+<em>Vertex AI Workbench (user-managed)</em> notebooks running in
+us-central1 as of October 2025.<br>
+Actual cost depends on sustained-use discounts and attached GPU storage
+quotas. See the full pricing tables for the most up-to-date info:</p>
+<p><strong>Reference Docs:</strong> - <a href="https://cloud.google.com/compute/vm-instance-pricing" class="external-link">Compute
+Engine VM Instance Pricing (applies to notebook backends)</a> - <a href="https://cloud.google.com/compute/gpus-pricing" class="external-link">Compute Engine GPU
+Pricing</a> - <a href="https://cloud.google.com/compute/all-pricing" class="external-link">All
+Compute Pricing Overview</a></p>
 <div class="section level4">
 <h4 id="general-notes">General Notes:<a class="anchor" aria-label="anchor" href="#general-notes"></a></h4>
 <ul><li>
@@ -370,9 +377,9 @@ unless using batch processing (common in deep learning).<br></li>
 for CPU-heavy tasks such as preprocessing, feature engineering, and
 traditional ML.<br></li>
 <li>
-<strong>GPU choices</strong> depend on task size and budget —
-<strong>T4</strong> (cost-effective), <strong>A100</strong>
-(high-performance), <strong>H100/B200</strong> (cutting-edge).<br></li>
+<strong>GPU choices</strong> depend on task size and budget — T4
+(cost-effective), A100 (high-performance), H100/B200
+(cutting-edge).<br></li>
 <li>The <strong>A2</strong> family (A100 GPUs) offers the best
 cost/performance trade-off for most research-scale DL workloads.<br></li>
 <li>The <strong>A3/A4</strong> families target large-scale model
@@ -381,16 +388,7 @@ training and are overkill for most notebook-level experiments.<br></li>
 <strong>Free Tier Eligibility</strong>: Some smaller instance types
 (e.g., <code>e2-micro</code>) may be eligible for the <a href="https://cloud.google.com/free" class="external-link">GCP Free Tier</a>. Check usage
 limits before running persistent notebooks.</li>
-</ul><p><strong>All pricing estimates</strong> are based on public rates for
-<em>Vertex AI Workbench (user-managed)</em> notebooks running in
-us-central1 as of October 2025.<br>
-Actual cost depends on sustained-use discounts and attached GPU storage
-quotas. See the full pricing tables for the most up-to-date info:</p>
-<p><strong>Reference Docs:</strong> - <a href="https://cloud.google.com/compute/vm-instance-pricing" class="external-link">Compute
-Engine VM Instance Pricing (applies to notebook backends)</a> - <a href="https://cloud.google.com/compute/gpus-pricing" class="external-link">Compute Engine GPU
-Pricing</a> - <a href="https://cloud.google.com/compute/all-pricing" class="external-link">All
-Compute Pricing Overview</a></p>
-<table class="table"><colgroup><col width="12%"><col width="29%"><col width="6%"><col width="12%"><col width="6%"><col width="18%"><col width="13%"></colgroup><thead><tr class="header"><th><strong>Dataset Size</strong></th>
+</ul><table class="table"><colgroup><col width="12%"><col width="29%"><col width="6%"><col width="12%"><col width="6%"><col width="18%"><col width="13%"></colgroup><thead><tr class="header"><th><strong>Dataset Size</strong></th>
 <th><strong>Recommended Notebook Instance (GCP)</strong></th>
 <th><strong>vCPU</strong></th>
 <th><strong>Memory (GiB)</strong></th>
