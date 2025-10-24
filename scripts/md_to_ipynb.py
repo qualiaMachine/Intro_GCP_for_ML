@@ -9,9 +9,9 @@ notebooks_dir = "notebooks"
 
 # List of Markdown files to ignore (no conversion needed)
 ignore_list = [
-    "Introduction.md",
-    "Data-storage.md",
-    "Resource-management-cleanup.md"
+    "01-Introduction.md",
+    "02-Data-storage.md",
+    "09-Resource-management-cleanup.md"
 ]
 
 # Ensure notebooks directory exists
