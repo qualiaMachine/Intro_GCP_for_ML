@@ -1,11 +1,11 @@
 ---
-title: Instances for ML (GCP Workbench)
+title: Instances for ML 
 ---
 
-The below table provides general recommendations for selecting Google Cloud Platform (GCP) instances when using *Vertex AI Workbench Notebooks* (user-managed or managed). 
+The below table provides general recommendations for selecting Google Cloud Platform (GCP) instances. 
 
-**All pricing estimates** are based on public rates for *Vertex AI Workbench (user-managed)* notebooks running in us-central1 as of October 2025.  
-Actual cost depends on sustained-use discounts and attached GPU storage quotas.  See the full pricing tables for the most up-to-date info:  
+**All pricing estimates** are based on public rates for notebooks running in us-central1 as of October 2025.  
+Actual cost depends on sustained-use discounts and attached GPU storage quotas. See the full pricing tables for the most up-to-date info:  
 
 **Reference Docs:**
 - [Compute Engine VM Instance Pricing (applies to notebook backends)](https://cloud.google.com/compute/vm-instance-pricing)
