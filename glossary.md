@@ -1,5 +1,5 @@
 ---
-title: Glossary (GCP)
+title: Glossary
 ---
 
 Understanding the terminology used in cloud computing and GCP is half the battle when working with Vertex AI and Workbench. Familiarity with these key concepts will help you navigate Google Cloud services, configure machine learning workflows, and troubleshoot issues more efficiently.  
