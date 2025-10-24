@@ -65,7 +65,7 @@ We will follow these steps to create our first Workbench Instance:
         
 ![Required tags for notebook.](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-tags.jpg){alt="Screenshot showing required tags for notebook"}
 
-### Advanced Settings: Environment Options
+### Advanced Settings: Environment 
 
 While we won't modify environment settings during this workshop, it's useful to understand what these options control when creating or editing a Workbench Instance in Vertex AI Workbench.
 
@@ -86,6 +86,42 @@ See: [Vertex AI Workbench release notes](https://cloud.google.com/vertex-ai/docs
 - **Set idle shutdown**: To save on costs when you aren't doing anything in your notebook, lower the default idle shutdown time to **60 (minutes)**.
 
 ![Enable Idle Shutdown](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-idleshutdown.jpg){alt="Set Idle Shutdown"}
+
+### Advanced Settings: Disks
+
+Each Vertex AI Workbench instance uses **Persistent Disks (PDs)** to store your system files and data. You'll configure two disks when creating a notebook: a **boot disk** and a **data disk**. We'll leave these at their default settings, but it's useful to understand the settings for future work.
+
+#### Boot Disk
+Keep this fixed at **100 GB (Balanced PD)** — the default minimum.  
+It holds the OS, JupyterLab, and ML libraries but not your datasets.  
+Estimated cost: about **$10 / month (~$0.014 / hr)**.  
+You rarely need to resize this, though you can increase to **150–200 GB** if you plan to install large environments, custom CUDA builds, or multiple frameworks.
+
+#### Data Disk
+This is where your datasets, checkpoints, and outputs live.  
+Use a **Balanced PD** by default, or an **SSD PD** only for high-I/O workloads.  
+A good rule of thumb is to allocate **≈ 2× your dataset size**, with a **minimum of 150 GB** and a **maximum of 1 TB**.  
+For example:
+- 20 GB dataset → 150 GB data disk (minimum)  
+- 100 GB dataset → 200 GB data disk  
+- Larger datasets → keep the full dataset in **Cloud Storage (`gs://`)** and copy only subsets locally.
+
+> Persistent Disks can be resized anytime without downtime, so it’s best to start small and expand when needed.
+
+#### Cost awareness
+Persistent Disks are fast but cost more than Cloud Storage.  
+Typical rates:  
+- **Balanced PD:** ~$0.10–$0.12 / GB / month  
+- **SSD PD:** ~$0.17–$0.20 / GB / month  
+- **Cloud Storage (Standard):** ~$0.026 / GB / month  
+
+> **Rule of thumb:** use PDs only for active work; store everything else in Cloud Storage.  
+> Example: a 200 GB dataset costs **~$24/month on a PD** but only **~$5/month in Cloud Storage**.
+
+Check the latest pricing here:  
+- [Persistent Disk & Image pricing](https://cloud.google.com/compute/disks-image-pricing)  
+- [Cloud Storage pricing](https://cloud.google.com/storage/pricing)
+
 
 ##### Advanced settings: Networking - Remove External IP Access
 
