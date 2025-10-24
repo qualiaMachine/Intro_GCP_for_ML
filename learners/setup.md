@@ -9,7 +9,7 @@ Before attending this workshop, you'll need to complete a few setup steps to ens
 1. **GitHub Account** – Create an account and be ready to fork a repository.  
 2. **GCP Access** – Use a **shared Google Cloud project** (if attending the Machine Learning Marathon or Research Bazaar) or sign up for a personal GCP Free Tier account.  
 3. **Titanic Dataset** – Download the required CSV files in advance.  
-6. **(Optional) Google Cloud Skills Boost** — For a broader overview of GCP, visit the [Getting Started with Google Cloud Fundamentals](https://www.cloudskillsboost.google/course_templates/62) course.
+4. **(Optional) Google Cloud Skills Boost** — For a broader overview of GCP, visit the [Getting Started with Google Cloud Fundamentals](https://www.cloudskillsboost.google/course_templates/62) course.
 
 Details on each step are outlined below.
 
@@ -27,6 +27,7 @@ There are two ways to get access to GCP for this lesson. Please wait for a pre-w
 If you are attending this lesson as part of the **Machine Learning Marathon** or **Research Bazaar**, the instructors will provide access to a shared GCP project for all attendees. You do not need to set up your own account.  
 
 What to expect:
+
 * Before the workshop, you will receive an email invitation to join the shared GCP project.  
 * During the lesson, you will log in with your Google account credentials (NetID or Gmail).  
 * This setup ensures that all participants have a consistent environment and avoids unexpected billing for attendees.  
