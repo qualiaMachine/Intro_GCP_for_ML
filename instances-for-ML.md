@@ -2,15 +2,7 @@
 title: Instances for ML (GCP Workbench)
 ---
 
-The below table provides general recommendations for selecting **Google Cloud Platform (GCP)** instances when using **Vertex AI Workbench Notebooks** (user-managed or managed). These are direct compute instances that underlie notebook environments — **not AutoML or training jobs**.
-
-#### General Notes:
-- **Minimum RAM** should be at least 1.5× dataset size unless using batch processing (common in deep learning).  
-- The **N2** and **C2** series are optimized for CPU-heavy tasks such as preprocessing, feature engineering, and traditional ML.  
-- **GPU choices** depend on task size and budget — **T4** (cost-effective), **A100** (high-performance), **H100/B200** (cutting-edge).  
-- The **A2** family (A100 GPUs) offers the best cost/performance trade-off for most research-scale DL workloads.  
-- The **A3/A4** families target large-scale model training and are overkill for most notebook-level experiments.  
-- **Free Tier Eligibility**: Some smaller instance types (e.g., `e2-micro`) may be eligible for the [GCP Free Tier](https://cloud.google.com/free). Check usage limits before running persistent notebooks.
+The below table provides general recommendations for selecting Google Cloud Platform (GCP) instances when using *Vertex AI Workbench Notebooks* (user-managed or managed). 
 
 **All pricing estimates** are based on public rates for *Vertex AI Workbench (user-managed)* notebooks running in us-central1 as of October 2025.  
 Actual cost depends on sustained-use discounts and attached GPU storage quotas.  See the full pricing tables for the most up-to-date info:  
@@ -19,6 +11,14 @@ Actual cost depends on sustained-use discounts and attached GPU storage quotas. 
 - [Compute Engine VM Instance Pricing (applies to notebook backends)](https://cloud.google.com/compute/vm-instance-pricing)
 - [Compute Engine GPU Pricing](https://cloud.google.com/compute/gpus-pricing)
 - [All Compute Pricing Overview](https://cloud.google.com/compute/all-pricing)
+  
+#### General Notes:
+- **Minimum RAM** should be at least 1.5× dataset size unless using batch processing (common in deep learning).  
+- The **N2** and **C2** series are optimized for CPU-heavy tasks such as preprocessing, feature engineering, and traditional ML.  
+- **GPU choices** depend on task size and budget — T4 (cost-effective), A100 (high-performance), H100/B200 (cutting-edge).  
+- The **A2** family (A100 GPUs) offers the best cost/performance trade-off for most research-scale DL workloads.  
+- The **A3/A4** families target large-scale model training and are overkill for most notebook-level experiments.  
+- **Free Tier Eligibility**: Some smaller instance types (e.g., `e2-micro`) may be eligible for the [GCP Free Tier](https://cloud.google.com/free). Check usage limits before running persistent notebooks.
 
 
 | **Dataset Size** | **Recommended Notebook Instance (GCP)** | **vCPU** | **Memory (GiB)** | **GPU** | **Price per Hour (USD)** | **Suitable Tasks** |
