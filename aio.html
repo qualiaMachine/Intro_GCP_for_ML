@@ -1328,7 +1328,7 @@ train, tune, RAG, etc.)</li>
 </div>
 </div>
 <div class="section level3">
-<h3 id="advanced-settings-environment-options">Advanced Settings: Environment Options<a class="anchor" aria-label="anchor" href="#advanced-settings-environment-options"></a>
+<h3 id="advanced-settings-environment">Advanced Settings: Environment<a class="anchor" aria-label="anchor" href="#advanced-settings-environment"></a>
 </h3>
 <p>While we won’t modify environment settings during this workshop, it’s
 useful to understand what these options control when creating or editing
@@ -1374,6 +1374,64 @@ doing anything in your notebook, lower the default idle shutdown time to
 <figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-idleshutdown.jpg" alt="Set Idle Shutdown" class="figure mx-auto d-block"><div class="figcaption">Enable Idle Shutdown</div>
 </figure>
 </div>
+</div>
+<div class="section level3">
+<h3 id="advanced-settings-disks">Advanced Settings: Disks<a class="anchor" aria-label="anchor" href="#advanced-settings-disks"></a>
+</h3>
+<p>Each Vertex AI Workbench instance uses <strong>Persistent Disks
+(PDs)</strong> to store your system files and data. You’ll configure two
+disks when creating a notebook: a <strong>boot disk</strong> and a
+<strong>data disk</strong>. We’ll leave these at their default settings,
+but it’s useful to understand the settings for future work.</p>
+<div class="section level4">
+<h4 id="boot-disk">Boot Disk<a class="anchor" aria-label="anchor" href="#boot-disk"></a>
+</h4>
+<p>Keep this fixed at <strong>100 GB (Balanced PD)</strong> — the
+default minimum.<br>
+It holds the OS, JupyterLab, and ML libraries but not your
+datasets.<br>
+Estimated cost: about <strong>$10 / month (~$0.014 / hr)</strong>.<br>
+You rarely need to resize this, though you can increase to
+<strong>150–200 GB</strong> if you plan to install large environments,
+custom CUDA builds, or multiple frameworks.</p>
+</div>
+<div class="section level4">
+<h4 id="data-disk">Data Disk<a class="anchor" aria-label="anchor" href="#data-disk"></a>
+</h4>
+<p>This is where your datasets, checkpoints, and outputs live.<br>
+Use a <strong>Balanced PD</strong> by default, or an <strong>SSD
+PD</strong> only for high-I/O workloads.<br>
+A good rule of thumb is to allocate <strong>≈ 2× your dataset
+size</strong>, with a <strong>minimum of 150 GB</strong> and a
+<strong>maximum of 1 TB</strong>.<br>
+For example: - 20 GB dataset → 150 GB data disk (minimum)<br>
+- 100 GB dataset → 200 GB data disk<br>
+- Larger datasets → keep the full dataset in <strong>Cloud Storage
+(<code>gs://</code>)</strong> and copy only subsets locally.</p>
+<blockquote>
+<p>Persistent Disks can be resized anytime without downtime, so it’s
+best to start small and expand when needed.</p>
+</blockquote>
+</div>
+<div class="section level4">
+<h4 id="cost-awareness">Cost awareness<a class="anchor" aria-label="anchor" href="#cost-awareness"></a>
+</h4>
+<p>Persistent Disks are fast but cost more than Cloud Storage.<br>
+Typical rates:<br>
+- <strong>Balanced PD:</strong> ~$0.10–$0.12 / GB / month<br>
+- <strong>SSD PD:</strong> ~$0.17–$0.20 / GB / month<br>
+- <strong>Cloud Storage (Standard):</strong> ~$0.026 / GB / month</p>
+<blockquote>
+<p><strong>Rule of thumb:</strong> use PDs only for active work; store
+everything else in Cloud Storage.<br>
+Example: a 200 GB dataset costs <strong>~$24/month on a PD</strong> but
+only <strong>~$5/month in Cloud Storage</strong>.</p>
+</blockquote>
+<p>Check the latest pricing here:<br>
+- <a href="https://cloud.google.com/compute/disks-image-pricing" class="external-link">Persistent
+Disk &amp; Image pricing</a><br>
+- <a href="https://cloud.google.com/storage/pricing" class="external-link">Cloud Storage
+pricing</a></p>
 <div class="section level5">
 <h5 id="advanced-settings-networking---remove-external-ip-access">Advanced settings: Networking - Remove External IP Access<a class="anchor" aria-label="anchor" href="#advanced-settings-networking---remove-external-ip-access"></a>
 </h5>
@@ -1406,6 +1464,7 @@ scratch.</p>
 instance will start in a few minutes. When its status is “Running,” you
 can open JupyterLab and begin working.</li>
 </ul>
+</div>
 </div>
 </div>
 <div class="section level3">
@@ -1718,7 +1777,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2034,7 +2093,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
