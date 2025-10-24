@@ -1,7 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/01-Introduction.html</loc>
+  </url>
+  <url>
     <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/01-introduction.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/02-Data-storage.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/03-Notebooks-as-controllers.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/04-Accessing-and-managing-data.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/05-Interacting-with-code-repo.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/06-Training-models-in-VertexAI.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/07-Training-models-in-VertexAI-GPUs.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/08-Hyperparameter-tuning.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/09-Resource-management-cleanup.html</loc>
   </url>
   <url>
     <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/404.html</loc>
@@ -52,7 +79,34 @@
     <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instances-for-ML.html</loc>
   </url>
   <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/01-Introduction.html</loc>
+  </url>
+  <url>
     <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/01-introduction.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/02-Data-storage.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/03-Notebooks-as-controllers.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/04-Accessing-and-managing-data.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/05-Interacting-with-code-repo.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/06-Training-models-in-VertexAI.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/07-Training-models-in-VertexAI-GPUs.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/08-Hyperparameter-tuning.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/09-Resource-management-cleanup.html</loc>
   </url>
   <url>
     <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/404.html</loc>
