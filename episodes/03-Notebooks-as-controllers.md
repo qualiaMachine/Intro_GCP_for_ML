@@ -108,6 +108,13 @@ For example:
 
 > Persistent Disks can be resized anytime without downtime, so it’s best to start small and expand when needed.
 
+#### Deletion behavior
+The 'Delete to trash' option is **unchecked by default**, which is what you want.  
+When left unchecked, deleted files are removed immediately, freeing up disk space right away.  
+If you check this box, files will move to the system trash instead — meaning they still take up space (and cost) until you empty it.
+
+> **Keep this unchecked** to avoid paying for deleted files that remain in the trash.
+
 #### Cost awareness
 Persistent Disks are fast but cost more than Cloud Storage.  
 Typical rates:  
