@@ -1217,9 +1217,9 @@ making it easy to start experimenting without additional setup. Learn
 more in the <a href="https://cloud.google.com/vertex-ai/docs/workbench/instances/introduction?_gl=1*r0g0e9*_ga*MTczMzg4NDE1OC4xNzU4MzEyMTE0*_ga_WH2QY8WWF5*czE3NTg1NTczMzkkbzMkZzEkdDE3NTg1NjIxNzgkajI3JGwwJGgw" class="external-link">Workbench
 Instances documentation</a>.</p>
 </blockquote>
-<div class="section level3">
-<h3 id="using-the-notebook-as-a-controller">Using the notebook as a controller<a class="anchor" aria-label="anchor" href="#using-the-notebook-as-a-controller"></a>
-</h3>
+</section><section><h2 class="section-heading" id="using-the-notebook-as-a-controller">Using the notebook as a controller<a class="anchor" aria-label="anchor" href="#using-the-notebook-as-a-controller"></a>
+</h2>
+<hr class="half-width">
 <p>The notebook instance functions as a <em>controller</em> to manage
 more resource-intensive tasks. By selecting a modest machine type (e.g.,
 <code>n1-standard-4</code>), you can perform lightweight operations
@@ -1231,9 +1231,9 @@ infrastructure for demanding tasks like model training, batch
 prediction, and hyperparameter tuning.</p>
 <p>We will follow these steps to create our first Workbench
 Instance:</p>
-<div class="section level4">
-<h4 id="navigate-to-workbench">1. Navigate to Workbench<a class="anchor" aria-label="anchor" href="#navigate-to-workbench"></a>
-</h4>
+<div class="section level3">
+<h3 id="navigate-to-workbench">1. Navigate to Workbench<a class="anchor" aria-label="anchor" href="#navigate-to-workbench"></a>
+</h3>
 <ul>
 <li>In the Google Cloud Console, search for “Workbench.”<br>
 </li>
@@ -1243,12 +1243,12 @@ forward).<br>
 <li>Pin Workbench to your navigation bar for quick access.</li>
 </ul>
 </div>
+<div class="section level3">
+<h3 id="create-a-new-workbench-instance">2. Create a new Workbench Instance<a class="anchor" aria-label="anchor" href="#create-a-new-workbench-instance"></a>
+</h3>
 <div class="section level4">
-<h4 id="create-a-new-workbench-instance">2. Create a new Workbench Instance<a class="anchor" aria-label="anchor" href="#create-a-new-workbench-instance"></a>
+<h4 id="initial-settings">Initial settings<a class="anchor" aria-label="anchor" href="#initial-settings"></a>
 </h4>
-<div class="section level5">
-<h5 id="initial-settings">Initial settings<a class="anchor" aria-label="anchor" href="#initial-settings"></a>
-</h5>
 <ul>
 <li>Click <strong>Create New</strong> near the top of the Workbench
 page</li>
@@ -1303,9 +1303,9 @@ workshop.</li>
 </li>
 </ul>
 </div>
-<div class="section level5">
-<h5 id="advanced-settings-details-tagging">Advanced settings: Details (tagging)<a class="anchor" aria-label="anchor" href="#advanced-settings-details-tagging"></a>
-</h5>
+<div class="section level4">
+<h4 id="advanced-settings-details-tagging">Advanced settings: Details (tagging)<a class="anchor" aria-label="anchor" href="#advanced-settings-details-tagging"></a>
+</h4>
 <ul>
 <li>
 <strong>IMPORTANT:</strong> Open the “Advanced optoins menu next
@@ -1330,11 +1330,9 @@ train, tune, RAG, etc.)</li>
 <figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-tags.jpg" alt="Screenshot showing required tags for notebook" class="figure mx-auto d-block"><div class="figcaption">Required tags for notebook.</div>
 </figure>
 </div>
-</div>
-</div>
-<div class="section level3">
-<h3 id="advanced-settings-environment">Advanced Settings: Environment<a class="anchor" aria-label="anchor" href="#advanced-settings-environment"></a>
-</h3>
+<div class="section level4">
+<h4 id="advanced-settings-environment">Advanced Settings: Environment<a class="anchor" aria-label="anchor" href="#advanced-settings-environment"></a>
+</h4>
 <p>While we won’t modify environment settings during this workshop, it’s
 useful to understand what these options control when creating or editing
 a Workbench Instance in Vertex AI Workbench.</p>
@@ -1357,9 +1355,10 @@ version, performance, storage, networking, and permissions of that
 underlying VM, even though the interface abstracts most of the
 complexity away.</p>
 </blockquote>
-<div class="section level5">
-<h5 id="advanced-settings-machine-type">Advanced settings: Machine Type<a class="anchor" aria-label="anchor" href="#advanced-settings-machine-type"></a>
-</h5>
+</div>
+<div class="section level4">
+<h4 id="advanced-settings-machine-type">Advanced settings: Machine Type<a class="anchor" aria-label="anchor" href="#advanced-settings-machine-type"></a>
+</h4>
 <ul>
 <li>
 <strong>Machine type</strong>: Select a small machine (e.g.,
@@ -1379,18 +1378,17 @@ doing anything in your notebook, lower the default idle shutdown time to
 <figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-idleshutdown.jpg" alt="Set Idle Shutdown" class="figure mx-auto d-block"><div class="figcaption">Enable Idle Shutdown</div>
 </figure>
 </div>
-</div>
-<div class="section level3">
-<h3 id="advanced-settings-disks">Advanced Settings: Disks<a class="anchor" aria-label="anchor" href="#advanced-settings-disks"></a>
-</h3>
+<div class="section level4">
+<h4 id="advanced-settings-disks">Advanced Settings: Disks<a class="anchor" aria-label="anchor" href="#advanced-settings-disks"></a>
+</h4>
 <p>Each Vertex AI Workbench instance uses <strong>Persistent Disks
 (PDs)</strong> to store your system files and data. You’ll configure two
 disks when creating a notebook: a <strong>boot disk</strong> and a
 <strong>data disk</strong>. We’ll leave these at their default settings,
 but it’s useful to understand the settings for future work.</p>
-<div class="section level4">
-<h4 id="boot-disk">Boot Disk<a class="anchor" aria-label="anchor" href="#boot-disk"></a>
-</h4>
+<div class="section level5">
+<h5 id="boot-disk">Boot Disk<a class="anchor" aria-label="anchor" href="#boot-disk"></a>
+</h5>
 <p>Keep this fixed at <strong>100 GB (Balanced PD)</strong> — the
 default minimum.<br>
 It holds the OS, JupyterLab, and ML libraries but not your
@@ -1400,9 +1398,9 @@ You rarely need to resize this, though you can increase to
 <strong>150–200 GB</strong> if you plan to install large environments,
 custom CUDA builds, or multiple frameworks.</p>
 </div>
-<div class="section level4">
-<h4 id="data-disk">Data Disk<a class="anchor" aria-label="anchor" href="#data-disk"></a>
-</h4>
+<div class="section level5">
+<h5 id="data-disk">Data Disk<a class="anchor" aria-label="anchor" href="#data-disk"></a>
+</h5>
 <p>This is where your datasets, checkpoints, and outputs live.<br>
 Use a <strong>Balanced PD</strong> by default, or an <strong>SSD
 PD</strong> only for high-I/O workloads.<br>
@@ -1418,9 +1416,9 @@ For example: - 20 GB dataset → 150 GB data disk (minimum)<br>
 best to start small and expand when needed.</p>
 </blockquote>
 </div>
-<div class="section level4">
-<h4 id="deletion-behavior">Deletion behavior<a class="anchor" aria-label="anchor" href="#deletion-behavior"></a>
-</h4>
+<div class="section level5">
+<h5 id="deletion-behavior">Deletion behavior<a class="anchor" aria-label="anchor" href="#deletion-behavior"></a>
+</h5>
 <p>The ‘Delete to trash’ option is <strong>unchecked by
 default</strong>, which is what you want.<br>
 When left unchecked, deleted files are removed immediately, freeing up
@@ -1432,9 +1430,9 @@ meaning they still take up space (and cost) until you empty it.</p>
 files that remain in the trash.</p>
 </blockquote>
 </div>
-<div class="section level4">
-<h4 id="cost-awareness">Cost awareness<a class="anchor" aria-label="anchor" href="#cost-awareness"></a>
-</h4>
+<div class="section level5">
+<h5 id="cost-awareness">Cost awareness<a class="anchor" aria-label="anchor" href="#cost-awareness"></a>
+</h5>
 <p>Persistent Disks are fast but cost more than Cloud Storage.<br>
 Typical rates:<br>
 - <strong>Balanced PD:</strong> ~$0.10–$0.12 / GB / month<br>
@@ -1451,9 +1449,11 @@ only <strong>~$5/month in Cloud Storage</strong>.</p>
 Disk &amp; Image pricing</a><br>
 - <a href="https://cloud.google.com/storage/pricing" class="external-link">Cloud Storage
 pricing</a></p>
-<div class="section level5">
-<h5 id="advanced-settings-networking---remove-external-ip-access">Advanced settings: Networking - Remove External IP Access<a class="anchor" aria-label="anchor" href="#advanced-settings-networking---remove-external-ip-access"></a>
-</h5>
+</div>
+</div>
+<div class="section level4">
+<h4 id="advanced-settings-networking---remove-external-ip-access">Advanced settings: Networking - Remove External IP Access<a class="anchor" aria-label="anchor" href="#advanced-settings-networking---remove-external-ip-access"></a>
+</h4>
 <ul>
 <li>
 <em>Don’t</em> <strong>Assign External IP address</strong>: Uncheck
@@ -1475,16 +1475,15 @@ or you may need to delete the instance and recreate one from
 scratch.</p>
 </blockquote>
 </div>
-<div class="section level5">
-<h5 id="create-notebook">Create notebook<a class="anchor" aria-label="anchor" href="#create-notebook"></a>
-</h5>
+</div>
+<div class="section level3">
+<h3 id="create-notebook">Create notebook<a class="anchor" aria-label="anchor" href="#create-notebook"></a>
+</h3>
 <ul>
 <li>Click <strong>Create</strong> to create the instance. Your notebook
 instance will start in a few minutes. When its status is “Running,” you
 can open JupyterLab and begin working.</li>
 </ul>
-</div>
-</div>
 </div>
 <div class="section level3">
 <h3 id="managing-training-and-tuning-with-the-controller-notebook">Managing training and tuning with the controller notebook<a class="anchor" aria-label="anchor" href="#managing-training-and-tuning-with-the-controller-notebook"></a>
@@ -1526,7 +1525,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1551,9 +1550,6 @@ instance environment.</p>
 <p>We will then select the standard python3 environment to start our
 first .ipynb notebook (Jupyter notebook). We can use this environment
 since we aren’t doing any training/tuning just yet.</p>
-<div class="section level5">
-<h5 id="load-pre-filled-jupyter-notebooks-1">Load pre-filled Jupyter notebooks<a class="anchor" aria-label="anchor" href="#load-pre-filled-jupyter-notebooks-1"></a>
-</h5>
 <p>Within the Jupyter notebook, run the following command to clone the
 lesson repo into our Jupyter environment:</p>
 <div class="codewrapper sourceCode" id="cb1">
@@ -1600,7 +1596,6 @@ left running.</li>
 Place links that you need to refer to multiple times across pages here. Delete
 any links that you are not going to use.
  -->
-</div>
 </div>
 </section></section><section id="aio-04-Accessing-and-managing-data"><p>Content from <a href="04-Accessing-and-managing-data.html">Accessing and Managing Data in GCS with Vertex AI Notebooks</a></p>
 <hr>
@@ -2335,7 +2330,7 @@ discuss:</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>
@@ -3718,7 +3713,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -3750,7 +3745,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -3780,7 +3775,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
