@@ -1,34 +1,40 @@
 ---
-title: Instances for ML
+title: Instances for ML (GCP Workbench)
 ---
 
-The below table provides general recommendations for selecting AWS instances based on dataset size, computational needs, and cost considerations.
+The below table provides general recommendations for selecting **Google Cloud Platform (GCP)** instances when using **Vertex AI Workbench Notebooks** (user-managed or managed). These are direct compute instances that underlie notebook environments — **not AutoML or training jobs**.
 
-#### Genearl Notes:
-- **Minimum RAM** should be at least 1.5X dataset size unless using batch processing (common in deep learning).
-- The **m5** and **c5** instances are optimized for CPU-heavy tasks, such as preprocessing, feature engineering, and model training without GPUs.
-- **GPU choices** depend on the task (T4 for cost-effective DL, V100/A100 for high performance).
-- The **g4dn** instances are cost-effective GPU options, suitable for moderate-scale deep learning tasks.
-- The **p3** instances offer high-performance GPU processing, best suited for large deep learning models requiring fast training times.
-- **Free Tier Eligibility**: Some smaller instance types, such as `ml.t3.medium`, may be eligible for the AWS Free Tier, which provides limited hours of usage per month. Free Tier eligibility can vary, so check [AWS Free Tier details](https://aws.amazon.com/free/) before launching instances to avoid unexpected costs.
+#### General Notes:
+- **Minimum RAM** should be at least 1.5× dataset size unless using batch processing (common in deep learning).  
+- The **N2** and **C2** series are optimized for CPU-heavy tasks such as preprocessing, feature engineering, and traditional ML.  
+- **GPU choices** depend on task size and budget — **T4** (cost-effective), **A100** (high-performance), **H100/B200** (cutting-edge).  
+- The **A2** family (A100 GPUs) offers the best cost/performance trade-off for most research-scale DL workloads.  
+- The **A3/A4** families target large-scale model training and are overkill for most notebook-level experiments.  
+- **Free Tier Eligibility**: Some smaller instance types (e.g., `e2-micro`) may be eligible for the [GCP Free Tier](https://cloud.google.com/free). Check usage limits before running persistent notebooks.
+
+**All pricing estimates** are based on public rates for *Vertex AI Workbench (user-managed)* notebooks running in us-central1 as of October 2025.  
+Actual cost depends on sustained-use discounts and attached GPU storage quotas.  See the full pricing tables for the most up-to-date info:  
+
+**Reference Docs:**
+- [Compute Engine VM Instance Pricing (applies to notebook backends)](https://cloud.google.com/compute/vm-instance-pricing)
+- [Compute Engine GPU Pricing](https://cloud.google.com/compute/gpus-pricing)
+- [All Compute Pricing Overview](https://cloud.google.com/compute/all-pricing)
 
 
-| **Dataset Size** | **Recommended Instance Type** | **vCPU** | **Memory (GiB)** | **GPU** | **Price per Hour (USD)** | **Suitable Tasks** |
-|-----------------|------------------------------|----------|------------------|---------|--------------------------|--------------------|
-| < 1GB          | `ml.t3.medium`                | 2        | 4                | None    | $0.04                    | Preprocessing, lightweight model training |
-| < 1GB          | `ml.m5.large`                 | 2        | 8                | None    | $0.10                    | Preprocessing, regression, feature engineering, small model training |
-| < 1GB          | `g4dn.xlarge` (T4 GPU)        | 4        | 16               | 1x NVIDIA T4 | $0.75 | GPU processing for small-scale deep learning, cost-effective GPU option |
-| < 1GB          | `p3.2xlarge` (V100 GPU)       | 8        | 61               | 1x NVIDIA V100 | **$3.83** | High-performance GPU processing, faster training for deep learning models, higher cost but faster than `g4dn` |
-| 10GB          | `ml.c5.2xlarge`                | 8        | 16               | None    | $0.34                    | CPU-heavy processing, model training |
-| 10GB          | `ml.m5.2xlarge`                | 8        | 32               | None    | $0.38                    | Preprocessing, feature engineering, model training |
-| 10GB          | `g4dn.2xlarge` (T4 GPU)        | 8        | 32               | 1x NVIDIA T4 | $0.94 | Moderate-scale deep learning, cost-effective GPU training |
-| 10GB          | `p3.2xlarge` (V100 GPU)       | 8        | 61               | 1x NVIDIA V100 | **$3.83** | Faster GPU processing for deep learning, better suited for larger models if budget allows |
-| 50GB          | `ml.c5.4xlarge`                | 16       | 64               | None    | $0.77                    | CPU-heavy processing, large model training |
-| 50GB          | `ml.m5.4xlarge`                | 16       | 64               | None    | $0.77                    | Preprocessing, feature engineering, large model training |
-| 50GB          | `g4dn.4xlarge` (T4 GPU)        | 16       | 64               | 1x NVIDIA T4 | $1.48 | Moderate-scale deep learning, balanced performance and cost |
-| 100GB         | `g4dn.8xlarge` (T4 GPU)       | 32       | 128              | 1x NVIDIA T4 | **$2.76** | Large-scale model training with cost-effective GPU acceleration |
-| 100GB         | `p3.8xlarge` (V100 GPU)       | 32       | 244              | 4x NVIDIA V100 | **$15.20** | High-performance GPU processing for large deep learning models (e.g., transformers, CNNs) |
-| 100GB         | `p4d.24xlarge` (A100 GPU)      | 96       | 1,152            | 8x NVIDIA A100 | **$32.77** | High-performance DL for large datasets with batch streaming |
-| 1TB+         | `p3.16xlarge` (V100 GPU)       | 64       | 488              | 8x NVIDIA V100 | **$30.40** | Extreme-scale deep learning, large transformer training |
-| 1TB+         | `p4d.24xlarge` (A100 GPU)      | 96       | 1,152            | 8x NVIDIA A100 | **$32.77** | Deep learning with batch processing for 1TB+ datasets |
+| **Dataset Size** | **Recommended Notebook Instance (GCP)** | **vCPU** | **Memory (GiB)** | **GPU** | **Price per Hour (USD)** | **Suitable Tasks** |
+|------------------|------------------------------------------|----------|------------------|---------|--------------------------|--------------------|
+| < 1 GB           | `e2-micro` *(Free Tier)*                | 2        | 1                | None    | Free Tier Eligible       | Simple scripts, test notebooks, lightweight tasks |
+| < 1 GB           | `n2-standard-4` *(Workbench)*           | 4        | 16               | None    | ~$0.17                   | Preprocessing, regression, small models |
+| < 1 GB           | `a2-highgpu-1g` *(1× A100)*             | 12       | 85               | 1× NVIDIA A100 | ~$2.93 | Entry-level GPU experiments, fine-tuning small DL models |
+| 10 GB            | `c2-standard-8` *(Workbench)*           | 8        | 32               | None    | ~$0.34                   | CPU-heavy model training, feature engineering |
+| 10 GB            | `n2-standard-8` *(Workbench)*           | 8        | 32               | None    | ~$0.38                   | Preprocessing, small- to mid-scale ML |
+| 10 GB            | `a2-highgpu-2g` *(2× A100)*             | 24       | 170              | 2× NVIDIA A100 | ~$5.90 | Moderate deep learning workloads |
+| 50 GB            | `c2-standard-16` *(Workbench)*          | 16       | 64               | None    | ~$0.68                   | Large CPU training tasks, data prep |
+| 50 GB            | `n2-standard-16` *(Workbench)*          | 16       | 64               | None    | ~$0.70                   | Feature engineering, large non-GPU models |
+| 50 GB            | `a2-highgpu-4g` *(4× A100)*             | 48       | 340              | 4× NVIDIA A100 | ~$11.80 | Mid-scale deep learning, cost-balanced training |
+| 100 GB           | `a3-highgpu-8g` *(8× H100)*             | 128      | 512              | 8× NVIDIA H100 | ~$32.00 | Transformer training, distributed DL experiments |
+| 100 GB           | `a4-highgpu-4g` *(4× B200)*             | 96       | 768              | 4× NVIDIA B200 | ~$36.00 | Large-scale DL with advanced GPUs |
+| 1 TB+            | `a4x-highgpu-4g` *(4× B200)*            | 144      | 884              | 4× NVIDIA B200 | ~$40.00 | Foundation model research, large-batch DL |
+| 1 TB+            | `a3-mega` *(8× H100)*                   | 192      | 1024             | 8× NVIDIA H100 | ~$45.00 | Distributed large-model training across multiple GPUs |
+
 
