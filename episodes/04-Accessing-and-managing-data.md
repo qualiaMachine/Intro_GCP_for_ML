@@ -53,8 +53,8 @@ Similar to other cloud vendors, we can either (A) read data directly from Google
 ### A) Reading data directly into memory  
 
 ```python
-
 import pandas as pd
+import io
 
 bucket_name = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
 
