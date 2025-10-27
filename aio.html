@@ -1055,7 +1055,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1858,7 +1858,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2174,7 +2174,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -2352,6 +2352,73 @@ first.</p>
 </section><section><h2 class="section-heading" id="testing-train-py-locally-in-the-notebook">Testing train.py locally in the notebook<a class="anchor" aria-label="anchor" href="#testing-train-py-locally-in-the-notebook"></a>
 </h2>
 <hr class="half-width">
+<div id="understanding-the-xgboost-training-script-gcp-version" class="callout discussion">
+<div class="callout-square">
+<i class="callout-icon" data-feather="message-circle"></i>
+</div>
+<span class="callout-header">Discussion</span>
+<div id="understanding-the-xgboost-training-script-gcp-version" class="callout-inner">
+<h3 class="callout-title">Understanding the XGBoost Training Script (GCP
+version)</h3>
+<div class="callout-content">
+<p>Take a moment to review the <code>train_xgboost.py</code> script
+we’re using on GCP found in
+<code>Intro_GCP-for_ML/scripts/train_xgboost.py</code>. This script
+handles preprocessing, training, and saving an XGBoost model, while
+supporting <strong>local paths</strong> and <strong>GCS
+(<code>gs://</code>) paths</strong>, and it adapts to <strong>Vertex
+AI</strong> conventions (e.g., <code>AIP_MODEL_DIR</code>).</p>
+<p>Try answering the following questions:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Data preprocessing</strong>: What transformations are
+applied to the dataset before training?</p></li>
+<li><p><strong>Training function</strong>: What does the
+<code>train_model()</code> function do? Why print the training
+time?</p></li>
+<li><p><strong>Command-line arguments</strong>: What is the purpose of
+<code>argparse</code> in this script? How would you change the number of
+training rounds?</p></li>
+<li><p><strong>Handling local vs. GCP runs</strong>: How does the script
+let you run the same code locally, in Workbench, or as a Vertex AI job?
+Which environment variable controls where the model artifact is
+written?</p></li>
+<li><p><strong>Training and saving the model</strong>: What format is
+the dataset converted to before training, and why? How does the script
+save to a local path vs. a <code>gs://</code> destination?</p></li>
+</ol>
+<p>After reviewing, discuss any questions or observations with your
+group.</p>
+</div>
+</div>
+</div>
+<div id="accordionSolution1" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
+  <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
+</button>
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div class="accordion-body">
+<ol style="list-style-type: decimal">
+<li><p><strong>Data preprocessing</strong>: The script fills missing
+values (<code>Age</code> with median, <code>Embarked</code> with mode),
+maps categorical fields to numeric (<code>Sex</code> → {male:1,
+female:0}, <code>Embarked</code> → {S:0, C:1, Q:2}), and drops
+non-predictive columns (<code>Name</code>, <code>Ticket</code>,
+<code>Cabin</code>).</p></li>
+<li><p><strong>Training function</strong>: <code>train_model()</code>
+constructs and fits an XGBoost model with the provided parameters and
+prints wall-clock training time. Timing helps compare runs and make
+sensible scaling choices.</p></li>
+<li><p><strong>Command-line arguments</strong>: <code>argparse</code>
+lets you set hyperparameters and file paths without editing code (e.g.,
+<code>--max_depth</code>, <code>--eta</code>, <code>--num_round</code>,
+<code>--train</code>). To change rounds:<br>
+```bash python train_xgboost.py –num_round 200</p></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
 <p>Before scaling training jobs onto managed resources, it’s essential
 to test your training script locally. This prevents wasting GPU/TPU time
 on bugs or misconfigured code.</p>
@@ -2396,12 +2463,12 @@ discuss:</strong></p>
 </div>
 </div>
 </div>
-<div id="accordionSolution1" class="accordion challenge-accordion accordion-flush">
+<div id="accordionSolution2" class="accordion challenge-accordion accordion-flush">
 <div class="accordion-item">
-<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
-  <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
+  <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <ul>
 <li>
@@ -3781,7 +3848,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -3813,7 +3880,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -3843,7 +3910,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
