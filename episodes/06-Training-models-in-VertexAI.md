@@ -172,7 +172,7 @@ Training on this small dataset should take <1 minute. Log runtime as a baseline.
 - `xgboost-model`  # Python-serialized XGBoost model (Booster) via joblib; load with joblib.load for reuse.
 
 ## Training via Vertex AI custom training job
-Unlike "local" training, this launches a **managed training job** that runs on scalable compute. Vertex AI handles provisioning, scaling, logging, and saving outputs to GCS.  
+Unlike "local" training using our notebook's VM, this next approach launches a **managed training job** that runs on scalable compute. Vertex AI handles provisioning, scaling, logging, and saving outputs to GCS.  
 
 ### Which machine type to start with?
 Start with a small CPU machine like `n1-standard-4`. Only scale up to GPUs/TPUs once you've verified your script. See [Instances for ML on GCP](../instances-for-ML.html) for guidance.  
