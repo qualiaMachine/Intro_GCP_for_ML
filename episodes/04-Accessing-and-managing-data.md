@@ -22,8 +22,18 @@ exercises: 10
 
 ## Initial setup 
 
-#### Open JupyterLab notebook
-Once your Vertex AI Workbench notebook instance shows as **Running**, open it in JupyterLab. Create a new Python 3 notebook and rename it to: `Interacting-with-GCS.ipynb`.  
+#### Load pre-filled Jupyter notebooks 
+If you haven't opened your newly created VM from the last episode yet, lick **Open JupyterLab** to open the instance in Jupyter Lab. From there, we can create as many Jupyter notebooks as we would like within the instance environment. 
+
+We will then select the standard python3 environment to start our first .ipynb notebook (Jupyter notebook). We can use this environment since we aren't doing any training/tuning just yet.
+
+Within the Jupyter notebook, run the following command to clone the lesson repo into our Jupyter environment:
+
+```sh
+!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
+```
+
+Then, navigate to `/Intro_GCP_for_ML/notebooks/Accessing-and-managing-data.ipynb` to begin the first notebook.
 
 #### Set up GCP environment
 Before interacting with GCS, we need to authenticate and initialize the client libraries. This ensures our notebook can talk to GCP securely.
