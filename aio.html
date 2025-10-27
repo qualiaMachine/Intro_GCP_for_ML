@@ -940,66 +940,64 @@ click on a file and find its <strong>gs:// URI</strong> (e.g.,
 <code>gs://sinkorswim-johndoe-titanic/titanic_test.csv</code>). This URI
 will be used to access the data later.</p>
 </div>
-</section><section><h2 class="section-heading" id="gcs-bucket-costs">GCS bucket costs<a class="anchor" aria-label="anchor" href="#gcs-bucket-costs"></a>
+</section><section><h2 class="section-heading" id="data-transfer-storage-costs-explained">Data transfer &amp; storage costs explained<a class="anchor" aria-label="anchor" href="#data-transfer-storage-costs-explained"></a>
 </h2>
 <hr class="half-width">
 <p>GCS costs are based on storage class, data transfer, and operations
 (requests).</p>
-<div class="section level3">
-<h3 id="storage-costs">Storage costs<a class="anchor" aria-label="anchor" href="#storage-costs"></a>
-</h3>
 <ul>
-<li>Standard storage (us-central1): ~$0.02 per GB per month.<br>
+<li>
+<strong>Standard storage</strong>: Data storage cost is based on
+region. In <code>us-central1</code>, the cost is ~$0.02 per GB per
+month.<br>
 </li>
-<li>Other classes (Nearline, Coldline, Archive) are cheaper but with
-retrieval costs.</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="data-transfer-costs-explained">Data transfer costs explained<a class="anchor" aria-label="anchor" href="#data-transfer-costs-explained"></a>
-</h3>
-<ul>
 <li>
 <strong>Uploading data (ingress):</strong> Copying data into a GCS
 bucket from your laptop, campus HPC, or another provider is free.<br>
 </li>
 <li>
-<strong>Accessing data in the same region:</strong> If your bucket
-and your compute resources (VMs, Vertex AI jobs) are in the same region,
-you can read and stream data with no transfer fees. You only pay the
-storage cost per GB-month.<br>
-</li>
+<strong>Downloading data out of GCP (egress):</strong> Refers to
+data leaving Google’s network to the public internet, such as
+downloading files from GCS to your local machine. Typical cost is around
+$0.12 per GB to the U.S. and North America, more for other continents.
+<ul>
 <li>
 <strong>Cross-region access:</strong> If your bucket is in one
-region and your compute runs in another, you’ll pay an egress fee (about
-$0.01–0.02 per GB within North America, higher if crossing
-continents).<br>
+region and your compute runs in another, you’ll pay an egress fee of
+about $0.01–0.02 per GB within North America, higher if crossing
+continents.<br>
+</li>
+</ul>
 </li>
 <li>
-<strong>Downloading data out of GCP (egress):</strong> This refers
-to data leaving Google’s network to the public internet, such as
-downloading files to your laptop. Typical cost is around <strong>$0.12
-per GB</strong> to the U.S. and North America, more for other
-continents.<br>
+<strong>Reading (GET) requests:</strong> Each read or list operation
+incurs a small API request fee of roughly $0.004 per 10,000 requests.
+<ul>
+<li>Example: a training job that loads 10,000 image samples from GCS
+(one per batch) would make about 10,000 GET requests, costing around
+$0.004 total. Reading a large file such as a 1 GB CSV or TFRecord shard
+counts as a single GET request.<br>
+</li>
+</ul>
+</li>
+<li>
+<strong>Writing (PUT/POST/LIST) requests:</strong> Uploading,
+creating, or modifying objects costs about $0.05 per 10,000 requests.
+<ul>
+<li>Example: saving one model checkpoint file (e.g.,
+<code>model-weights.h5</code> or <code>model.pt</code>) triggers one PUT
+request. A training pipeline that saves a few dozen checkpoints or logs
+would cost well under one cent in request fees.<br>
+</li>
+</ul>
 </li>
 <li>
 <strong>Deleting data:</strong> Removing objects or buckets does not
 incur transfer costs. If you download data before deleting, you pay for
-the egress, but simply deleting in the console or CLI is free. For
-Nearline/Coldline/Archive storage classes, deleting before the minimum
-storage duration (30, 90, or 365 days) triggers an early deletion
-fee.</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="request-costs">Request costs<a class="anchor" aria-label="anchor" href="#request-costs"></a>
-</h3>
-<ul>
-<li>
-<code>GET</code> (read) requests: ~$0.004 per 10,000 requests.<br>
-</li>
-<li>
-<code>PUT</code> (write) requests: ~$0.05 per 10,000 requests.</li>
+the egress, but deleting directly in the console or CLI is free. For
+Nearline, Coldline, or Archive storage classes, deleting before the
+minimum storage duration (30, 90, or 365 days) triggers an
+early-deletion fee.</li>
 </ul>
 <p><strong><em>For detailed pricing, see <a href="https://cloud.google.com/storage/pricing" class="external-link">GCS Pricing
 Information</a>.</em></strong></p>
@@ -1031,7 +1029,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1089,7 +1087,6 @@ GB, and 1 TB (1024 GB).</strong></p>
 </li>
 <li><strong>Total: $143.36</strong></li>
 </ul>
-</div>
 </div>
 </div>
 </div>
@@ -1796,7 +1793,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2112,7 +2109,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -2332,7 +2329,7 @@ discuss:</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>
@@ -3712,7 +3709,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -3744,7 +3741,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -3774,7 +3771,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
