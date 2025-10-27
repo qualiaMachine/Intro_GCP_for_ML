@@ -664,7 +664,7 @@ for ML on GCP</a> for guidance.</p>
 <span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>MODEL_URI <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/xgb/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">/model.joblib"</span>  <span class="co"># everything will live beside this</span></span>
 <span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
 <span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co"># Staging bucket is only for the SDK's temp code tarball (aiplatform-*.tar.gz)</span></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>aiplatform.init(project<span class="op">=</span>PROJECT, location<span class="op">=</span>REGION, staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>aiplatform.init(project<span class="op">=</span>PROJECT_ID, location<span class="op">=</span>REGION, staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
 </div>
 <div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
