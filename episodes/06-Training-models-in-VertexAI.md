@@ -47,17 +47,9 @@ PROJECT_ID = client.project
 REGION = "us-central1"
 BUCKET_NAME = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
 
-print("Project:", PROJECT_ID)
+print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 ```
 
-- `aiplatform.init()`: Sets defaults for project, region, and staging bucket.  
-
-```python
-from google.cloud import aiplatform
-
-# Initialize Vertex AI client
-aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}")
-```
 
 #### 4. Get code from GitHub repo (skip if already completed)
 If you didn't complete earlier episodes, clone our code repo before moving forward. Check to make sure we're in our Jupyter home folder first.  
@@ -76,7 +68,7 @@ If you didn't complete earlier episodes, clone our code repo before moving forwa
 
 ### Understanding the XGBoost Training Script (GCP version)
 
-Take a moment to review the `train_xgboost.py` script we’re using on GCP found in `Intro_GCP-for_ML/scripts/train_xgboost.py`. This script handles preprocessing, training, and saving an XGBoost model, while supporting **local paths** and **GCS (`gs://`) paths**, and it adapts to **Vertex AI** conventions (e.g., `AIP_MODEL_DIR`).
+Take a moment to review the `train_xgboost.py` script we're using on GCP found in `Intro_GCP-for_ML/scripts/train_xgboost.py`. This script handles preprocessing, training, and saving an XGBoost model, while supporting **local paths** and **GCS (`gs://`) paths**, and it adapts to **Vertex AI** conventions (e.g., `AIP_MODEL_DIR`).
 
 Try answering the following questions:
 
@@ -103,10 +95,7 @@ After reviewing, discuss any questions or observations with your group.
 
 2. **Training function**: `train_model()` constructs and fits an XGBoost model with the provided parameters and prints wall-clock training time. Timing helps compare runs and make sensible scaling choices.
 
-3. **Command-line arguments**: `argparse` lets you set hyperparameters and file paths without editing code (e.g., `--max_depth`, `--eta`, `--num_round`, `--train`). To change rounds:  
-   ```bash
-   python train_xgboost.py --num_round 200
-   ```
+3. **Command-line arguments**: `argparse` lets you set hyperparameters and file paths without editing code (e.g., `--max_depth`, `--eta`, `--num_round`, `--train`). To change rounds:  `python train_xgboost.py --num_round 200`
 
 4. **Handling local vs. GCP runs**:  
    - **Input**: You pass `--train` as either a local path (`train.csv`) or a GCS URI (`gs://bucket/path.csv`). The script automatically detects `gs://` and reads the file directly from Cloud Storage using the Python client.  
@@ -121,25 +110,19 @@ After reviewing, discuss any questions or observations with your group.
 Before scaling training jobs onto managed resources, it's essential to test your training script locally. This prevents wasting GPU/TPU time on bugs or misconfigured code.  
 
 ### Guidelines for testing ML pipelines before scaling
+
 - **Run tests locally first** with small datasets.  
 - **Use a subset of your dataset** (1–5%) for fast checks.  
 - **Start with minimal compute** before moving to larger accelerators.  
 - **Log key metrics** such as loss curves and runtimes.  
 - **Verify correctness first** before scaling up.  
 
-::::::::::::::::::::::::::::::::::::::: discussion
 
 ### What tests should we do before scaling?  
 
-Before scaling to multiple or more powerful instances (e.g., GPUs or TPUs), it's important to run a few sanity checks. **In your group, discuss:**  
+Before scaling to multiple or more powerful instances (e.g., GPUs or TPUs), it's important to run a few sanity checks. Skipping these can lead to: silent data bugs, runtime blowups at scale, inefficient experiments, or broken model artifacts.  
 
-- Which checks do you think are most critical before scaling up?  
-- What potential issues might we miss if we skip this step?  
-
-:::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
-::::::::::::::::::::::::::::::::::::::: solution
+Here is a non-exhaustive list of suggested tests to perform before scaling up your compute needs.
 
 - **Data loads correctly** – dataset loads without errors, expected columns exist, missing values handled.  
 - **Overfitting check** – train on a tiny dataset (e.g., 100 rows). If it doesn't overfit, something is off.  
@@ -148,9 +131,6 @@ Before scaling to multiple or more powerful instances (e.g., GPUs or TPUs), it's
 - **Memory estimate** – check approximate memory use.  
 - **Save & reload** – ensure model saves, reloads, and infers without errors.  
 
-Skipping these can lead to: silent data bugs, runtime blowups at scale, inefficient experiments, or broken model artifacts.  
-
-:::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## Download data into notebook environment
 Sometimes it's helpful to keep a copy of data in your notebook VM for quick iteration, even though **GCS is the preferred storage location**.  
@@ -180,47 +160,56 @@ start = t.time()
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
-Training on this small dataset should take <1 minute. Log runtime as a baseline.  You should see the following output files:
+Training on this small dataset should take <1 minute. Log runtime as a baseline.  You should see the following output file:
 
-- xgboost-model.joblib  # Python-serialized XGBoost model (Booster) via joblib; load with joblib.load for reuse.
-- eval_history.csv      # Per-iteration validation metrics; columns: iter,val_logloss (good for plotting learning curves).
-- training.log          # Full stdout/stderr from the run (params, dataset sizes, timings, warnings/errors) for audit/debug.
-- metrics.json          # Structured summary: final_val_logloss, num_boost_round, params, train_rows/val_rows, features[], model_uri.
-
+- `xgboost-model`  # Python-serialized XGBoost model (Booster) via joblib; load with joblib.load for reuse.
 
 ## Training via Vertex AI custom training job
-Unlike "local" training, this launches a **managed training job** that runs on scalable compute. Vertex AI handles provisioning, scaling, logging, and saving outputs to GCS.  
+Unlike "local" training using our notebook's VM, this next approach launches a **managed training job** that runs on scalable compute. Vertex AI handles provisioning, scaling, logging, and saving outputs to GCS.  
 
 ### Which machine type to start with?
-Start with a small CPU machine like `n1-standard-4`. Only scale up to GPUs/TPUs once you've verified your script. See [Instances for ML on GCP](../instances-for-ML.html) for guidance.  
+Start with a small CPU machine like `n1-standard-4`. Only scale up to GPUs/TPUs once you've verified your script. See [Instances for ML on GCP](https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html) for guidance.  
+
+```python
+MACHINE = 'n1-standard-4'
+```
 
 ### Creating a custom training job with the SDK
+
+We'll first initialize the Vertex AI platform with our environment variables. We'll also set a `RUN_ID` and `ARTIFACT_DIR` to help store outputs. 
 
 ```python
 from google.cloud import aiplatform
 import datetime as dt
-
-PROJECT = "doit-rci-mlm25-4626"
-REGION = "us-central1"
-BUCKET = BUCKET_NAME  # e.g., "endemann_titanic" (same region as REGION)
-
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
-MODEL_URI = f"gs://{BUCKET}/artifacts/xgb/{RUN_ID}/model.joblib"  # everything will live beside this
+print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
+ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/"  # everything will live beside this
 
 # Staging bucket is only for the SDK's temp code tarball (aiplatform-*.tar.gz)
-aiplatform.init(project=PROJECT, location=REGION, staging_bucket=f"gs://{BUCKET}")
+aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}/.vertex_staging")
+```
+
+This next section defines a custom training job in Vertex AI, specifying how and where the training code will run.  It points to your training script (`train_xgboost.py`), uses Google's prebuilt XGBoost training container image, and installs any extra dependencies your script needs (in this case, `google-cloud-storage` for accessing GCS).  The `display_name` sets a readable name for tracking the job in the Vertex AI console.
+
+```python
 
 job = aiplatform.CustomTrainingJob(
     display_name=f"endemann_xgb_{RUN_ID}",
-    script_path="Intro_GCP_VertexAI/code/train_xgboost.py",
+    script_path="Intro_GCP_for_ML/scripts/train_xgboost.py",
     container_uri="us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest",
-    requirements=["gcsfs"],  # script writes gs://MODEL_URI and sidecar files
+    requirements=["google-cloud-storage"],  # your script uses storage.Client()
 )
+```
 
+Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier.  
+The `args` list passes command-line parameters directly into your training script, including hyperparameters and the path to the training data in GCS.  
+`base_output_dir` specifies where all outputs (model, metrics, logs) will be written in Cloud Storage, and `machine_type` controls the compute resources used for training.  
+When `sync=True`, the notebook waits until the job finishes before continuing, making it easier to inspect results immediately after training.
+
+```python
 job.run(
     args=[
-        f"--train=gs://{BUCKET}/titanic_train.csv",
-        f"--model_out={MODEL_URI}",      # model, metrics.json, eval_history.csv, training.log all go here
+        f"--train=gs://{BUCKET_NAME}/titanic_train.csv",
         "--max_depth=3",
         "--eta=0.1",
         "--subsample=0.8",
@@ -228,15 +217,26 @@ job.run(
         "--num_round=100",
     ],
     replica_count=1,
-    machine_type="n1-standard-4",
+    machine_type=MACHINE, # MACHINE variable defined above; adjust to something more powerful when needed
+    base_output_dir=ARTIFACT_DIR,  # sets AIP_MODEL_DIR for your script
     sync=True,
 )
 
-print("Model + logs folder:", MODEL_URI.rsplit("/", 1)[0])
+print("Model + logs folder:", ARTIFACT_DIR)
 
 ```
 
-This launches a managed training job with Vertex AI. 
+This launches a managed training job with Vertex AI. It should take 2-5 minutes for the training job to complete. 
+
+### Understanding the training output message
+
+After your job finishes, you may see a message like: `Training did not produce a Managed Model returning None.` This is expected when running a `CustomTrainingJob` without specifying deployment parameters.  Vertex AI supports two modes:
+
+- **CustomTrainingJob (research/development)** – You control training and save models/logs to Cloud Storage via `AIP_MODEL_DIR`. This is ideal for experimentation and cost control.
+- **TrainingPipeline (for deployment)** – You include `model_serving_container_image_uri` and `model_display_name`, and Vertex automatically registers a *Managed Model* in the Model Registry for deployment to an endpoint.
+
+In our setup, we're intentionally using the simpler **CustomTrainingJob** path. Your trained model is safely stored under your specified artifact directory (e.g., `gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/`), and you can later register or deploy it manually when ready.
+
 
 ## Monitoring training jobs in the Console
 1. Go to the Google Cloud Console.  
@@ -244,38 +244,56 @@ This launches a managed training job with Vertex AI.
 3. Click on your job name to see status, logs, and output model artifacts.  
 4. Cancel jobs from the console if needed (be careful not to stop jobs you don't own in shared projects).
 
-#### Visit "training pipelines" to verify it's running. It may take around 5 minutes to finish.
+#### Visit "training pipelines" to verify it's running.
 
 https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&project=doit-rci-mlm25-4626
 
-Should output the following files:
+## Training artifacts
 
-- endemann_titanic/artifacts/xgb/20250924-154740/xgboost-model.joblib  # Python-serialized XGBoost model (Booster) via joblib; load with joblib.load for reuse.
-- endemann_titanic/artifacts/xgb/20250924-154740/eval_history.csv      # Per-iteration validation metrics; columns: iter,val_logloss (good for plotting learning curves).
-- endemann_titanic/artifacts/xgb/20250924-154740/training.log          # Full stdout/stderr from the run (params, dataset sizes, timings, warnings/errors) for audit/debug.
-- endemann_titanic/artifacts/xgb/20250924-154740/metrics.json          # Structured summary: final_val_logloss, num_boost_round, params, train_rows/val_rows, features[], model_uri.
+After the training run completes, we can manually view our bucket using the Google Cloud Console or run the below code.
 
-## When training takes too long
+```python
+total_size_bytes = 0
+# bucket = client.bucket(BUCKET_NAME)
+
+for blob in client.list_blobs(BUCKET_NAME):
+    total_size_bytes += blob.size
+    print(blob.name)
+
+total_size_mb = total_size_bytes / (1024**2)
+print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
+```
+
+#### Training Artifacts  →  `ARTIFACT_DIR`
+This is your *intended output location*, set via `base_output_dir`.  
+It contains everything your training script explicitly writes. In our case, this includes:
+
+- **`{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/xgboost-model`** — Serialized XGBoost model (Booster) saved via `joblib`; reload later with `joblib.load()` for reuse or deployment.  
+
+
+#### System-Generated Files
+Additional system-generated files (e.g., Vertex's `.tar.gz` code package or `executor_output.json`) will appear under `.vertex_staging/` and can be safely ignored or auto-deleted via lifecycle rules.
+
+### When training takes too long  
 
 Two main options in Vertex AI:  
 
-- **Option 1: Upgrade to more powerful machine types** (e.g., add GPUs like T4, V100, A100).  
-- **Option 2: Use distributed training with multiple replicas**.  
+**Option 1: Upgrade to more powerful machine types**  
+- The simplest way to reduce training time is to use a larger machine or add GPUs (e.g., T4, V100, A100).  
+- This works best for small or medium datasets (<10 GB) and avoids the coordination overhead of distributed training.  
+- GPUs and TPUs can accelerate deep learning workloads significantly.  
 
-### Option 1: Upgrade machine type (preferred first step)
-- Works best for small/medium datasets (<10 GB).  
-- Avoids the coordination overhead of distributed training.  
-- GPUs/TPUs accelerate deep learning tasks significantly.  
+**Option 2: Use distributed training with multiple replicas**  
+- Vertex AI supports distributed training for many frameworks.  
+- The dataset is split across replicas, each training a portion of the data with synchronized gradient updates.  
+- This approach is most useful for large datasets and long-running jobs.  
 
-### Option 2: Distributed training with multiple replicas
-- Supported in Vertex AI for many frameworks.  
-- Split data across replicas, each trains a portion, gradients synchronized.  
-- More beneficial for very large datasets and long-running jobs.  
+**When distributed training makes sense**  
+- Dataset size exceeds 10–50 GB.  
+- Training on a single machine takes more than 10 hours.  
+- The model is a deep learning workload that scales naturally across GPUs or TPUs.  
 
-### When distributed training makes sense
-- Dataset >10–50 GB.  
-- Training time >10 hours on single machine.  
-- Deep learning workloads that naturally parallelize across GPUs/TPUs.  
+We will explore both options more in depth in the next episode when we train a neural network.
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
