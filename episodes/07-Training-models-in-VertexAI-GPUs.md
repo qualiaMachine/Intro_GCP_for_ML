@@ -26,85 +26,82 @@ Open a fresh Jupyter notebook in Vertex AI Workbench (Instances tab) and initial
 
 ```python
 from google.cloud import aiplatform, storage
-import datetime as dt
-
-PROJECT_ID = "your-gcp-project-id"
+client = storage.Client()
+PROJECT_ID = client.project
 REGION = "us-central1"
-BUCKET_NAME = "your-bucket"  # same region as REGION
+BUCKET_NAME = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
+
+print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 
 # Only used for the SDK's small packaging tarball.
-aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}")
+aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}/.vertex_staging") # store tar balls in staging folder 
 ```
 
 ### Select the PyTorch environment (kernel)
-- In JupyterLab, click the kernel name (top‑right) and switch to a **PyTorch‑ready** kernel. On Workbench Instances this is usually available out‑of‑the‑box; if `import torch` fails, install locally:
-  ```bash
-  pip install torch torchvision --upgrade
-  ```
-- Quick check that your kernel can see PyTorch (and optionally CUDA if your VM has a GPU):
-  ```python
-  import torch
-  print("torch:", torch.__version__, "cuda:", torch.cuda.is_available())
-  ```
-- Note: local PyTorch is only needed for **local tests**. Your **Vertex AI job** uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
+In JupyterLab, click the kernel name (top‑right) and switch to a **PyTorch** kernel. 
 
-Notes:
-- The staging bucket only stores the SDK’s temporary tar.gz of your training code.
-- We will **not** use `base_output_dir`; your script will write everything under a single `gs://…/artifacts/.../` path.
+- Note: local PyTorch is only needed for **local tests**. Your **Vertex AI job** uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
 
 ## Prepare data as `.npz`
 
+Why `.npz`?
+
+- Smaller, faster I/O than CSV for arrays.
+- Natural fit for `torch.utils.data.Dataset` / `DataLoader`.
+- One file can hold multiple arrays (`X_train`, `y_train`).
+  
 ```python
 import pandas as pd
+import io
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 
 # Load Titanic CSV (from local or GCS you've already downloaded to the notebook)
-df = pd.read_csv("titanic_train.csv")
+bucket = client.bucket(BUCKET_NAME)
+blob = bucket.blob("titanic_train.csv")
+df = pd.read_csv(io.BytesIO(blob.download_as_bytes()))
 
 # Minimal preprocessing to numeric arrays
-sex_enc = LabelEncoder().fit(df["Sex"])  
-df["Sex"] = sex_enc.transform(df["Sex"])  
-df["Embarked"] = df["Embarked"].fillna("S")
-emb_enc = LabelEncoder().fit(df["Embarked"])  
-df["Embarked"] = emb_enc.transform(df["Embarked"])  
-df["Age"] = df["Age"].fillna(df["Age"].median())
-df["Fare"] = df["Fare"].fillna(df["Fare"].median())
+sex_enc = LabelEncoder().fit(df["Sex"])            # Fit label encoder on 'Sex' column (male/female)
+df["Sex"] = sex_enc.transform(df["Sex"])           # Convert 'Sex' to numeric values (e.g., male=1, female=0)
+df["Embarked"] = df["Embarked"].fillna("S")       # Replace missing embarkation ports with most common ('S')
+emb_enc = LabelEncoder().fit(df["Embarked"])       # Fit label encoder on 'Embarked' column (S/C/Q)
+df["Embarked"] = emb_enc.transform(df["Embarked"]) # Convert embarkation categories to numeric codes
+df["Age"] = df["Age"].fillna(df["Age"].median())   # Fill missing ages with median (robust to outliers)
+df["Fare"] = df["Fare"].fillna(df["Fare"].median())# Fill missing fares with median to avoid NaNs
 
-X = df[["Pclass","Sex","Age","SibSp","Parch","Fare","Embarked"]].values
-y = df["Survived"].values
+X = df[["Pclass","Sex","Age","SibSp","Parch","Fare","Embarked"]].values  # Select numeric feature columns as input
+y = df["Survived"].values                                                # Target variable (1=survived, 0=did not survive)
 
-scaler = StandardScaler()
-X = scaler.fit_transform(X)
+scaler = StandardScaler()                                                # Initialize standard scaler for standardization (best practice for neural net training)
+X = scaler.fit_transform(X)                                              # Scale features to mean=0, std=1 for stable training
 
-X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_val, y_train, y_val = train_test_split(                       # Split dataset into training and validation sets
+    X, y, test_size=0.2, random_state=42)                                # 80% training, 20% validation (fixed random seed)
 
-np.savez("train_data.npz", X_train=X_train, y_train=y_train)
-np.savez("val_data.npz",   X_val=X_val,   y_val=y_val)
+np.savez("/home/jupyter/train_data.npz", X_train=X_train, y_train=y_train)             # Save training arrays to compressed .npz file
+np.savez("/home/jupyter/val_data.npz",   X_val=X_val,   y_val=y_val)                   # Save validation arrays to compressed .npz file
 
+```
+
+We can then upload the files to our GCS bucket.
+
+```python
 # Upload to GCS
-client = storage.Client()
-bucket = client.bucket(BUCKET_NAME)
-bucket.blob("data/train_data.npz").upload_from_filename("train_data.npz")
-bucket.blob("data/val_data.npz").upload_from_filename("val_data.npz")
+bucket.blob("data/train_data.npz").upload_from_filename("/home/jupyter/train_data.npz")
+bucket.blob("data/val_data.npz").upload_from_filename("/home/jupyter/val_data.npz")
 print("Uploaded: gs://%s/data/train_data.npz and val_data.npz" % BUCKET_NAME)
 ```
 
-:::::::::::::::::::::::::::::::: callout
-
-#### Why `.npz`?
-- Smaller, faster I/O than CSV for arrays.
-- Natural fit for `torch.utils.data.Dataset` / `DataLoader`.
-- One file can hold multiple arrays (`X_train`, `y_train`).
-
-::::::::::::::::::::::::::::::::::::::::::::::::
-
 ## Minimal PyTorch training script (`train_nn.py`)
 
-Place this file in your repo (e.g., `GCP_helpers/train_nn.py`). It does three things:
-1) loads `.npz` from local or GCS, 2) trains a tiny MLP, 3) **writes all outputs side‑by‑side** (model + metrics + eval history + training.log) to the same `--model_out` folder.
+Find this file in our repo: `Intro_GCP_for_ML/scripts/train_nn.py`. It does three things:
+1) loads `.npz` from local or GCS
+2) trains a tiny MLP
+3) **writes all outputs side‑by‑side** (model + metrics + eval history + training.log) to the same `--model_out` folder.
 
+   
 ```python
 # GCP_helpers/train_nn.py
 import argparse, io, json, os, sys
@@ -112,7 +109,7 @@ import numpy as np
 import torch, torch.nn as nn
 from time import time
 
-# --- small helpers for GCS/local I/O ---
+#  small helpers for GCS/local I/O 
 def _parent_dir(p):
     return p.rsplit("/", 1)[0] if p.startswith("gs://") else (os.path.dirname(p) or ".")
 
@@ -134,7 +131,7 @@ def _write_bytes(path: str, data: bytes):
 def _write_text(path: str, text: str):
     _write_bytes(path, text.encode("utf-8"))
 
-# --- tiny MLP ---
+#  tiny MLP 
 class MLP(nn.Module):
     def __init__(self, d_in):
         super().__init__()
@@ -246,6 +243,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 ```
 
 ## Launch the training job (no base_output_dir)
