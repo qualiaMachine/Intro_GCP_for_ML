@@ -47,7 +47,7 @@ PROJECT_ID = client.project
 REGION = "us-central1"
 BUCKET_NAME = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
 
-print("Project:", PROJECT_ID)
+print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 ```
 
 
@@ -110,6 +110,7 @@ After reviewing, discuss any questions or observations with your group.
 Before scaling training jobs onto managed resources, it's essential to test your training script locally. This prevents wasting GPU/TPU time on bugs or misconfigured code.  
 
 ### Guidelines for testing ML pipelines before scaling
+
 - **Run tests locally first** with small datasets.  
 - **Use a subset of your dataset** (1–5%) for fast checks.  
 - **Start with minimal compute** before moving to larger accelerators.  
@@ -169,20 +170,26 @@ Unlike "local" training using our notebook's VM, this next approach launches a *
 ### Which machine type to start with?
 Start with a small CPU machine like `n1-standard-4`. Only scale up to GPUs/TPUs once you've verified your script. See [Instances for ML on GCP](https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html) for guidance.  
 
+```python
+MACHINE = 'n1-standard-4'
+```
+
 ### Creating a custom training job with the SDK
 
+We'll first initialize the Vertex AI platform with our environment variables. We'll also set a `RUN_ID` and `ARTIFACT_DIR` to help store outputs. 
 
 ```python
 from google.cloud import aiplatform
 import datetime as dt
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
-MODEL_URI = f"gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/model.joblib"  # everything will live beside this
+print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
+ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/"  # everything will live beside this
 
 # Staging bucket is only for the SDK's temp code tarball (aiplatform-*.tar.gz)
-aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}")
+aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}/.vertex_staging")
 ```
 
-- `aiplatform.init()`: Sets defaults for project, region, and staging bucket.  
+This next section defines a custom training job in Vertex AI, specifying how and where the training code will run.  It points to your training script (`train_xgboost.py`), uses Google's prebuilt XGBoost training container image, and installs any extra dependencies your script needs (in this case, `google-cloud-storage` for accessing GCS).  The `display_name` sets a readable name for tracking the job in the Vertex AI console.
 
 ```python
 
@@ -192,7 +199,14 @@ job = aiplatform.CustomTrainingJob(
     container_uri="us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest",
     requirements=["google-cloud-storage"],  # your script uses storage.Client()
 )
+```
 
+Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier.  
+The `args` list passes command-line parameters directly into your training script, including hyperparameters and the path to the training data in GCS.  
+`base_output_dir` specifies where all outputs (model, metrics, logs) will be written in Cloud Storage, and `machine_type` controls the compute resources used for training.  
+When `sync=True`, the notebook waits until the job finishes before continuing, making it easier to inspect results immediately after training.
+
+```python
 job.run(
     args=[
         f"--train=gs://{BUCKET_NAME}/titanic_train.csv",
@@ -203,13 +217,12 @@ job.run(
         "--num_round=100",
     ],
     replica_count=1,
-    machine_type="n1-standard-4",
-    base_output_dir=MODEL_URI.rsplit("/", 1)[0],  # sets AIP_MODEL_DIR for your script
+    machine_type=MACHINE, # MACHINE variable defined above; adjust to something more powerful when needed
+    base_output_dir=ARTIFACT_DIR,  # sets AIP_MODEL_DIR for your script
     sync=True,
 )
 
-print("Model + logs folder:", MODEL_URI.rsplit("/", 1)[0])
-
+print("Model + logs folder:", ARTIFACT_DIR)
 
 ```
 
@@ -221,38 +234,37 @@ This launches a managed training job with Vertex AI. It should take 2-5 minutes 
 3. Click on your job name to see status, logs, and output model artifacts.  
 4. Cancel jobs from the console if needed (be careful not to stop jobs you don't own in shared projects).
 
-#### Visit "training pipelines" to verify it's running. It may take around 5 minutes to finish.
+#### Visit "training pipelines" to verify it's running.
 
 https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&project=doit-rci-mlm25-4626
 
-Should output the following files:
+## Training artifacts
 
-- {BUCKET_NAME}/artifacts/xgb/{RUN_ID}/xgboost-model         # Python-serialized XGBoost model (Booster) via joblib; load with joblib.load for reuse.
-- {BUCKET_NAME}/artifacts/xgb/{RUN_ID}/eval_history.csv      # Per-iteration validation metrics; columns: iter,val_logloss (good for plotting learning curves).
-- {BUCKET_NAME}/artifacts/xgb/{RUN_ID}/training.log          # Full stdout/stderr from the run (params, dataset sizes, timings, warnings/errors) for audit/debug.
-- {BUCKET_NAME}/artifacts/xgb/{RUN_ID}/metrics.json          # Structured summary: final_val_logloss, num_boost_round, params, train_rows/val_rows, features[], model_uri.
-  
-## When training takes too long
+After the training run completes, we can manually view our bucket using the Google Cloud Console or run the below code.
 
-Two main options in Vertex AI:  
+```python
+total_size_bytes = 0
+# bucket = client.bucket(BUCKET_NAME)
 
-- **Option 1: Upgrade to more powerful machine types** (e.g., add GPUs like T4, V100, A100).  
-- **Option 2: Use distributed training with multiple replicas**.  
+for blob in client.list_blobs(BUCKET_NAME):
+    total_size_bytes += blob.size
+    print(blob.name)
 
-### Option 1: Upgrade machine type (preferred first step)
-- Works best for small/medium datasets (<10 GB).  
-- Avoids the coordination overhead of distributed training.  
-- GPUs/TPUs accelerate deep learning tasks significantly.  
+total_size_mb = total_size_bytes / (1024**2)
+print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
+```
 
-### Option 2: Distributed training with multiple replicas
-- Supported in Vertex AI for many frameworks.  
-- Split data across replicas, each trains a portion, gradients synchronized.  
-- More beneficial for very large datasets and long-running jobs.  
+#### Training Artifacts  →  `gs://<bucket>/artifacts/<run_id>/`
+This is your *intended output location*, set via `base_output_dir`.  
+It contains everything your training script explicitly writes. In our case, this includes:
 
-### When distributed training makes sense
-- Dataset >10–50 GB.  
-- Training time >10 hours on single machine.  
-- Deep learning workloads that naturally parallelize across GPUs/TPUs.  
+- **`{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/xgboost-model`** — Serialized XGBoost model (Booster) saved via `joblib`; reload later with `joblib.load()` for reuse or deployment.  
+
+
+#### System-Generated Files
+Additional system-generated files (e.g., Vertex's `.tar.gz` code package or `executor_output.json`) will appear under `.vertex_staging/` and can be safely ignored or auto-deleted via lifecycle rules.
+
+
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
