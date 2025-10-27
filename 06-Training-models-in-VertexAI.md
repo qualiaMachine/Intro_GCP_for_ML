@@ -50,14 +50,6 @@ BUCKET_NAME = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
 print("Project:", PROJECT_ID)
 ```
 
-- `aiplatform.init()`: Sets defaults for project, region, and staging bucket.  
-
-```python
-from google.cloud import aiplatform
-
-# Initialize Vertex AI client
-aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}")
-```
 
 #### 4. Get code from GitHub repo (skip if already completed)
 If you didn't complete earlier episodes, clone our code repo before moving forward. Check to make sure we're in our Jupyter home folder first.  
@@ -179,6 +171,7 @@ Start with a small CPU machine like `n1-standard-4`. Only scale up to GPUs/TPUs 
 
 ### Creating a custom training job with the SDK
 
+
 ```python
 from google.cloud import aiplatform
 import datetime as dt
@@ -189,18 +182,20 @@ MODEL_URI = f"gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/model.joblib"  # everyth
 aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}")
 ```
 
+- `aiplatform.init()`: Sets defaults for project, region, and staging bucket.  
+
 ```python
+
 job = aiplatform.CustomTrainingJob(
     display_name=f"endemann_xgb_{RUN_ID}",
     script_path="Intro_GCP_for_ML/scripts/train_xgboost.py",
     container_uri="us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest",
-    requirements=["gcsfs"],  # script writes gs://MODEL_URI and sidecar files
+    requirements=["google-cloud-storage"],  # your script uses storage.Client()
 )
 
 job.run(
     args=[
         f"--train=gs://{BUCKET_NAME}/titanic_train.csv",
-        f"--model_out={MODEL_URI}",      # model, metrics.json, eval_history.csv, training.log all go here
         "--max_depth=3",
         "--eta=0.1",
         "--subsample=0.8",
@@ -209,14 +204,16 @@ job.run(
     ],
     replica_count=1,
     machine_type="n1-standard-4",
+    base_output_dir=MODEL_URI.rsplit("/", 1)[0],  # sets AIP_MODEL_DIR for your script
     sync=True,
 )
 
 print("Model + logs folder:", MODEL_URI.rsplit("/", 1)[0])
 
+
 ```
 
-This launches a managed training job with Vertex AI. 
+This launches a managed training job with Vertex AI. It should take 2-5 minutes for the training job to complete. 
 
 ## Monitoring training jobs in the Console
 1. Go to the Google Cloud Console.  
