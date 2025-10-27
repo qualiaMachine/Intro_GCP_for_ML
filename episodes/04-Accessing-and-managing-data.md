@@ -76,6 +76,14 @@ gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
 
 ### B) Downloading a local copy  
 
+If you prefer, you can download the file from your bucket to the notebook VM's local disk. This makes repeated reads faster within our notebook environment, but note that *each download counts as a "GET" request* and may incur a small data transfer (egress) cost *if the bucket and VM are in different regions*. If both are in the same region, there are no transfer fees — only standard request costs (typically fractions of a cent).
+
+Let's verify what our path looks like first.
+
+```
+!pwd
+```
+
 ```python
 blob_name = "titanic_train.csv"
 local_path = "/home/jupyter/titanic_train.csv"
