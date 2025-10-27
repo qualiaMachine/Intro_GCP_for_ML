@@ -517,7 +517,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li><p><strong>Data preprocessing</strong>: The script fills missing
 values (<code>Age</code> with median, <code>Embarked</code> with mode),
@@ -579,29 +579,15 @@ accelerators.<br></li>
 runtimes.<br></li>
 <li>
 <strong>Verify correctness first</strong> before scaling up.</li>
-</ul><div id="what-tests-should-we-do-before-scaling" class="callout discussion">
-<div class="callout-square">
-<i class="callout-icon" data-feather="message-circle"></i>
-</div>
-<span class="callout-header">Discussion</span>
-<div id="what-tests-should-we-do-before-scaling" class="callout-inner">
-<h3 class="callout-title">What tests should we do before scaling?</h3>
-<div class="callout-content">
-<p>Before scaling to multiple or more powerful instances (e.g., GPUs or
-TPUs), it’s important to run a few sanity checks. <strong>In your group,
-discuss:</strong></p>
-<ul><li>Which checks do you think are most critical before scaling up?<br></li>
-<li>What potential issues might we miss if we skip this step?</li>
 </ul></div>
-</div>
-</div>
-<div id="accordionSolution2" class="accordion challenge-accordion accordion-flush">
-<div class="accordion-item">
-<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
-  <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
-</button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
-<div class="accordion-body">
+<div class="section level3">
+<h3 id="what-tests-should-we-do-before-scaling">What tests should we do before scaling?<a class="anchor" aria-label="anchor" href="#what-tests-should-we-do-before-scaling"></a></h3>
+<p>Before scaling to multiple or more powerful instances (e.g., GPUs or
+TPUs), it’s important to run a few sanity checks. Skipping these can
+lead to: silent data bugs, runtime blowups at scale, inefficient
+experiments, or broken model artifacts.</p>
+<p>Here is a non-exhaustive list of suggested tests to perform before
+scaling up your compute needs.</p>
 <ul><li>
 <strong>Data loads correctly</strong> – dataset loads without
 errors, expected columns exist, missing values handled.<br></li>
@@ -620,13 +606,7 @@ use.<br></li>
 <li>
 <strong>Save &amp; reload</strong> – ensure model saves, reloads,
 and infers without errors.</li>
-</ul><p>Skipping these can lead to: silent data bugs, runtime blowups at
-scale, inefficient experiments, or broken model artifacts.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
+</ul></div>
 </section><section><h2 class="section-heading" id="download-data-into-notebook-environment">Download data into notebook environment<a class="anchor" aria-label="anchor" href="#download-data-into-notebook-environment"></a></h2>
 <hr class="half-width"><p>Sometimes it’s helpful to keep a copy of data in your notebook VM for
 quick iteration, even though <strong>GCS is the preferred storage
