@@ -66,12 +66,23 @@ train_data.head()
 
 ```
 
-If you get an error, return to the Google Cloud Console (where we created our bucket and VM) and search for "Cloud Shell Editor". Open a shell editor and run the below command, *replacing the bucket name with your bucket's name`:
+If you get an error, return to the Google Cloud Console (where we created our bucket and VM) and search for "Cloud Shell Editor". Open a shell editor and run the below commands, *replacing the bucket name with your bucket's name`:
 
 ```sh
+# Grant read permisssions on the bucket
 gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
   --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
   --role="roles/storage.objectViewer"
+
+# Grant write permisssions on the bucket
+gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
+  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+  --role="roles/storage.objectCreator"
+
+# (Only if you also need overwrite/delete)
+gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
+  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+  --role="roles/storage.objectAdmin"
 ```
 
 ### B) Downloading a local copy  
