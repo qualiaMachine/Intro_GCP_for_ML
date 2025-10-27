@@ -645,9 +645,10 @@ as a baseline. You should see the following output file:</p>
 <code>xgboost-model</code> # Python-serialized XGBoost model
 (Booster) via joblib; load with joblib.load for reuse.</li>
 </ul></section><section><h2 class="section-heading" id="training-via-vertex-ai-custom-training-job">Training via Vertex AI custom training job<a class="anchor" aria-label="anchor" href="#training-via-vertex-ai-custom-training-job"></a></h2>
-<hr class="half-width"><p>Unlike “local” training, this launches a <strong>managed training
-job</strong> that runs on scalable compute. Vertex AI handles
-provisioning, scaling, logging, and saving outputs to GCS.</p>
+<hr class="half-width"><p>Unlike “local” training using our notebook’s VM, this next approach
+launches a <strong>managed training job</strong> that runs on scalable
+compute. Vertex AI handles provisioning, scaling, logging, and saving
+outputs to GCS.</p>
 <div class="section level3">
 <h3 id="which-machine-type-to-start-with">Which machine type to start with?<a class="anchor" aria-label="anchor" href="#which-machine-type-to-start-with"></a></h3>
 <p>Start with a small CPU machine like <code>n1-standard-4</code>. Only
