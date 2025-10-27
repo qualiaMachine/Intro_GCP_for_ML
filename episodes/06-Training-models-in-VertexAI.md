@@ -112,7 +112,7 @@ Sometimes it's helpful to keep a copy of data in your notebook VM for quick iter
 from google.cloud import storage
 
 client = storage.Client()
-bucket = client.bucket(bucket_name)
+bucket = client.bucket(BUCKET_NAME)
 
 blob = bucket.blob("titanic_train.csv")
 blob.download_to_filename("titanic_train.csv")
@@ -155,7 +155,7 @@ import datetime as dt
 
 PROJECT = "doit-rci-mlm25-4626"
 REGION = "us-central1"
-BUCKET = bucket_name  # e.g., "endemann_titanic" (same region as REGION)
+BUCKET = BUCKET_NAME  # e.g., "endemann_titanic" (same region as REGION)
 
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
 MODEL_URI = f"gs://{BUCKET}/artifacts/xgb/{RUN_ID}/model.joblib"  # everything will live beside this
