@@ -133,7 +133,7 @@ Click **Create** if everything looks good.
 - In the bucket dashboard, click **Upload Files**.  
 - Select your Titanic CSVs and upload.  
 
-**Note the GCS URI for your data** After uploading, click on a file and find its **gs:// URI** (e.g., `gs://sinkorswim_john-doe_titanic/titanic_test.csv`). This URI will be used to access the data later.
+**Note the GCS URI for your data** After uploading, click on a file and find its **gs:// URI** (e.g., `gs://sinkorswim-johndoe-titanic/titanic_test.csv`). This URI will be used to access the data later.
 
 ## GCS bucket costs
 
