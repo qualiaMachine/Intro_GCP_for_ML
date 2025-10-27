@@ -22,7 +22,11 @@ exercises: 10
 
 ## Initial setup (controller notebook)
 
-Open a fresh Jupyter notebook in Vertex AI Workbench (Instances tab) and initialize:
+## Initial setup (controller notebook)
+
+Open a fresh Jupyter notebook in Vertex AI Workbench. Select the **PyTorch** environment (kernel)
+
+Note: local PyTorch is only needed for local tests. Your **Vertex AI job** uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
 
 ```python
 from google.cloud import aiplatform, storage
@@ -36,11 +40,6 @@ print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 # Only used for the SDK's small packaging tarball.
 aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}/.vertex_staging") # store tar balls in staging folder 
 ```
-
-### Select the PyTorch environment (kernel)
-In JupyterLab, click the kernel name (top‑right) and switch to a **PyTorch** kernel. 
-
-- Note: local PyTorch is only needed for **local tests**. Your **Vertex AI job** uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
 
 ## Prepare data as `.npz`
 
