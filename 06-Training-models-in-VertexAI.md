@@ -182,17 +182,14 @@ Start with a small CPU machine like `n1-standard-4`. Only scale up to GPUs/TPUs 
 ```python
 from google.cloud import aiplatform
 import datetime as dt
-
-PROJECT = "doit-rci-mlm25-4626"
-REGION = "us-central1"
-BUCKET = BUCKET_NAME  # e.g., "endemann_titanic" (same region as REGION)
-
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
-MODEL_URI = f"gs://{BUCKET}/artifacts/xgb/{RUN_ID}/model.joblib"  # everything will live beside this
+MODEL_URI = f"gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/model.joblib"  # everything will live beside this
 
 # Staging bucket is only for the SDK's temp code tarball (aiplatform-*.tar.gz)
-aiplatform.init(project=PROJECT, location=REGION, staging_bucket=f"gs://{BUCKET}")
+aiplatform.init(project=PROJECT, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}")
+```
 
+```python
 job = aiplatform.CustomTrainingJob(
     display_name=f"endemann_xgb_{RUN_ID}",
     script_path="Intro_GCP_VertexAI/code/train_xgboost.py",
@@ -202,7 +199,7 @@ job = aiplatform.CustomTrainingJob(
 
 job.run(
     args=[
-        f"--train=gs://{BUCKET}/titanic_train.csv",
+        f"--train=gs://{BUCKET_NAME}/titanic_train.csv",
         f"--model_out={MODEL_URI}",      # model, metrics.json, eval_history.csv, training.log all go here
         "--max_depth=3",
         "--eta=0.1",
