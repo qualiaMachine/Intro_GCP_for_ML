@@ -33,7 +33,7 @@ Within the Jupyter notebook, run the following command to clone the lesson repo 
 !git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
 ```
 
-Then, navigate to `/Intro_GCP_for_ML/notebooks/Accessing-and-managing-data.ipynb` to begin the first notebook.
+Then, navigate to `/Intro_GCP_for_ML/notebooks/04-Accessing-and-managing-data.ipynb` to begin the first notebook.
 
 #### Set up GCP environment
 Before interacting with GCS, we need to authenticate and initialize the client libraries. This ensures our notebook can talk to GCP securely.
