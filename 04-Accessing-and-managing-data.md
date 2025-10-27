@@ -122,12 +122,20 @@ print(f"Estimated annual cost: ${monthly_cost*12:.4f}")
 For updated prices, see [GCS Pricing](https://cloud.google.com/storage/pricing).
 
 ## Writing output files to GCS
+Create a sample file on the notebook VM's storage.
 
 ```python
 # Create a sample file locally on the notebook VM
-with open("Notes.txt", "w") as f:
+file_path = "/home/jupyter/Notes.txt"
+with open(file_path, "w") as f:
     f.write("This is a test note for GCS.")
 
+!ls /home/jupyter
+```
+
+Upload file.
+
+```python
 # Point to the right bucket
 bucket = client.bucket(bucket_name)
 
@@ -136,7 +144,7 @@ bucket = client.bucket(bucket_name)
 blob = bucket.blob("docs/Notes.txt")
 
 # Upload the local file into that blob (object) in GCS
-blob.upload_from_filename("Notes.txt")
+blob.upload_from_filename(file_path)
 
 print("File uploaded successfully.")
 
