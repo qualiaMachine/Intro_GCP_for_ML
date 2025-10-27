@@ -69,13 +69,9 @@ We will follow these steps to create our first Workbench Instance:
 
 While we won't modify environment settings during this workshop, it's useful to understand what these options control when creating or editing a Workbench Instance in Vertex AI Workbench.
 
-All Workbench environments use JupyterLab 3 by default, with the latest NVIDIA GPU drivers, CUDA libraries, and Intel optimizations preinstalled.  
-You can optionally select JupyterLab 4 (currently in preview) or provide a custom container image to run your own environment (for example, a Docker image containing specialized ML frameworks or dependencies).  
-If needed, you can also specify a post-startup script stored in Cloud Storage (`gs://path/to/script.sh`) to automatically configure the instance (install packages, mount buckets, etc.) when it boots.  
+All Workbench environments use JupyterLab 3 by default, with the latest NVIDIA GPU drivers, CUDA libraries, and Intel optimizations preinstalled. You can optionally select JupyterLab 4 (currently in preview) or provide a custom container image to run your own environment (for example, a Docker image containing specialized ML frameworks or dependencies).  If needed, you can also specify a post-startup script stored in Cloud Storage (`gs://path/to/script.sh`) to automatically configure the instance (install packages, mount buckets, etc.) when it boots.  
 
 See: [Vertex AI Workbench release notes](https://cloud.google.com/vertex-ai/docs/release-notes) for supported versions and base images.
-
-> In short: your Workbench environment is a containerized JupyterLab session running on a Compute Engine VM. These options control the version, performance, storage, networking, and permissions of that underlying VM, even though the interface abstracts most of the complexity away.
 
 #### Advanced settings: Machine Type 
 
