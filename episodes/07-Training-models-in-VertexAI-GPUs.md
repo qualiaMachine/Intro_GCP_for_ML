@@ -97,9 +97,8 @@ print("Uploaded: gs://%s/data/train_data.npz and val_data.npz" % BUCKET_NAME)
 
 Find this file in our repo: `Intro_GCP_for_ML/scripts/train_nn.py`. It does three things:
 1) loads `.npz` from local or GCS
-2) trains a tiny MLP
+2) trains a tiny multilayer perceptron (MLP)
 3) **writes all outputs side‑by‑side** (model + metrics + eval history + training.log) to the same `--model_out` folder.
-
    
 ```python
 # GCP_helpers/train_nn.py
