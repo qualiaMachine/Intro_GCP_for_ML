@@ -192,7 +192,7 @@ aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCK
 ```python
 job = aiplatform.CustomTrainingJob(
     display_name=f"endemann_xgb_{RUN_ID}",
-    script_path="Intro_GCP_VertexAI/code/train_xgboost.py",
+    script_path="Intro_GCP_for_ML/scripts/train_xgboost.py",
     container_uri="us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest",
     requirements=["gcsfs"],  # script writes gs://MODEL_URI and sidecar files
 )
