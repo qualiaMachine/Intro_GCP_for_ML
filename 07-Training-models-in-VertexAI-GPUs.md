@@ -101,147 +101,40 @@ Find this file in our repo: `Intro_GCP_for_ML/scripts/train_nn.py`. It does thre
 3) **writes all outputs side‑by‑side** (model + metrics + eval history + training.log) to the same `--model_out` folder.
    
 ```python
-# GCP_helpers/train_nn.py
-import argparse, io, json, os, sys
-import numpy as np
-import torch, torch.nn as nn
-from time import time
+import time as t
 
-#  small helpers for GCS/local I/O 
-def _parent_dir(p):
-    return p.rsplit("/", 1)[0] if p.startswith("gs://") else (os.path.dirname(p) or ".")
+start = t.time()
 
-def _write_bytes(path: str, data: bytes):
-    if path.startswith("gs://"):
-        try:
-            import fsspec
-            with fsspec.open(path, "wb") as f:
-                f.write(data)
-        except Exception:
-            from google.cloud import storage
-            b, k = path[5:].split("/", 1)
-            storage.Client().bucket(b).blob(k).upload_from_string(data)
-    else:
-        os.makedirs(_parent_dir(path), exist_ok=True)
-        with open(path, "wb") as f:
-            f.write(data)
+# Example: run your custom training script with args
+!python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
+    --train /home/jupyter/train_data.npz \
+    --val /home/jupyter/val_data.npz \
+    --epochs 50 \
+    --learning_rate 0.001
 
-def _write_text(path: str, text: str):
-    _write_bytes(path, text.encode("utf-8"))
+print(f"Total local runtime: {t.time() - start:.2f} seconds")
+```
 
-#  tiny MLP 
-class MLP(nn.Module):
-    def __init__(self, d_in):
-        super().__init__()
-        self.net = nn.Sequential(
-            nn.Linear(d_in, 32), nn.ReLU(),
-            nn.Linear(32, 16), nn.ReLU(),
-            nn.Linear(16, 1), nn.Sigmoid(),
-        )
-    def forward(self, x):
-        return self.net(x)
+To address the numpy mismatch, we can run the following code first.
+```python
+!pip install --upgrade --force-reinstall "numpy<2"
+```
 
-class _Tee:
-    def __init__(self, *s): self.s = s
-    def write(self, d):
-        for x in self.s: x.write(d); x.flush()
-    def flush(self):
-        for x in self.s: x.flush()
+Then, rerun.
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--train", required=True)
-    ap.add_argument("--val",   required=True)
-    ap.add_argument("--epochs", type=int, default=100)
-    ap.add_argument("--learning_rate", type=float, default=1e-3)
-    ap.add_argument("--model_out", required=True, help="gs://…/artifacts/.../model.pt")
-    args = ap.parse_args()
+```python
+import time as t
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+start = t.time()
 
-    # All artifacts will sit next to model_out
-    model_path = args.model_out
-    art_dir = _parent_dir(model_path)
+# Example: run your custom training script with args
+!python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
+    --train /home/jupyter/train_data.npz \
+    --val /home/jupyter/val_data.npz \
+    --epochs 50 \
+    --learning_rate 0.001
 
-    # capture stdout/stderr
-    buf = io.StringIO()
-    orig_out, orig_err = sys.stdout, sys.stderr
-    sys.stdout = _Tee(sys.stdout, buf)
-    sys.stderr = _Tee(sys.stderr, buf)
-    log_path = f"{art_dir}/training.log"
-
-    try:
-        # Load npz (supports gs:// via fsspec)
-        def _npz_load(p):
-            if p.startswith("gs://"):
-                import fsspec
-                with fsspec.open(p, "rb") as f:
-                    by = f.read()
-                return np.load(io.BytesIO(by))
-            else:
-                return np.load(p)
-        train = _npz_load(args.train)
-        val   = _npz_load(args.val)
-        Xtr, ytr = train["X_train"].astype("float32"), train["y_train"].astype("float32")
-        Xva, yva = val["X_val"].astype("float32"),   val["y_val"].astype("float32")
-
-        Xtr_t = torch.from_numpy(Xtr).to(device)
-        ytr_t = torch.from_numpy(ytr).view(-1,1).to(device)
-        Xva_t = torch.from_numpy(Xva).to(device)
-        yva_t = torch.from_numpy(yva).view(-1,1).to(device)
-
-        model = MLP(Xtr.shape[1]).to(device)
-        opt = torch.optim.Adam(model.parameters(), lr=args.learning_rate)
-        loss_fn = nn.BCELoss()
-
-        hist = []
-        t0 = time()
-        for ep in range(1, args.epochs+1):
-            model.train()
-            opt.zero_grad()
-            pred = model(Xtr_t)
-            loss = loss_fn(pred, ytr_t)
-            loss.backward(); opt.step()
-
-            model.eval()
-            with torch.no_grad():
-                val_loss = loss_fn(model(Xva_t), yva_t).item()
-            hist.append(val_loss)
-            if ep % 10 == 0 or ep == 1:
-                print(f"epoch={ep} val_loss={val_loss:.4f}")
-        print(f"Training time: {time()-t0:.2f}s on {device}")
-
-        # save model
-        torch.save(model.state_dict(), model_path)
-        print(f"[INFO] Saved model: {model_path}")
-
-        # metrics.json and eval_history.csv
-        import json
-        metrics = {
-            "final_val_loss": float(hist[-1]) if hist else None,
-            "epochs": int(args.epochs),
-            "learning_rate": float(args.learning_rate),
-            "train_rows": int(Xtr.shape[0]),
-            "val_rows": int(Xva.shape[0]),
-            "features": list(range(Xtr.shape[1])),
-            "model_uri": model_path,
-            "device": str(device),
-        }
-        from io import StringIO
-        _write_text(f"{art_dir}/metrics.json", json.dumps(metrics, indent=2))
-        csv = "iter,val_loss\n" + "\n".join(f"{i+1},{v}" for i, v in enumerate(hist))
-        _write_text(f"{art_dir}/eval_history.csv", csv)
-    finally:
-        # persist log and restore streams
-        try:
-            _write_text(log_path, buf.getvalue())
-        except Exception as e:
-            print(f"[WARN] could not write log: {e}")
-        sys.stdout, sys.stderr = orig_out, orig_err
-
-if __name__ == "__main__":
-    main()
-
+print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
 ## Launch the training job (no base_output_dir)
