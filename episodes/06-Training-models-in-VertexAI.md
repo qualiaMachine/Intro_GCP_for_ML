@@ -230,11 +230,11 @@ https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&pro
 
 Should output the following files:
 
-- endemann_titanic/artifacts/xgb/20250924-154740/xgboost-model.joblib  # Python-serialized XGBoost model (Booster) via joblib; load with joblib.load for reuse.
-- endemann_titanic/artifacts/xgb/20250924-154740/eval_history.csv      # Per-iteration validation metrics; columns: iter,val_logloss (good for plotting learning curves).
-- endemann_titanic/artifacts/xgb/20250924-154740/training.log          # Full stdout/stderr from the run (params, dataset sizes, timings, warnings/errors) for audit/debug.
-- endemann_titanic/artifacts/xgb/20250924-154740/metrics.json          # Structured summary: final_val_logloss, num_boost_round, params, train_rows/val_rows, features[], model_uri.
-
+- {BUCKET_NAME}/artifacts/xgb/{RUN_ID}/xgboost-model         # Python-serialized XGBoost model (Booster) via joblib; load with joblib.load for reuse.
+- {BUCKET_NAME}/artifacts/xgb/{RUN_ID}/eval_history.csv      # Per-iteration validation metrics; columns: iter,val_logloss (good for plotting learning curves).
+- {BUCKET_NAME}/artifacts/xgb/{RUN_ID}/training.log          # Full stdout/stderr from the run (params, dataset sizes, timings, warnings/errors) for audit/debug.
+- {BUCKET_NAME}/artifacts/xgb/{RUN_ID}/metrics.json          # Structured summary: final_val_logloss, num_boost_round, params, train_rows/val_rows, features[], model_uri.
+  
 ## When training takes too long
 
 Two main options in Vertex AI:  
