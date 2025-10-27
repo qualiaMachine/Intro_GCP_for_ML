@@ -60,7 +60,7 @@ We will follow these steps to create our first Workbench Instance:
 - **IMPORTANT:** Open the "Advanced optoins menu next
   -  **Labels (required for cost tracking):**  Under the Details menu, add the following tags (all lowercase) so that you can track the total cost of your activity on GCP later:
       - `project = teamname` (your team's name)
-      - `name = name` (your name)
+      - `name = name` (firstname-lastname)
       - `purpose = train` (i.e., the notebook's overall purpose — train, tune, RAG, etc.)
         
 ![Required tags for notebook.](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-tags.jpg){alt="Screenshot showing required tags for notebook"}
