@@ -710,17 +710,17 @@ you don’t own in shared projects).</li>
 around 5 minutes to finish.<a class="anchor" aria-label="anchor" href="#visit-training-pipelines-to-verify-its-running--it-may-take-around-5-minutes-to-finish-"></a></h4>
 <p><a href="https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link uri">https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626</a></p>
 <p>Should output the following files:</p>
-<ul><li>endemann_titanic/artifacts/xgb/20250924-154740/xgboost-model.joblib
-# Python-serialized XGBoost model (Booster) via joblib; load with
+<ul><li>{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/xgboost-model #
+Python-serialized XGBoost model (Booster) via joblib; load with
 joblib.load for reuse.</li>
-<li>endemann_titanic/artifacts/xgb/20250924-154740/eval_history.csv #
+<li>{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/eval_history.csv #
 Per-iteration validation metrics; columns: iter,val_logloss (good for
 plotting learning curves).</li>
-<li>endemann_titanic/artifacts/xgb/20250924-154740/training.log # Full
+<li>{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/training.log # Full
 stdout/stderr from the run (params, dataset sizes, timings,
 warnings/errors) for audit/debug.</li>
-<li>endemann_titanic/artifacts/xgb/20250924-154740/metrics.json #
-Structured summary: final_val_logloss, num_boost_round, params,
+<li>{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/metrics.json # Structured
+summary: final_val_logloss, num_boost_round, params,
 train_rows/val_rows, features[], model_uri.</li>
 </ul></div>
 </section><section><h2 class="section-heading" id="when-training-takes-too-long">When training takes too long<a class="anchor" aria-label="anchor" href="#when-training-takes-too-long"></a></h2>

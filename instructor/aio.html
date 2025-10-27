@@ -1059,7 +1059,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1544,7 +1544,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1864,7 +1864,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2181,7 +2181,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -2633,17 +2633,17 @@ around 5 minutes to finish.<a class="anchor" aria-label="anchor" href="#visit-tr
 <p><a href="https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link uri">https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626</a></p>
 <p>Should output the following files:</p>
 <ul>
-<li>endemann_titanic/artifacts/xgb/20250924-154740/xgboost-model.joblib
-# Python-serialized XGBoost model (Booster) via joblib; load with
+<li>{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/xgboost-model #
+Python-serialized XGBoost model (Booster) via joblib; load with
 joblib.load for reuse.</li>
-<li>endemann_titanic/artifacts/xgb/20250924-154740/eval_history.csv #
+<li>{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/eval_history.csv #
 Per-iteration validation metrics; columns: iter,val_logloss (good for
 plotting learning curves).</li>
-<li>endemann_titanic/artifacts/xgb/20250924-154740/training.log # Full
+<li>{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/training.log # Full
 stdout/stderr from the run (params, dataset sizes, timings,
 warnings/errors) for audit/debug.</li>
-<li>endemann_titanic/artifacts/xgb/20250924-154740/metrics.json #
-Structured summary: final_val_logloss, num_boost_round, params,
+<li>{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/metrics.json # Structured
+summary: final_val_logloss, num_boost_round, params,
 train_rows/val_rows, features[], model_uri.</li>
 </ul>
 </div>
