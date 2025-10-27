@@ -80,9 +80,9 @@ To upload our Titanic dataset to a GCS bucket, we'll follow these steps:
 #### 3a. Getting Started (bucket name and tags)
 - **Provide a bucket name**: Enter a globally unique name. For this workshop, we can use the following naming convention to easily locate our buckets: `teamname_first-lastname_dataname` (e.g., sinkorswim_john-doe_titanic)
 - **Add labels (tags) to track costs**: Add labels to track resource usage and billing. If you're working in a shared account, this step is *mandatory*. If not, it's still recommended to help you track your own costs!
-    - `project=teamname`
-    - `name=first-lastname`
-    - `purpose=bucket-dataname`
+    - `project = teamname` (your team's name)
+    - `name = name` (firstname-lastname)
+    - `purpose=bucket-dataname` (include bucket- prefix followed by name of dataset)
  
 ![Example of Tags for a GCS Bucket](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-tags.jpg){alt="Screenshot showing required tags for a GCS bucket"}
 
