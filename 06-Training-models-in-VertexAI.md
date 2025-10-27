@@ -175,7 +175,7 @@ Training on this small dataset should take <1 minute. Log runtime as a baseline.
 Unlike "local" training using our notebook's VM, this next approach launches a **managed training job** that runs on scalable compute. Vertex AI handles provisioning, scaling, logging, and saving outputs to GCS.  
 
 ### Which machine type to start with?
-Start with a small CPU machine like `n1-standard-4`. Only scale up to GPUs/TPUs once you've verified your script. See [Instances for ML on GCP](../instances-for-ML.html) for guidance.  
+Start with a small CPU machine like `n1-standard-4`. Only scale up to GPUs/TPUs once you've verified your script. See [Instances for ML on GCP](https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html) for guidance.  
 
 ### Creating a custom training job with the SDK
 
