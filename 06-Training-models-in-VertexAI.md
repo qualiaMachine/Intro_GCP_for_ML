@@ -264,7 +264,26 @@ It contains everything your training script explicitly writes. In our case, this
 #### System-Generated Files
 Additional system-generated files (e.g., Vertex's `.tar.gz` code package or `executor_output.json`) will appear under `.vertex_staging/` and can be safely ignored or auto-deleted via lifecycle rules.
 
+### When training takes too long  
 
+Two main options in Vertex AI:  
+
+**Option 1: Upgrade to more powerful machine types**  
+- The simplest way to reduce training time is to use a larger machine or add GPUs (e.g., T4, V100, A100).  
+- This works best for small or medium datasets (<10 GB) and avoids the coordination overhead of distributed training.  
+- GPUs and TPUs can accelerate deep learning workloads significantly.  
+
+**Option 2: Use distributed training with multiple replicas**  
+- Vertex AI supports distributed training for many frameworks.  
+- The dataset is split across replicas, each training a portion of the data with synchronized gradient updates.  
+- This approach is most useful for large datasets and long-running jobs.  
+
+**When distributed training makes sense**  
+- Dataset size exceeds 10–50 GB.  
+- Training on a single machine takes more than 10 hours.  
+- The model is a deep learning workload that scales naturally across GPUs or TPUs.  
+
+We will explore both options more in depth in the next episode when we train a neural network.
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
