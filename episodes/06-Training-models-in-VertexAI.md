@@ -71,6 +71,45 @@ If you didn't complete earlier episodes, clone our code repo before moving forwa
 ```
 
 ## Testing train.py locally in the notebook
+
+::::::::::::::::::::::::::::::::::::::: challenge
+
+### Understanding the XGBoost Training Script (GCP version)
+
+Take a moment to review the `train_xgboost.py` script we’re using on GCP found in `Intro_GCP-for_ML/scripts/train_xgboost.py`. This script handles preprocessing, training, and saving an XGBoost model, while supporting **local paths** and **GCS (`gs://`) paths**, and it adapts to **Vertex AI** conventions (e.g., `AIP_MODEL_DIR`).
+
+Try answering the following questions:
+
+1. **Data preprocessing**: What transformations are applied to the dataset before training?
+
+2. **Training function**: What does the `train_model()` function do? Why print the training time?
+
+3. **Command-line arguments**: What is the purpose of `argparse` in this script? How would you change the number of training rounds?
+
+4. **Handling local vs. GCP runs**: How does the script let you run the same code locally, in Workbench, or as a Vertex AI job? Which environment variable controls where the model artifact is written?
+
+5. **Training and saving the model**: What format is the dataset converted to before training, and why? How does the script save to a local path vs. a `gs://` destination?
+
+After reviewing, discuss any questions or observations with your group.
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+::::::::::::::::::::::::::::::::::::::: solution
+
+### Solution
+
+1. **Data preprocessing**: The script fills missing values (`Age` with median, `Embarked` with mode), maps categorical fields to numeric (`Sex` → {male:1, female:0}, `Embarked` → {S:0, C:1, Q:2}), and drops non-predictive columns (`Name`, `Ticket`, `Cabin`).
+
+2. **Training function**: `train_model()` constructs and fits an XGBoost model with the provided parameters and prints wall-clock training time. Timing helps compare runs and make sensible scaling choices.
+
+3. **Command-line arguments**: `argparse` lets you set hyperparameters and file paths without editing code (e.g., `--max_depth`, `--eta`, `--num_round`, `--train`). To change rounds:  
+   ```bash
+   python train_xgboost.py --num_round 200
+
+:::::::::::::::::::::::::::::::::::::::
+
+
 Before scaling training jobs onto managed resources, it's essential to test your training script locally. This prevents wasting GPU/TPU time on bugs or misconfigured code.  
 
 ### Guidelines for testing ML pipelines before scaling
