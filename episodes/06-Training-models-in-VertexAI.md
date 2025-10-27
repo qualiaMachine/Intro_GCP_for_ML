@@ -28,7 +28,7 @@ exercises: 2
 Navigate to `/Intro_GCP_for_ML/notebooks/06-Training-models-in-VertexAI.ipynb` to begin this notebook.
 
 #### 2. CD to instance home directory
-So we all can reference helper functions consistently, change directory to your Jupyter home directory.  
+To ensure we're all in the saming starting spot, change directory to your Jupyter home directory.
 
 ```python
 %cd /home/jupyter/
