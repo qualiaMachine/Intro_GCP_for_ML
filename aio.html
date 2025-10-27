@@ -1029,7 +1029,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1513,7 +1513,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1665,20 +1665,18 @@ securely.</p>
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> storage</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="im">import</span> io</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>client <span class="op">=</span> storage.Client()</span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Project:"</span>, client.project)</span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Credentials:"</span>, client._credentials.service_account_email)</span></code></pre>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>client <span class="op">=</span> storage.Client()</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Project:"</span>, client.project)</span></code></pre>
 </div>
 </div>
-</section><section><h2 class="section-heading" id="reading-data-from-gcs">Reading data from GCS<a class="anchor" aria-label="anchor" href="#reading-data-from-gcs"></a>
+</section><section><h2 class="section-heading" id="reading-data-from-google-cloud-storage-gcs">Reading data from Google Cloud Storage (GCS)<a class="anchor" aria-label="anchor" href="#reading-data-from-google-cloud-storage-gcs"></a>
 </h2>
 <hr class="half-width">
-<p>As with S3, you can either (A) read data directly from GCS into
-memory, or (B) download a copy into your notebook VM. Since we’re using
-notebooks as controllers rather than training environments, the
-recommended approach is <strong>reading directly from GCS</strong>.</p>
+<p>Similar to other cloud vendors, we can either (A) read data directly
+from Google Cloud Storage (GCS) into memory, or (B) download a copy into
+your notebook VM. Since we’re using notebooks as controllers rather than
+training environments, the recommended approach is <em>reading directly
+from GCS into memory</em>.</p>
 <div class="section level3">
 <h3 id="a-reading-data-directly-into-memory">A) Reading data directly into memory<a class="anchor" aria-label="anchor" href="#a-reading-data-directly-into-memory"></a>
 </h3>
@@ -1686,88 +1684,101 @@ recommended approach is <strong>reading directly from GCS</strong>.</p>
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>bucket_name <span class="op">=</span> <span class="st">"yourname_titanic"</span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_train.csv"</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>train_data <span class="op">=</span> pd.read_csv(io.BytesIO(blob.download_as_bytes()))</span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="bu">print</span>(train_data.shape)</span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>train_data.head()</span></code></pre>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>bucket_name <span class="op">=</span> <span class="st">"sinkorswim-johndoe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_train.csv"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>train_data <span class="op">=</span> pd.read_csv(io.BytesIO(blob.download_as_bytes()))</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="bu">print</span>(train_data.shape)</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>train_data.head()</span></code></pre>
+</div>
+<p>If you get an error, return to the Google Cloud Console (where we
+created our bucket and VM) and search for “Cloud Shell Editor”. Open a
+shell editor and run the below command, *replacing the bucket name with
+your bucket’s name`:</p>
+<div class="codewrapper sourceCode" id="cb4">
+<h3 class="code-label">SH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode sh" tabindex="0"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectViewer"</span></span></code></pre>
 </div>
 </div>
 <div class="section level3">
 <h3 id="b-downloading-a-local-copy">B) Downloading a local copy<a class="anchor" aria-label="anchor" href="#b-downloading-a-local-copy"></a>
 </h3>
-<div class="codewrapper sourceCode" id="cb4">
+<div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>bucket_name <span class="op">=</span> <span class="st">"yourname-titanic-gcs"</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>blob_name <span class="op">=</span> <span class="st">"titanic_train.csv"</span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>local_path <span class="op">=</span> <span class="st">"/home/jupyter/titanic_train.csv"</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(blob_name)</span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>blob.download_to_filename(local_path)</span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>lh <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span></span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>blob_name <span class="op">=</span> <span class="st">"titanic_train.csv"</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>local_path <span class="op">=</span> <span class="st">"/home/jupyter/titanic_train.csv"</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(blob_name)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>blob.download_to_filename(local_path)</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>lh <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span></span></code></pre>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="checking-storage-usage-of-a-bucket">Checking storage usage of a bucket<a class="anchor" aria-label="anchor" href="#checking-storage-usage-of-a-bucket"></a>
 </h2>
 <hr class="half-width">
-<div class="codewrapper sourceCode" id="cb5">
-<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>total_size_bytes <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    total_size_bytes <span class="op">+=</span> blob.size</span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>total_size_mb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>bucket_name<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
-</div>
-</section><section><h2 class="section-heading" id="estimating-storage-costs">Estimating storage costs<a class="anchor" aria-label="anchor" href="#estimating-storage-costs"></a>
-</h2>
-<hr class="half-width">
 <div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>storage_price_per_gb <span class="op">=</span> <span class="fl">0.02</span>  <span class="co"># $/GB/month for Standard storage</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>total_size_gb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">3</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>monthly_cost <span class="op">=</span> total_size_gb <span class="op">*</span> storage_price_per_gb</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated monthly cost: $</span><span class="sc">{</span>monthly_cost<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated annual cost: $</span><span class="sc">{</span>monthly_cost<span class="op">*</span><span class="dv">12</span><span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>total_size_bytes <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    total_size_bytes <span class="op">+=</span> blob.size</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>total_size_mb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>bucket_name<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
 </div>
-<p>For updated prices, see <a href="https://cloud.google.com/storage/pricing" class="external-link">GCS Pricing</a>.</p>
-</section><section><h2 class="section-heading" id="writing-output-files-to-gcs">Writing output files to GCS<a class="anchor" aria-label="anchor" href="#writing-output-files-to-gcs"></a>
+</section><section><h2 class="section-heading" id="estimating-storage-costs">Estimating storage costs<a class="anchor" aria-label="anchor" href="#estimating-storage-costs"></a>
 </h2>
 <hr class="half-width">
 <div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Create a sample file locally on the notebook VM</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"Notes.txt"</span>, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    f.write(<span class="st">"This is a test note for GCS."</span>)</span>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>storage_price_per_gb <span class="op">=</span> <span class="fl">0.02</span>  <span class="co"># $/GB/month for Standard storage</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>total_size_gb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">3</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>monthly_cost <span class="op">=</span> total_size_gb <span class="op">*</span> storage_price_per_gb</span>
 <span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co"># Point to the right bucket</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co"># Create a *Blob* object, which represents a path inside the bucket</span></span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co"># (here it will end up as gs://&lt;bucket_name&gt;/docs/Notes.txt)</span></span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"docs/Notes.txt"</span>)</span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a></span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co"># Upload the local file into that blob (object) in GCS</span></span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>blob.upload_from_filename(<span class="st">"Notes.txt"</span>)</span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a></span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"File uploaded successfully."</span>)</span></code></pre>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated monthly cost: $</span><span class="sc">{</span>monthly_cost<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated annual cost: $</span><span class="sc">{</span>monthly_cost<span class="op">*</span><span class="dv">12</span><span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
-<p>List bucket contents:</p>
+<p>For updated prices, see <a href="https://cloud.google.com/storage/pricing" class="external-link">GCS Pricing</a>.</p>
+</section><section><h2 class="section-heading" id="writing-output-files-to-gcs">Writing output files to GCS<a class="anchor" aria-label="anchor" href="#writing-output-files-to-gcs"></a>
+</h2>
+<hr class="half-width">
 <div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>    <span class="bu">print</span>(blob.name)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Create a sample file locally on the notebook VM</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">"Notes.txt"</span>, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    f.write(<span class="st">"This is a test note for GCS."</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co"># Point to the right bucket</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co"># Create a *Blob* object, which represents a path inside the bucket</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co"># (here it will end up as gs://&lt;bucket_name&gt;/docs/Notes.txt)</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"docs/Notes.txt"</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co"># Upload the local file into that blob (object) in GCS</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>blob.upload_from_filename(<span class="st">"Notes.txt"</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"File uploaded successfully."</span>)</span></code></pre>
+</div>
+<p>List bucket contents:</p>
+<div class="codewrapper sourceCode" id="cb9">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>    <span class="bu">print</span>(blob.name)</span></code></pre>
 </div>
 <div id="challenge-estimating-gcs-costs" class="callout challenge">
 <div class="callout-square">
@@ -1793,7 +1804,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2109,7 +2120,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -2329,7 +2340,7 @@ discuss:</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>
@@ -3709,7 +3720,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -3741,7 +3752,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -3771,7 +3782,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
