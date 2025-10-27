@@ -1027,7 +1027,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1156,7 +1156,7 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-03-Notebooks-as-controllers"><p>Content from <a href="03-Notebooks-as-controllers.html">Notebooks as Controllers</a></p>
 <hr>
-<p>Last updated on 2025-10-24 |
+<p>Last updated on 2025-10-27 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/03-Notebooks-as-controllers.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -1333,23 +1333,15 @@ useful to understand what these options control when creating or editing
 a Workbench Instance in Vertex AI Workbench.</p>
 <p>All Workbench environments use JupyterLab 3 by default, with the
 latest NVIDIA GPU drivers, CUDA libraries, and Intel optimizations
-preinstalled.<br>
-You can optionally select JupyterLab 4 (currently in preview) or provide
-a custom container image to run your own environment (for example, a
-Docker image containing specialized ML frameworks or
-dependencies).<br>
-If needed, you can also specify a post-startup script stored in Cloud
-Storage (<code>gs://path/to/script.sh</code>) to automatically configure
-the instance (install packages, mount buckets, etc.) when it boots.</p>
+preinstalled. You can optionally select JupyterLab 4 (currently in
+preview) or provide a custom container image to run your own environment
+(for example, a Docker image containing specialized ML frameworks or
+dependencies). If needed, you can also specify a post-startup script
+stored in Cloud Storage (<code>gs://path/to/script.sh</code>) to
+automatically configure the instance (install packages, mount buckets,
+etc.) when it boots.</p>
 <p>See: <a href="https://cloud.google.com/vertex-ai/docs/release-notes" class="external-link">Vertex AI
 Workbench release notes</a> for supported versions and base images.</p>
-<blockquote>
-<p>In short: your Workbench environment is a containerized JupyterLab
-session running on a Compute Engine VM. These options control the
-version, performance, storage, networking, and permissions of that
-underlying VM, even though the interface abstracts most of the
-complexity away.</p>
-</blockquote>
 </div>
 <div class="section level4">
 <h4 id="advanced-settings-machine-type">Advanced settings: Machine Type<a class="anchor" aria-label="anchor" href="#advanced-settings-machine-type"></a>
@@ -1520,7 +1512,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -2322,7 +2314,7 @@ discuss:</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>
@@ -3849,8 +3841,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/aio.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/aio.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2025-10-24",
-  "datePublished": "2025-10-24"
+  "dateModified": "2025-10-27",
+  "datePublished": "2025-10-27"
 }
 
   </script><script>
