@@ -517,7 +517,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li><p><strong>Data preprocessing</strong>: The script fills missing
 values (<code>Age</code> with median, <code>Embarked</code> with mode),
@@ -660,40 +660,38 @@ for ML on GCP</a> for guidance.</p>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> aiplatform</span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>PROJECT <span class="op">=</span> <span class="st">"doit-rci-mlm25-4626"</span></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>REGION <span class="op">=</span> <span class="st">"us-central1"</span></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>BUCKET <span class="op">=</span> BUCKET_NAME  <span class="co"># e.g., "endemann_titanic" (same region as REGION)</span></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>MODEL_URI <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET<span class="sc">}</span><span class="ss">/artifacts/xgb/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">/model.joblib"</span>  <span class="co"># everything will live beside this</span></span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a></span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co"># Staging bucket is only for the SDK's temp code tarball (aiplatform-*.tar.gz)</span></span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>aiplatform.init(project<span class="op">=</span>PROJECT, location<span class="op">=</span>REGION, staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a></span>
-<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
-<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"endemann_xgb_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_VertexAI/code/train_xgboost.py"</span>,</span>
-<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest"</span>,</span>
-<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"gcsfs"</span>],  <span class="co"># script writes gs://MODEL_URI and sidecar files</span></span>
-<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>)</span>
-<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a></span>
-<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>job.run(</span>
-<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a>    args<span class="op">=</span>[</span>
-<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET<span class="sc">}</span><span class="ss">/titanic_train.csv"</span>,</span>
-<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>MODEL_URI<span class="sc">}</span><span class="ss">"</span>,      <span class="co"># model, metrics.json, eval_history.csv, training.log all go here</span></span>
-<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a>        <span class="st">"--max_depth=3"</span>,</span>
-<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a>        <span class="st">"--eta=0.1"</span>,</span>
-<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a>        <span class="st">"--subsample=0.8"</span>,</span>
-<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a>        <span class="st">"--colsample_bytree=0.8"</span>,</span>
-<span id="cb8-29"><a href="#cb8-29" tabindex="-1"></a>        <span class="st">"--num_round=100"</span>,</span>
-<span id="cb8-30"><a href="#cb8-30" tabindex="-1"></a>    ],</span>
-<span id="cb8-31"><a href="#cb8-31" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb8-32"><a href="#cb8-32" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-4"</span>,</span>
-<span id="cb8-33"><a href="#cb8-33" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb8-34"><a href="#cb8-34" tabindex="-1"></a>)</span>
-<span id="cb8-35"><a href="#cb8-35" tabindex="-1"></a></span>
-<span id="cb8-36"><a href="#cb8-36" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Model + logs folder:"</span>, MODEL_URI.rsplit(<span class="st">"/"</span>, <span class="dv">1</span>)[<span class="dv">0</span>])</span></code></pre>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>MODEL_URI <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/xgb/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">/model.joblib"</span>  <span class="co"># everything will live beside this</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co"># Staging bucket is only for the SDK's temp code tarball (aiplatform-*.tar.gz)</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>aiplatform.init(project<span class="op">=</span>PROJECT, location<span class="op">=</span>REGION, staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
+</div>
+<div class="codewrapper sourceCode" id="cb9">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"endemann_xgb_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_VertexAI/code/train_xgboost.py"</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"gcsfs"</span>],  <span class="co"># script writes gs://MODEL_URI and sidecar files</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>)</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>job.run(</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>    args<span class="op">=</span>[</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/titanic_train.csv"</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>MODEL_URI<span class="sc">}</span><span class="ss">"</span>,      <span class="co"># model, metrics.json, eval_history.csv, training.log all go here</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>        <span class="st">"--max_depth=3"</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>        <span class="st">"--eta=0.1"</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>        <span class="st">"--subsample=0.8"</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>        <span class="st">"--colsample_bytree=0.8"</span>,</span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>        <span class="st">"--num_round=100"</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>    ],</span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-4"</span>,</span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a>)</span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a></span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Model + logs folder:"</span>, MODEL_URI.rsplit(<span class="st">"/"</span>, <span class="dv">1</span>)[<span class="dv">0</span>])</span></code></pre>
 </div>
 <p>This launches a managed training job with Vertex AI.</p>
 </div>
