@@ -448,32 +448,21 @@ model artifacts, and job outputs.<br></li>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a></span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Project:"</span>, PROJECT_ID)</span></code></pre>
 </div>
-<ul><li>
-<code>aiplatform.init()</code>: Sets defaults for project, region,
-and staging bucket.</li>
-</ul><div class="codewrapper sourceCode" id="cb3">
-<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> aiplatform</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co"># Initialize Vertex AI client</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>aiplatform.init(project<span class="op">=</span>PROJECT_ID, location<span class="op">=</span>REGION, staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
-</div>
 </div>
 <div class="section level4">
 <h4 id="get-code-from-github-repo-skip-if-already-completed">4. Get code from GitHub repo (skip if already completed)<a class="anchor" aria-label="anchor" href="#get-code-from-github-repo-skip-if-already-completed"></a></h4>
 <p>If you didn’t complete earlier episodes, clone our code repo before
 moving forward. Check to make sure we’re in our Jupyter home folder
 first.</p>
+<div class="codewrapper sourceCode" id="cb3">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co">#%cd /home/jupyter/</span></span></code></pre>
+</div>
 <div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">#%cd /home/jupyter/</span></span></code></pre>
-</div>
-<div class="codewrapper sourceCode" id="cb5">
-<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co">#!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git</span></span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">#!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git</span></span></code></pre>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="testing-train-py-locally-in-the-notebook">Testing train.py locally in the notebook<a class="anchor" aria-label="anchor" href="#testing-train-py-locally-in-the-notebook"></a></h2>
@@ -613,31 +602,31 @@ and infers without errors.</li>
 <hr class="half-width"><p>Sometimes it’s helpful to keep a copy of data in your notebook VM for
 quick iteration, even though <strong>GCS is the preferred storage
 location</strong>.</p>
-<div class="codewrapper sourceCode" id="cb6">
+<div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> storage</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>client <span class="op">=</span> storage.Client()</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(BUCKET_NAME)</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_train.csv"</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>blob.download_to_filename(<span class="st">"titanic_train.csv"</span>)</span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Downloaded titanic_train.csv"</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> storage</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>client <span class="op">=</span> storage.Client()</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(BUCKET_NAME)</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_train.csv"</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>blob.download_to_filename(<span class="st">"titanic_train.csv"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Downloaded titanic_train.csv"</span>)</span></code></pre>
 </div>
 </section><section><h2 class="section-heading" id="local-test-run-of-train-py">Local test run of train.py<a class="anchor" aria-label="anchor" href="#local-test-run-of-train-py"></a></h2>
-<hr class="half-width"><div class="codewrapper sourceCode" id="cb7">
+<hr class="half-width"><div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="im">import</span> time <span class="im">as</span> t</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>start <span class="op">=</span> t.time()</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co"># Example: run your custom training script with args</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="op">!</span>python Intro_GCP_for_ML<span class="op">/</span>scripts<span class="op">/</span>train_xgboost.py <span class="op">--</span>max_depth <span class="dv">3</span> <span class="op">--</span>eta <span class="fl">0.1</span> <span class="op">--</span>subsample <span class="fl">0.8</span> <span class="op">--</span>colsample_bytree <span class="fl">0.8</span> <span class="op">--</span>num_round <span class="dv">100</span> <span class="op">--</span>train titanic_train.csv</span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total local runtime: </span><span class="sc">{</span>t<span class="sc">.</span>time() <span class="op">-</span> start<span class="sc">:.2f}</span><span class="ss"> seconds"</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="im">import</span> time <span class="im">as</span> t</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>start <span class="op">=</span> t.time()</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co"># Example: run your custom training script with args</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="op">!</span>python Intro_GCP_for_ML<span class="op">/</span>scripts<span class="op">/</span>train_xgboost.py <span class="op">--</span>max_depth <span class="dv">3</span> <span class="op">--</span>eta <span class="fl">0.1</span> <span class="op">--</span>subsample <span class="fl">0.8</span> <span class="op">--</span>colsample_bytree <span class="fl">0.8</span> <span class="op">--</span>num_round <span class="dv">100</span> <span class="op">--</span>train titanic_train.csv</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total local runtime: </span><span class="sc">{</span>t<span class="sc">.</span>time() <span class="op">-</span> start<span class="sc">:.2f}</span><span class="ss"> seconds"</span>)</span></code></pre>
 </div>
 <p>Training on this small dataset should take &lt;1 minute. Log runtime
 as a baseline. You should see the following output file:</p>
@@ -657,45 +646,51 @@ for ML on GCP</a> for guidance.</p>
 </div>
 <div class="section level3">
 <h3 id="creating-a-custom-training-job-with-the-sdk">Creating a custom training job with the SDK<a class="anchor" aria-label="anchor" href="#creating-a-custom-training-job-with-the-sdk"></a></h3>
-<div class="codewrapper sourceCode" id="cb8">
+<div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> aiplatform</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>MODEL_URI <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/xgb/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">/model.joblib"</span>  <span class="co"># everything will live beside this</span></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co"># Staging bucket is only for the SDK's temp code tarball (aiplatform-*.tar.gz)</span></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>aiplatform.init(project<span class="op">=</span>PROJECT_ID, location<span class="op">=</span>REGION, staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> aiplatform</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>MODEL_URI <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/xgb/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">/model.joblib"</span>  <span class="co"># everything will live beside this</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co"># Staging bucket is only for the SDK's temp code tarball (aiplatform-*.tar.gz)</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>aiplatform.init(project<span class="op">=</span>PROJECT_ID, location<span class="op">=</span>REGION, staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
 </div>
-<div class="codewrapper sourceCode" id="cb9">
+<ul><li>
+<code>aiplatform.init()</code>: Sets defaults for project, region,
+and staging bucket.</li>
+</ul><div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"endemann_xgb_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_xgboost.py"</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest"</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"gcsfs"</span>],  <span class="co"># script writes gs://MODEL_URI and sidecar files</span></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>)</span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>job.run(</span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>    args<span class="op">=</span>[</span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/titanic_train.csv"</span>,</span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>MODEL_URI<span class="sc">}</span><span class="ss">"</span>,      <span class="co"># model, metrics.json, eval_history.csv, training.log all go here</span></span>
-<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>        <span class="st">"--max_depth=3"</span>,</span>
-<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>        <span class="st">"--eta=0.1"</span>,</span>
-<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>        <span class="st">"--subsample=0.8"</span>,</span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>        <span class="st">"--colsample_bytree=0.8"</span>,</span>
-<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>        <span class="st">"--num_round=100"</span>,</span>
-<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>    ],</span>
-<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-4"</span>,</span>
-<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a>)</span>
-<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a></span>
-<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Model + logs folder:"</span>, MODEL_URI.rsplit(<span class="st">"/"</span>, <span class="dv">1</span>)[<span class="dv">0</span>])</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"endemann_xgb_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_xgboost.py"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest"</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"google-cloud-storage"</span>],  <span class="co"># your script uses storage.Client()</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>)</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>job.run(</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>    args<span class="op">=</span>[</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/titanic_train.csv"</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>        <span class="st">"--max_depth=3"</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>        <span class="st">"--eta=0.1"</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>        <span class="st">"--subsample=0.8"</span>,</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>        <span class="st">"--colsample_bytree=0.8"</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>        <span class="st">"--num_round=100"</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>    ],</span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-4"</span>,</span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>    base_output_dir<span class="op">=</span>MODEL_URI.rsplit(<span class="st">"/"</span>, <span class="dv">1</span>)[<span class="dv">0</span>],  <span class="co"># sets AIP_MODEL_DIR for your script</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a>)</span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Model + logs folder:"</span>, MODEL_URI.rsplit(<span class="st">"/"</span>, <span class="dv">1</span>)[<span class="dv">0</span>])</span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a></span></code></pre>
 </div>
-<p>This launches a managed training job with Vertex AI.</p>
+<p>This launches a managed training job with Vertex AI. It should take
+2-5 minutes for the training job to complete.</p>
 </div>
 </section><section><h2 class="section-heading" id="monitoring-training-jobs-in-the-console">Monitoring training jobs in the Console<a class="anchor" aria-label="anchor" href="#monitoring-training-jobs-in-the-console"></a></h2>
 <hr class="half-width"><ol style="list-style-type: decimal"><li>Go to the Google Cloud Console.<br></li>
