@@ -124,19 +124,12 @@ Before scaling training jobs onto managed resources, it's essential to test your
 - **Log key metrics** such as loss curves and runtimes.  
 - **Verify correctness first** before scaling up.  
 
-::::::::::::::::::::::::::::::::::::::: discussion
 
 ### What tests should we do before scaling?  
 
-Before scaling to multiple or more powerful instances (e.g., GPUs or TPUs), it's important to run a few sanity checks. **In your group, discuss:**  
+Before scaling to multiple or more powerful instances (e.g., GPUs or TPUs), it's important to run a few sanity checks. Skipping these can lead to: silent data bugs, runtime blowups at scale, inefficient experiments, or broken model artifacts.  
 
-- Which checks do you think are most critical before scaling up?  
-- What potential issues might we miss if we skip this step?  
-
-:::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
-::::::::::::::::::::::::::::::::::::::: solution
+Here is a non-exhaustive list of suggested tests to perform before scaling up your compute needs.
 
 - **Data loads correctly** – dataset loads without errors, expected columns exist, missing values handled.  
 - **Overfitting check** – train on a tiny dataset (e.g., 100 rows). If it doesn't overfit, something is off.  
@@ -145,9 +138,6 @@ Before scaling to multiple or more powerful instances (e.g., GPUs or TPUs), it's
 - **Memory estimate** – check approximate memory use.  
 - **Save & reload** – ensure model saves, reloads, and infers without errors.  
 
-Skipping these can lead to: silent data bugs, runtime blowups at scale, inefficient experiments, or broken model artifacts.  
-
-:::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## Download data into notebook environment
 Sometimes it's helpful to keep a copy of data in your notebook VM for quick iteration, even though **GCS is the preferred storage location**.  
