@@ -106,6 +106,14 @@ After reviewing, discuss any questions or observations with your group.
 3. **Command-line arguments**: `argparse` lets you set hyperparameters and file paths without editing code (e.g., `--max_depth`, `--eta`, `--num_round`, `--train`). To change rounds:  
    ```bash
    python train_xgboost.py --num_round 200
+   ```
+
+4. **Handling local vs. GCP runs**:  
+   - **Input**: You pass `--train` as either a local path (`train.csv`) or a GCS URI (`gs://bucket/path.csv`). The script automatically detects `gs://` and reads the file directly from Cloud Storage using the Python client.  
+   - **Output**: If the environment variable `AIP_MODEL_DIR` is set (as it is in Vertex AI CustomJobs), the trained model is written there—often a `gs://` path. Otherwise, the model is saved in the current working directory, which works seamlessly in both local and Workbench environments.
+
+5. **Training and saving the model**:  
+   The training data is converted into an **XGBoost `DMatrix`**, an optimized format that speeds up training and reduces memory use. The trained model is serialized with `joblib`. When saving locally, the file is written directly to disk. If saving to a Cloud Storage path (`gs://...`), the model is first saved to a temporary file and then uploaded to the specified bucket.
 
 :::::::::::::::::::::::::::::::::::::::
 
