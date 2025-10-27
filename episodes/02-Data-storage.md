@@ -133,26 +133,43 @@ Click **Create** if everything looks good.
 - In the bucket dashboard, click **Upload Files**.  
 - Select your Titanic CSVs and upload.  
 
-**Note the GCS URI for your data** After uploading, click on a file and find its **gs:// URI** (e.g., `gs://sinkorswim_john-doe_titanic/titanic_test.csv`). This URI will be used to access the data later.
+**Note the GCS URI for your data** After uploading, click on a file and find its **gs:// URI** (e.g., `gs://sinkorswim-johndoe-titanic/titanic_test.csv`). This URI will be used to access the data later.
 
-## GCS bucket costs
+## Adjust bucket permissions
 
+Return to the Google Cloud Console (where we created our bucket and VM) and search for "Cloud Shell Editor". Open a shell editor and run the below command, *replacing the bucket name with your bucket's name`:
+
+```sh
+# Grant read permisssions on the bucket
+gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
+  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+  --role="roles/storage.objectViewer"
+
+# Grant write permisssions on the bucket
+gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
+  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+  --role="roles/storage.objectCreator"
+
+# (Only if you also need overwrite/delete)
+gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
+  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+  --role="roles/storage.objectAdmin"
+```
+
+This grants our future VMs permission to read objects from the bucket.
+
+## Data transfer & storage costs explained  
 GCS costs are based on storage class, data transfer, and operations (requests).  
 
-### Storage costs
-- Standard storage (us-central1): ~$0.02 per GB per month.  
-- Other classes (Nearline, Coldline, Archive) are cheaper but with retrieval costs.  
-
-### Data transfer costs explained  
+- **Standard storage**: Data storage cost is based on region. In `us-central1`, the cost is ~$0.02 per GB per month.  
 - **Uploading data (ingress):** Copying data into a GCS bucket from your laptop, campus HPC, or another provider is free.  
-- **Accessing data in the same region:** If your bucket and your compute resources (VMs, Vertex AI jobs) are in the same region, you can read and stream data with no transfer fees. You only pay the storage cost per GB-month.  
-- **Cross-region access:** If your bucket is in one region and your compute runs in another, you'll pay an egress fee (about $0.01–0.02 per GB within North America, higher if crossing continents).  
-- **Downloading data out of GCP (egress):** This refers to data leaving Google's network to the public internet, such as downloading files to your laptop. Typical cost is around **$0.12 per GB** to the U.S. and North America, more for other continents.  
-- **Deleting data:** Removing objects or buckets does not incur transfer costs. If you download data before deleting, you pay for the egress, but simply deleting in the console or CLI is free. For Nearline/Coldline/Archive storage classes, deleting before the minimum storage duration (30, 90, or 365 days) triggers an early deletion fee.  
-
-### Request costs
-- `GET` (read) requests: ~$0.004 per 10,000 requests.  
-- `PUT` (write) requests: ~$0.05 per 10,000 requests.  
+- **Downloading data out of GCP (egress):** Refers to data leaving Google's network to the public internet, such as downloading files from GCS to your local machine. Typical cost is around $0.12 per GB to the U.S. and North America, more for other continents.  
+  - **Cross-region access:** If your bucket is in one region and your compute runs in another, you'll pay an egress fee of about $0.01–0.02 per GB within North America, higher if crossing continents.  
+- **Reading (GET) requests:** Each read or list operation incurs a small API request fee of roughly $0.004 per 10,000 requests.  
+  - Example: a training job that loads 10,000 image samples from GCS (one per batch) would make about 10,000 GET requests, costing around $0.004 total. Reading a large file such as a 1 GB CSV or TFRecord shard counts as a single GET request.  
+- **Writing (PUT/POST/LIST) requests:** Uploading, creating, or modifying objects costs about $0.05 per 10,000 requests.  
+  - Example: saving one model checkpoint file (e.g., `model-weights.h5` or `model.pt`) triggers one PUT request. A training pipeline that saves a few dozen checkpoints or logs would cost well under one cent in request fees.  
+- **Deleting data:** Removing objects or buckets does not incur transfer costs. If you download data before deleting, you pay for the egress, but deleting directly in the console or CLI is free. For Nearline, Coldline, or Archive storage classes, deleting before the minimum storage duration (30, 90, or 365 days) triggers an early-deletion fee.  
 
 ***For detailed pricing, see [GCS Pricing Information](https://cloud.google.com/storage/pricing).***  
 

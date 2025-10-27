@@ -40,24 +40,24 @@ Before interacting with GCS, we need to authenticate and initialize the client l
 
 ```python
 from google.cloud import storage
-import pandas as pd
-import io
 client = storage.Client()
 print("Project:", client.project)
-print("Credentials:", client._credentials.service_account_email)
 
 ```
 
 
-## Reading data from GCS
+## Reading data from Google Cloud Storage (GCS)
 
-As with S3, you can either (A) read data directly from GCS into memory, or (B) download a copy into your notebook VM. Since we’re using notebooks as controllers rather than training environments, the recommended approach is **reading directly from GCS**.
+Similar to other cloud vendors, we can either (A) read data directly from Google Cloud Storage (GCS) into memory, or (B) download a copy into your notebook VM. Since we're using notebooks as controllers rather than training environments, the recommended approach is *reading directly from GCS into memory*.
 
 ### A) Reading data directly into memory  
 
 ```python
 
-bucket_name = "yourname_titanic"
+import pandas as pd
+
+bucket_name = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
+
 bucket = client.bucket(bucket_name)
 blob = bucket.blob("titanic_train.csv")
 train_data = pd.read_csv(io.BytesIO(blob.download_as_bytes()))
@@ -66,10 +66,36 @@ train_data.head()
 
 ```
 
+If you get an error, return to the Google Cloud Console (where we created our bucket and VM) and search for "Cloud Shell Editor". Open a shell editor and run the below commands, *replacing the bucket name with your bucket's name`:
+
+```sh
+# Grant read permisssions on the bucket
+gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
+  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+  --role="roles/storage.objectViewer"
+
+# Grant write permisssions on the bucket
+gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
+  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+  --role="roles/storage.objectCreator"
+
+# (Only if you also need overwrite/delete)
+gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
+  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+  --role="roles/storage.objectAdmin"
+```
+
 ### B) Downloading a local copy  
 
+If you prefer, you can download the file from your bucket to the notebook VM's local disk. This makes repeated reads faster within our notebook environment, but note that *each download counts as a "GET" request* and may incur a small data transfer (egress) cost *if the bucket and VM are in different regions*. If both are in the same region, there are no transfer fees — only standard request costs (typically fractions of a cent).
+
+Let's verify what our path looks like first.
+
+```
+!pwd
+```
+
 ```python
-bucket_name = "yourname-titanic-gcs"
 blob_name = "titanic_train.csv"
 local_path = "/home/jupyter/titanic_train.csv"
 
@@ -107,12 +133,20 @@ print(f"Estimated annual cost: ${monthly_cost*12:.4f}")
 For updated prices, see [GCS Pricing](https://cloud.google.com/storage/pricing).
 
 ## Writing output files to GCS
+Create a sample file on the notebook VM's storage.
 
 ```python
 # Create a sample file locally on the notebook VM
-with open("Notes.txt", "w") as f:
+file_path = "/home/jupyter/Notes.txt"
+with open(file_path, "w") as f:
     f.write("This is a test note for GCS.")
 
+!ls /home/jupyter
+```
+
+Upload file.
+
+```python
 # Point to the right bucket
 bucket = client.bucket(bucket_name)
 
@@ -121,7 +155,7 @@ bucket = client.bucket(bucket_name)
 blob = bucket.blob("docs/Notes.txt")
 
 # Upload the local file into that blob (object) in GCS
-blob.upload_from_filename("Notes.txt")
+blob.upload_from_filename(file_path)
 
 print("File uploaded successfully.")
 
