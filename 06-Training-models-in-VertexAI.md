@@ -264,7 +264,7 @@ total_size_mb = total_size_bytes / (1024**2)
 print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
 ```
 
-#### Training Artifacts  →  `gs://<bucket>/artifacts/<run_id>/`
+#### Training Artifacts  →  `ARTIFACT_DIR`
 This is your *intended output location*, set via `base_output_dir`.  
 It contains everything your training script explicitly writes. In our case, this includes:
 
