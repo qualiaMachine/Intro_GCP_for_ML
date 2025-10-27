@@ -167,13 +167,9 @@ start = t.time()
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
-Training on this small dataset should take <1 minute. Log runtime as a baseline.  You should see the following output files:
+Training on this small dataset should take <1 minute. Log runtime as a baseline.  You should see the following output file:
 
-- xgboost-model.joblib  # Python-serialized XGBoost model (Booster) via joblib; load with joblib.load for reuse.
-- eval_history.csv      # Per-iteration validation metrics; columns: iter,val_logloss (good for plotting learning curves).
-- training.log          # Full stdout/stderr from the run (params, dataset sizes, timings, warnings/errors) for audit/debug.
-- metrics.json          # Structured summary: final_val_logloss, num_boost_round, params, train_rows/val_rows, features[], model_uri.
-
+- `xgboost-model`  # Python-serialized XGBoost model (Booster) via joblib; load with joblib.load for reuse.
 
 ## Training via Vertex AI custom training job
 Unlike "local" training, this launches a **managed training job** that runs on scalable compute. Vertex AI handles provisioning, scaling, logging, and saving outputs to GCS.  
