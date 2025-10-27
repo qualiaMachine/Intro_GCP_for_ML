@@ -1539,7 +1539,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -2823,9 +2823,16 @@ training is (not) worth it.</li>
 </div>
 <section><h2 class="section-heading" id="initial-setup-controller-notebook">Initial setup (controller notebook)<a class="anchor" aria-label="anchor" href="#initial-setup-controller-notebook"></a>
 </h2>
+<hr class="half-width"></section><section><h2 class="section-heading" id="initial-setup-controller-notebook-1">Initial setup (controller notebook)<a class="anchor" aria-label="anchor" href="#initial-setup-controller-notebook-1"></a>
+</h2>
 <hr class="half-width">
-<p>Open a fresh Jupyter notebook in Vertex AI Workbench (Instances tab)
-and initialize:</p>
+<p>Open a fresh Jupyter notebook in Vertex AI Workbench. Select the
+<strong>PyTorch</strong> environment (kernel)</p>
+<p>Note: local PyTorch is only needed for local tests. Your
+<strong>Vertex AI job</strong> uses the container specified by
+<code>container_uri</code> (e.g., <code>pytorch-cpu.2-1</code> or
+<code>pytorch-gpu.2-1</code>), so it brings its own framework at run
+time.</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -2839,19 +2846,6 @@ and initialize:</p>
 <span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a></span>
 <span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co"># Only used for the SDK's small packaging tarball.</span></span>
 <span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>aiplatform.init(project<span class="op">=</span>PROJECT_ID, location<span class="op">=</span>REGION, staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/.vertex_staging"</span>) <span class="co"># store tar balls in staging folder </span></span></code></pre>
-</div>
-<div class="section level3">
-<h3 id="select-the-pytorch-environment-kernel">Select the PyTorch environment (kernel)<a class="anchor" aria-label="anchor" href="#select-the-pytorch-environment-kernel"></a>
-</h3>
-<p>In JupyterLab, click the kernel name (top‑right) and switch to a
-<strong>PyTorch</strong> kernel.</p>
-<ul>
-<li>Note: local PyTorch is only needed for <strong>local tests</strong>.
-Your <strong>Vertex AI job</strong> uses the container specified by
-<code>container_uri</code> (e.g., <code>pytorch-cpu.2-1</code> or
-<code>pytorch-gpu.2-1</code>), so it brings its own framework at run
-time.</li>
-</ul>
 </div>
 </section><section><h2 class="section-heading" id="prepare-data-as--npz">Prepare data as <code>.npz</code>
 <a class="anchor" aria-label="anchor" href="#prepare-data-as--npz"></a>
