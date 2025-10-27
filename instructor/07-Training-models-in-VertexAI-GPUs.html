@@ -495,176 +495,72 @@ perceptron (MLP) 3) <strong>writes all outputs side‑by‑side</strong>
 <div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># GCP_helpers/train_nn.py</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="im">import</span> argparse, io, json, os, sys</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="im">import</span> torch, torch.nn <span class="im">as</span> nn</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#  small helpers for GCS/local I/O </span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="kw">def</span> _parent_dir(p):</span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>    <span class="cf">return</span> p.rsplit(<span class="st">"/"</span>, <span class="dv">1</span>)[<span class="dv">0</span>] <span class="cf">if</span> p.startswith(<span class="st">"gs://"</span>) <span class="cf">else</span> (os.path.dirname(p) <span class="kw">or</span> <span class="st">"."</span>)</span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="kw">def</span> _write_bytes(path: <span class="bu">str</span>, data: <span class="bu">bytes</span>):</span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>    <span class="cf">if</span> path.startswith(<span class="st">"gs://"</span>):</span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>        <span class="cf">try</span>:</span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>            <span class="im">import</span> fsspec</span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>            <span class="cf">with</span> fsspec.<span class="bu">open</span>(path, <span class="st">"wb"</span>) <span class="im">as</span> f:</span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>                f.write(data)</span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>        <span class="cf">except</span> <span class="pp">Exception</span>:</span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>            <span class="im">from</span> google.cloud <span class="im">import</span> storage</span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>            b, k <span class="op">=</span> path[<span class="dv">5</span>:].split(<span class="st">"/"</span>, <span class="dv">1</span>)</span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>            storage.Client().bucket(b).blob(k).upload_from_string(data)</span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>        os.makedirs(_parent_dir(path), exist_ok<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>        <span class="cf">with</span> <span class="bu">open</span>(path, <span class="st">"wb"</span>) <span class="im">as</span> f:</span>
-<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>            f.write(data)</span>
-<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a></span>
-<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="kw">def</span> _write_text(path: <span class="bu">str</span>, text: <span class="bu">str</span>):</span>
-<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a>    _write_bytes(path, text.encode(<span class="st">"utf-8"</span>))</span>
-<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a></span>
-<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="co">#  tiny MLP </span></span>
-<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="kw">class</span> MLP(nn.Module):</span>
-<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, d_in):</span>
-<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
-<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>        <span class="va">self</span>.net <span class="op">=</span> nn.Sequential(</span>
-<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>            nn.Linear(d_in, <span class="dv">32</span>), nn.ReLU(),</span>
-<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>            nn.Linear(<span class="dv">32</span>, <span class="dv">16</span>), nn.ReLU(),</span>
-<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a>            nn.Linear(<span class="dv">16</span>, <span class="dv">1</span>), nn.Sigmoid(),</span>
-<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a>        )</span>
-<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x):</span>
-<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.net(x)</span>
-<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a></span>
-<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a><span class="kw">class</span> _Tee:</span>
-<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, <span class="op">*</span>s): <span class="va">self</span>.s <span class="op">=</span> s</span>
-<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a>    <span class="kw">def</span> write(<span class="va">self</span>, d):</span>
-<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a>        <span class="cf">for</span> x <span class="kw">in</span> <span class="va">self</span>.s: x.write(d)<span class="op">;</span> x.flush()</span>
-<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a>    <span class="kw">def</span> flush(<span class="va">self</span>):</span>
-<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a>        <span class="cf">for</span> x <span class="kw">in</span> <span class="va">self</span>.s: x.flush()</span>
-<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a></span>
-<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a><span class="kw">def</span> main():</span>
-<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a>    ap <span class="op">=</span> argparse.ArgumentParser()</span>
-<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a>    ap.add_argument(<span class="st">"--train"</span>, required<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a>    ap.add_argument(<span class="st">"--val"</span>,   required<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a>    ap.add_argument(<span class="st">"--epochs"</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">int</span>, default<span class="op">=</span><span class="dv">100</span>)</span>
-<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a>    ap.add_argument(<span class="st">"--learning_rate"</span>, <span class="bu">type</span><span class="op">=</span><span class="bu">float</span>, default<span class="op">=</span><span class="fl">1e-3</span>)</span>
-<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a>    ap.add_argument(<span class="st">"--model_out"</span>, required<span class="op">=</span><span class="va">True</span>, <span class="bu">help</span><span class="op">=</span><span class="st">"gs://…/artifacts/.../model.pt"</span>)</span>
-<span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a>    args <span class="op">=</span> ap.parse_args()</span>
-<span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a></span>
-<span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a>    device <span class="op">=</span> torch.device(<span class="st">"cuda"</span> <span class="cf">if</span> torch.cuda.is_available() <span class="cf">else</span> <span class="st">"cpu"</span>)</span>
-<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a></span>
-<span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a>    <span class="co"># All artifacts will sit next to model_out</span></span>
-<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a>    model_path <span class="op">=</span> args.model_out</span>
-<span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a>    art_dir <span class="op">=</span> _parent_dir(model_path)</span>
-<span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a></span>
-<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a>    <span class="co"># capture stdout/stderr</span></span>
-<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a>    buf <span class="op">=</span> io.StringIO()</span>
-<span id="cb4-65"><a href="#cb4-65" tabindex="-1"></a>    orig_out, orig_err <span class="op">=</span> sys.stdout, sys.stderr</span>
-<span id="cb4-66"><a href="#cb4-66" tabindex="-1"></a>    sys.stdout <span class="op">=</span> _Tee(sys.stdout, buf)</span>
-<span id="cb4-67"><a href="#cb4-67" tabindex="-1"></a>    sys.stderr <span class="op">=</span> _Tee(sys.stderr, buf)</span>
-<span id="cb4-68"><a href="#cb4-68" tabindex="-1"></a>    log_path <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>art_dir<span class="sc">}</span><span class="ss">/training.log"</span></span>
-<span id="cb4-69"><a href="#cb4-69" tabindex="-1"></a></span>
-<span id="cb4-70"><a href="#cb4-70" tabindex="-1"></a>    <span class="cf">try</span>:</span>
-<span id="cb4-71"><a href="#cb4-71" tabindex="-1"></a>        <span class="co"># Load npz (supports gs:// via fsspec)</span></span>
-<span id="cb4-72"><a href="#cb4-72" tabindex="-1"></a>        <span class="kw">def</span> _npz_load(p):</span>
-<span id="cb4-73"><a href="#cb4-73" tabindex="-1"></a>            <span class="cf">if</span> p.startswith(<span class="st">"gs://"</span>):</span>
-<span id="cb4-74"><a href="#cb4-74" tabindex="-1"></a>                <span class="im">import</span> fsspec</span>
-<span id="cb4-75"><a href="#cb4-75" tabindex="-1"></a>                <span class="cf">with</span> fsspec.<span class="bu">open</span>(p, <span class="st">"rb"</span>) <span class="im">as</span> f:</span>
-<span id="cb4-76"><a href="#cb4-76" tabindex="-1"></a>                    by <span class="op">=</span> f.read()</span>
-<span id="cb4-77"><a href="#cb4-77" tabindex="-1"></a>                <span class="cf">return</span> np.load(io.BytesIO(by))</span>
-<span id="cb4-78"><a href="#cb4-78" tabindex="-1"></a>            <span class="cf">else</span>:</span>
-<span id="cb4-79"><a href="#cb4-79" tabindex="-1"></a>                <span class="cf">return</span> np.load(p)</span>
-<span id="cb4-80"><a href="#cb4-80" tabindex="-1"></a>        train <span class="op">=</span> _npz_load(args.train)</span>
-<span id="cb4-81"><a href="#cb4-81" tabindex="-1"></a>        val   <span class="op">=</span> _npz_load(args.val)</span>
-<span id="cb4-82"><a href="#cb4-82" tabindex="-1"></a>        Xtr, ytr <span class="op">=</span> train[<span class="st">"X_train"</span>].astype(<span class="st">"float32"</span>), train[<span class="st">"y_train"</span>].astype(<span class="st">"float32"</span>)</span>
-<span id="cb4-83"><a href="#cb4-83" tabindex="-1"></a>        Xva, yva <span class="op">=</span> val[<span class="st">"X_val"</span>].astype(<span class="st">"float32"</span>),   val[<span class="st">"y_val"</span>].astype(<span class="st">"float32"</span>)</span>
-<span id="cb4-84"><a href="#cb4-84" tabindex="-1"></a></span>
-<span id="cb4-85"><a href="#cb4-85" tabindex="-1"></a>        Xtr_t <span class="op">=</span> torch.from_numpy(Xtr).to(device)</span>
-<span id="cb4-86"><a href="#cb4-86" tabindex="-1"></a>        ytr_t <span class="op">=</span> torch.from_numpy(ytr).view(<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>).to(device)</span>
-<span id="cb4-87"><a href="#cb4-87" tabindex="-1"></a>        Xva_t <span class="op">=</span> torch.from_numpy(Xva).to(device)</span>
-<span id="cb4-88"><a href="#cb4-88" tabindex="-1"></a>        yva_t <span class="op">=</span> torch.from_numpy(yva).view(<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>).to(device)</span>
-<span id="cb4-89"><a href="#cb4-89" tabindex="-1"></a></span>
-<span id="cb4-90"><a href="#cb4-90" tabindex="-1"></a>        model <span class="op">=</span> MLP(Xtr.shape[<span class="dv">1</span>]).to(device)</span>
-<span id="cb4-91"><a href="#cb4-91" tabindex="-1"></a>        opt <span class="op">=</span> torch.optim.Adam(model.parameters(), lr<span class="op">=</span>args.learning_rate)</span>
-<span id="cb4-92"><a href="#cb4-92" tabindex="-1"></a>        loss_fn <span class="op">=</span> nn.BCELoss()</span>
-<span id="cb4-93"><a href="#cb4-93" tabindex="-1"></a></span>
-<span id="cb4-94"><a href="#cb4-94" tabindex="-1"></a>        hist <span class="op">=</span> []</span>
-<span id="cb4-95"><a href="#cb4-95" tabindex="-1"></a>        t0 <span class="op">=</span> time()</span>
-<span id="cb4-96"><a href="#cb4-96" tabindex="-1"></a>        <span class="cf">for</span> ep <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, args.epochs<span class="op">+</span><span class="dv">1</span>):</span>
-<span id="cb4-97"><a href="#cb4-97" tabindex="-1"></a>            model.train()</span>
-<span id="cb4-98"><a href="#cb4-98" tabindex="-1"></a>            opt.zero_grad()</span>
-<span id="cb4-99"><a href="#cb4-99" tabindex="-1"></a>            pred <span class="op">=</span> model(Xtr_t)</span>
-<span id="cb4-100"><a href="#cb4-100" tabindex="-1"></a>            loss <span class="op">=</span> loss_fn(pred, ytr_t)</span>
-<span id="cb4-101"><a href="#cb4-101" tabindex="-1"></a>            loss.backward()<span class="op">;</span> opt.step()</span>
-<span id="cb4-102"><a href="#cb4-102" tabindex="-1"></a></span>
-<span id="cb4-103"><a href="#cb4-103" tabindex="-1"></a>            model.<span class="bu">eval</span>()</span>
-<span id="cb4-104"><a href="#cb4-104" tabindex="-1"></a>            <span class="cf">with</span> torch.no_grad():</span>
-<span id="cb4-105"><a href="#cb4-105" tabindex="-1"></a>                val_loss <span class="op">=</span> loss_fn(model(Xva_t), yva_t).item()</span>
-<span id="cb4-106"><a href="#cb4-106" tabindex="-1"></a>            hist.append(val_loss)</span>
-<span id="cb4-107"><a href="#cb4-107" tabindex="-1"></a>            <span class="cf">if</span> ep <span class="op">%</span> <span class="dv">10</span> <span class="op">==</span> <span class="dv">0</span> <span class="kw">or</span> ep <span class="op">==</span> <span class="dv">1</span>:</span>
-<span id="cb4-108"><a href="#cb4-108" tabindex="-1"></a>                <span class="bu">print</span>(<span class="ss">f"epoch=</span><span class="sc">{</span>ep<span class="sc">}</span><span class="ss"> val_loss=</span><span class="sc">{</span>val_loss<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb4-109"><a href="#cb4-109" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Training time: </span><span class="sc">{</span>time()<span class="op">-</span>t0<span class="sc">:.2f}</span><span class="ss">s on </span><span class="sc">{</span>device<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb4-110"><a href="#cb4-110" tabindex="-1"></a></span>
-<span id="cb4-111"><a href="#cb4-111" tabindex="-1"></a>        <span class="co"># save model</span></span>
-<span id="cb4-112"><a href="#cb4-112" tabindex="-1"></a>        torch.save(model.state_dict(), model_path)</span>
-<span id="cb4-113"><a href="#cb4-113" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"[INFO] Saved model: </span><span class="sc">{</span>model_path<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb4-114"><a href="#cb4-114" tabindex="-1"></a></span>
-<span id="cb4-115"><a href="#cb4-115" tabindex="-1"></a>        <span class="co"># metrics.json and eval_history.csv</span></span>
-<span id="cb4-116"><a href="#cb4-116" tabindex="-1"></a>        <span class="im">import</span> json</span>
-<span id="cb4-117"><a href="#cb4-117" tabindex="-1"></a>        metrics <span class="op">=</span> {</span>
-<span id="cb4-118"><a href="#cb4-118" tabindex="-1"></a>            <span class="st">"final_val_loss"</span>: <span class="bu">float</span>(hist[<span class="op">-</span><span class="dv">1</span>]) <span class="cf">if</span> hist <span class="cf">else</span> <span class="va">None</span>,</span>
-<span id="cb4-119"><a href="#cb4-119" tabindex="-1"></a>            <span class="st">"epochs"</span>: <span class="bu">int</span>(args.epochs),</span>
-<span id="cb4-120"><a href="#cb4-120" tabindex="-1"></a>            <span class="st">"learning_rate"</span>: <span class="bu">float</span>(args.learning_rate),</span>
-<span id="cb4-121"><a href="#cb4-121" tabindex="-1"></a>            <span class="st">"train_rows"</span>: <span class="bu">int</span>(Xtr.shape[<span class="dv">0</span>]),</span>
-<span id="cb4-122"><a href="#cb4-122" tabindex="-1"></a>            <span class="st">"val_rows"</span>: <span class="bu">int</span>(Xva.shape[<span class="dv">0</span>]),</span>
-<span id="cb4-123"><a href="#cb4-123" tabindex="-1"></a>            <span class="st">"features"</span>: <span class="bu">list</span>(<span class="bu">range</span>(Xtr.shape[<span class="dv">1</span>])),</span>
-<span id="cb4-124"><a href="#cb4-124" tabindex="-1"></a>            <span class="st">"model_uri"</span>: model_path,</span>
-<span id="cb4-125"><a href="#cb4-125" tabindex="-1"></a>            <span class="st">"device"</span>: <span class="bu">str</span>(device),</span>
-<span id="cb4-126"><a href="#cb4-126" tabindex="-1"></a>        }</span>
-<span id="cb4-127"><a href="#cb4-127" tabindex="-1"></a>        <span class="im">from</span> io <span class="im">import</span> StringIO</span>
-<span id="cb4-128"><a href="#cb4-128" tabindex="-1"></a>        _write_text(<span class="ss">f"</span><span class="sc">{</span>art_dir<span class="sc">}</span><span class="ss">/metrics.json"</span>, json.dumps(metrics, indent<span class="op">=</span><span class="dv">2</span>))</span>
-<span id="cb4-129"><a href="#cb4-129" tabindex="-1"></a>        csv <span class="op">=</span> <span class="st">"iter,val_loss</span><span class="ch">\n</span><span class="st">"</span> <span class="op">+</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>.join(<span class="ss">f"</span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">,</span><span class="sc">{</span>v<span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> i, v <span class="kw">in</span> <span class="bu">enumerate</span>(hist))</span>
-<span id="cb4-130"><a href="#cb4-130" tabindex="-1"></a>        _write_text(<span class="ss">f"</span><span class="sc">{</span>art_dir<span class="sc">}</span><span class="ss">/eval_history.csv"</span>, csv)</span>
-<span id="cb4-131"><a href="#cb4-131" tabindex="-1"></a>    <span class="cf">finally</span>:</span>
-<span id="cb4-132"><a href="#cb4-132" tabindex="-1"></a>        <span class="co"># persist log and restore streams</span></span>
-<span id="cb4-133"><a href="#cb4-133" tabindex="-1"></a>        <span class="cf">try</span>:</span>
-<span id="cb4-134"><a href="#cb4-134" tabindex="-1"></a>            _write_text(log_path, buf.getvalue())</span>
-<span id="cb4-135"><a href="#cb4-135" tabindex="-1"></a>        <span class="cf">except</span> <span class="pp">Exception</span> <span class="im">as</span> e:</span>
-<span id="cb4-136"><a href="#cb4-136" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"[WARN] could not write log: </span><span class="sc">{</span>e<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb4-137"><a href="#cb4-137" tabindex="-1"></a>        sys.stdout, sys.stderr <span class="op">=</span> orig_out, orig_err</span>
-<span id="cb4-138"><a href="#cb4-138" tabindex="-1"></a></span>
-<span id="cb4-139"><a href="#cb4-139" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
-<span id="cb4-140"><a href="#cb4-140" tabindex="-1"></a>    main()</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="im">import</span> time <span class="im">as</span> t</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>start <span class="op">=</span> t.time()</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co"># Example: run your custom training script with args</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="op">!</span>python <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span>Intro_GCP_for_ML<span class="op">/</span>scripts<span class="op">/</span>train_nn.py <span class="op">\</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>    <span class="op">--</span>train <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span>train_data.npz <span class="op">\</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>    <span class="op">--</span>val <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span>val_data.npz <span class="op">\</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>    <span class="op">--</span>epochs <span class="dv">50</span> <span class="op">\</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>    <span class="op">--</span>learning_rate <span class="fl">0.001</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total local runtime: </span><span class="sc">{</span>t<span class="sc">.</span>time() <span class="op">-</span> start<span class="sc">:.2f}</span><span class="ss"> seconds"</span>)</span></code></pre>
 </div>
-</section><section><h2 class="section-heading" id="launch-the-training-job-no-base_output_dir">Launch the training job (no base_output_dir)<a class="anchor" aria-label="anchor" href="#launch-the-training-job-no-base_output_dir"></a></h2>
-<hr class="half-width"><div class="codewrapper sourceCode" id="cb5">
+<p>To address the numpy mismatch, we can run the following code
+first.</p>
+<div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>MODEL_URI <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ss">/model.pt"</span>   <span class="co"># model + metrics + logs will live here together</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"pytorch_nn_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"GCP_helpers/train_nn.py"</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-1:latest"</span>,  <span class="co"># or pytorch-gpu.2-1</span></span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"torch"</span>, <span class="st">"numpy"</span>, <span class="st">"fsspec"</span>, <span class="st">"gcsfs"</span>],</span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>)</span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>job.run(</span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>    args<span class="op">=</span>[</span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
-<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>        <span class="ss">f"--epochs=200"</span>,</span>
-<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>        <span class="ss">f"--learning_rate=0.001"</span>,</span>
-<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>MODEL_URI<span class="sc">}</span><span class="ss">"</span>,   <span class="co"># drives where *all* artifacts go</span></span>
-<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>    ],</span>
-<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-4"</span>,  <span class="co"># CPU fine for small datasets</span></span>
-<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a>)</span>
-<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a></span>
-<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">--</span>upgrade <span class="op">--</span>force<span class="op">-</span>reinstall <span class="st">"numpy&lt;2"</span></span></code></pre>
+</div>
+<p>Then, rerun.</p>
+<div class="codewrapper sourceCode" id="cb6">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="im">import</span> time <span class="im">as</span> t</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>start <span class="op">=</span> t.time()</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co"># Example: run your custom training script with args</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="op">!</span>python <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span>Intro_GCP_for_ML<span class="op">/</span>scripts<span class="op">/</span>train_nn.py <span class="op">\</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>    <span class="op">--</span>train <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span>train_data.npz <span class="op">\</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>    <span class="op">--</span>val <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span>val_data.npz <span class="op">\</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>    <span class="op">--</span>epochs <span class="dv">50</span> <span class="op">\</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>    <span class="op">--</span>learning_rate <span class="fl">0.001</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total local runtime: </span><span class="sc">{</span>t<span class="sc">.</span>time() <span class="op">-</span> start<span class="sc">:.2f}</span><span class="ss"> seconds"</span>)</span></code></pre>
+</div>
+</section><section><h2 class="section-heading" id="launch-the-training-job-no-base_output_dir">Launch the training job (no base_output_dir)<a class="anchor" aria-label="anchor" href="#launch-the-training-job-no-base_output_dir"></a></h2>
+<hr class="half-width"><div class="codewrapper sourceCode" id="cb7">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>MODEL_URI <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ss">/model.pt"</span>   <span class="co"># model + metrics + logs will live here together</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"pytorch_nn_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"GCP_helpers/train_nn.py"</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-1:latest"</span>,  <span class="co"># or pytorch-gpu.2-1</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"torch"</span>, <span class="st">"numpy"</span>, <span class="st">"fsspec"</span>, <span class="st">"gcsfs"</span>],</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>)</span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>job.run(</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>    args<span class="op">=</span>[</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>        <span class="ss">f"--epochs=200"</span>,</span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>        <span class="ss">f"--learning_rate=0.001"</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>MODEL_URI<span class="sc">}</span><span class="ss">"</span>,   <span class="co"># drives where *all* artifacts go</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>    ],</span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-4"</span>,  <span class="co"># CPU fine for small datasets</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>)</span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
 <p><strong>What you’ll see in
 <code>gs://…/artifacts/pytorch/&lt;RUN_ID&gt;/</code>:</strong> -
@@ -676,30 +572,30 @@ validation loss (for plots/regression checks). -
 and debugging.</p>
 </section><section><h2 class="section-heading" id="optional-gpu-training">Optional: GPU training<a class="anchor" aria-label="anchor" href="#optional-gpu-training"></a></h2>
 <hr class="half-width"><p>For larger models or heavier data:</p>
-<div class="codewrapper sourceCode" id="cb6">
+<div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"pytorch_nn_gpu_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"GCP_helpers/train_nn.py"</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-1:latest"</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"torch"</span>, <span class="st">"numpy"</span>, <span class="st">"fsspec"</span>, <span class="st">"gcsfs"</span>],</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>)</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>job.run(</span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>    args<span class="op">=</span>[</span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>        <span class="ss">f"--epochs=200"</span>,</span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>        <span class="ss">f"--learning_rate=0.001"</span>,</span>
-<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>MODEL_URI<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>    ],</span>
-<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-8"</span>,</span>
-<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a>    accelerator_type<span class="op">=</span><span class="st">"NVIDIA_TESLA_T4"</span>,</span>
-<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>    accelerator_count<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"pytorch_nn_gpu_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"GCP_helpers/train_nn.py"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-1:latest"</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"torch"</span>, <span class="st">"numpy"</span>, <span class="st">"fsspec"</span>, <span class="st">"gcsfs"</span>],</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>)</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>job.run(</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>    args<span class="op">=</span>[</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>        <span class="ss">f"--epochs=200"</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>        <span class="ss">f"--learning_rate=0.001"</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>MODEL_URI<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>    ],</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-8"</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>    accelerator_type<span class="op">=</span><span class="st">"NVIDIA_TESLA_T4"</span>,</span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>    accelerator_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>)</span></code></pre>
 </div>
 <p>GPU tips: - On small problems, GPU startup/transfer overhead can
 erase speedups—benchmark before you scale. - Stick to a single replica
