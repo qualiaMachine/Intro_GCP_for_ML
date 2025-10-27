@@ -103,10 +103,7 @@ After reviewing, discuss any questions or observations with your group.
 
 2. **Training function**: `train_model()` constructs and fits an XGBoost model with the provided parameters and prints wall-clock training time. Timing helps compare runs and make sensible scaling choices.
 
-3. **Command-line arguments**: `argparse` lets you set hyperparameters and file paths without editing code (e.g., `--max_depth`, `--eta`, `--num_round`, `--train`). To change rounds:  
-   ```bash
-   python train_xgboost.py --num_round 200
-   ```
+3. **Command-line arguments**: `argparse` lets you set hyperparameters and file paths without editing code (e.g., `--max_depth`, `--eta`, `--num_round`, `--train`). To change rounds:  `python train_xgboost.py --num_round 200`
 
 4. **Handling local vs. GCP runs**:  
    - **Input**: You pass `--train` as either a local path (`train.csv`) or a GCS URI (`gs://bucket/path.csv`). The script automatically detects `gs://` and reads the file directly from Cloud Storage using the Python client.  
