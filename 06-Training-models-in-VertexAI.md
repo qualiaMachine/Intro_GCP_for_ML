@@ -35,35 +35,39 @@ So we all can reference helper functions consistently, change directory to your 
 ```
 
 #### 3. Initialize Vertex AI environment
-This code initializes the Vertex AI environment by importing the Python SDK, setting the project, region, and defining a GCS bucket for input/output data.  
+This code initializes the Vertex AI environment by importing the Python SDK, setting the project, region, and defining a GCS bucket for input/output data.
+
+- `PROJECT_ID`: Identifies your GCP project.  
+- `REGION`: Determines where training jobs run (choose a region close to your data).  
+- `staging_bucket`: A GCS bucket for storing datasets, model artifacts, and job outputs.  
+```python
+from google.cloud import storage
+client = storage.Client()
+PROJECT_ID = client.project
+REGION = "us-central1"
+BUCKET_NAME = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
+
+print("Project:", PROJECT_ID)
+```
+
+- `aiplatform.init()`: Sets defaults for project, region, and staging bucket.  
 
 ```python
 from google.cloud import aiplatform
-import pandas as pd
-
-# Set your project and region (replace with your values)
-PROJECT_ID = "your-gcp-project-id"
-REGION = "us-central1"
-BUCKET_NAME = "your-gcs-bucket"
 
 # Initialize Vertex AI client
 aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}")
 ```
 
-- `aiplatform.init()`: Sets defaults for project, region, and staging bucket.  
-- `PROJECT_ID`: Identifies your GCP project.  
-- `REGION`: Determines where training jobs run (choose a region close to your data).  
-- `staging_bucket`: A GCS bucket for storing datasets, model artifacts, and job outputs.  
-
 #### 4. Get code from GitHub repo (skip if already completed)
 If you didn't complete earlier episodes, clone our code repo before moving forward. Check to make sure we're in our Jupyter home folder first.  
 
 ```python
-%cd /home/jupyter/
+#%cd /home/jupyter/
 ```
 
 ```python
-!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
+#!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
 ```
 
 ## Testing train.py locally in the notebook
@@ -124,7 +128,7 @@ import time as t
 start = t.time()
 
 # Example: run your custom training script with args
-!python GCP_helpers/train_xgboost.py --max_depth 3 --eta 0.1 --subsample 0.8 --colsample_bytree 0.8 --num_round 100 --train titanic_train.csv
+!python Intro_GCP_for_ML/scripts/train_xgboost.py --max_depth 3 --eta 0.1 --subsample 0.8 --colsample_bytree 0.8 --num_round 100 --train titanic_train.csv
 
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
