@@ -519,7 +519,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li><p><strong>Data preprocessing</strong>: The script fills missing
 values (<code>Age</code> with median, <code>Embarked</code> with mode),
@@ -640,16 +640,10 @@ location</strong>.</p>
 <span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total local runtime: </span><span class="sc">{</span>t<span class="sc">.</span>time() <span class="op">-</span> start<span class="sc">:.2f}</span><span class="ss"> seconds"</span>)</span></code></pre>
 </div>
 <p>Training on this small dataset should take &lt;1 minute. Log runtime
-as a baseline. You should see the following output files:</p>
-<ul><li>xgboost-model.joblib # Python-serialized XGBoost model (Booster) via
-joblib; load with joblib.load for reuse.</li>
-<li>eval_history.csv # Per-iteration validation metrics; columns:
-iter,val_logloss (good for plotting learning curves).</li>
-<li>training.log # Full stdout/stderr from the run (params, dataset
-sizes, timings, warnings/errors) for audit/debug.</li>
-<li>metrics.json # Structured summary: final_val_logloss,
-num_boost_round, params, train_rows/val_rows, features[],
-model_uri.</li>
+as a baseline. You should see the following output file:</p>
+<ul><li>
+<code>xgboost-model</code> # Python-serialized XGBoost model
+(Booster) via joblib; load with joblib.load for reuse.</li>
 </ul></section><section><h2 class="section-heading" id="training-via-vertex-ai-custom-training-job">Training via Vertex AI custom training job<a class="anchor" aria-label="anchor" href="#training-via-vertex-ai-custom-training-job"></a></h2>
 <hr class="half-width"><p>Unlike “local” training, this launches a <strong>managed training
 job</strong> that runs on scalable compute. Vertex AI handles
