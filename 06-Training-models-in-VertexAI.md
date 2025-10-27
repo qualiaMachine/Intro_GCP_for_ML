@@ -25,7 +25,7 @@ exercises: 10
 ## Initial setup 
 
 #### 1. Open a new .ipynb notebook
-Open a fresh Jupyter notebook inside your Vertex AI Workbench instance. You can name it something along the lines of, `Training-models.ipynb`.  
+Navigate to `/Intro_GCP_for_ML/notebooks/06-Training-models-in-VertexAI.ipynb` to begin this notebook.
 
 #### 2. CD to instance home directory
 So we all can reference helper functions consistently, change directory to your Jupyter home directory.  
