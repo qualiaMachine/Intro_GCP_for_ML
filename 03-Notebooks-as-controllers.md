@@ -179,7 +179,7 @@ Within the Jupyter notebook, run the following command to clone the lesson repo 
 !git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
 ```
 
-Then, navigate to `/Intro_GCP_for_ML/notebooks/Accessing-and-managing-data.ipynb` to begin the first notebook.
+Then, navigate to `/Intro_GCP_for_ML/notebooks/04-Accessing-and-managing-data.ipynb` to begin the first notebook.
 
 
 ::::::::::::::::::::::::::::::::::::: keypoints 
