@@ -135,6 +135,18 @@ Click **Create** if everything looks good.
 
 **Note the GCS URI for your data** After uploading, click on a file and find its **gs:// URI** (e.g., `gs://sinkorswim-johndoe-titanic/titanic_test.csv`). This URI will be used to access the data later.
 
+## Adjust bucket permissions
+
+Return to the Google Cloud Console (where we created our bucket and VM) and search for "Cloud Shell Editor". Open a shell editor and run the below command, *replacing the bucket name with your bucket's name`:
+
+```sh
+gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
+  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+  --role="roles/storage.objectViewer"
+```
+
+This grants our future VMs permission to read objects from the bucket.
+
 ## Data transfer & storage costs explained  
 GCS costs are based on storage class, data transfer, and operations (requests).  
 
