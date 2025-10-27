@@ -186,7 +186,7 @@ RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
 MODEL_URI = f"gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/model.joblib"  # everything will live beside this
 
 # Staging bucket is only for the SDK's temp code tarball (aiplatform-*.tar.gz)
-aiplatform.init(project=PROJECT, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}")
+aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}")
 ```
 
 ```python
