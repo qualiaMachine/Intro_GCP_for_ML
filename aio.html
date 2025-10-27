@@ -1055,7 +1055,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1539,7 +1539,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -2383,7 +2383,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li><p><strong>Data preprocessing</strong>: The script fills missing
@@ -2621,6 +2621,32 @@ training.</p>
 </div>
 <p>This launches a managed training job with Vertex AI. It should take
 2-5 minutes for the training job to complete.</p>
+</div>
+<div class="section level3">
+<h3 id="understanding-the-training-output-message">Understanding the training output message<a class="anchor" aria-label="anchor" href="#understanding-the-training-output-message"></a>
+</h3>
+<p>After your job finishes, you may see a message like:
+<code>Training did not produce a Managed Model returning None.</code>
+This is expected when running a <code>CustomTrainingJob</code> without
+specifying deployment parameters. Vertex AI supports two modes:</p>
+<ul>
+<li>
+<strong>CustomTrainingJob (research/development)</strong> – You
+control training and save models/logs to Cloud Storage via
+<code>AIP_MODEL_DIR</code>. This is ideal for experimentation and cost
+control.</li>
+<li>
+<strong>TrainingPipeline (for deployment)</strong> – You include
+<code>model_serving_container_image_uri</code> and
+<code>model_display_name</code>, and Vertex automatically registers a
+<em>Managed Model</em> in the Model Registry for deployment to an
+endpoint.</li>
+</ul>
+<p>In our setup, we’re intentionally using the simpler
+<strong>CustomTrainingJob</strong> path. Your trained model is safely
+stored under your specified artifact directory (e.g.,
+<code>gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/</code>), and you can
+later register or deploy it manually when ready.</p>
 </div>
 </section><section><h2 class="section-heading" id="monitoring-training-jobs-in-the-console">Monitoring training jobs in the Console<a class="anchor" aria-label="anchor" href="#monitoring-training-jobs-in-the-console"></a>
 </h2>
