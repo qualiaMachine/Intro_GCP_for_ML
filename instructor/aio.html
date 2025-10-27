@@ -1544,7 +1544,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1864,7 +1864,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2181,7 +2181,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -2692,6 +2692,33 @@ deployment.</li>
 <code>.tar.gz</code> code package or <code>executor_output.json</code>)
 will appear under <code>.vertex_staging/</code> and can be safely
 ignored or auto-deleted via lifecycle rules.</p>
+</div>
+<div class="section level3">
+<h3 id="when-training-takes-too-long">When training takes too long<a class="anchor" aria-label="anchor" href="#when-training-takes-too-long"></a>
+</h3>
+<p>Two main options in Vertex AI:</p>
+<p><strong>Option 1: Upgrade to more powerful machine
+types</strong><br>
+- The simplest way to reduce training time is to use a larger machine or
+add GPUs (e.g., T4, V100, A100).<br>
+- This works best for small or medium datasets (&lt;10 GB) and avoids
+the coordination overhead of distributed training.<br>
+- GPUs and TPUs can accelerate deep learning workloads
+significantly.</p>
+<p><strong>Option 2: Use distributed training with multiple
+replicas</strong><br>
+- Vertex AI supports distributed training for many frameworks.<br>
+- The dataset is split across replicas, each training a portion of the
+data with synchronized gradient updates.<br>
+- This approach is most useful for large datasets and long-running
+jobs.</p>
+<p><strong>When distributed training makes sense</strong><br>
+- Dataset size exceeds 10–50 GB.<br>
+- Training on a single machine takes more than 10 hours.<br>
+- The model is a deep learning workload that scales naturally across
+GPUs or TPUs.</p>
+<p>We will explore both options more in depth in the next episode when
+we train a neural network.</p>
 <div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
 <i class="callout-icon" data-feather="key"></i>
