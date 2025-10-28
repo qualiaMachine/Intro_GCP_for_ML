@@ -20,11 +20,20 @@ exercises: 10
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-## Initial setup (controller notebook)
+## Initial setup
 
-Open a fresh Jupyter notebook in Vertex AI Workbench. Select the **PyTorch** environment (kernel)
+#### 1. Open pre-filled notebook
+Navigate to `/Intro_GCP_for_ML/notebooks/06-Training-models-in-VertexAI-GPUs.ipynb` to begin this notebook. Select the *PyTorch* environment (kernel) Local PyTorch is only needed for local tests. Your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
 
-Note: local PyTorch is only needed for local tests. Your **Vertex AI job** uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
+#### 2. CD to instance home directory
+To ensure we're all in the saming starting spot, change directory to your Jupyter home directory.
+
+```python
+%cd /home/jupyter/
+```
+
+#### 3. Set environment variables 
+This code initializes the Vertex AI environment by importing the Python SDK, setting the project, region, and defining a GCS bucket for input/output data.
 
 ```python
 from google.cloud import aiplatform, storage
