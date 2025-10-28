@@ -544,16 +544,7 @@ code:</p>
 </div>
 </section><section><h2 class="section-heading" id="minimal-pytorch-training-script-train_nn-py---local-test">Minimal PyTorch training script (<code>train_nn.py</code>) - local
 test<a class="anchor" aria-label="anchor" href="#minimal-pytorch-training-script-train_nn-py---local-test"></a></h2>
-<hr class="half-width"><p><strong>Outside of this workshop, you should run these kinds of tests
-on your local laptop or lab PC when possible.</strong> We’re using the
-Workbench VM here only for convenience in this workshop setting, but
-this does incur a small fee for our running VM.</p>
-<ul><li>For large datasets, use a small representative sample of the total
-dataset when testing locally (i.e., just to verify that code is working
-and model overfits nearly perfectly after training enough epochs)</li>
-<li>For larger models, use smaller model equivalents (e.g., 100M vs 7B
-params) when testing locally</li>
-</ul><p>Find this file in our repo:
+<hr class="half-width"><p>Find this file in our repo:
 <code>Intro_GCP_for_ML/scripts/train_nn.py</code>. It does three things:
 1) loads <code>.npz</code> from local or GCS 2) trains a tiny multilayer
 perceptron (MLP) 3) writes all outputs side‑by‑side (model + metrics +
@@ -600,7 +591,16 @@ first.</p>
 <span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a></span>
 <span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total local runtime: </span><span class="sc">{</span>t<span class="sc">.</span>time() <span class="op">-</span> start<span class="sc">:.2f}</span><span class="ss"> seconds"</span>)</span></code></pre>
 </div>
-</section><section><h2 class="section-heading" id="launch-the-training-job-no-base_output_dir">Launch the training job (no base_output_dir)<a class="anchor" aria-label="anchor" href="#launch-the-training-job-no-base_output_dir"></a></h2>
+<p><strong>Outside of this workshop, you should run these kinds of tests
+on your local laptop or lab PC when possible.</strong> We’re using the
+Workbench VM here only for convenience in this workshop setting, but
+this does incur a small fee for our running VM.</p>
+<ul><li>For large datasets, use a small representative sample of the total
+dataset when testing locally (i.e., just to verify that code is working
+and model overfits nearly perfectly after training enough epochs)</li>
+<li>For larger models, use smaller model equivalents (e.g., 100M vs 7B
+params) when testing locally</li>
+</ul></section><section><h2 class="section-heading" id="launch-the-training-job-no-base_output_dir">Launch the training job (no base_output_dir)<a class="anchor" aria-label="anchor" href="#launch-the-training-job-no-base_output_dir"></a></h2>
 <hr class="half-width"><div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>

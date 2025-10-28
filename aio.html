@@ -1055,7 +1055,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -2365,7 +2365,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -2987,17 +2987,6 @@ code:</p>
 test<a class="anchor" aria-label="anchor" href="#minimal-pytorch-training-script-train_nn-py---local-test"></a>
 </h2>
 <hr class="half-width">
-<p><strong>Outside of this workshop, you should run these kinds of tests
-on your local laptop or lab PC when possible.</strong> We’re using the
-Workbench VM here only for convenience in this workshop setting, but
-this does incur a small fee for our running VM.</p>
-<ul>
-<li>For large datasets, use a small representative sample of the total
-dataset when testing locally (i.e., just to verify that code is working
-and model overfits nearly perfectly after training enough epochs)</li>
-<li>For larger models, use smaller model equivalents (e.g., 100M vs 7B
-params) when testing locally</li>
-</ul>
 <p>Find this file in our repo:
 <code>Intro_GCP_for_ML/scripts/train_nn.py</code>. It does three things:
 1) loads <code>.npz</code> from local or GCS 2) trains a tiny multilayer
@@ -3045,7 +3034,17 @@ first.</p>
 <span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a></span>
 <span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total local runtime: </span><span class="sc">{</span>t<span class="sc">.</span>time() <span class="op">-</span> start<span class="sc">:.2f}</span><span class="ss"> seconds"</span>)</span></code></pre>
 </div>
-</section><section><h2 class="section-heading" id="launch-the-training-job-no-base_output_dir">Launch the training job (no base_output_dir)<a class="anchor" aria-label="anchor" href="#launch-the-training-job-no-base_output_dir"></a>
+<p><strong>Outside of this workshop, you should run these kinds of tests
+on your local laptop or lab PC when possible.</strong> We’re using the
+Workbench VM here only for convenience in this workshop setting, but
+this does incur a small fee for our running VM.</p>
+<ul>
+<li>For large datasets, use a small representative sample of the total
+dataset when testing locally (i.e., just to verify that code is working
+and model overfits nearly perfectly after training enough epochs)</li>
+<li>For larger models, use smaller model equivalents (e.g., 100M vs 7B
+params) when testing locally</li>
+</ul></section><section><h2 class="section-heading" id="launch-the-training-job-no-base_output_dir">Launch the training job (no base_output_dir)<a class="anchor" aria-label="anchor" href="#launch-the-training-job-no-base_output_dir"></a>
 </h2>
 <hr class="half-width">
 <div class="codewrapper sourceCode" id="cb9">
@@ -3853,7 +3852,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -3885,7 +3884,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -3915,7 +3914,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
