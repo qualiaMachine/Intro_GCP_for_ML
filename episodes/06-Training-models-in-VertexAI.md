@@ -50,18 +50,6 @@ BUCKET_NAME = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
 print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 ```
 
-
-#### 4. Get code from GitHub repo (skip if already completed)
-If you didn't complete earlier episodes, clone our code repo before moving forward. Check to make sure we're in our Jupyter home folder first.  
-
-```python
-#%cd /home/jupyter/
-```
-
-```python
-#!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
-```
-
 ## Testing train.py locally in the notebook
 
 ::::::::::::::::::::::::::::::::::::::: challenge
