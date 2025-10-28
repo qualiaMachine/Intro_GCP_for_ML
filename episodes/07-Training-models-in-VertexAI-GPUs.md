@@ -105,13 +105,15 @@ bucket.blob("data/val_data.npz").upload_from_filename("/home/jupyter/val_data.np
 print("Uploaded: gs://%s/data/train_data.npz and val_data.npz" % BUCKET_NAME)
 ```
 
-## Minimal PyTorch training script (`train_nn.py`)
+## Minimal PyTorch training script (`train_nn.py`) - local test
 
 Find this file in our repo: `Intro_GCP_for_ML/scripts/train_nn.py`. It does three things:
 1) loads `.npz` from local or GCS
 2) trains a tiny multilayer perceptron (MLP)
 3) **writes all outputs side‑by‑side** (model + metrics + eval history + training.log) to the same `--model_out` folder.
-   
+
+To test this code, we can run the following:
+
 ```python
 import time as t
 
@@ -149,6 +151,11 @@ start = t.time()
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
+**Outside of this workshop, you should run these kinds of tests on your local laptop or lab PC when possible.** We're using the Workbench VM here only for convenience in this workshop setting, but this does incur a small fee for our running VM. 
+
+- For large datasets, use a small representative sample of the total dataset when testing locally (i.e., just to verify that code is working and model overfits nearly perfectly after training enough epochs)
+- For larger models, use smaller model equivalents (e.g., 100M vs 7B params) when testing locally
+  
 ## Launch the training job (no base_output_dir)
 
 ```python
