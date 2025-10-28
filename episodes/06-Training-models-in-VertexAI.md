@@ -182,14 +182,18 @@ job = aiplatform.CustomTrainingJob(
     display_name=f"endemann_xgb_{RUN_ID}",
     script_path="Intro_GCP_for_ML/scripts/train_xgboost.py",
     container_uri="us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest",
-    requirements=["google-cloud-storage"],  # your script uses storage.Client()
+    requirements=["google-cloud-storage"],  # Our train_xgboost.py script uses storage.Client(), which isn't included in the xgboost image. We add it here.
 )
 ```
 
-Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier.  
-The `args` list passes command-line parameters directly into your training script, including hyperparameters and the path to the training data in GCS.  
-`base_output_dir` specifies where all outputs (model, metrics, logs) will be written in Cloud Storage, and `machine_type` controls the compute resources used for training.  
-When `sync=True`, the notebook waits until the job finishes before continuing, making it easier to inspect results immediately after training.
+Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier. **We won't be charged for our selected `MACHINE` until we run the below code using `job.run()`. This marks the point when our script actually begins executing remotely on the Vertex training infrastructure. Once job.run() is called, Vertex handles packaging your training script, transferring it to the managed training environment, provisioning the requested compute instance, and monitoring the run. The job's status and logs can be viewed directly in the Vertex AI Console under Training → Custom jobs.
+
+If you need to cancel or modify a job mid-run, you can do so from the console or via the SDK by calling job.cancel(). When the job completes, Vertex automatically tears down the compute resources so you only pay for the active training time.
+
+- The `args` list passes command-line parameters directly into your training script, including hyperparameters and the path to the training data in GCS.  
+- `base_output_dir` specifies where all outputs (model, metrics, logs) will be written in Cloud Storage
+- `machine_type` controls the compute resources used for training.
+- When `sync=True`, the notebook waits until the job finishes before continuing, making it easier to inspect results immediately after training.
 
 ```python
 job.run(
