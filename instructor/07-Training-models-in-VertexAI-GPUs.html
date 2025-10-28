@@ -446,7 +446,7 @@ input/output data.</p>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a></span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"project = </span><span class="sc">{</span>PROJECT_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">region = </span><span class="sc">{</span>REGION<span class="sc">}</span><span class="ch">\n</span><span class="ss">bucket = </span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co"># Only used for the SDK's small packaging tarball.</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co"># initializes the Vertex AI environment with the correct project and location. Staging bucket is used for storing the compressed software that's packaged for training/tuning jobs.</span></span>
 <span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>aiplatform.init(project<span class="op">=</span>PROJECT_ID, location<span class="op">=</span>REGION, staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/.vertex_staging"</span>) <span class="co"># store tar balls in staging folder </span></span></code></pre>
 </div>
 </div>
