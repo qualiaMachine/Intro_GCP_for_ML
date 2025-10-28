@@ -1059,7 +1059,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1544,7 +1544,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -2181,7 +2181,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -2369,7 +2369,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li><p><strong>Data preprocessing</strong>: The script fills missing
@@ -2858,13 +2858,42 @@ input/output data.</p>
 <a class="anchor" aria-label="anchor" href="#prepare-data-as--npz"></a>
 </h2>
 <hr class="half-width">
-<p>Why <code>.npz</code>?</p>
+<p>Why <code>.npz</code>? NumPy’s <code>.npz</code> files are compressed
+binary containers that can store multiple arrays (e.g., features and
+labels) together in a single file. They offer numerous benefits:</p>
 <ul>
-<li>Smaller, faster I/O than CSV for arrays.</li>
-<li>Natural fit for <code>torch.utils.data.Dataset</code> /
-<code>DataLoader</code>.</li>
+<li>Smaller, faster I/O than CSV for arrays.<br>
+</li>
 <li>One file can hold multiple arrays (<code>X_train</code>,
 <code>y_train</code>).</li>
+<li>Natural fit for <code>torch.utils.data.Dataset</code> /
+<code>DataLoader</code>.<br>
+</li>
+<li>
+<strong>Cloud-friendly:</strong> compressed <code>.npz</code> files
+reduce upload and download times and minimize GCS egress costs. Because
+each <code>.npz</code> is a single binary object, reading it from Google
+Cloud Storage (GCS) requires only one network call—much faster and
+cheaper than streaming many small CSVs or images individually.<br>
+</li>
+<li>
+<strong>Efficient data movement:</strong> when you launch a Vertex
+AI training job, GCS objects referenced in your script (for example,
+<code>gs://.../train_data.npz</code>) are automatically staged to the
+job’s VM or container at runtime. Vertex copies these objects into its
+local scratch disk before execution, so subsequent reads (e.g.,
+<code>np.load(...)</code>) occur from local storage rather than directly
+over the network. For small-to-medium datasets, this happens
+transparently and incurs minimal startup delay.<br>
+</li>
+<li>
+<strong>Reproducible binary format:</strong> unlike CSV,
+<code>.npz</code> preserves exact dtypes and shapes, ensuring identical
+results across different environments and containers.<br>
+</li>
+<li>Each GCS object read or listing request incurs a small per-request
+cost; using a single <code>.npz</code> reduces both the number of API
+calls and associated latency.</li>
 </ul>
 <div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -3769,7 +3798,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -3801,7 +3830,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -3831,7 +3860,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →

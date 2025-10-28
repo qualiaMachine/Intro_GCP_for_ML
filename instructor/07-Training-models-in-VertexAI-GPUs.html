@@ -452,12 +452,36 @@ input/output data.</p>
 </div>
 </section><section><h2 class="section-heading" id="prepare-data-as--npz">Prepare data as <code>.npz</code>
 <a class="anchor" aria-label="anchor" href="#prepare-data-as--npz"></a></h2>
-<hr class="half-width"><p>Why <code>.npz</code>?</p>
-<ul><li>Smaller, faster I/O than CSV for arrays.</li>
-<li>Natural fit for <code>torch.utils.data.Dataset</code> /
-<code>DataLoader</code>.</li>
+<hr class="half-width"><p>Why <code>.npz</code>? NumPy’s <code>.npz</code> files are compressed
+binary containers that can store multiple arrays (e.g., features and
+labels) together in a single file. They offer numerous benefits:</p>
+<ul><li>Smaller, faster I/O than CSV for arrays.<br></li>
 <li>One file can hold multiple arrays (<code>X_train</code>,
 <code>y_train</code>).</li>
+<li>Natural fit for <code>torch.utils.data.Dataset</code> /
+<code>DataLoader</code>.<br></li>
+<li>
+<strong>Cloud-friendly:</strong> compressed <code>.npz</code> files
+reduce upload and download times and minimize GCS egress costs. Because
+each <code>.npz</code> is a single binary object, reading it from Google
+Cloud Storage (GCS) requires only one network call—much faster and
+cheaper than streaming many small CSVs or images individually.<br></li>
+<li>
+<strong>Efficient data movement:</strong> when you launch a Vertex
+AI training job, GCS objects referenced in your script (for example,
+<code>gs://.../train_data.npz</code>) are automatically staged to the
+job’s VM or container at runtime. Vertex copies these objects into its
+local scratch disk before execution, so subsequent reads (e.g.,
+<code>np.load(...)</code>) occur from local storage rather than directly
+over the network. For small-to-medium datasets, this happens
+transparently and incurs minimal startup delay.<br></li>
+<li>
+<strong>Reproducible binary format:</strong> unlike CSV,
+<code>.npz</code> preserves exact dtypes and shapes, ensuring identical
+results across different environments and containers.<br></li>
+<li>Each GCS object read or listing request incurs a small per-request
+cost; using a single <code>.npz</code> reduces both the number of API
+calls and associated latency.</li>
 </ul><div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
