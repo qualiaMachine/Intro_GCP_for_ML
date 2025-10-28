@@ -129,7 +129,7 @@ print("Downloaded titanic_train.csv")
 
 ## Local test run of train.py
 
-**Outside of this workshop, you should run these kinds of tests on your local laptop or lab PC when possible.** We're using the Workbench VM here only for convenience in this workshop setting, but this does incur a small fee for our running VM. To run tests locally, you can
+**Outside of this workshop, you should run these kinds of tests on your local laptop or lab PC when possible.** We're using the Workbench VM here only for convenience in this workshop setting, but this does incur a small fee for our running VM. 
 
 - For large datasets, use a small representative sample of the total dataset when testing locally (i.e., just to verify that code is working and model overfits nearly perfectly after training enough epochs)
 - For larger models, use smaller model equivalents (e.g., 100M vs 7B params) when testing locally
