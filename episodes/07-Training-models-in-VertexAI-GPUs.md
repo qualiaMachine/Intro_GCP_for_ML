@@ -44,7 +44,7 @@ BUCKET_NAME = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
 
 print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 
-# Only used for the SDK's small packaging tarball.
+# initializes the Vertex AI environment with the correct project and location. Staging bucket is used for storing the compressed software that's packaged for training/tuning jobs.
 aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}/.vertex_staging") # store tar balls in staging folder 
 ```
 
