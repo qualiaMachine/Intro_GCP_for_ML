@@ -1858,7 +1858,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2330,26 +2330,30 @@ version)</h3>
 we’re using on GCP found in
 <code>Intro_GCP-for_ML/scripts/train_xgboost.py</code>. This script
 handles preprocessing, training, and saving an XGBoost model, while
-supporting <strong>local paths</strong> and <strong>GCS
-(<code>gs://</code>) paths</strong>, and it adapts to <strong>Vertex
-AI</strong> conventions (e.g., <code>AIP_MODEL_DIR</code>).</p>
+supporting local paths and GCS (<code>gs://</code>) paths, and it adapts
+to Vertex AI conventions (e.g., <code>AIP_MODEL_DIR</code>).</p>
 <p>Try answering the following questions:</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>Data preprocessing</strong>: What transformations are
-applied to the dataset before training?</p></li>
-<li><p><strong>Training function</strong>: What does the
+<li>
+<strong>Data preprocessing</strong>: What transformations are
+applied to the dataset before training?</li>
+<li>
+<strong>Training function</strong>: What does the
 <code>train_model()</code> function do? Why print the training
-time?</p></li>
-<li><p><strong>Command-line arguments</strong>: What is the purpose of
+time?</li>
+<li>
+<strong>Command-line arguments</strong>: What is the purpose of
 <code>argparse</code> in this script? How would you change the number of
-training rounds?</p></li>
-<li><p><strong>Handling local vs. GCP runs</strong>: How does the script
+training rounds?</li>
+<li>
+<strong>Handling local vs. GCP runs</strong>: How does the script
 let you run the same code locally, in Workbench, or as a Vertex AI job?
 Which environment variable controls where the model artifact is
-written?</p></li>
-<li><p><strong>Training and saving the model</strong>: What format is
-the dataset converted to before training, and why? How does the script
-save to a local path vs. a <code>gs://</code> destination?</p></li>
+written?</li>
+<li>
+<strong>Training and saving the model</strong>: What format is the
+dataset converted to before training, and why? How does the script save
+to a local path vs. a <code>gs://</code> destination?</li>
 </ol>
 <p>After reviewing, discuss any questions or observations with your
 group.</p>
@@ -2361,26 +2365,30 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
-<li><p><strong>Data preprocessing</strong>: The script fills missing
-values (<code>Age</code> with median, <code>Embarked</code> with mode),
-maps categorical fields to numeric (<code>Sex</code> → {male:1,
-female:0}, <code>Embarked</code> → {S:0, C:1, Q:2}), and drops
-non-predictive columns (<code>Name</code>, <code>Ticket</code>,
-<code>Cabin</code>).</p></li>
-<li><p><strong>Training function</strong>: <code>train_model()</code>
+<li>
+<strong>Data preprocessing</strong>: The script fills missing values
+(<code>Age</code> with median, <code>Embarked</code> with mode), maps
+categorical fields to numeric (<code>Sex</code> → {male:1, female:0},
+<code>Embarked</code> → {S:0, C:1, Q:2}), and drops non-predictive
+columns (<code>Name</code>, <code>Ticket</code>,
+<code>Cabin</code>).</li>
+<li>
+<strong>Training function</strong>: <code>train_model()</code>
 constructs and fits an XGBoost model with the provided parameters and
 prints wall-clock training time. Timing helps compare runs and make
-sensible scaling choices.</p></li>
-<li><p><strong>Command-line arguments</strong>: <code>argparse</code>
-lets you set hyperparameters and file paths without editing code (e.g.,
+sensible scaling choices.</li>
+<li>
+<strong>Command-line arguments</strong>: <code>argparse</code> lets
+you set hyperparameters and file paths without editing code (e.g.,
 <code>--max_depth</code>, <code>--eta</code>, <code>--num_round</code>,
 <code>--train</code>). To change rounds:
-<code>python train_xgboost.py --num_round 200</code></p></li>
+<code>python train_xgboost.py --num_round 200</code>
+</li>
 <li>
-<p><strong>Handling local vs. GCP runs</strong>:</p>
+<strong>Handling local vs. GCP runs</strong>:
 <ul>
 <li>
 <strong>Input</strong>: You pass <code>--train</code> as either a
@@ -2397,14 +2405,15 @@ Otherwise, the model is saved in the current working directory, which
 works seamlessly in both local and Workbench environments.</li>
 </ul>
 </li>
-<li><p><strong>Training and saving the model</strong>:<br>
+<li>
+<strong>Training and saving the model</strong>:<br>
 The training data is converted into an <strong>XGBoost
 <code>DMatrix</code></strong>, an optimized format that speeds up
 training and reduces memory use. The trained model is serialized with
 <code>joblib</code>. When saving locally, the file is written directly
 to disk. If saving to a Cloud Storage path (<code>gs://...</code>), the
 model is first saved to a temporary file and then uploaded to the
-specified bucket.</p></li>
+specified bucket.</li>
 </ol>
 </div>
 </div>
