@@ -50,11 +50,16 @@ aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCK
 
 ## Prepare data as `.npz`
 
-Why `.npz`?
+Why `.npz`? NumPy's `.npz` files are compressed binary containers that can store multiple arrays (e.g., features and labels) together in a single file. They offer numerous benefits:
 
-- Smaller, faster I/O than CSV for arrays.
-- Natural fit for `torch.utils.data.Dataset` / `DataLoader`.
+- Smaller, faster I/O than CSV for arrays.  
 - One file can hold multiple arrays (`X_train`, `y_train`).
+- Natural fit for `torch.utils.data.Dataset` / `DataLoader`.  
+- **Cloud-friendly:** compressed `.npz` files reduce upload and download times and minimize GCS egress costs. Because each `.npz` is a single binary object, reading it from Google Cloud Storage (GCS) requires only one network call—much faster and cheaper than streaming many small CSVs or images individually.  
+- **Efficient data movement:** when you launch a Vertex AI training job, GCS objects referenced in your script (for example, `gs://.../train_data.npz`) are automatically staged to the job’s VM or container at runtime. Vertex copies these objects into its local scratch disk before execution, so subsequent reads (e.g., `np.load(...)`) occur from local storage rather than directly over the network. For small-to-medium datasets, this happens transparently and incurs minimal startup delay.  
+- **Reproducible binary format:** unlike CSV, `.npz` preserves exact dtypes and shapes, ensuring identical results across different environments and containers.  
+- Each GCS object read or listing request incurs a small per-request cost; using a single `.npz` reduces both the number of API calls and associated latency.
+
   
 ```python
 import pandas as pd
