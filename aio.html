@@ -1055,7 +1055,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1539,7 +1539,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1858,7 +1858,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2505,8 +2505,7 @@ location</strong>.</p>
 <p><strong>Outside of this workshop, you should run these kinds of tests
 on your local laptop or lab PC when possible.</strong> We’re using the
 Workbench VM here only for convenience in this workshop setting, but
-this does incur a small fee for our running VM. To run tests locally,
-you can</p>
+this does incur a small fee for our running VM.</p>
 <ul>
 <li>For large datasets, use a small representative sample of the total
 dataset when testing locally (i.e., just to verify that code is working
@@ -2951,7 +2950,8 @@ calls and associated latency.</li>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>bucket.blob(<span class="st">"data/val_data.npz"</span>).upload_from_filename(<span class="st">"/home/jupyter/val_data.npz"</span>)</span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Uploaded: gs://</span><span class="sc">%s</span><span class="st">/data/train_data.npz and val_data.npz"</span> <span class="op">%</span> BUCKET_NAME)</span></code></pre>
 </div>
-</section><section><h2 class="section-heading" id="minimal-pytorch-training-script-train_nn-py">Minimal PyTorch training script (<code>train_nn.py</code>)<a class="anchor" aria-label="anchor" href="#minimal-pytorch-training-script-train_nn-py"></a>
+</section><section><h2 class="section-heading" id="minimal-pytorch-training-script-train_nn-py---local-test">Minimal PyTorch training script (<code>train_nn.py</code>) - local
+test<a class="anchor" aria-label="anchor" href="#minimal-pytorch-training-script-train_nn-py---local-test"></a>
 </h2>
 <hr class="half-width">
 <p>Find this file in our repo:
@@ -2960,6 +2960,7 @@ calls and associated latency.</li>
 perceptron (MLP) 3) <strong>writes all outputs side‑by‑side</strong>
 (model + metrics + eval history + training.log) to the same
 <code>--model_out</code> folder.</p>
+<p>To test this code, we can run the following:</p>
 <div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -3000,7 +3001,17 @@ first.</p>
 <span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a></span>
 <span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total local runtime: </span><span class="sc">{</span>t<span class="sc">.</span>time() <span class="op">-</span> start<span class="sc">:.2f}</span><span class="ss"> seconds"</span>)</span></code></pre>
 </div>
-</section><section><h2 class="section-heading" id="launch-the-training-job-no-base_output_dir">Launch the training job (no base_output_dir)<a class="anchor" aria-label="anchor" href="#launch-the-training-job-no-base_output_dir"></a>
+<p><strong>Outside of this workshop, you should run these kinds of tests
+on your local laptop or lab PC when possible.</strong> We’re using the
+Workbench VM here only for convenience in this workshop setting, but
+this does incur a small fee for our running VM.</p>
+<ul>
+<li>For large datasets, use a small representative sample of the total
+dataset when testing locally (i.e., just to verify that code is working
+and model overfits nearly perfectly after training enough epochs)</li>
+<li>For larger models, use smaller model equivalents (e.g., 100M vs 7B
+params) when testing locally</li>
+</ul></section><section><h2 class="section-heading" id="launch-the-training-job-no-base_output_dir">Launch the training job (no base_output_dir)<a class="anchor" aria-label="anchor" href="#launch-the-training-job-no-base_output_dir"></a>
 </h2>
 <hr class="half-width">
 <div class="codewrapper sourceCode" id="cb8">
