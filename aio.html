@@ -1539,7 +1539,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1858,7 +1858,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2174,7 +2174,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -2365,7 +2365,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -2583,20 +2583,38 @@ tracking the job in the Vertex AI console.</p>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"endemann_xgb_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
 <span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_xgboost.py"</span>,</span>
 <span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest"</span>,</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"google-cloud-storage"</span>],  <span class="co"># your script uses storage.Client()</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"google-cloud-storage"</span>],  <span class="co"># Our train_xgboost.py script uses storage.Client(), which isn't included in the xgboost image. We add it here.</span></span>
 <span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>)</span></code></pre>
 </div>
 <p>Finally, this next block launches the custom training job on Vertex
-AI using the configuration defined earlier.<br>
-The <code>args</code> list passes command-line parameters directly into
-your training script, including hyperparameters and the path to the
-training data in GCS.<br><code>base_output_dir</code> specifies where all outputs (model,
-metrics, logs) will be written in Cloud Storage, and
+AI using the configuration defined earlier. **We won’t be charged for
+our selected <code>MACHINE</code> until we run the below code using
+<code>job.run()</code>. This marks the point when our script actually
+begins executing remotely on the Vertex training infrastructure. Once
+job.run() is called, Vertex handles packaging your training script,
+transferring it to the managed training environment, provisioning the
+requested compute instance, and monitoring the run. The job’s status and
+logs can be viewed directly in the Vertex AI Console under Training →
+Custom jobs.</p>
+<p>If you need to cancel or modify a job mid-run, you can do so from the
+console or via the SDK by calling job.cancel(). When the job completes,
+Vertex automatically tears down the compute resources so you only pay
+for the active training time.</p>
+<ul>
+<li>The <code>args</code> list passes command-line parameters directly
+into your training script, including hyperparameters and the path to the
+training data in GCS.<br>
+</li>
+<li>
+<code>base_output_dir</code> specifies where all outputs (model,
+metrics, logs) will be written in Cloud Storage</li>
+<li>
 <code>machine_type</code> controls the compute resources used for
-training.<br>
-When <code>sync=True</code>, the notebook waits until the job finishes
-before continuing, making it easier to inspect results immediately after
-training.</p>
+training.</li>
+<li>When <code>sync=True</code>, the notebook waits until the job
+finishes before continuing, making it easier to inspect results
+immediately after training.</li>
+</ul>
 <div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
