@@ -491,7 +491,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>Data preprocessing</strong>: The script fills missing values
@@ -604,7 +604,17 @@ location</strong>.</p>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Downloaded titanic_train.csv"</span>)</span></code></pre>
 </div>
 </section><section><h2 class="section-heading" id="local-test-run-of-train-py">Local test run of train.py<a class="anchor" aria-label="anchor" href="#local-test-run-of-train-py"></a></h2>
-<hr class="half-width"><div class="codewrapper sourceCode" id="cb4">
+<hr class="half-width"><p><strong>Outside of this workshop, you should run these kinds of tests
+on your local laptop or lab PC when possible.</strong> We’re using the
+Workbench VM here only for convenience in this workshop setting, but
+this does incur a small fee for our running VM. To run tests locally,
+you can</p>
+<ul><li>For large datasets, use a small representative sample of the total
+dataset when testing locally (i.e., just to verify that code is working
+and model overfits nearly perfectly after training enough epochs)</li>
+<li>For larger models, use smaller model equivalents (e.g., 100M vs 7B
+params) when testing locally</li>
+</ul><div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="im">import</span> time <span class="im">as</span> t</span>
