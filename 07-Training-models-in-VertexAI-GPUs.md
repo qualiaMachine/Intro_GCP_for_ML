@@ -104,6 +104,19 @@ bucket.blob("data/train_data.npz").upload_from_filename("/home/jupyter/train_dat
 bucket.blob("data/val_data.npz").upload_from_filename("/home/jupyter/val_data.npz")
 print("Uploaded: gs://%s/data/train_data.npz and val_data.npz" % BUCKET_NAME)
 ```
+To check our work (bucket contents), we can again use the following code:
+
+```python
+total_size_bytes = 0
+# bucket = client.bucket(BUCKET_NAME)
+
+for blob in client.list_blobs(BUCKET_NAME):
+    total_size_bytes += blob.size
+    print(blob.name)
+
+total_size_mb = total_size_bytes / (1024**2)
+print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
+```
 
 ## Minimal PyTorch training script (`train_nn.py`) - local test
 
