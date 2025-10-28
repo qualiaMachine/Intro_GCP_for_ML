@@ -34,12 +34,12 @@ To ensure we're all in the saming starting spot, change directory to your Jupyte
 %cd /home/jupyter/
 ```
 
-#### 3. Initialize Vertex AI environment
+#### 3. Set environment variables 
 This code initializes the Vertex AI environment by importing the Python SDK, setting the project, region, and defining a GCS bucket for input/output data.
 
 - `PROJECT_ID`: Identifies your GCP project.  
 - `REGION`: Determines where training jobs run (choose a region close to your data).  
-- `staging_bucket`: A GCS bucket for storing datasets, model artifacts, and job outputs.  
+
 ```python
 from google.cloud import storage
 client = storage.Client()
