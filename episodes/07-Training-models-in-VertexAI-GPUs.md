@@ -14,7 +14,7 @@ exercises: 10
 ::::::::::::::::::::::::::::::::::::: objectives
 
 - Prepare the Titanic dataset and save train/val arrays to compressed `.npz` files in GCS.
-- Submit a **CustomTrainingJob** that runs a PyTorch script and explicitly writes outputs to a chosen `gs://…/artifacts/.../` folder.
+- Submit a *CustomTrainingJob* that runs a PyTorch script and explicitly writes outputs to a chosen `gs://…/artifacts/.../` folder.
 - Co‑locate artifacts: `model.pt` (or `.joblib`), `metrics.json`, `eval_history.csv`, and `training.log` for reproducibility.
 - Choose CPU vs. GPU instances sensibly; understand when distributed training is (not) worth it.
 
@@ -104,6 +104,7 @@ bucket.blob("data/train_data.npz").upload_from_filename("/home/jupyter/train_dat
 bucket.blob("data/val_data.npz").upload_from_filename("/home/jupyter/val_data.npz")
 print("Uploaded: gs://%s/data/train_data.npz and val_data.npz" % BUCKET_NAME)
 ```
+
 To check our work (bucket contents), we can again use the following code:
 
 ```python
@@ -123,7 +124,7 @@ print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
 Find this file in our repo: `Intro_GCP_for_ML/scripts/train_nn.py`. It does three things:
 1) loads `.npz` from local or GCS
 2) trains a tiny multilayer perceptron (MLP)
-3) **writes all outputs side‑by‑side** (model + metrics + eval history + training.log) to the same `--model_out` folder.
+3) writes all outputs side‑by‑side (model + metrics + eval history + training.log) to the same `--model_out` folder.
 
 To test this code, we can run the following:
 
