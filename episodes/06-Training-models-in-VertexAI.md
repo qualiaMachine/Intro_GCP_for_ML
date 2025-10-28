@@ -24,7 +24,7 @@ exercises: 2
 
 ## Initial setup 
 
-#### 1. Open a new .ipynb notebook
+#### 1. Open pre-filled notebook
 Navigate to `/Intro_GCP_for_ML/notebooks/06-Training-models-in-VertexAI.ipynb` to begin this notebook.
 
 #### 2. CD to instance home directory
