@@ -22,8 +22,6 @@ exercises: 10
 
 ## Initial setup (controller notebook)
 
-## Initial setup (controller notebook)
-
 Open a fresh Jupyter notebook in Vertex AI Workbench. Select the **PyTorch** environment (kernel)
 
 Note: local PyTorch is only needed for local tests. Your **Vertex AI job** uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
