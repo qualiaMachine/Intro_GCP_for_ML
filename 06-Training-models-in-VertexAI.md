@@ -56,18 +56,14 @@ print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 
 ### Understanding the XGBoost Training Script (GCP version)
 
-Take a moment to review the `train_xgboost.py` script we're using on GCP found in `Intro_GCP-for_ML/scripts/train_xgboost.py`. This script handles preprocessing, training, and saving an XGBoost model, while supporting **local paths** and **GCS (`gs://`) paths**, and it adapts to **Vertex AI** conventions (e.g., `AIP_MODEL_DIR`).
+Take a moment to review the `train_xgboost.py` script we're using on GCP found in `Intro_GCP-for_ML/scripts/train_xgboost.py`. This script handles preprocessing, training, and saving an XGBoost model, while supporting local paths and GCS (`gs://`) paths, and it adapts to Vertex AI conventions (e.g., `AIP_MODEL_DIR`).
 
 Try answering the following questions:
 
 1. **Data preprocessing**: What transformations are applied to the dataset before training?
-
 2. **Training function**: What does the `train_model()` function do? Why print the training time?
-
 3. **Command-line arguments**: What is the purpose of `argparse` in this script? How would you change the number of training rounds?
-
 4. **Handling local vs. GCP runs**: How does the script let you run the same code locally, in Workbench, or as a Vertex AI job? Which environment variable controls where the model artifact is written?
-
 5. **Training and saving the model**: What format is the dataset converted to before training, and why? How does the script save to a local path vs. a `gs://` destination?
 
 After reviewing, discuss any questions or observations with your group.
@@ -80,15 +76,11 @@ After reviewing, discuss any questions or observations with your group.
 ### Solution
 
 1. **Data preprocessing**: The script fills missing values (`Age` with median, `Embarked` with mode), maps categorical fields to numeric (`Sex` → {male:1, female:0}, `Embarked` → {S:0, C:1, Q:2}), and drops non-predictive columns (`Name`, `Ticket`, `Cabin`).
-
 2. **Training function**: `train_model()` constructs and fits an XGBoost model with the provided parameters and prints wall-clock training time. Timing helps compare runs and make sensible scaling choices.
-
 3. **Command-line arguments**: `argparse` lets you set hyperparameters and file paths without editing code (e.g., `--max_depth`, `--eta`, `--num_round`, `--train`). To change rounds:  `python train_xgboost.py --num_round 200`
-
 4. **Handling local vs. GCP runs**:  
    - **Input**: You pass `--train` as either a local path (`train.csv`) or a GCS URI (`gs://bucket/path.csv`). The script automatically detects `gs://` and reads the file directly from Cloud Storage using the Python client.  
    - **Output**: If the environment variable `AIP_MODEL_DIR` is set (as it is in Vertex AI CustomJobs), the trained model is written there—often a `gs://` path. Otherwise, the model is saved in the current working directory, which works seamlessly in both local and Workbench environments.
-
 5. **Training and saving the model**:  
    The training data is converted into an **XGBoost `DMatrix`**, an optimized format that speeds up training and reduces memory use. The trained model is serialized with `joblib`. When saving locally, the file is written directly to disk. If saving to a Cloud Storage path (`gs://...`), the model is first saved to a temporary file and then uploaded to the specified bucket.
 
