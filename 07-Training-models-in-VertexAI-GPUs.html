@@ -277,7 +277,6 @@ test</a></li>
 <li><a href="#launch-the-training-job">Launch the training job</a></li>
 <li><a href="#gpu-accelerated-training-on-vertex-ai">GPU-Accelerated Training on Vertex AI</a></li>
 <li><a href="#distributed-training-when-to-consider">Distributed training (when to consider)</a></li>
-<li><a href="#monitoring-jobs-finding-outputs">Monitoring jobs &amp; finding outputs</a></li>
 <li><a href="#additional-resources">Additional resources</a></li>
         </ul></div><!--/div.accordion-body-->
     </div><!--/div.accordion-collapse-->
@@ -820,13 +819,6 @@ single machine/GPU is simpler and cheaper.</li>
 <li>
 <strong>Model parallelism</strong> is for very large networks that
 don’t fit on one device—overkill for this lesson.</li>
-</ul></section><section><h2 class="section-heading" id="monitoring-jobs-finding-outputs">Monitoring jobs &amp; finding outputs<a class="anchor" aria-label="anchor" href="#monitoring-jobs-finding-outputs"></a></h2>
-<hr class="half-width"><ul><li>Console → Vertex AI → Training → Custom Jobs → your run → “Output
-directory” shows the container logs and the environment’s
-<code>AIP_MODEL_DIR</code>.</li>
-<li>Your script writes <strong>model + metrics + eval history +
-training.log</strong> next to <code>--model_out</code>, e.g.,
-<code>gs://&lt;bucket&gt;/artifacts/pytorch/&lt;RUN_ID&gt;/</code>.</li>
 </ul></section><section><h2 class="section-heading" id="additional-resources">Additional resources<a class="anchor" aria-label="anchor" href="#additional-resources"></a></h2>
 <hr class="half-width"><p>To learn more about PyTorch and Vertex AI integrations, visit the
 docs: <a href="https://docs.cloud.google.com/vertex-ai/docs/start/pytorch" class="external-link">docs.cloud.google.com/vertex-ai/docs/start/pytorch</a></p>
