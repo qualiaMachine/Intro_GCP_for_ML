@@ -196,7 +196,8 @@ print(f"Total local runtime: {t.time() - start:.2f} seconds")
 
 In the previous episode, we trained an XGBoost model using Vertex AI's CustomTrainingJob interface. Here, we'll do the same for a PyTorch neural network. The structure is nearly identical —  we define a training script, select a prebuilt container (CPU or GPU), and specify where to write all outputs in Google Cloud Storage (GCS). The main difference is that PyTorch requires us to save our own model weights and metrics inside the script rather than relying on Vertex to package a model automatically.
 
-Set configuration vars. For our image, we can find the corresponding PyTorch image by visiting: [cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch](https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch)
+### Set training job configuration vars
+For our image, we can find the corresponding PyTorch image by visiting: [cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch](https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch)
 
 ```python
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -204,13 +205,17 @@ ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch/{RUN_ID}"
 IMAGE = 'us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest' # cpu-only version
 MACHINE = "n1-standard-4",  # CPU fine for small datasets
 
+# init job (this does not consume any resources)
 job = aiplatform.CustomTrainingJob(
     display_name=f"pytorch_nn_{RUN_ID}",
     script_path="Intro_GCP_for_ML/scripts/train_xgboost.py",
-    container_uri=IMAGE,
-    requirements=["torch", "numpy", "fsspec", "gcsfs"],
-)
+    container_uri=IMAGE)
 
+```
+
+Run the job, paying for our `MACHINE` on-demand.
+
+```python
 job.run(
     args=[
         f"--train=gs://{BUCKET_NAME}/data/train_data.npz",
