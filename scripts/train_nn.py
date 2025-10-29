@@ -112,7 +112,7 @@ def main():
     ap.add_argument("--learning_rate", type=float, default=1e-3, help="Learning rate")
     # Early stopping args
     ap.add_argument("--patience", type=int, default=10, help="Epochs to wait for val_loss improvement")
-    ap.add_argument("--min_delta", type=float, default=0.0, help="Minimum improvement in val_loss to reset patience")
+    ap.add_argument("--min_delta", type=float, default=1e-3, help="Minimum improvement in val_loss to reset patience")
     ap.add_argument("--restore_best", type=lambda s: s.lower() in {"1","true","yes","y"}, default=True,
                     help="Restore best weights before saving (default True)")
     args = ap.parse_args()
