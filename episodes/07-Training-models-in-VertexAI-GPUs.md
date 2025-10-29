@@ -355,7 +355,6 @@ GPU tips:
 - **Data parallelism** (DDP) helps when a single GPU is saturated by batch size/throughput. For most workshop‑scale models, a single machine/GPU is simpler and cheaper.
 - **Model parallelism** is for very large networks that don't fit on one device—overkill for this lesson.
 
-
 ## Additional resources
 To learn more about PyTorch and Vertex AI integrations, visit the docs: [docs.cloud.google.com/vertex-ai/docs/start/pytorch](https://docs.cloud.google.com/vertex-ai/docs/start/pytorch)
 
