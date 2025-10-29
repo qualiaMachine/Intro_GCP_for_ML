@@ -65,7 +65,6 @@ from google.cloud.aiplatform import hyperparameter_tuning as hpt
 parameter_spec = {
     "learning_rate": hpt.DoubleParameterSpec(min=1e-4, max=1e-1, scale="log"),
     "patience": hpt.IntegerParameterSpec(min=5, max=20, scale="linear"),
-    "min_delta": hpt.DoubleParameterSpec(min=0.0, max=0.01, scale="linear"),
 }
 ```
 
