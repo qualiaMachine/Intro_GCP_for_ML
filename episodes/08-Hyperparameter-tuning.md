@@ -56,6 +56,8 @@ print(f"validation_accuracy: {val_acc:.6f}", flush=True)
 #### 2. Define hyperparameter search space
 This step defines which parameters Vertex AI will vary across trials and their allowed ranges. The number of total settings tested is determined later using `max_trial_count`.
 
+Vertex AI uses **Bayesian optimization** by default (internally listed as `"ALGORITHM_UNSPECIFIED"` in the API).  That means if you don’t explicitly specify a search algorithm, Vertex AI automatically applies an adaptive Bayesian strategy to balance exploration (trying new areas of the parameter space) and exploitation (focusing near the best results so far).  Each completed trial helps the tuner model how your objective metric (for example, `validation_accuracy`) changes across parameter values. Subsequent trials then sample new parameter combinations that are statistically more likely to improve performance, which usually yields better results than random or grid search—especially when `max_trial_count` is limited.
+
 Include early-stopping parameters so the tuner can learn good stopping behavior for your dataset:
 
 ```python
