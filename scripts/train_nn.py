@@ -226,6 +226,11 @@ def main():
             final_val_loss = loss_fn(val_pred, yva_t).item()
             final_val_acc  = accuracy_binary(val_pred, yva_t)
 
+        #  Guarantee Vertex sees a compliant metric line 
+        print(f"validation_accuracy: {final_val_acc:.6f}", flush=True)
+        print(f"validation_loss: {final_val_loss:.6f}", flush=True)
+
+
         # -----------------------------
         # Save artifacts: model + metrics + logs
         # -----------------------------
