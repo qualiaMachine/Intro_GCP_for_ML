@@ -200,6 +200,7 @@ In the previous episode, we trained an XGBoost model using Vertex AI's CustomTra
 For our image, we can find the corresponding PyTorch image by visiting: [cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch](https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch)
 
 ```python
+import datetime as dt
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
 ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch/{RUN_ID}"
 IMAGE = 'us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest' # cpu-only version
@@ -276,7 +277,6 @@ This makes it easy to start with a CPU run for testing, then scale up to GPU tra
 
 
 ```python
-import datetime as dt
 from google.cloud import aiplatform
 
 LAST_NAME = "DOE"  # Your last name goes in the job display name so it's easy to find in the Console
