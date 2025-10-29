@@ -46,7 +46,7 @@ Change to your Jupyter home folder to keep paths consistent.
 #### 1. Prepare training script with metric logging
 Your training script (`train_nn.py`) should periodically print validation metrics in a format Vertex AI can capture. Vertex AI parses lines like `key: value` from stdout.
 
-Add these two lines right after you compute `val_loss` and `val_acc` inside the epoch loop (the patch below shows exactly where):
+Add these two lines right after you compute `val_loss` and `val_acc` inside the epoch loop:
 
 ```python
 print(f"validation_loss: {val_loss:.6f}", flush=True)
