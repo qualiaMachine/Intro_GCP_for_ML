@@ -203,6 +203,11 @@ def main():
                         metric_value=val_loss,
                         global_step=ep,  # optional, helps charts; any monotonic step is fine
                     )
+                    ht.report_hyperparameter_tuning_metric(
+                        hyperparameter_metric_tag="validation_accuracy",
+                        metric_value=val_acc,
+                        global_step=ep)
+
 
 
             hist.append(val_loss)
