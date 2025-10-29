@@ -72,6 +72,8 @@ parameter_spec = {
 
 #### 3. Configure hyperparameter tuning job
 
+**Start with a max of 1 trials!** Scale up after confirming it's setup correctly.
+
 ```python
 from google.cloud import aiplatform, storage
 from google.cloud.aiplatform import hyperparameter_tuning as hpt
