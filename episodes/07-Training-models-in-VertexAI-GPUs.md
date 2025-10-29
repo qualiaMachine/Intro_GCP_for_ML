@@ -134,6 +134,12 @@ Find this file in our repo: `Intro_GCP_for_ML/scripts/train_nn.py`. It does thre
 To test this code, we can run the following:
 
 ```python
+# configure training hyperparameters to use in all model training runs downstream
+MAX_EPOCHS = 500
+LR =  0.001
+PATIENCE = 50
+
+# local training run
 import time as t
 
 start = t.time()
@@ -142,8 +148,9 @@ start = t.time()
 !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
     --train /home/jupyter/train_data.npz \
     --val /home/jupyter/val_data.npz \
-    --epochs 500 \
-    --learning_rate 0.001
+    --epochs $MAX_EPOCHS \
+    --learning_rate $LR \
+    --patience $PATIENCE
 
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
@@ -164,8 +171,10 @@ If applicable (numpy mismatch), run the below code after uncommenting it (select
 # !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
 #     --train /home/jupyter/train_data.npz \
 #     --val /home/jupyter/val_data.npz \
-#     --epochs 50 \
-#     --learning_rate 0.001
+#    --epochs $MAX_EPOCHS \
+#    --learning_rate $LR \
+#    --patience $PATIENCE
+
 
 # print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
@@ -184,13 +193,44 @@ start = t.time()
 !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
     --train /home/jupyter/train_data.npz \
     --val /home/jupyter/val_data.npz \
-    --epochs 50 \
-    --learning_rate 0.001
+    --epochs $MAX_EPOCHS \
+    --learning_rate $LR \
+    --patience $PATIENCE
 
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
 **Please don't use cloud resources for code that is not reproducible!**
+
+### Evaluate the locally trained model on the validation data
+
+```python
+import sys, torch, numpy as np
+sys.path.append("/home/jupyter/Intro_GCP_for_ML/scripts")
+from train_nn import TitanicNet
+
+# load validation data
+d = np.load("/home/jupyter/val_data.npz")
+X_val, y_val = d["X_val"], d["y_val"]
+
+# rebuild model and load weights
+m = TitanicNet()
+state = torch.load("/home/jupyter/model.pt", map_location="cpu") 
+m.load_state_dict(state)
+m.eval()
+
+X_val_t = torch.tensor(X_val, dtype=torch.float32)
+with torch.no_grad():
+    # model already outputs probabilities in (0,1) because final layer is Sigmoid
+    probs = m(X_val_t).squeeze(1)              # shape [N]
+    preds = (probs >= 0.5).long().cpu().numpy()
+
+acc = (preds == y_val).mean()
+print(f"Local model val accuracy: {acc:.4f}")
+
+```
+
+We should see an accuracy that matches our best epoch in the local training run. Note that in our setup, early stopping is based on validation loss; not accuracy.
 
 ## Launch the training job 
 
@@ -200,6 +240,7 @@ In the previous episode, we trained an XGBoost model using Vertex AI's CustomTra
 For our image, we can find the corresponding PyTorch image by visiting: [cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch](https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch)
 
 ```python
+import datetime as dt
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
 ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch/{RUN_ID}"
 IMAGE = 'us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest' # cpu-only version
@@ -262,6 +303,42 @@ print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
 - `eval_history.csv` — per‑epoch validation loss (for plots/regression checks).
 - `training.log` — complete stdout/stderr for reproducibility and debugging.
 
+### Evaluate the Vertex-trained model on the validation data
+
+We can check out work to see if this model gives the same result as our "locally" trained model above. First, we'll copy the model from GCS to our notebook.
+```python
+# Copy model.pt from GCS (replace RUN_ID with your run folder)
+!gsutil cp {ARTIFACT_DIR}/model/model.pt /home/jupyter/model_vertex.pt
+!ls
+```
+
+As before, we can run our model evaluation code with this model.
+
+```python
+import sys, torch, numpy as np
+sys.path.append("/home/jupyter/Intro_GCP_for_ML/scripts")
+from train_nn import TitanicNet
+
+# load validation data
+d = np.load("/home/jupyter/val_data.npz")
+X_val, y_val = d["X_val"], d["y_val"]
+
+# rebuild model and load weights
+m = TitanicNet()
+state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")  
+m.load_state_dict(state)
+m.eval()
+
+X_val_t = torch.tensor(X_val, dtype=torch.float32)
+with torch.no_grad():
+    # model already outputs probabilities in (0,1) because final layer is Sigmoid
+    probs = m(X_val_t).squeeze(1)              # shape [N]
+    preds = (probs >= 0.5).long().cpu().numpy()
+
+acc = (preds == y_val).mean()
+print(f"Vertex model val accuracy: {acc:.4f}")
+
+```
 ## GPU-Accelerated Training on Vertex AI
 
 In the previous example, we ran our PyTorch training job on a CPU-only machine using the `pytorch-cpu` container. That setup works well for small models or quick tests since CPU instances are cheaper and start faster.
@@ -276,7 +353,6 @@ This makes it easy to start with a CPU run for testing, then scale up to GPU tra
 
 
 ```python
-import datetime as dt
 from google.cloud import aiplatform
 
 LAST_NAME = "DOE"  # Your last name goes in the job display name so it's easy to find in the Console
