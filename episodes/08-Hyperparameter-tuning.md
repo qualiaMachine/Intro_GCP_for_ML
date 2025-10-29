@@ -33,7 +33,10 @@ The overall process involves these steps:
 5. Monitor progress in the Vertex AI Console.  
 6. Extract the best model and inspect recorded metrics.  
 
-#### 0. Directory setup
+#### 0. Initial setup
+
+Navigate to `/Intro_GCP_for_ML/notebooks/08-Hyperparameter-tuning.ipynb` to begin this notebook. Select the *PyTorch* environment (kernel) Local PyTorch is only needed for local tests. Your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
+
 Change to your Jupyter home folder to keep paths consistent.
 
 ```python
@@ -43,7 +46,7 @@ Change to your Jupyter home folder to keep paths consistent.
 #### 1. Prepare training script with metric logging
 Your training script (`train_nn.py`) should periodically print validation metrics in a format Vertex AI can capture. Vertex AI parses lines like `key: value` from stdout.
 
-Add these two lines right after you compute `val_loss` and `val_acc` inside the epoch loop (the patch below shows exactly where):
+Add these two lines right after you compute `val_loss` and `val_acc` inside the epoch loop:
 
 ```python
 print(f"validation_loss: {val_loss:.6f}", flush=True)
@@ -63,12 +66,8 @@ from google.cloud import aiplatform
 from google.cloud.aiplatform import hyperparameter_tuning as hpt
 
 parameter_spec = {
-    "epochs": hpt.IntegerParameterSpec(min=100, max=300, scale="linear"),
     "learning_rate": hpt.DoubleParameterSpec(min=1e-4, max=1e-1, scale="log"),
     "patience": hpt.IntegerParameterSpec(min=5, max=20, scale="linear"),
-    "min_delta": hpt.DoubleParameterSpec(min=0.0, max=0.01, scale="linear"),  # improvement threshold on val_loss
-    # You can also add restore_best as categorical if you want to compare behaviors:
-    # "restore_best": hpt.CategoricalParameterSpec(values=["true","false"]),
 }
 ```
 
@@ -97,7 +96,7 @@ Create a unique run ID and set the container, machine type, and base output dire
 
 ```python
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
-BASE_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch_hpt/{RUN_ID}"
+ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch_hpt/{RUN_ID}"
 
 IMAGE = "us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest"  # CPU example
 MACHINE = "n1-standard-4"
@@ -106,7 +105,24 @@ ACCELERATOR_COUNT = 0
 ```
 
 #### 5. Configure hyperparameter tuning job
-Set the optimization metric to the printed key `validation_accuracy`. Start with one trial to validate your setup before scaling.
+When you use Vertex AI Hyperparameter Tuning Jobs, each trial needs a complete, runnable training configuration: the script, its arguments, the container image, and the compute environment.  
+Rather than defining these pieces inline each time, we create a **CustomJob** to hold that configuration.  
+
+The CustomJob acts as the blueprint for running a single training task — specifying exactly what to run and on what resources. The tuner then reuses that job definition across all trials, automatically substituting in new hyperparameter values for each run.  
+
+This approach has a few practical advantages:
+
+- You only define the environment once — machine type, accelerators, and output directories are all reused across trials.  
+- The tuner can safely inject trial-specific parameters (those declared in `parameter_spec`) while leaving other arguments unchanged.  
+- It provides a clean separation between *what a single job does* (`CustomJob`) and *how many times to repeat it with new settings* (`HyperparameterTuningJob`).  
+- It avoids the extra abstraction layers of higher-level wrappers like `CustomTrainingJob`, which automatically package code and environments. Using `CustomJob.from_local_script` keeps the workflow predictable and explicit.
+
+In short:  
+`CustomJob` defines how to run one training run.  
+`HyperparameterTuningJob` defines how to repeat it with different parameter sets and track results.  
+
+The number of total runs is set by `max_trial_count`, and the number of simultaneous runs is controlled by `parallel_trial_count`.  Each trial’s output and metrics are logged under the GCS `base_output_dir`. **ALWAYS START WITH 2 trials** before scaling up `max_trial_count`.
+
 
 ```python
 metric_spec = {"validation_accuracy": "maximize"}  # matches script print key
@@ -118,13 +134,10 @@ custom_job = aiplatform.CustomJob.from_local_script(
     args=[
         f"--train=gs://{BUCKET_NAME}/data/train_data.npz",
         f"--val=gs://{BUCKET_NAME}/data/val_data.npz",
-        "--epochs=200",                 # HPT will override when sampling
         "--learning_rate=0.001",        # HPT will override when sampling
         "--patience=10",                # HPT will override when sampling
-        "--min_delta=0.0",              # HPT will override when sampling
-        # "--restore_best=true",        # optional categorical param if enabled above
     ],
-    base_output_dir=BASE_DIR,
+    base_output_dir=ARTIFACT_DIR,
     machine_type=MACHINE,
     accelerator_type=ACCELERATOR_TYPE,
     accelerator_count=ACCELERATOR_COUNT,
@@ -132,21 +145,22 @@ custom_job = aiplatform.CustomJob.from_local_script(
 
 DISPLAY_NAME = f"{LAST_NAME}_pytorch_hpt_{RUN_ID}"
 
+# ALWAYS START WITH 2 trials before scaling up `max_trial_count`
 tuning_job = aiplatform.HyperparameterTuningJob(
     display_name=DISPLAY_NAME,
     custom_job=custom_job,                 # must be a CustomJob (not CustomTrainingJob)
     metric_spec=metric_spec,
     parameter_spec=parameter_spec,
-    max_trial_count=10,                    # controls how many configurations are tested
+    max_trial_count=1,                    # controls how many configurations are tested
     parallel_trial_count=2,                # how many run concurrently (keep small for adaptive search)
 )
 
 tuning_job.run(sync=True)
-print("HPT artifacts base:", BASE_DIR)
+print("HPT artifacts base:", ARTIFACT_DIR)
 ```
 
 #### 6. Monitor tuning job
-Open **Vertex AI → Training → Hyperparameter tuning jobs** to track trials, parameters, and metrics. You can also stop jobs from the console if needed.
+Open **Vertex AI → Training → Hyperparameter tuning jobs** to track trials, parameters, and metrics. You can also stop jobs from the console if needed. For MLM25, the folllowing link should work: [https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&project=doit-rci-mlm25-4626]([https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&project=doit-rci-mlm25-4626]).
 
 #### 7. Inspect best trial results
 After completion, look up the best configuration and objective value from the SDK:
@@ -158,16 +172,16 @@ print("Best validation_accuracy:", best_trial.final_measurement.metrics)
 ```
 
 #### 8. Review recorded metrics in GCS
-Your script writes a `metrics.json` (with keys such as `final_val_accuracy`, `final_val_loss`) to each trial’s output directory (under `BASE_DIR`). The snippet below aggregates those into a dataframe for side-by-side comparison.
+Your script writes a `metrics.json` (with keys such as `final_val_accuracy`, `final_val_loss`) to each trial’s output directory (under `ARTIFACT_DIR`). The snippet below aggregates those into a dataframe for side-by-side comparison.
 
 ```python
 from google.cloud import storage
 import json, pandas as pd
 
-def list_metrics_from_gcs(base_dir: str):
+def list_metrics_from_gcs(ARTIFACT_DIR: str):
     client = storage.Client()
-    bucket_name = base_dir.replace("gs://", "").split("/")[0]
-    prefix = "/".join(base_dir.replace("gs://", "").split("/")[1:])
+    bucket_name = ARTIFACT_DIR.replace("gs://", "").split("/")[0]
+    prefix = "/".join(ARTIFACT_DIR.replace("gs://", "").split("/")[1:])
     blobs = client.list_blobs(bucket_name, prefix=prefix)
 
     records = []
@@ -179,7 +193,7 @@ def list_metrics_from_gcs(base_dir: str):
             records.append(data)
     return pd.DataFrame(records)
 
-df = list_metrics_from_gcs(BASE_DIR)
+df = list_metrics_from_gcs(ARTIFACT_DIR)
 print(df[["trial_id","final_val_accuracy","final_val_loss","best_val_loss","best_epoch","patience","min_delta","learning_rate"]].sort_values("final_val_accuracy", ascending=False))
 ```
 
