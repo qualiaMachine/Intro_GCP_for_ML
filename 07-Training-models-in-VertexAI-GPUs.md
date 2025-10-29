@@ -256,6 +256,7 @@ print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
 ```
 
 **What you'll see in `gs://…/artifacts/pytorch/<RUN_ID>/`:**
+
 - `model.pt` — PyTorch weights (`state_dict`).
 - `metrics.json` — final val loss, hyperparameters, dataset sizes, device, model URI.
 - `eval_history.csv` — per‑epoch validation loss (for plots/regression checks).
