@@ -70,8 +70,6 @@ parameter_spec = {
     "learning_rate": hpt.DoubleParameterSpec(min=1e-4, max=1e-1, scale="log"),
     "patience": hpt.IntegerParameterSpec(min=5, max=20, scale="linear"),
     "min_delta": hpt.DoubleParameterSpec(min=0.0, max=0.01, scale="linear"),  # improvement threshold on val_loss
-    # You can also add restore_best as categorical if you want to compare behaviors:
-    # "restore_best": hpt.CategoricalParameterSpec(values=["true","false"]),
 }
 ```
 
@@ -121,11 +119,8 @@ custom_job = aiplatform.CustomJob.from_local_script(
     args=[
         f"--train=gs://{BUCKET_NAME}/data/train_data.npz",
         f"--val=gs://{BUCKET_NAME}/data/val_data.npz",
-        "--epochs=200",                 # HPT will override when sampling
         "--learning_rate=0.001",        # HPT will override when sampling
         "--patience=10",                # HPT will override when sampling
-        "--min_delta=0.0",              # HPT will override when sampling
-        # "--restore_best=true",        # optional categorical param if enabled above
     ],
     base_output_dir=BASE_DIR,
     machine_type=MACHINE,
