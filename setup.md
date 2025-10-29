@@ -24,12 +24,11 @@ There are two ways to get access to GCP for this lesson. Please wait for a pre-w
 
 #### Option 1) Shared Google Cloud Project
 
-If you are attending this lesson as part of the **Machine Learning Marathon** or **Research Bazaar**, the instructors will provide access to a shared GCP project for all attendees. You do not need to set up your own account.  
+If you are attending this lesson as part of the **Machine Learning Marathon** or **Research Bazaar**, the instructors will provide access to a shared GCP project for all attendees. You do not need to set up your own account. The instructors will add you to a shared account.
 
 What to expect:
 
-* Before the workshop, you will receive an email invitation to join the shared GCP project.  
-* During the lesson, you will log in with your Google account credentials (NetID or Gmail).  
+* During the lesson, you will log in with your Google account credentials.  
 * This setup ensures that all participants have a consistent environment and avoids unexpected billing for attendees.  
 * Please use shared credits responsibly — they are limited and reused for future training events.  
   * Stay within the provided exercises and avoid launching additional compute-heavy workloads (e.g., training large language models).  
