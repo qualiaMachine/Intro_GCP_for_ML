@@ -642,12 +642,13 @@ visiting: <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-co
 <div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest'</span> <span class="co"># cpu-only version</span></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span> <span class="co"># CPU fine for small datasets</span></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"RUN_ID = </span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">ARTIFACT_DIR = </span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ch">\n</span><span class="ss">MACHINE = </span><span class="sc">{</span>MACHINE<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest'</span> <span class="co"># cpu-only version</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span> <span class="co"># CPU fine for small datasets</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"RUN_ID = </span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">ARTIFACT_DIR = </span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ch">\n</span><span class="ss">MACHINE = </span><span class="sc">{</span>MACHINE<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
 </div>
 </div>
 <div class="section level3">
@@ -740,73 +741,72 @@ parameters.</p>
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> aiplatform</span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">"DOE"</span>  <span class="co"># Your last name goes in the job display name so it's easy to find in the Console</span></span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co"># GCS folder where ALL artifacts (model.pt, metrics.json, eval_history.csv, training.log) will be saved.</span></span>
-<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co"># Your train_nn.py writes to AIP_MODEL_DIR, and base_output_dir (below) sets that variable for the job.</span></span>
-<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co"># ---- Container image ----</span></span>
-<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a><span class="co"># Use a prebuilt TRAINING image that has PyTorch + CUDA. This enables GPU at runtime.</span></span>
-<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest"</span></span>
-<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a></span>
-<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="co"># ---- Machine vs Accelerator (important!) ----</span></span>
-<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a><span class="co"># machine_type = the VM's CPU/RAM shape. It is NOT a GPU by itself.</span></span>
-<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="co"># We often pick n1-standard-8 as a balanced baseline for single-GPU jobs.</span></span>
-<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-8"</span></span>
-<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a></span>
-<span id="cb13-20"><a href="#cb13-20" tabindex="-1"></a><span class="co"># To actually get a GPU, you *attach* one via accelerator_type + accelerator_count.</span></span>
-<span id="cb13-21"><a href="#cb13-21" tabindex="-1"></a><span class="co"># Common choices:</span></span>
-<span id="cb13-22"><a href="#cb13-22" tabindex="-1"></a><span class="co">#   "NVIDIA_TESLA_T4" (cost-effective, widely available)</span></span>
-<span id="cb13-23"><a href="#cb13-23" tabindex="-1"></a><span class="co">#   "NVIDIA_L4"       (newer, CUDA 12.x, good perf/$)</span></span>
-<span id="cb13-24"><a href="#cb13-24" tabindex="-1"></a><span class="co">#   "NVIDIA_TESLA_V100" / "NVIDIA_A100_40GB" (high-end, pricey)</span></span>
-<span id="cb13-25"><a href="#cb13-25" tabindex="-1"></a>ACCELERATOR_TYPE <span class="op">=</span> <span class="st">"NVIDIA_TESLA_T4"</span></span>
-<span id="cb13-26"><a href="#cb13-26" tabindex="-1"></a>ACCELERATOR_COUNT <span class="op">=</span> <span class="dv">1</span>  <span class="co"># Increase (2,4) only if your code supports multi-GPU (e.g., DDP)</span></span>
-<span id="cb13-27"><a href="#cb13-27" tabindex="-1"></a></span>
-<span id="cb13-28"><a href="#cb13-28" tabindex="-1"></a><span class="co"># Alternative (GPU-bundled) machines:</span></span>
-<span id="cb13-29"><a href="#cb13-29" tabindex="-1"></a><span class="co"># If you pick an A2 type like "a2-highgpu-1g", it already includes 1 A100 GPU.</span></span>
-<span id="cb13-30"><a href="#cb13-30" tabindex="-1"></a><span class="co"># In that case, you can omit accelerator_type/accelerator_count entirely.</span></span>
-<span id="cb13-31"><a href="#cb13-31" tabindex="-1"></a><span class="co"># Example:</span></span>
-<span id="cb13-32"><a href="#cb13-32" tabindex="-1"></a><span class="co"># MACHINE = "a2-highgpu-1g"</span></span>
-<span id="cb13-33"><a href="#cb13-33" tabindex="-1"></a><span class="co"># (and then remove the accelerator_* kwargs in job.run)</span></span>
-<span id="cb13-34"><a href="#cb13-34" tabindex="-1"></a></span>
-<span id="cb13-35"><a href="#cb13-35" tabindex="-1"></a><span class="bu">print</span>(</span>
-<span id="cb13-36"><a href="#cb13-36" tabindex="-1"></a>    <span class="st">"RUN_ID ="</span>, RUN_ID,</span>
-<span id="cb13-37"><a href="#cb13-37" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">ARTIFACT_DIR ="</span>, ARTIFACT_DIR,</span>
-<span id="cb13-38"><a href="#cb13-38" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">IMAGE ="</span>, IMAGE,</span>
-<span id="cb13-39"><a href="#cb13-39" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">MACHINE ="</span>, MACHINE,</span>
-<span id="cb13-40"><a href="#cb13-40" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">ACCELERATOR_TYPE ="</span>, ACCELERATOR_TYPE,</span>
-<span id="cb13-41"><a href="#cb13-41" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">ACCELERATOR_COUNT ="</span>, ACCELERATOR_COUNT,</span>
-<span id="cb13-42"><a href="#cb13-42" tabindex="-1"></a>)</span>
-<span id="cb13-43"><a href="#cb13-43" tabindex="-1"></a></span>
-<span id="cb13-44"><a href="#cb13-44" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_nn_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb13-45"><a href="#cb13-45" tabindex="-1"></a></span>
-<span id="cb13-46"><a href="#cb13-46" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
-<span id="cb13-47"><a href="#cb13-47" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
-<span id="cb13-48"><a href="#cb13-48" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_nn.py"</span>,  <span class="co"># Your PyTorch trainer</span></span>
-<span id="cb13-49"><a href="#cb13-49" tabindex="-1"></a>    container_uri<span class="op">=</span>IMAGE,  <span class="co"># Must be a *training* image (not prediction)</span></span>
-<span id="cb13-50"><a href="#cb13-50" tabindex="-1"></a>)</span>
-<span id="cb13-51"><a href="#cb13-51" tabindex="-1"></a></span>
-<span id="cb13-52"><a href="#cb13-52" tabindex="-1"></a>job.run(</span>
-<span id="cb13-53"><a href="#cb13-53" tabindex="-1"></a>    args<span class="op">=</span>[</span>
-<span id="cb13-54"><a href="#cb13-54" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
-<span id="cb13-55"><a href="#cb13-55" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
-<span id="cb13-56"><a href="#cb13-56" tabindex="-1"></a>        <span class="st">"--epochs=200"</span>,</span>
-<span id="cb13-57"><a href="#cb13-57" tabindex="-1"></a>        <span class="st">"--learning_rate=0.001"</span>,</span>
-<span id="cb13-58"><a href="#cb13-58" tabindex="-1"></a>    ],</span>
-<span id="cb13-59"><a href="#cb13-59" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,                 <span class="co"># One worker (simple, cheaper)</span></span>
-<span id="cb13-60"><a href="#cb13-60" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,            <span class="co"># CPU/RAM shape of the VM (no GPU implied)</span></span>
-<span id="cb13-61"><a href="#cb13-61" tabindex="-1"></a>    accelerator_type<span class="op">=</span>ACCELERATOR_TYPE,   <span class="co"># Attaches the selected GPU model</span></span>
-<span id="cb13-62"><a href="#cb13-62" tabindex="-1"></a>    accelerator_count<span class="op">=</span>ACCELERATOR_COUNT, <span class="co"># Number of GPUs to attach</span></span>
-<span id="cb13-63"><a href="#cb13-63" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACT_DIR,    <span class="co"># Sets AIP_MODEL_DIR used by your script for all artifacts</span></span>
-<span id="cb13-64"><a href="#cb13-64" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,                       <span class="co"># Waits for job to finish so you can inspect outputs immediately</span></span>
-<span id="cb13-65"><a href="#cb13-65" tabindex="-1"></a>)</span>
-<span id="cb13-66"><a href="#cb13-66" tabindex="-1"></a></span>
-<span id="cb13-67"><a href="#cb13-67" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> aiplatform</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">"DOE"</span>  <span class="co"># Your last name goes in the job display name so it's easy to find in the Console</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co"># GCS folder where ALL artifacts (model.pt, metrics.json, eval_history.csv, training.log) will be saved.</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co"># Your train_nn.py writes to AIP_MODEL_DIR, and base_output_dir (below) sets that variable for the job.</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="co"># ---- Container image ----</span></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co"># Use a prebuilt TRAINING image that has PyTorch + CUDA. This enables GPU at runtime.</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest"</span></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a><span class="co"># ---- Machine vs Accelerator (important!) ----</span></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a><span class="co"># machine_type = the VM's CPU/RAM shape. It is NOT a GPU by itself.</span></span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a><span class="co"># We often pick n1-standard-8 as a balanced baseline for single-GPU jobs.</span></span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-8"</span></span>
+<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a><span class="co"># To actually get a GPU, you *attach* one via accelerator_type + accelerator_count.</span></span>
+<span id="cb13-20"><a href="#cb13-20" tabindex="-1"></a><span class="co"># Common choices:</span></span>
+<span id="cb13-21"><a href="#cb13-21" tabindex="-1"></a><span class="co">#   "NVIDIA_TESLA_T4" (cost-effective, widely available)</span></span>
+<span id="cb13-22"><a href="#cb13-22" tabindex="-1"></a><span class="co">#   "NVIDIA_L4"       (newer, CUDA 12.x, good perf/$)</span></span>
+<span id="cb13-23"><a href="#cb13-23" tabindex="-1"></a><span class="co">#   "NVIDIA_TESLA_V100" / "NVIDIA_A100_40GB" (high-end, pricey)</span></span>
+<span id="cb13-24"><a href="#cb13-24" tabindex="-1"></a>ACCELERATOR_TYPE <span class="op">=</span> <span class="st">"NVIDIA_TESLA_T4"</span></span>
+<span id="cb13-25"><a href="#cb13-25" tabindex="-1"></a>ACCELERATOR_COUNT <span class="op">=</span> <span class="dv">1</span>  <span class="co"># Increase (2,4) only if your code supports multi-GPU (e.g., DDP)</span></span>
+<span id="cb13-26"><a href="#cb13-26" tabindex="-1"></a></span>
+<span id="cb13-27"><a href="#cb13-27" tabindex="-1"></a><span class="co"># Alternative (GPU-bundled) machines:</span></span>
+<span id="cb13-28"><a href="#cb13-28" tabindex="-1"></a><span class="co"># If you pick an A2 type like "a2-highgpu-1g", it already includes 1 A100 GPU.</span></span>
+<span id="cb13-29"><a href="#cb13-29" tabindex="-1"></a><span class="co"># In that case, you can omit accelerator_type/accelerator_count entirely.</span></span>
+<span id="cb13-30"><a href="#cb13-30" tabindex="-1"></a><span class="co"># Example:</span></span>
+<span id="cb13-31"><a href="#cb13-31" tabindex="-1"></a><span class="co"># MACHINE = "a2-highgpu-1g"</span></span>
+<span id="cb13-32"><a href="#cb13-32" tabindex="-1"></a><span class="co"># (and then remove the accelerator_* kwargs in job.run)</span></span>
+<span id="cb13-33"><a href="#cb13-33" tabindex="-1"></a></span>
+<span id="cb13-34"><a href="#cb13-34" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb13-35"><a href="#cb13-35" tabindex="-1"></a>    <span class="st">"RUN_ID ="</span>, RUN_ID,</span>
+<span id="cb13-36"><a href="#cb13-36" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">ARTIFACT_DIR ="</span>, ARTIFACT_DIR,</span>
+<span id="cb13-37"><a href="#cb13-37" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">IMAGE ="</span>, IMAGE,</span>
+<span id="cb13-38"><a href="#cb13-38" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">MACHINE ="</span>, MACHINE,</span>
+<span id="cb13-39"><a href="#cb13-39" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">ACCELERATOR_TYPE ="</span>, ACCELERATOR_TYPE,</span>
+<span id="cb13-40"><a href="#cb13-40" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">ACCELERATOR_COUNT ="</span>, ACCELERATOR_COUNT,</span>
+<span id="cb13-41"><a href="#cb13-41" tabindex="-1"></a>)</span>
+<span id="cb13-42"><a href="#cb13-42" tabindex="-1"></a></span>
+<span id="cb13-43"><a href="#cb13-43" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_nn_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb13-44"><a href="#cb13-44" tabindex="-1"></a></span>
+<span id="cb13-45"><a href="#cb13-45" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
+<span id="cb13-46"><a href="#cb13-46" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
+<span id="cb13-47"><a href="#cb13-47" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_nn.py"</span>,  <span class="co"># Your PyTorch trainer</span></span>
+<span id="cb13-48"><a href="#cb13-48" tabindex="-1"></a>    container_uri<span class="op">=</span>IMAGE,  <span class="co"># Must be a *training* image (not prediction)</span></span>
+<span id="cb13-49"><a href="#cb13-49" tabindex="-1"></a>)</span>
+<span id="cb13-50"><a href="#cb13-50" tabindex="-1"></a></span>
+<span id="cb13-51"><a href="#cb13-51" tabindex="-1"></a>job.run(</span>
+<span id="cb13-52"><a href="#cb13-52" tabindex="-1"></a>    args<span class="op">=</span>[</span>
+<span id="cb13-53"><a href="#cb13-53" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
+<span id="cb13-54"><a href="#cb13-54" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
+<span id="cb13-55"><a href="#cb13-55" tabindex="-1"></a>        <span class="st">"--epochs=200"</span>,</span>
+<span id="cb13-56"><a href="#cb13-56" tabindex="-1"></a>        <span class="st">"--learning_rate=0.001"</span>,</span>
+<span id="cb13-57"><a href="#cb13-57" tabindex="-1"></a>    ],</span>
+<span id="cb13-58"><a href="#cb13-58" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,                 <span class="co"># One worker (simple, cheaper)</span></span>
+<span id="cb13-59"><a href="#cb13-59" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,            <span class="co"># CPU/RAM shape of the VM (no GPU implied)</span></span>
+<span id="cb13-60"><a href="#cb13-60" tabindex="-1"></a>    accelerator_type<span class="op">=</span>ACCELERATOR_TYPE,   <span class="co"># Attaches the selected GPU model</span></span>
+<span id="cb13-61"><a href="#cb13-61" tabindex="-1"></a>    accelerator_count<span class="op">=</span>ACCELERATOR_COUNT, <span class="co"># Number of GPUs to attach</span></span>
+<span id="cb13-62"><a href="#cb13-62" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACT_DIR,    <span class="co"># Sets AIP_MODEL_DIR used by your script for all artifacts</span></span>
+<span id="cb13-63"><a href="#cb13-63" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,                       <span class="co"># Waits for job to finish so you can inspect outputs immediately</span></span>
+<span id="cb13-64"><a href="#cb13-64" tabindex="-1"></a>)</span>
+<span id="cb13-65"><a href="#cb13-65" tabindex="-1"></a></span>
+<span id="cb13-66"><a href="#cb13-66" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
 <p>GPU tips: - On small problems, GPU startup/transfer overhead can
 erase speedups—benchmark before you scale. - Stick to a single replica
