@@ -109,7 +109,7 @@ def main():
     ap.add_argument("--train", required=True, help="Path to training npz (local or gs://)")
     ap.add_argument("--val",   required=True, help="Path to validation npz (local or gs://)")
     ap.add_argument("--epochs", type=int, default=1000, help="Max number of epochs")
-    ap.add_argument("--learning_rate", type=float, default=1e-3, help="Learning rate")
+    ap.add_argument("--learning_rate", type=float, default=1e-4, help="Learning rate")
     # Early stopping args
     ap.add_argument("--patience", type=int, default=10, help="Epochs to wait for val_loss improvement")
     ap.add_argument("--min_delta", type=float, default=1e-3, help="Minimum improvement in val_loss to reset patience")
@@ -195,9 +195,10 @@ def main():
             else:
                 epochs_no_improve += 1
 
+
             if ep == 1 or ep % 10 == 0 or ep == args.epochs or improved:
-                tag = " *best*" if improved else ""
-                print(f"epoch={ep} loss={loss.item():.4f} val_loss={val_loss:.4f} val_acc={val_acc:.4f}{tag}", flush=True)
+                    
+                print(f"epoch={ep} loss={loss.item():.4f} val_loss={val_loss:.4f} val_acc={val_acc:.4f}", flush=True)
 
                 # print these on their own lines for HyperparamterTuning jobs to detect
                 print(f"validation_loss: {val_loss:.6f}", flush=True)
