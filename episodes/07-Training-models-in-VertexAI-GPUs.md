@@ -269,7 +269,7 @@ In the previous example, we ran our PyTorch training job on a CPU-only machine u
 In this section, we'll attach a GPU to our Vertex AI training job to speed up heavier workloads. The workflow is nearly identical to the CPU version, except for a few changes:
 
 - The container image switches to the GPU-enabled version (`pytorch-gpu.2-4.py310:latest`), which includes CUDA and cuDNN.
-- The machine type (`n1-standard-8`) defines CPU and memory resources, while we now add a GPU accelerator (`NVIDIA_TESLA_T4`, `NVIDIA_L4`, etc.).
+- The machine type (`n1-standard-8`) defines CPU and memory resources, while we now add a GPU accelerator (`NVIDIA_TESLA_T4`, `NVIDIA_L4`, etc.). **For guidance on selecting a machine type and accelerator, visit the [Compute for ML](https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html) resource.**
 - The training script, arguments, and artifact handling all stay the same.
 
 This makes it easy to start with a CPU run for testing, then scale up to GPU training by changing only the image and adding accelerator parameters.
@@ -325,7 +325,6 @@ job = aiplatform.CustomTrainingJob(
     display_name=DISPLAY_NAME,
     script_path="Intro_GCP_for_ML/scripts/train_nn.py",  # Your PyTorch trainer
     container_uri=IMAGE,  # Must be a *training* image (not prediction)
-    # requirements=[]  # Not needed: the image already has torch, numpy, gcs libs
 )
 
 job.run(
