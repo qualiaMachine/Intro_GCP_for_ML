@@ -170,6 +170,27 @@ If applicable (numpy mismatch), run the below code after uncommenting it (select
 # print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
+### Reproducibility test
+Without reproducibility, it's impossible to gain reliable insights into the efficacy of our methods. An essential component of applied ML/AI is ensuring our experiments are reproducible. Let's first rerun the same code we did above to verify we get the same result. 
+
+* Take a look near the top of `Intro_GCP_for_ML/scripts/train_nn.py` where we are setting multiple numpy and torch seeds to ensure reproducibility.
+
+```python
+import time as t
+
+start = t.time()
+
+# Example: run your custom training script with args
+!python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
+    --train /home/jupyter/train_data.npz \
+    --val /home/jupyter/val_data.npz \
+    --epochs 50 \
+    --learning_rate 0.001
+
+print(f"Total local runtime: {t.time() - start:.2f} seconds")
+```
+
+**Please don't use cloud resources for code that is not reproducible!**
 
 ## Launch the training job 
 
