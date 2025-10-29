@@ -460,69 +460,72 @@ with optional scaling.</li>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>client <span class="op">=</span> storage.Client()</span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>PROJECT_ID <span class="op">=</span> client.project</span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>REGION <span class="op">=</span> <span class="st">"us-central1"</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"sinkorswim-johndoe-titanic"</span>  <span class="co"># ADJUST</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>aiplatform.init(</span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>    project<span class="op">=</span>PROJECT_ID,</span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>    location<span class="op">=</span>REGION,</span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>    staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/.vertex_staging"</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>)</span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a></span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co"># --- run IDs and output dir ---</span></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>BASE_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch_hpt/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a></span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co"># --- training container (use TRAINING image) ---</span></span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest'</span> <span class="co"># cpu-only version</span></span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a></span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co"># --- machine/accelerator for each trial (CPU example) ---</span></span>
-<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span></span>
-<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>ACCELERATOR_TYPE <span class="op">=</span> <span class="va">None</span></span>
-<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>ACCELERATOR_COUNT <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a></span>
-<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="co"># --- search space (arg names must match train_nn.py argparse flags) ---</span></span>
-<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>parameter_spec <span class="op">=</span> {</span>
-<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a>    <span class="st">"epochs"</span>: hpt.IntegerParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="dv">100</span>, <span class="bu">max</span><span class="op">=</span><span class="dv">300</span>, scale<span class="op">=</span><span class="st">"linear"</span>),</span>
-<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>    <span class="st">"learning_rate"</span>: hpt.DoubleParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="fl">1e-4</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">1e-1</span>, scale<span class="op">=</span><span class="st">"log"</span>),</span>
-<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>}</span>
-<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a></span>
-<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>metric_spec <span class="op">=</span> {<span class="st">"final_val_loss"</span>: <span class="st">"minimize"</span>}  <span class="co"># must match metrics.json key written by your script</span></span>
-<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a></span>
-<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a><span class="co"># --- build the trial job as a CustomJob; set compute + base_output_dir HERE ---</span></span>
-<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a>custom_job <span class="op">=</span> aiplatform.CustomJob.from_local_script(</span>
-<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"pytorch_trial_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_nn.py"</span>,</span>
-<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a>    container_uri<span class="op">=</span>IMAGE,</span>
-<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a>    args<span class="op">=</span>[</span>
-<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
-<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
-<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a>        <span class="st">"--epochs=200"</span>,</span>
-<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a>        <span class="st">"--learning_rate=0.001"</span>,</span>
-<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a>    ],</span>
-<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a>    base_output_dir<span class="op">=</span>BASE_DIR,</span>
-<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,</span>
-<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a>    accelerator_type<span class="op">=</span><span class="st">"ACCELERATOR_TYPE_UNSPECIFIED"</span>,  <span class="co"># explicitly no GPU</span></span>
-<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a>    accelerator_count<span class="op">=</span><span class="dv">0</span>,                              <span class="co"># also required</span></span>
-<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a>    requirements<span class="op">=</span>[</span>
-<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a>        <span class="st">"torch"</span>,</span>
-<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a>        <span class="st">"google-cloud-storage"</span>,</span>
-<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a>        <span class="st">"fsspec"</span>,</span>
-<span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a>        <span class="st">"gcsfs"</span>,</span>
-<span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a>    ],</span>
-<span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a>)</span>
-<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a></span>
-<span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a><span class="co"># --- create and run the HPT job (no base_output_dir or machine args here) ---</span></span>
-<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a>tuning_job <span class="op">=</span> aiplatform.HyperparameterTuningJob(</span>
-<span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"pytorch_hpt_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,                 <span class="co"># must be a CustomJob (not CustomTrainingJob)</span></span>
-<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a>    metric_spec<span class="op">=</span>metric_spec,</span>
-<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a>    parameter_spec<span class="op">=</span>parameter_spec,</span>
-<span id="cb4-65"><a href="#cb4-65" tabindex="-1"></a>    max_trial_count<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb4-66"><a href="#cb4-66" tabindex="-1"></a>    parallel_trial_count<span class="op">=</span><span class="dv">2</span>,</span>
-<span id="cb4-67"><a href="#cb4-67" tabindex="-1"></a>)</span>
-<span id="cb4-68"><a href="#cb4-68" tabindex="-1"></a></span>
-<span id="cb4-69"><a href="#cb4-69" tabindex="-1"></a>tuning_job.run(sync<span class="op">=</span><span class="va">True</span>)  <span class="co"># just launch; compute/output were set on the CustomJob above</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">"DOE"</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"sinkorswim-johndoe-titanic"</span>  <span class="co"># ADJUST</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>aiplatform.init(</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>    project<span class="op">=</span>PROJECT_ID,</span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>    location<span class="op">=</span>REGION,</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>    staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/.vertex_staging"</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>)</span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co"># --- run IDs and output dir ---</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>BASE_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch_hpt/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co"># --- training container (use TRAINING image) ---</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest'</span> <span class="co"># cpu-only version</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co"># --- machine/accelerator for each trial (CPU example) ---</span></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>ACCELERATOR_TYPE <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a>ACCELERATOR_COUNT <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="co"># --- search space (arg names must match train_nn.py argparse flags) ---</span></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a>parameter_spec <span class="op">=</span> {</span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>    <span class="st">"epochs"</span>: hpt.IntegerParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="dv">100</span>, <span class="bu">max</span><span class="op">=</span><span class="dv">300</span>, scale<span class="op">=</span><span class="st">"linear"</span>),</span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>    <span class="st">"learning_rate"</span>: hpt.DoubleParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="fl">1e-4</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">1e-1</span>, scale<span class="op">=</span><span class="st">"log"</span>),</span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>}</span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>metric_spec <span class="op">=</span> {<span class="st">"final_val_loss"</span>: <span class="st">"minimize"</span>}  <span class="co"># must match metrics.json key written by your script</span></span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a></span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a><span class="co"># --- build the trial job as a CustomJob; set compute + base_output_dir HERE ---</span></span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a>custom_job <span class="op">=</span> aiplatform.CustomJob.from_local_script(</span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_hpt-trial_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_nn.py"</span>,</span>
+<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a>    container_uri<span class="op">=</span>IMAGE,</span>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>    args<span class="op">=</span>[</span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a>        <span class="st">"--epochs=200"</span>,</span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a>        <span class="st">"--learning_rate=0.001"</span>,</span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a>    ],</span>
+<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a>    base_output_dir<span class="op">=</span>BASE_DIR,</span>
+<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,</span>
+<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a>    accelerator_type<span class="op">=</span><span class="st">"ACCELERATOR_TYPE_UNSPECIFIED"</span>,  <span class="co"># explicitly no GPU</span></span>
+<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a>    accelerator_count<span class="op">=</span><span class="dv">0</span>,                              <span class="co"># also required</span></span>
+<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a>    requirements<span class="op">=</span>[</span>
+<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a>        <span class="st">"torch"</span>,</span>
+<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a>        <span class="st">"google-cloud-storage"</span>,</span>
+<span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a>        <span class="st">"fsspec"</span>,</span>
+<span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a>        <span class="st">"gcsfs"</span>,</span>
+<span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a>    ],</span>
+<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a>)</span>
+<span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a></span>
+<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a><span class="co"># --- create and run the HPT job (no base_output_dir or machine args here) ---</span></span>
+<span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_hpt_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span> <span class="co"># since we're in a shared account envirnoment, we'll add our name to the training job to more easily track these jobs down in the Console</span></span>
+<span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a>tuning_job <span class="op">=</span> aiplatform.HyperparameterTuningJob(</span>
+<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
+<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,                 <span class="co"># must be a CustomJob (not CustomTrainingJob)</span></span>
+<span id="cb4-65"><a href="#cb4-65" tabindex="-1"></a>    metric_spec<span class="op">=</span>metric_spec,</span>
+<span id="cb4-66"><a href="#cb4-66" tabindex="-1"></a>    parameter_spec<span class="op">=</span>parameter_spec,</span>
+<span id="cb4-67"><a href="#cb4-67" tabindex="-1"></a>    max_trial_count<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb4-68"><a href="#cb4-68" tabindex="-1"></a>    parallel_trial_count<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb4-69"><a href="#cb4-69" tabindex="-1"></a>)</span>
 <span id="cb4-70"><a href="#cb4-70" tabindex="-1"></a></span>
-<span id="cb4-71"><a href="#cb4-71" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"HPT artifacts base:"</span>, BASE_DIR)</span></code></pre>
+<span id="cb4-71"><a href="#cb4-71" tabindex="-1"></a>tuning_job.run(sync<span class="op">=</span><span class="va">True</span>)  <span class="co"># just launch; compute/output were set on the CustomJob above</span></span>
+<span id="cb4-72"><a href="#cb4-72" tabindex="-1"></a></span>
+<span id="cb4-73"><a href="#cb4-73" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"HPT artifacts base:"</span>, BASE_DIR)</span>
+<span id="cb4-74"><a href="#cb4-74" tabindex="-1"></a></span></code></pre>
 </div>
 <ul><li>
 <strong>max_trial_count</strong>: Total number of configurations
