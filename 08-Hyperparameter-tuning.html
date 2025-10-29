@@ -558,7 +558,7 @@ WITH 1 trial</strong> before scaling up
 <span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a></span>
 <span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_hpt_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
 <span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a></span>
-<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co"># ALWAYS START WITH 2 trials before scaling up `max_trial_count`</span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co"># ALWAYS START WITH 1 trial before scaling up `max_trial_count`</span></span>
 <span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a>tuning_job <span class="op">=</span> aiplatform.HyperparameterTuningJob(</span>
 <span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
 <span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,                 <span class="co"># must be a CustomJob (not CustomTrainingJob)</span></span>
