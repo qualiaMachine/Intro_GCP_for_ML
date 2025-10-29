@@ -109,7 +109,7 @@ ACCELERATOR_COUNT = 0
 ```
 
 #### 5. Configure hyperparameter tuning job
-Set the optimization metric to the printed key `validation_accuracy`. Start with one trial to validate your setup before scaling.
+Set the optimization metric to the printed key `validation_accuracy`. **Always start with one trial to validate your setup before scaling.** 
 
 ```python
 metric_spec = {"validation_accuracy": "maximize"}  # matches script print key
