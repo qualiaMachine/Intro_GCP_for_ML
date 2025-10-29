@@ -203,17 +203,27 @@ For our image, we can find the corresponding PyTorch image by visiting: [cloud.g
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
 ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch/{RUN_ID}"
 IMAGE = 'us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest' # cpu-only version
-MACHINE = "n1-standard-4",  # CPU fine for small datasets
+MACHINE = "n1-standard-4" # CPU fine for small datasets
 
+print(f"RUN_ID = {RUN_ID}\nARTIFACT_DIR = {ARTIFACT_DIR}\nMACHINE = {MACHINE}")
+```
+
+### Init the training job with configurations
+
+```python
 # init job (this does not consume any resources)
+LAST_NAME = 'DOE' # REPLACE with your last name. Since we're in a shared account envirnoment, this will help us track down jobs in the Console
+DISPLAY_NAME = f"{LAST_NAME}_pytorch_nn_{RUN_ID}" 
+
+# init the job. This does not consume resources until we run job.run()
 job = aiplatform.CustomTrainingJob(
-    display_name=f"pytorch_nn_{RUN_ID}",
+    display_name=DISPLAY_NAME,
     script_path="Intro_GCP_for_ML/scripts/train_nn.py",
     container_uri=IMAGE)
 
 ```
 
-Run the job, paying for our `MACHINE` on-demand.
+### Run the job, paying for our `MACHINE` on-demand.
 
 ```python
 job.run(
