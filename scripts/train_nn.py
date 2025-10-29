@@ -197,7 +197,12 @@ def main():
 
             if ep == 1 or ep % 10 == 0 or ep == args.epochs or improved:
                 tag = " *best*" if improved else ""
-                print(f"epoch={ep} loss:{loss.item():.4f} val_loss:{val_loss:.4f} val_acc:{val_acc:.4f}{tag}", flush=True)
+                print(f"epoch={ep} loss={loss.item():.4f} val_loss={val_loss:.4f} val_acc={val_acc:.4f}{tag}", flush=True)
+
+                # print these on their own lines for HyperparamterTuning jobs to detect
+    +           print(f"validation_loss: {val_loss:.6f}", flush=True)
++               print(f"validation_accuracy: {val_acc:.6f}", flush=True)
+@@
 
             if epochs_no_improve >= args.patience:
                 print(f"[EARLY STOP] No improvement in val_loss for {args.patience} epochs (best at epoch {best_epoch}).", flush=True)
