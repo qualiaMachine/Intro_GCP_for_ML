@@ -2,11 +2,15 @@
 title: Compute for ML
 ---
 
-This page provides guidance for selecting compute configurations in Google Cloud Platform (GCP) for machine learning workloads.  
-While instance size is an important factor, effective performance depends on how you pair a machine type with optional GPU accelerators.
+This page provides guidance for selecting compute configurations in Google Cloud Platform (GCP) for machine learning workloads.  While instance size is an important factor, effective performance depends on how you pair a machine type with optional GPU accelerators.
 
-All pricing estimates are based on public rates for `us-central1` as of October 2025.  
-Actual cost depends on sustained-use discounts, attached GPU quotas, and whether your project has promotional or educational credits.
+All pricing estimates are based on public rates for `us-central1` as of October 2025. Actual cost depends on sustained-use discounts, attached GPU quotas, and whether your project has promotional or educational credits.
+
+### Reference Docs
+
+- [Compute Engine VM Instance Pricing (applies to notebook backends)](https://cloud.google.com/compute/vm-instance-pricing)
+- [Compute Engine GPU Pricing](https://cloud.google.com/compute/gpus-pricing)
+- [All Compute Pricing Overview](https://cloud.google.com/compute/all-pricing)
 
 ### Key Terms
 
@@ -15,13 +19,9 @@ Actual cost depends on sustained-use discounts, attached GPU quotas, and whether
 - **GPU (Graphics Processing Unit)**: Specialized hardware for parallel tensor operations used in deep learning model training and inference.  
 - **Machine type**: Defines CPU and RAM resources; determines how many vCPUs and how much memory your instance has.  
 - **Machine family**: A group of machine types optimized for a specific balance of performance, memory, and cost (e.g., `n2-standard-8`).  
-- **Accelerator**: Optional hardware (such as GPUs or TPUs) that can be attached to certain VM families to speed up training and inference.  
+- **Accelerator**: Optional hardware (such as GPUs or TPUs) that can be attached to certain VM families to speed up training and inference.
+- **Accelerator count**: Defines how many GPUs are attached to a single VM. Most training jobs begin with `accelerator_count=1`. Increasing the count (for example, to 2, 4, or 8) enables multi-GPU training, but it also requires proportional increases in CPU, memory, and disk I/O to feed data efficiently to all GPUs. Performance scaling is rarely linear — expect diminishing returns beyond 2–4 GPUs unless your model and batch sizes are very large.  
 - **Region**: The physical location of your compute resources (e.g., `us-central1`). Pricing and GPU availability can vary by region.  
-
-### Reference Docs
-- [Compute Engine VM Instance Pricing (applies to notebook backends)](https://cloud.google.com/compute/vm-instance-pricing)
-- [Compute Engine GPU Pricing](https://cloud.google.com/compute/gpus-pricing)
-- [All Compute Pricing Overview](https://cloud.google.com/compute/all-pricing)
 
 ### Key Concepts
 
@@ -103,7 +103,17 @@ However, when using model sharding or quantized models under 20–40 GB total, a
 - For small datasets, CPUs are often faster to start and cheaper to run.  
 - When moving from CPU to GPU training, keep the same script and simply change:
   - `container_uri` to a GPU-enabled image (for example, `pytorch-gpu.*`)
-  - Add `accelerator_type` and `accelerator_count` in your `CustomTrainingJob`.
+  - Add both `accelerator_type` and `accelerator_count` in your `CustomTrainingJob`. For example:  
+    ```python
+    job.run(
+        machine_type="n2-standard-8",
+        accelerator_type="NVIDIA_L4",
+        accelerator_count=1,
+        base_output_dir=ARTIFACTS,
+    )
+    ```
+  - Increasing `accelerator_count` (e.g., 2–4) enables parallel training but requires larger datasets and batch sizes to avoid idle GPUs.
+
 
 ### Summary
 
