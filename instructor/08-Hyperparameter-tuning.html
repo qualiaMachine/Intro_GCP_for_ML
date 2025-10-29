@@ -405,7 +405,14 @@ of trials and level of parallelization.</p>
 <li>Monitor progress in the Vertex AI Console.<br></li>
 <li>Extract the best model and inspect recorded metrics.</li>
 </ol><div class="section level4">
-<h4 id="directory-setup">0. Directory setup<a class="anchor" aria-label="anchor" href="#directory-setup"></a></h4>
+<h4 id="initial-setup">0. Initial setup<a class="anchor" aria-label="anchor" href="#initial-setup"></a></h4>
+<p>Navigate to
+<code>/Intro_GCP_for_ML/notebooks/08-Hyperparameter-tuning.ipynb</code>
+to begin this notebook. Select the <em>PyTorch</em> environment (kernel)
+Local PyTorch is only needed for local tests. Your <em>Vertex AI
+job</em> uses the container specified by <code>container_uri</code>
+(e.g., <code>pytorch-cpu.2-1</code> or <code>pytorch-gpu.2-1</code>), so
+it brings its own framework at run time.</p>
 <p>Change to your Jupyter home folder to keep paths consistent.</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
