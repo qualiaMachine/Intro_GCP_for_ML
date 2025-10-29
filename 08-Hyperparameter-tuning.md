@@ -67,7 +67,7 @@ from google.cloud.aiplatform import hyperparameter_tuning as hpt
 parameter_spec = {
     "learning_rate": hpt.DoubleParameterSpec(min=1e-4, max=1e-1, scale="log"),
     "patience": hpt.IntegerParameterSpec(min=5, max=20, scale="linear"),
-    "min_delta": hpt.DoubleParameterSpec(min=0.0, max=0.01, scale="linear"),
+    "min_delta": hpt.DoubleParameterSpec(min=1e-6, max=1e-3, scale="log"),
 }
 ```
 
@@ -129,7 +129,7 @@ metric_spec = {"validation_accuracy": "maximize"}  # matches script print key
 
 custom_job = aiplatform.CustomJob.from_local_script(
     display_name=f"{LAST_NAME}_pytorch_hpt-trial_{RUN_ID}",
-    script_path="Intro_GCP_for_ML/scripts/train_nn.py",
+    script_path="/home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py",
     container_uri=IMAGE,
     args=[
         f"--train=gs://{BUCKET_NAME}/data/train_data.npz",
