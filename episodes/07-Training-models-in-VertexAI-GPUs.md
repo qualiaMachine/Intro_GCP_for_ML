@@ -415,8 +415,9 @@ job.run(
     args=[
         f"--train=gs://{BUCKET_NAME}/data/train_data.npz",
         f"--val=gs://{BUCKET_NAME}/data/val_data.npz",
-        "--epochs=200",
-        "--learning_rate=0.001",
+        f"--epochs={MAX_EPOCHS}",
+        f"--learning_rate={LR}",
+        f"--patience={PATIENCE}",
     ],
     replica_count=1,                 # One worker (simple, cheaper)
     machine_type=MACHINE,            # CPU/RAM shape of the VM (no GPU implied)
@@ -427,7 +428,6 @@ job.run(
 )
 
 print("Artifacts folder:", ARTIFACT_DIR)
-
 ```
 
 GPU tips:
