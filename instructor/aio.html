@@ -1864,7 +1864,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2373,7 +2373,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -3437,12 +3437,6 @@ parses lines like <code>key: value</code> from stdout.</p>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"validation_loss: </span><span class="sc">{</span>val_loss<span class="sc">:.6f}</span><span class="ss">"</span>, flush<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"validation_accuracy: </span><span class="sc">{</span>val_acc<span class="sc">:.6f}</span><span class="ss">"</span>, flush<span class="op">=</span><span class="va">True</span>)</span></code></pre>
 </div>
-<p>This is in addition to your existing human-readable line (e.g.,
-<code>epoch=... val_loss:... val_acc:...</code>).<br>
-Patch file you can apply: <code>train_nn.patch</code> (provided below).
-The current script also writes a <code>metrics.json</code> with keys
-like <code>final_val_accuracy</code> which we will read later.
-fileciteturn0file0</p>
 </div>
 <div class="section level4">
 <h4 id="define-hyperparameter-search-space">2. Define hyperparameter search space<a class="anchor" aria-label="anchor" href="#define-hyperparameter-search-space"></a>
@@ -3574,10 +3568,13 @@ WITH 2 trials</strong> before scaling up
 <span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a>    parameter_spec<span class="op">=</span>parameter_spec,</span>
 <span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a>    max_trial_count<span class="op">=</span><span class="dv">1</span>,                    <span class="co"># controls how many configurations are tested</span></span>
 <span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a>    parallel_trial_count<span class="op">=</span><span class="dv">2</span>,                <span class="co"># how many run concurrently (keep small for adaptive search)</span></span>
-<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a>)</span>
-<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a></span>
-<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a>tuning_job.run(sync<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"HPT artifacts base:"</span>, ARTIFACT_DIR)</span></code></pre>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a>    <span class="co"># search_algorithm="ALGORITHM_UNSPECIFIED",  # default = adaptive search (Bayesian)</span></span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a>    <span class="co"># search_algorithm="RANDOM_SEARCH",          # optional override</span></span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a>    <span class="co"># search_algorithm="GRID_SEARCH",            # optional override</span></span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a>)</span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a>tuning_job.run(sync<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-35"><a href="#cb6-35" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"HPT artifacts base:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
 </div>
 <div class="section level4">
@@ -3648,6 +3645,57 @@ time in terms of cost, time, and result quality?<br>
 <li>When would you want to prioritize speed over adaptive search
 benefits?</li>
 </ul>
+<p><strong>Cost:</strong><br>
+- If you run the same total number of trials, total cost is <em>roughly
+unchanged</em>; you’re paying for the same amount of compute, just
+compressed into a shorter wall-clock window.<br>
+- Parallelism can raise short-term spend rate (more machines running at
+once) and may increase idle/overhead if trials start/finish
+unevenly.</p>
+<p><strong>Time:</strong><br>
+- Higher <code>parallel_trial_count</code> reduces wall-clock time
+almost linearly until you hit queue, quota, or data/IO
+bottlenecks.<br>
+- Startup overhead (image pull, environment setup) is paid for each
+concurrent trial; with many short trials, this overhead can become a
+larger fraction of runtime.</p>
+<p><strong>Result quality (adaptive search):</strong><br>
+- Vertex AI’s adaptive search benefits from learning from early
+trials.<br>
+- With many trials in flight simultaneously, the tuner can’t incorporate
+results quickly, so it explores “blind” for longer. This often yields
+slightly <em>worse</em> final results for a fixed
+<code>max_trial_count</code>.<br>
+- With modest parallelism (e.g., 2–4), the tuner can still update
+beliefs and exploit promising regions sooner.</p>
+<p><strong>Guidelines:</strong><br>
+- Start small: <code>parallel_trial_count</code> in the range 2–4 is a
+good default.<br>
+- Keep parallelism to <strong>≤ 25–33%</strong> of
+<code>max_trial_count</code> when you care about adaptive quality.<br>
+- Increase parallelism when your trials are long and you’re confident
+the search space is well-bounded (less need for rapid adaptation).</p>
+<p><strong>When to prioritize speed (higher parallelism):</strong><br>
+- Strict deadlines or demo timelines.<br>
+- Very cheap/short trials where startup time dominates.<br>
+- You’re using a non-adaptive or nearly random search space.<br>
+- You have unused quota/credits and want faster iteration.</p>
+<p><strong>When to prioritize adaptive quality (lower
+parallelism):</strong><br>
+- Trials are expensive, noisy, or have high variance; learning from
+early wins saves budget.<br>
+- Small <code>max_trial_count</code> (e.g., ≤ 10–20).<br>
+- Early stopping is enabled and you want the tuner to exploit promising
+regions quickly.<br>
+- You’re adding new dimensions (e.g., LR + patience + min_delta) and
+want the search to refine intelligently.</p>
+<p><strong>Practical recipe:</strong><br>
+- First run: <code>max_trial_count=1</code>,
+<code>parallel_trial_count=1</code> (pipeline sanity check).<br>
+- Main run: <code>max_trial_count=10–20</code>,
+<code>parallel_trial_count=2–4</code>.<br>
+- Scale up parallelism only after the above completes cleanly and you
+confirm adaptive performance is acceptable.</p>
 </div>
 </div>
 </div>
@@ -4130,7 +4178,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -4162,7 +4210,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -4192,7 +4240,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
