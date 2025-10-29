@@ -49,8 +49,8 @@ Your training script (`train_nn.py`) should periodically print validation metric
 Add these two lines right after you compute `val_loss` and `val_acc` inside the epoch loop:
 
 ```python
-print(f"validation_loss: {val_loss:.6f}", flush=True)
-print(f"validation_accuracy: {val_acc:.6f}", flush=True)
+# print(f"validation_loss: {val_loss:.6f}", flush=True)
+# print(f"validation_accuracy: {val_acc:.6f}", flush=True)
 ```
 
 #### 2. Define hyperparameter search space
