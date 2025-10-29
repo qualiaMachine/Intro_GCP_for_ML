@@ -108,7 +108,7 @@ def main():
     ap = argparse.ArgumentParser(description="Train TitanicNet on .npz data (local or gs://)")
     ap.add_argument("--train", required=True, help="Path to training npz (local or gs://)")
     ap.add_argument("--val",   required=True, help="Path to validation npz (local or gs://)")
-    ap.add_argument("--epochs", type=int, default=100, help="Max number of epochs")
+    ap.add_argument("--epochs", type=int, default=1000, help="Max number of epochs")
     ap.add_argument("--learning_rate", type=float, default=1e-3, help="Learning rate")
     # Early stopping args
     ap.add_argument("--patience", type=int, default=10, help="Epochs to wait for val_loss improvement")
