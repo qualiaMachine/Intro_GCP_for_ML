@@ -121,6 +121,11 @@ print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
 
 ## Minimal PyTorch training script (`train_nn.py`) - local test
 
+**Outside of this workshop, you should run these kinds of tests on your local laptop or lab PC when possible.** We're using the Workbench VM here only for convenience in this workshop setting, but this does incur a small fee for our running VM. 
+
+- For large datasets, use a small representative sample of the total dataset when testing locally (i.e., just to verify that code is working and model overfits nearly perfectly after training enough epochs)
+- For larger models, use smaller model equivalents (e.g., 100M vs 7B params) when testing locally
+  
 Find this file in our repo: `Intro_GCP_for_ML/scripts/train_nn.py`. It does three things:
 1) loads `.npz` from local or GCS
 2) trains a tiny multilayer perceptron (MLP)
@@ -143,33 +148,29 @@ start = t.time()
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
-To address the numpy mismatch, we can run the following code first.
-```python
-!pip install --upgrade --force-reinstall "numpy<2"
-```
-
-Then, rerun.
+If applicable (numpy mismatch), run the below code after uncommenting it (select code and type `Ctrl+/` for multiline uncommenting)
 
 ```python
-import time as t
+# # Fix numpy mismatch
+# !pip install --upgrade --force-reinstall "numpy<2"
 
-start = t.time()
+# # Then, rerun:
 
-# Example: run your custom training script with args
-!python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
-    --train /home/jupyter/train_data.npz \
-    --val /home/jupyter/val_data.npz \
-    --epochs 50 \
-    --learning_rate 0.001
+# import time as t
 
-print(f"Total local runtime: {t.time() - start:.2f} seconds")
+# start = t.time()
+
+# # Example: run your custom training script with args
+# !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
+#     --train /home/jupyter/train_data.npz \
+#     --val /home/jupyter/val_data.npz \
+#     --epochs 50 \
+#     --learning_rate 0.001
+
+# print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
-**Outside of this workshop, you should run these kinds of tests on your local laptop or lab PC when possible.** We're using the Workbench VM here only for convenience in this workshop setting, but this does incur a small fee for our running VM. 
 
-- For large datasets, use a small representative sample of the total dataset when testing locally (i.e., just to verify that code is working and model overfits nearly perfectly after training enough epochs)
-- For larger models, use smaller model equivalents (e.g., 100M vs 7B params) when testing locally
-  
 ## Launch the training job (no base_output_dir)
 
 ```python
