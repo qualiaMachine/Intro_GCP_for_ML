@@ -889,18 +889,19 @@ parameters.</p>
 <span id="cb16-52"><a href="#cb16-52" tabindex="-1"></a>    args<span class="op">=</span>[</span>
 <span id="cb16-53"><a href="#cb16-53" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
 <span id="cb16-54"><a href="#cb16-54" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
-<span id="cb16-55"><a href="#cb16-55" tabindex="-1"></a>        <span class="st">"--epochs=200"</span>,</span>
-<span id="cb16-56"><a href="#cb16-56" tabindex="-1"></a>        <span class="st">"--learning_rate=0.001"</span>,</span>
-<span id="cb16-57"><a href="#cb16-57" tabindex="-1"></a>    ],</span>
-<span id="cb16-58"><a href="#cb16-58" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,                 <span class="co"># One worker (simple, cheaper)</span></span>
-<span id="cb16-59"><a href="#cb16-59" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,            <span class="co"># CPU/RAM shape of the VM (no GPU implied)</span></span>
-<span id="cb16-60"><a href="#cb16-60" tabindex="-1"></a>    accelerator_type<span class="op">=</span>ACCELERATOR_TYPE,   <span class="co"># Attaches the selected GPU model</span></span>
-<span id="cb16-61"><a href="#cb16-61" tabindex="-1"></a>    accelerator_count<span class="op">=</span>ACCELERATOR_COUNT, <span class="co"># Number of GPUs to attach</span></span>
-<span id="cb16-62"><a href="#cb16-62" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACT_DIR,    <span class="co"># Sets AIP_MODEL_DIR used by your script for all artifacts</span></span>
-<span id="cb16-63"><a href="#cb16-63" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,                       <span class="co"># Waits for job to finish so you can inspect outputs immediately</span></span>
-<span id="cb16-64"><a href="#cb16-64" tabindex="-1"></a>)</span>
-<span id="cb16-65"><a href="#cb16-65" tabindex="-1"></a></span>
-<span id="cb16-66"><a href="#cb16-66" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
+<span id="cb16-55"><a href="#cb16-55" tabindex="-1"></a>        <span class="ss">f"--epochs=</span><span class="sc">{</span>MAX_EPOCHS<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb16-56"><a href="#cb16-56" tabindex="-1"></a>        <span class="ss">f"--learning_rate=</span><span class="sc">{</span>LR<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb16-57"><a href="#cb16-57" tabindex="-1"></a>        <span class="ss">f"--patience=</span><span class="sc">{</span>PATIENCE<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb16-58"><a href="#cb16-58" tabindex="-1"></a>    ],</span>
+<span id="cb16-59"><a href="#cb16-59" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,                 <span class="co"># One worker (simple, cheaper)</span></span>
+<span id="cb16-60"><a href="#cb16-60" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,            <span class="co"># CPU/RAM shape of the VM (no GPU implied)</span></span>
+<span id="cb16-61"><a href="#cb16-61" tabindex="-1"></a>    accelerator_type<span class="op">=</span>ACCELERATOR_TYPE,   <span class="co"># Attaches the selected GPU model</span></span>
+<span id="cb16-62"><a href="#cb16-62" tabindex="-1"></a>    accelerator_count<span class="op">=</span>ACCELERATOR_COUNT, <span class="co"># Number of GPUs to attach</span></span>
+<span id="cb16-63"><a href="#cb16-63" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACT_DIR,    <span class="co"># Sets AIP_MODEL_DIR used by your script for all artifacts</span></span>
+<span id="cb16-64"><a href="#cb16-64" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,                       <span class="co"># Waits for job to finish so you can inspect outputs immediately</span></span>
+<span id="cb16-65"><a href="#cb16-65" tabindex="-1"></a>)</span>
+<span id="cb16-66"><a href="#cb16-66" tabindex="-1"></a></span>
+<span id="cb16-67"><a href="#cb16-67" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
 <p>GPU tips: - On small problems, GPU startup/transfer overhead can
 erase speedups—benchmark before you scale. - Stick to a single replica
