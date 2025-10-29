@@ -41,14 +41,14 @@ Change directory to your Jupyter home folder.
 ```
 
 #### 1. Prepare training script with metric logging
-Your training script (`train_nn.py`) should periodically print validation accuracy in a format that Vertex AI can capture.  
+Your training script (`train_nn.py`) should periodically print validation accuracy in a format that Vertex AI can capture. 
+
+**Vertex AI automatically captures metrics logged in this format (`key: value`). ** 
 
 ```python
 if (epoch + 1) % 100 == 0 or epoch == epochs - 1:
     print(f"validation_accuracy: {val_accuracy:.4f}", flush=True)
 ```
-
-Vertex AI automatically captures metrics logged in this format (`key: value`).  
 
 #### 2. Define hyperparameter search space
 
