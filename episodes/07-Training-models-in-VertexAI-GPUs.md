@@ -194,23 +194,22 @@ print(f"Total local runtime: {t.time() - start:.2f} seconds")
 
 ## Launch the training job 
 
-In the previous episode, we trained an XGBoost model using Vertex AI's CustomTrainingJob interface.  
-Here, we'll do the same for a PyTorch neural network. The structure is nearly identical —  
-we define a training script, select a prebuilt container (CPU or GPU), and specify where  
-to write all outputs in Google Cloud Storage (GCS). The main difference is that PyTorch  
-requires us to save our own model weights and metrics inside the script rather than relying  
-on Vertex to package a model automatically.
+In the previous episode, we trained an XGBoost model using Vertex AI's CustomTrainingJob interface. Here, we'll do the same for a PyTorch neural network. The structure is nearly identical —  we define a training script, select a prebuilt container (CPU or GPU), and specify where to write all outputs in Google Cloud Storage (GCS). The main difference is that PyTorch requires us to save our own model weights and metrics inside the script rather than relying on Vertex to package a model automatically.
 
+Set configuration vars. For our image, we can find the corresponding PyTorch image by visiting: [docs.cloud.google.com/vertex-ai/docs/predictions/pre-built-containers#pytorch](https://docs.cloud.google.com/vertex-ai/docs/predictions/pre-built-containers#pytorch)
+
+- replace "prediction" with "training" in the image paths found from the above reference.
 
 ```python
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
 ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch/{RUN_ID}"
-MODEL_URI = f"{ARTIFACT_DIR}/model.pt"   # model + metrics + logs will live here together
+IMAGE = 'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-4:latest' # or pytorch-gpu.2-4
+MACHINE = "n1-standard-4",  # CPU fine for small datasets
 
 job = aiplatform.CustomTrainingJob(
     display_name=f"pytorch_nn_{RUN_ID}",
-    script_path="GCP_helpers/train_nn.py",
-    container_uri="us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-1:latest",  # or pytorch-gpu.2-1
+    script_path="Intro_GCP_for_ML/scripts/train_xgboost.py",
+    container_uri=IMAGE,
     requirements=["torch", "numpy", "fsspec", "gcsfs"],
 )
 
@@ -220,10 +219,10 @@ job.run(
         f"--val=gs://{BUCKET_NAME}/data/val_data.npz",
         f"--epochs=200",
         f"--learning_rate=0.001",
-        f"--model_out={MODEL_URI}",   # drives where *all* artifacts go
+        f"--model_out={ARTIFACT_DIR}",   # drives where *all* artifacts go
     ],
     replica_count=1,
-    machine_type="n1-standard-4",  # CPU fine for small datasets
+    machine_type=MACHINE,
     sync=True,
 )
 
@@ -279,7 +278,7 @@ GPU tips:
 - Your script writes **model + metrics + eval history + training.log** next to `--model_out`, e.g., `gs://<bucket>/artifacts/pytorch/<RUN_ID>/`.
 
 ## Additional resources
-To learn more about PyTorch and Vertex AI integrations, visit the docs: [https://docs.cloud.google.com/vertex-ai/docs/start/pytorch](https://docs.cloud.google.com/vertex-ai/docs/start/pytorch)
+To learn more about PyTorch and Vertex AI integrations, visit the docs: [docs.cloud.google.com/vertex-ai/docs/start/pytorch](https://docs.cloud.google.com/vertex-ai/docs/start/pytorch)
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
