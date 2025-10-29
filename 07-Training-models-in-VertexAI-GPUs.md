@@ -142,7 +142,7 @@ start = t.time()
 !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
     --train /home/jupyter/train_data.npz \
     --val /home/jupyter/val_data.npz \
-    --epochs 50 \
+    --epochs 500 \
     --learning_rate 0.001
 
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
