@@ -2365,7 +2365,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -3531,7 +3531,7 @@ different parameter sets and track results.</p>
 the number of simultaneous runs is controlled by
 <code>parallel_trial_count</code>. Each trial’s output and metrics are
 logged under the GCS <code>base_output_dir</code>. <strong>ALWAYS START
-WITH 2 trials</strong> before scaling up
+WITH 1 trial</strong> before scaling up
 <code>max_trial_count</code>.</p>
 <div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -3556,7 +3556,7 @@ WITH 2 trials</strong> before scaling up
 <span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a></span>
 <span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_hpt_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
 <span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a></span>
-<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co"># ALWAYS START WITH 2 trials before scaling up `max_trial_count`</span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co"># ALWAYS START WITH 1 trial before scaling up `max_trial_count`</span></span>
 <span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a>tuning_job <span class="op">=</span> aiplatform.HyperparameterTuningJob(</span>
 <span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
 <span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,                 <span class="co"># must be a CustomJob (not CustomTrainingJob)</span></span>
