@@ -137,6 +137,18 @@ def main():
     sys.stdout = _Tee(sys.stdout, log_buf)
     sys.stderr = _Tee(sys.stderr, log_buf)
 
+    # Eenable Vertex HPT metric reporting 
+    try:
+        # cloudml-hypertune is installed on Vertex AI workers; on local it might not be.
+        from hypertune import HyperTune
+        _hpt = HyperTune()          # instance scoped to this run
+        _hpt_enabled = True
+    except Exception:
+        # If the package isn't available (e.g., local run), we simply no-op.
+        _hpt = None
+        _hpt_enabled = False
+
+
     try:
         # -----------------------------
         # Load pre-split .npz datasets
@@ -182,6 +194,16 @@ def main():
                 val_pred = model(Xva_t)
                 val_loss = loss_fn(val_pred, yva_t).item()
                 val_acc  = accuracy_binary(val_pred, yva_t)
+                # Report trial metric to Vertex AI HPT (only if the library is available).
+                # This is how Vertex picks the "best" trial and avoids INFEASIBLE states when searching.
+                if _hpt_enabled:
+                    # The tag string MUST match your HPT metric_spec key, e.g., {"validation_loss": "minimize"}.
+                    _hpt.report_hyperparameter_tuning_metric(
+                        hyperparameter_metric_tag="validation_loss",
+                        metric_value=val_loss,
+                        global_step=ep,  # optional, helps charts; any monotonic step is fine
+                    )
+
 
             hist.append(val_loss)
 
@@ -200,9 +222,9 @@ def main():
                     
                 print(f"epoch={ep} loss={loss.item():.4f} val_loss={val_loss:.4f} val_acc={val_acc:.4f}", flush=True)
 
-                # print these on their own lines for HyperparamterTuning jobs to detect
-                print(f"validation_loss: {val_loss:.6f}", flush=True)
-                print(f"validation_accuracy: {val_acc:.6f}", flush=True)
+                # # print these on their own lines for HyperparamterTuning jobs to detect
+                # print(f"validation_loss: {val_loss:.6f}", flush=True)
+                # print(f"validation_accuracy: {val_acc:.6f}", flush=True)
 
 
             if epochs_no_improve >= args.patience:
