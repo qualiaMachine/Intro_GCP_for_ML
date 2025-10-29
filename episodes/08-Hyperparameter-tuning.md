@@ -124,12 +124,6 @@ custom_job = aiplatform.CustomJob.from_local_script(
     machine_type=MACHINE,
     accelerator_type="ACCELERATOR_TYPE_UNSPECIFIED",  # explicitly no GPU
     accelerator_count=0,                              # also required
-    requirements=[
-        "torch",
-        "google-cloud-storage",
-        "fsspec",
-        "gcsfs",
-    ],
 )
 
 # --- create and run the HPT job (no base_output_dir or machine args here) ---
