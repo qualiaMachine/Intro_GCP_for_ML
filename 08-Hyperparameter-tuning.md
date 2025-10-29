@@ -56,6 +56,8 @@ print(f"validation_accuracy: {val_acc:.6f}", flush=True)
 #### 2. Define hyperparameter search space
 This step defines which parameters Vertex AI will vary across trials and their allowed ranges. The number of total settings tested is determined later using `max_trial_count`.
 
+Vertex AI uses **Bayesian optimization** by default (internally listed as `"ALGORITHM_UNSPECIFIED"` in the API).  That means if you don’t explicitly specify a search algorithm, Vertex AI automatically applies an adaptive Bayesian strategy to balance exploration (trying new areas of the parameter space) and exploitation (focusing near the best results so far).  Each completed trial helps the tuner model how your objective metric (for example, `validation_accuracy`) changes across parameter values. Subsequent trials then sample new parameter combinations that are statistically more likely to improve performance, which usually yields better results than random or grid search—especially when `max_trial_count` is limited.
+
 Include early-stopping parameters so the tuner can learn good stopping behavior for your dataset:
 
 ```python
@@ -65,6 +67,7 @@ from google.cloud.aiplatform import hyperparameter_tuning as hpt
 parameter_spec = {
     "learning_rate": hpt.DoubleParameterSpec(min=1e-4, max=1e-1, scale="log"),
     "patience": hpt.IntegerParameterSpec(min=5, max=20, scale="linear"),
+    "min_delta": hpt.DoubleParameterSpec(min=0.0, max=0.01, scale="linear"),
 }
 ```
 
@@ -118,7 +121,7 @@ In short:
 `CustomJob` defines how to run one training run.  
 `HyperparameterTuningJob` defines how to repeat it with different parameter sets and track results.  
 
-The number of total runs is set by `max_trial_count`, and the number of simultaneous runs is controlled by `parallel_trial_count`.  Each trial's output and metrics are logged under the GCS `base_output_dir`. **ALWAYS START WITH 2 trials** before scaling up `max_trial_count`.
+The number of total runs is set by `max_trial_count`, and the number of simultaneous runs is controlled by `parallel_trial_count`.  Each trial's output and metrics are logged under the GCS `base_output_dir`. **ALWAYS START WITH 1 trial** before scaling up `max_trial_count`.
 
 
 ```python
@@ -149,7 +152,7 @@ tuning_job = aiplatform.HyperparameterTuningJob(
     metric_spec=metric_spec,
     parameter_spec=parameter_spec,
     max_trial_count=1,                    # controls how many configurations are tested
-    parallel_trial_count=2,                # how many run concurrently (keep small for adaptive search)
+    parallel_trial_count=1,                # how many run concurrently (keep small for adaptive search)
     # search_algorithm="ALGORITHM_UNSPECIFIED",  # default = adaptive search (Bayesian)
     # search_algorithm="RANDOM_SEARCH",          # optional override
     # search_algorithm="GRID_SEARCH",            # optional override
