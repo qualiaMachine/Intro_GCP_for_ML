@@ -206,7 +206,7 @@ X_val, y_val = d["X_val"], d["y_val"]
 
 # rebuild model and load weights
 m = TitanicNet()
-state = torch.load("/home/jupyter/model.pt", map_location="cpu")  # same file as ./model.pt
+state = torch.load("/home/jupyter/model.pt", map_location="cpu") 
 m.load_state_dict(state)
 m.eval()
 
@@ -221,6 +221,7 @@ print(f"Local model val accuracy: {acc:.4f}")
 
 ```
 
+We should see an accuracy that matches our best epoch in the local training run. Note that in our setup, early stopping is based on validation loss; not accuracy.
 
 ## Launch the training job 
 
