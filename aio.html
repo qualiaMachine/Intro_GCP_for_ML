@@ -1055,7 +1055,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1539,7 +1539,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -2174,7 +2174,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -3498,9 +3498,41 @@ output directory for artifacts.</p>
 <div class="section level4">
 <h4 id="configure-hyperparameter-tuning-job">5. Configure hyperparameter tuning job<a class="anchor" aria-label="anchor" href="#configure-hyperparameter-tuning-job"></a>
 </h4>
-<p>Set the optimization metric to the printed key
-<code>validation_accuracy</code>. <strong>Always start with one trial to
-validate your setup before scaling.</strong></p>
+<p>When you use Vertex AI Hyperparameter Tuning Jobs, each trial needs a
+complete, runnable training configuration: the script, its arguments,
+the container image, and the compute environment.<br>
+Rather than defining these pieces inline each time, we create a
+<strong>CustomJob</strong> to hold that configuration.</p>
+<p>The CustomJob acts as the blueprint for running a single training
+task — specifying exactly what to run and on what resources. The tuner
+then reuses that job definition across all trials, automatically
+substituting in new hyperparameter values for each run.</p>
+<p>This approach has a few practical advantages:</p>
+<ul>
+<li>You only define the environment once — machine type, accelerators,
+and output directories are all reused across trials.<br>
+</li>
+<li>The tuner can safely inject trial-specific parameters (those
+declared in <code>parameter_spec</code>) while leaving other arguments
+unchanged.<br>
+</li>
+<li>It provides a clean separation between <em>what a single job
+does</em> (<code>CustomJob</code>) and <em>how many times to repeat it
+with new settings</em> (<code>HyperparameterTuningJob</code>).<br>
+</li>
+<li>It avoids the extra abstraction layers of higher-level wrappers like
+<code>CustomTrainingJob</code>, which automatically package code and
+environments. Using <code>CustomJob.from_local_script</code> keeps the
+workflow predictable and explicit.</li>
+</ul>
+<p>In short:<br><code>CustomJob</code> defines how to run one training run.<br><code>HyperparameterTuningJob</code> defines how to repeat it with
+different parameter sets and track results.</p>
+<p>The number of total runs is set by <code>max_trial_count</code>, and
+the number of simultaneous runs is controlled by
+<code>parallel_trial_count</code>. Each trial’s output and metrics are
+logged under the GCS <code>base_output_dir</code>. <strong>ALWAYS START
+WITH 2 trials</strong> before scaling up
+<code>max_trial_count</code>.</p>
 <div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -3524,17 +3556,18 @@ validate your setup before scaling.</strong></p>
 <span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a></span>
 <span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_hpt_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
 <span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a></span>
-<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a>tuning_job <span class="op">=</span> aiplatform.HyperparameterTuningJob(</span>
-<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
-<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,                 <span class="co"># must be a CustomJob (not CustomTrainingJob)</span></span>
-<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a>    metric_spec<span class="op">=</span>metric_spec,</span>
-<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a>    parameter_spec<span class="op">=</span>parameter_spec,</span>
-<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a>    max_trial_count<span class="op">=</span><span class="dv">10</span>,                    <span class="co"># controls how many configurations are tested</span></span>
-<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a>    parallel_trial_count<span class="op">=</span><span class="dv">2</span>,                <span class="co"># how many run concurrently (keep small for adaptive search)</span></span>
-<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a>)</span>
-<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a></span>
-<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a>tuning_job.run(sync<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"HPT artifacts base:"</span>, ARTIFACT_DIR)</span></code></pre>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co"># ALWAYS START WITH 2 trials before scaling up `max_trial_count`</span></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a>tuning_job <span class="op">=</span> aiplatform.HyperparameterTuningJob(</span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,                 <span class="co"># must be a CustomJob (not CustomTrainingJob)</span></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a>    metric_spec<span class="op">=</span>metric_spec,</span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a>    parameter_spec<span class="op">=</span>parameter_spec,</span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a>    max_trial_count<span class="op">=</span><span class="dv">1</span>,                    <span class="co"># controls how many configurations are tested</span></span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a>    parallel_trial_count<span class="op">=</span><span class="dv">2</span>,                <span class="co"># how many run concurrently (keep small for adaptive search)</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a>)</span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a></span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a>tuning_job.run(sync<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"HPT artifacts base:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
 </div>
 <div class="section level4">
