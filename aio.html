@@ -1539,7 +1539,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1858,7 +1858,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2174,7 +2174,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -3198,7 +3198,11 @@ version, except for a few changes:</p>
 cuDNN.</li>
 <li>The machine type (<code>n1-standard-8</code>) defines CPU and memory
 resources, while we now add a GPU accelerator
-(<code>NVIDIA_TESLA_T4</code>, <code>NVIDIA_L4</code>, etc.).</li>
+(<code>NVIDIA_TESLA_T4</code>, <code>NVIDIA_L4</code>, etc.).
+<strong>For guidance on selecting a machine type and accelerator, visit
+the <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html" class="external-link">Compute
+for ML</a> resource.</strong>
+</li>
 <li>The training script, arguments, and artifact handling all stay the
 same.</li>
 </ul>
@@ -3257,25 +3261,24 @@ parameters.</p>
 <span id="cb13-47"><a href="#cb13-47" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
 <span id="cb13-48"><a href="#cb13-48" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_nn.py"</span>,  <span class="co"># Your PyTorch trainer</span></span>
 <span id="cb13-49"><a href="#cb13-49" tabindex="-1"></a>    container_uri<span class="op">=</span>IMAGE,  <span class="co"># Must be a *training* image (not prediction)</span></span>
-<span id="cb13-50"><a href="#cb13-50" tabindex="-1"></a>    <span class="co"># requirements=[]  # Not needed: the image already has torch, numpy, gcs libs</span></span>
-<span id="cb13-51"><a href="#cb13-51" tabindex="-1"></a>)</span>
-<span id="cb13-52"><a href="#cb13-52" tabindex="-1"></a></span>
-<span id="cb13-53"><a href="#cb13-53" tabindex="-1"></a>job.run(</span>
-<span id="cb13-54"><a href="#cb13-54" tabindex="-1"></a>    args<span class="op">=</span>[</span>
-<span id="cb13-55"><a href="#cb13-55" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
-<span id="cb13-56"><a href="#cb13-56" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
-<span id="cb13-57"><a href="#cb13-57" tabindex="-1"></a>        <span class="st">"--epochs=200"</span>,</span>
-<span id="cb13-58"><a href="#cb13-58" tabindex="-1"></a>        <span class="st">"--learning_rate=0.001"</span>,</span>
-<span id="cb13-59"><a href="#cb13-59" tabindex="-1"></a>    ],</span>
-<span id="cb13-60"><a href="#cb13-60" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,                 <span class="co"># One worker (simple, cheaper)</span></span>
-<span id="cb13-61"><a href="#cb13-61" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,            <span class="co"># CPU/RAM shape of the VM (no GPU implied)</span></span>
-<span id="cb13-62"><a href="#cb13-62" tabindex="-1"></a>    accelerator_type<span class="op">=</span>ACCELERATOR_TYPE,   <span class="co"># Attaches the selected GPU model</span></span>
-<span id="cb13-63"><a href="#cb13-63" tabindex="-1"></a>    accelerator_count<span class="op">=</span>ACCELERATOR_COUNT, <span class="co"># Number of GPUs to attach</span></span>
-<span id="cb13-64"><a href="#cb13-64" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACT_DIR,    <span class="co"># Sets AIP_MODEL_DIR used by your script for all artifacts</span></span>
-<span id="cb13-65"><a href="#cb13-65" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,                       <span class="co"># Waits for job to finish so you can inspect outputs immediately</span></span>
-<span id="cb13-66"><a href="#cb13-66" tabindex="-1"></a>)</span>
-<span id="cb13-67"><a href="#cb13-67" tabindex="-1"></a></span>
-<span id="cb13-68"><a href="#cb13-68" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
+<span id="cb13-50"><a href="#cb13-50" tabindex="-1"></a>)</span>
+<span id="cb13-51"><a href="#cb13-51" tabindex="-1"></a></span>
+<span id="cb13-52"><a href="#cb13-52" tabindex="-1"></a>job.run(</span>
+<span id="cb13-53"><a href="#cb13-53" tabindex="-1"></a>    args<span class="op">=</span>[</span>
+<span id="cb13-54"><a href="#cb13-54" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
+<span id="cb13-55"><a href="#cb13-55" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
+<span id="cb13-56"><a href="#cb13-56" tabindex="-1"></a>        <span class="st">"--epochs=200"</span>,</span>
+<span id="cb13-57"><a href="#cb13-57" tabindex="-1"></a>        <span class="st">"--learning_rate=0.001"</span>,</span>
+<span id="cb13-58"><a href="#cb13-58" tabindex="-1"></a>    ],</span>
+<span id="cb13-59"><a href="#cb13-59" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,                 <span class="co"># One worker (simple, cheaper)</span></span>
+<span id="cb13-60"><a href="#cb13-60" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,            <span class="co"># CPU/RAM shape of the VM (no GPU implied)</span></span>
+<span id="cb13-61"><a href="#cb13-61" tabindex="-1"></a>    accelerator_type<span class="op">=</span>ACCELERATOR_TYPE,   <span class="co"># Attaches the selected GPU model</span></span>
+<span id="cb13-62"><a href="#cb13-62" tabindex="-1"></a>    accelerator_count<span class="op">=</span>ACCELERATOR_COUNT, <span class="co"># Number of GPUs to attach</span></span>
+<span id="cb13-63"><a href="#cb13-63" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACT_DIR,    <span class="co"># Sets AIP_MODEL_DIR used by your script for all artifacts</span></span>
+<span id="cb13-64"><a href="#cb13-64" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,                       <span class="co"># Waits for job to finish so you can inspect outputs immediately</span></span>
+<span id="cb13-65"><a href="#cb13-65" tabindex="-1"></a>)</span>
+<span id="cb13-66"><a href="#cb13-66" tabindex="-1"></a></span>
+<span id="cb13-67"><a href="#cb13-67" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
 <p>GPU tips: - On small problems, GPU startup/transfer overhead can
 erase speedups—benchmark before you scale. - Stick to a single replica
@@ -4020,7 +4023,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -4052,7 +4055,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -4082,7 +4085,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
