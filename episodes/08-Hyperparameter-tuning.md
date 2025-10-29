@@ -20,7 +20,7 @@ exercises: 0
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-To conduct efficient hyperparameter tuning with neural networks (or any model) in Vertex AI, we’ll use Vertex AI’s Hyperparameter Tuning Jobs. The key is defining a clear search space, ensuring metrics are properly logged, and keeping costs manageable by controlling the number of trials and level of parallelization.
+To conduct efficient hyperparameter tuning with neural networks (or any model) in Vertex AI, we'll use Vertex AI's Hyperparameter Tuning Jobs. The key is defining a clear search space, ensuring metrics are properly logged, and keeping costs manageable by controlling the number of trials and level of parallelization.
 
 ### Key steps for hyperparameter tuning
 
@@ -53,11 +53,10 @@ print(f"validation_loss: {val_loss:.6f}", flush=True)
 print(f"validation_accuracy: {val_acc:.6f}", flush=True)
 ```
 
-This is in addition to your existing human-readable line (e.g., `epoch=... val_loss:... val_acc:...`).  
-Patch file you can apply: `train_nn.patch` (provided below). The current script also writes a `metrics.json` with keys like `final_val_accuracy` which we will read later. fileciteturn0file0
-
 #### 2. Define hyperparameter search space
 This step defines which parameters Vertex AI will vary across trials and their allowed ranges. The number of total settings tested is determined later using `max_trial_count`.
+
+Vertex AI uses **Bayesian optimization** by default (internally listed as `"ALGORITHM_UNSPECIFIED"` in the API).  That means if you don’t explicitly specify a search algorithm, Vertex AI automatically applies an adaptive Bayesian strategy to balance exploration (trying new areas of the parameter space) and exploitation (focusing near the best results so far).  Each completed trial helps the tuner model how your objective metric (for example, `validation_accuracy`) changes across parameter values. Subsequent trials then sample new parameter combinations that are statistically more likely to improve performance, which usually yields better results than random or grid search—especially when `max_trial_count` is limited.
 
 Include early-stopping parameters so the tuner can learn good stopping behavior for your dataset:
 
@@ -68,6 +67,7 @@ from google.cloud.aiplatform import hyperparameter_tuning as hpt
 parameter_spec = {
     "learning_rate": hpt.DoubleParameterSpec(min=1e-4, max=1e-1, scale="log"),
     "patience": hpt.IntegerParameterSpec(min=5, max=20, scale="linear"),
+    "min_delta": hpt.DoubleParameterSpec(min=0.0, max=0.01, scale="linear"),
 }
 ```
 
@@ -121,7 +121,7 @@ In short:
 `CustomJob` defines how to run one training run.  
 `HyperparameterTuningJob` defines how to repeat it with different parameter sets and track results.  
 
-The number of total runs is set by `max_trial_count`, and the number of simultaneous runs is controlled by `parallel_trial_count`.  Each trial’s output and metrics are logged under the GCS `base_output_dir`. **ALWAYS START WITH 2 trials** before scaling up `max_trial_count`.
+The number of total runs is set by `max_trial_count`, and the number of simultaneous runs is controlled by `parallel_trial_count`.  Each trial's output and metrics are logged under the GCS `base_output_dir`. **ALWAYS START WITH 1 trial** before scaling up `max_trial_count`.
 
 
 ```python
@@ -145,14 +145,17 @@ custom_job = aiplatform.CustomJob.from_local_script(
 
 DISPLAY_NAME = f"{LAST_NAME}_pytorch_hpt_{RUN_ID}"
 
-# ALWAYS START WITH 2 trials before scaling up `max_trial_count`
+# ALWAYS START WITH 1 trial before scaling up `max_trial_count`
 tuning_job = aiplatform.HyperparameterTuningJob(
     display_name=DISPLAY_NAME,
     custom_job=custom_job,                 # must be a CustomJob (not CustomTrainingJob)
     metric_spec=metric_spec,
     parameter_spec=parameter_spec,
     max_trial_count=1,                    # controls how many configurations are tested
-    parallel_trial_count=2,                # how many run concurrently (keep small for adaptive search)
+    parallel_trial_count=1,                # how many run concurrently (keep small for adaptive search)
+    # search_algorithm="ALGORITHM_UNSPECIFIED",  # default = adaptive search (Bayesian)
+    # search_algorithm="RANDOM_SEARCH",          # optional override
+    # search_algorithm="GRID_SEARCH",            # optional override
 )
 
 tuning_job.run(sync=True)
@@ -172,7 +175,7 @@ print("Best validation_accuracy:", best_trial.final_measurement.metrics)
 ```
 
 #### 8. Review recorded metrics in GCS
-Your script writes a `metrics.json` (with keys such as `final_val_accuracy`, `final_val_loss`) to each trial’s output directory (under `ARTIFACT_DIR`). The snippet below aggregates those into a dataframe for side-by-side comparison.
+Your script writes a `metrics.json` (with keys such as `final_val_accuracy`, `final_val_loss`) to each trial's output directory (under `ARTIFACT_DIR`). The snippet below aggregates those into a dataframe for side-by-side comparison.
 
 ```python
 from google.cloud import storage
@@ -204,7 +207,43 @@ print(df[["trial_id","final_val_accuracy","final_val_loss","best_val_loss","best
 - How might running 10 trials in parallel differ from running 2 at a time in terms of cost, time, and result quality?  
 - When would you want to prioritize speed over adaptive search benefits?  
 
+**Cost:**  
+- If you run the same total number of trials, total cost is *roughly unchanged*; you're paying for the same amount of compute, just compressed into a shorter wall-clock window.  
+- Parallelism can raise short-term spend rate (more machines running at once) and may increase idle/overhead if trials start/finish unevenly.
+
+**Time:**  
+- Higher `parallel_trial_count` reduces wall-clock time almost linearly until you hit queue, quota, or data/IO bottlenecks.  
+- Startup overhead (image pull, environment setup) is paid for each concurrent trial; with many short trials, this overhead can become a larger fraction of runtime.
+
+**Result quality (adaptive search):**  
+- Vertex AI's adaptive search benefits from learning from early trials.  
+- With many trials in flight simultaneously, the tuner can't incorporate results quickly, so it explores “blind” for longer. This often yields slightly *worse* final results for a fixed `max_trial_count`.  
+- With modest parallelism (e.g., 2–4), the tuner can still update beliefs and exploit promising regions sooner.
+
+**Guidelines:**  
+- Start small: `parallel_trial_count` in the range 2–4 is a good default.  
+- Keep parallelism to **≤ 25–33%** of `max_trial_count` when you care about adaptive quality.  
+- Increase parallelism when your trials are long and you're confident the search space is well-bounded (less need for rapid adaptation).
+
+**When to prioritize speed (higher parallelism):**  
+- Strict deadlines or demo timelines.  
+- Very cheap/short trials where startup time dominates.  
+- You're using a non-adaptive or nearly random search space.  
+- You have unused quota/credits and want faster iteration.
+
+**When to prioritize adaptive quality (lower parallelism):**  
+- Trials are expensive, noisy, or have high variance; learning from early wins saves budget.  
+- Small `max_trial_count` (e.g., ≤ 10–20).  
+- Early stopping is enabled and you want the tuner to exploit promising regions quickly.  
+- You're adding new dimensions (e.g., LR + patience + min_delta) and want the search to refine intelligently.
+
+**Practical recipe:**  
+- First run: `max_trial_count=1`, `parallel_trial_count=1` (pipeline sanity check).  
+- Main run: `max_trial_count=10–20`, `parallel_trial_count=2–4`.  
+- Scale up parallelism only after the above completes cleanly and you confirm adaptive performance is acceptable.
+
 ::::::::::::::::::::::::::::::::::::::::::::::::
+
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
