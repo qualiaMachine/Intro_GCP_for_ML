@@ -721,15 +721,24 @@ visiting: <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-co
 <span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>        <span class="st">"--epochs=</span><span class="sc">{MAX_EPOCHS}</span><span class="st">"</span>,</span>
 <span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>        <span class="st">"--learning_rate=</span><span class="sc">{LR}</span><span class="st">"</span>,</span>
 <span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>        <span class="st">"--patience=</span><span class="sc">{PATIENCE}</span><span class="st">"</span>,</span>
-<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>    ],</span>
-<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,</span>
-<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACT_DIR,  <span class="co"># sets AIP_MODEL_DIR used by your script</span></span>
-<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a>)</span>
-<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>    ],</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,</span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACT_DIR,  <span class="co"># sets AIP_MODEL_DIR used by your script</span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>)</span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
+<div class="section level4">
+<h4 id="monitoring-training-jobs-in-the-console">Monitoring training jobs in the Console<a class="anchor" aria-label="anchor" href="#monitoring-training-jobs-in-the-console"></a></h4>
+<ol style="list-style-type: decimal"><li>Go to the Google Cloud Console.<br></li>
+<li>Navigate to <strong>Vertex AI &gt; Training &gt; Custom
+Jobs</strong>.<br></li>
+<li>Click on your job name to see status, logs, and output model
+artifacts.<br></li>
+<li>Cancel jobs from the console if needed (be careful not to stop jobs
+you don’t own in shared projects).</li>
+</ol><p><strong>Quick link</strong>: <a href="https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link uri">https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626</a></p>
 <p>Check our bucket contents to verify expected outputs are there.</p>
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -759,6 +768,7 @@ plots/regression checks).</li>
 <code>training.log</code> — complete stdout/stderr for
 reproducibility and debugging.</li>
 </ul></div>
+</div>
 <div class="section level3">
 <h3 id="evaluate-the-vertex-trained-model-on-the-validation-data">Evaluate the Vertex-trained model on the validation data<a class="anchor" aria-label="anchor" href="#evaluate-the-vertex-trained-model-on-the-validation-data"></a></h3>
 <p>We can check out work to see if this model gives the same result as
