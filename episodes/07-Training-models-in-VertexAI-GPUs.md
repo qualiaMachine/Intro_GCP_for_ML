@@ -278,6 +278,9 @@ GPU tips:
 - Console → Vertex AI → Training → Custom Jobs → your run → “Output directory” shows the container logs and the environment's `AIP_MODEL_DIR`.
 - Your script writes **model + metrics + eval history + training.log** next to `--model_out`, e.g., `gs://<bucket>/artifacts/pytorch/<RUN_ID>/`.
 
+## Additional resources
+To learn more about PyTorch and Vertex AI integrations, visit the docs: [https://docs.cloud.google.com/vertex-ai/docs/start/pytorch](https://docs.cloud.google.com/vertex-ai/docs/start/pytorch)
+
 ::::::::::::::::::::::::::::::::::::: keypoints
 
 - Use **CustomTrainingJob** with a prebuilt PyTorch container; let your script control outputs via `--model_out`.
