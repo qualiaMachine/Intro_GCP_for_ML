@@ -1055,7 +1055,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1858,7 +1858,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2365,7 +2365,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -3045,9 +3045,20 @@ uncommenting)</p>
 <span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a></span>
 <span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co"># print(f"Total local runtime: {t.time() - start:.2f} seconds")</span></span></code></pre>
 </div>
-</section><section><h2 class="section-heading" id="launch-the-training-job-no-base_output_dir">Launch the training job (no base_output_dir)<a class="anchor" aria-label="anchor" href="#launch-the-training-job-no-base_output_dir"></a>
+</section><section><h2 class="section-heading" id="launch-the-training-job">Launch the training job<a class="anchor" aria-label="anchor" href="#launch-the-training-job"></a>
 </h2>
 <hr class="half-width">
+<p>In the previous episode, we trained an XGBoost model using Vertex
+AI’s CustomTrainingJob interface.<br>
+Here, we’ll do the same for a PyTorch neural network. The structure is
+nearly identical —<br>
+we define a training script, select a prebuilt container (CPU or GPU),
+and specify where<br>
+to write all outputs in Google Cloud Storage (GCS). The main difference
+is that PyTorch<br>
+requires us to save our own model weights and metrics inside the script
+rather than relying<br>
+on Vertex to package a model automatically.</p>
 <div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
