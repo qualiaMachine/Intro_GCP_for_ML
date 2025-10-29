@@ -153,6 +153,9 @@ tuning_job = aiplatform.HyperparameterTuningJob(
     parameter_spec=parameter_spec,
     max_trial_count=1,                    # controls how many configurations are tested
     parallel_trial_count=2,                # how many run concurrently (keep small for adaptive search)
+    # search_algorithm="ALGORITHM_UNSPECIFIED",  # default = adaptive search (Bayesian)
+    # search_algorithm="RANDOM_SEARCH",          # optional override
+    # search_algorithm="GRID_SEARCH",            # optional override
 )
 
 tuning_job.run(sync=True)
