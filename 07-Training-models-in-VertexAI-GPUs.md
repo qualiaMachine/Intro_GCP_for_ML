@@ -271,9 +271,9 @@ job.run(
     args=[
         f"--train=gs://{BUCKET_NAME}/data/train_data.npz",
         f"--val=gs://{BUCKET_NAME}/data/val_data.npz",
-        "--epochs={MAX_EPOCHS}",
-        "--learning_rate={LR}",
-        "--patience={PATIENCE}",
+        f"--epochs={MAX_EPOCHS}",
+        f"--learning_rate={LR}",
+        f"--patience={PATIENCE}",
     ],
     replica_count=1,
     machine_type=MACHINE,
