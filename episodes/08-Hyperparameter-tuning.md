@@ -44,14 +44,25 @@ Change to your Jupyter home folder to keep paths consistent.
 ```
 
 #### 1. Prepare training script with metric logging
-Your training script (`train_nn.py`) should periodically print validation metrics in a format Vertex AI can capture. Vertex AI parses lines like `key: value` from stdout.
-
-Add these two lines right after you compute `val_loss` and `val_acc` inside the epoch loop:
+Your training script (`train_nn.py`) should report validation metrics in a way Vertex AI can track during hyperparameter tuning.  
+Add the following right after computing `val_loss` and `val_acc` inside your epoch loop:
 
 ```python
-# print(f"validation_loss: {val_loss:.6f}", flush=True)
-# print(f"validation_accuracy: {val_acc:.6f}", flush=True)
+# --- Report metrics to Vertex AI Hyperparameter Tuning ---
+try:
+    from hypertune import HyperTune
+    hpt = HyperTune()
+    hpt.report_hyperparameter_tuning_metric(
+        hyperparameter_metric_tag="validation_loss",  # must match metric_spec
+        metric_value=val_loss,
+        global_step=ep,
+    )
+except ImportError:
+    pass
+
 ```
+
+This ensures Vertex AI records the validation metric for each trial and can rank configurations by performance automatically.
 
 #### 2. Define hyperparameter search space
 This step defines which parameters Vertex AI will vary across trials and their allowed ranges. The number of total settings tested is determined later using `max_trial_count`.
