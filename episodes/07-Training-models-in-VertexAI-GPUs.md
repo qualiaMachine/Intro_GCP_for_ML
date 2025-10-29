@@ -148,26 +148,26 @@ start = t.time()
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
-To address the numpy mismatch, we can run the following code first.
-```python
-!pip install --upgrade --force-reinstall "numpy<2"
-```
-
-Then, rerun.
+If applicable (numpy mismatch), run the below code after uncommenting it (select code and type `Ctrl+/` for multiline uncommenting)
 
 ```python
-import time as t
+# # Fix numpy mismatch
+# !pip install --upgrade --force-reinstall "numpy<2"
 
-start = t.time()
+# # Then, rerun:
 
-# Example: run your custom training script with args
-!python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
-    --train /home/jupyter/train_data.npz \
-    --val /home/jupyter/val_data.npz \
-    --epochs 50 \
-    --learning_rate 0.001
+# import time as t
 
-print(f"Total local runtime: {t.time() - start:.2f} seconds")
+# start = t.time()
+
+# # Example: run your custom training script with args
+# !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
+#     --train /home/jupyter/train_data.npz \
+#     --val /home/jupyter/val_data.npz \
+#     --epochs 50 \
+#     --learning_rate 0.001
+
+# print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
 
