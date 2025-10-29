@@ -718,15 +718,16 @@ visiting: <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-co
 <span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>    args<span class="op">=</span>[</span>
 <span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
 <span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>        <span class="st">"--epochs=200"</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>        <span class="st">"--learning_rate=0.001"</span></span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>    ],</span>
-<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,</span>
-<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACT_DIR,  <span class="co"># sets AIP_MODEL_DIR used by your script</span></span>
-<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>)</span>
-<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>        <span class="st">"--epochs=</span><span class="sc">{MAX_EPOCHS}</span><span class="st">"</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>        <span class="st">"--learning_rate=</span><span class="sc">{LR}</span><span class="st">"</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>        <span class="st">"--patience=</span><span class="sc">{PATIENCE}</span><span class="st">"</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>    ],</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,</span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACT_DIR,  <span class="co"># sets AIP_MODEL_DIR used by your script</span></span>
+<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>)</span>
+<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
 <p>Check our bucket contents to verify expected outputs are there.</p>
 <div class="codewrapper sourceCode" id="cb13">
