@@ -355,10 +355,6 @@ GPU tips:
 - **Data parallelism** (DDP) helps when a single GPU is saturated by batch size/throughput. For most workshop‑scale models, a single machine/GPU is simpler and cheaper.
 - **Model parallelism** is for very large networks that don't fit on one device—overkill for this lesson.
 
-## Monitoring jobs & finding outputs
-
-- Console → Vertex AI → Training → Custom Jobs → your run → “Output directory” shows the container logs and the environment's `AIP_MODEL_DIR`.
-- Your script writes **model + metrics + eval history + training.log** next to `--model_out`, e.g., `gs://<bucket>/artifacts/pytorch/<RUN_ID>/`.
 
 ## Additional resources
 To learn more about PyTorch and Vertex AI integrations, visit the docs: [docs.cloud.google.com/vertex-ai/docs/start/pytorch](https://docs.cloud.google.com/vertex-ai/docs/start/pytorch)
