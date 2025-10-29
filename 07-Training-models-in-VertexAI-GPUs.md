@@ -230,16 +230,14 @@ job.run(
     args=[
         f"--train=gs://{BUCKET_NAME}/data/train_data.npz",
         f"--val=gs://{BUCKET_NAME}/data/val_data.npz",
-        f"--epochs=200",
-        f"--learning_rate=0.001",
-        f"--model_out={ARTIFACT_DIR}",   # drives where *all* artifacts go
+        "--epochs=200",
+        "--learning_rate=0.001"
     ],
     replica_count=1,
     machine_type=MACHINE,
+    base_output_dir=ARTIFACT_DIR,  # sets AIP_MODEL_DIR used by your script
     sync=True,
 )
-
-print("Artifacts folder:", ARTIFACT_DIR)
 ```
 
 **What you'll see in `gs://…/artifacts/pytorch/<RUN_ID>/`:**
