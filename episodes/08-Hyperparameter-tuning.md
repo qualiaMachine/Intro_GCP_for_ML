@@ -145,7 +145,7 @@ custom_job = aiplatform.CustomJob.from_local_script(
 
 DISPLAY_NAME = f"{LAST_NAME}_pytorch_hpt_{RUN_ID}"
 
-# ALWAYS START WITH 2 trials before scaling up `max_trial_count`
+# ALWAYS START WITH 1 trial before scaling up `max_trial_count`
 tuning_job = aiplatform.HyperparameterTuningJob(
     display_name=DISPLAY_NAME,
     custom_job=custom_job,                 # must be a CustomJob (not CustomTrainingJob)
