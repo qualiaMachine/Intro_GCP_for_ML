@@ -208,7 +208,7 @@ MACHINE = "n1-standard-4",  # CPU fine for small datasets
 # init job (this does not consume any resources)
 job = aiplatform.CustomTrainingJob(
     display_name=f"pytorch_nn_{RUN_ID}",
-    script_path="Intro_GCP_for_ML/scripts/train_xgboost.py",
+    script_path="Intro_GCP_for_ML/scripts/train_nn.py",
     container_uri=IMAGE)
 
 ```
