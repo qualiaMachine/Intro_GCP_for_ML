@@ -359,10 +359,44 @@ Google Cloud Platform (GCP) for machine learning workloads.<br>
 While instance size is an important factor, effective performance
 depends on how you pair a machine type with optional GPU
 accelerators.</p>
-<p><strong>All pricing estimates</strong> are based on public rates for
+<p>All pricing estimates are based on public rates for
 <code>us-central1</code> as of October 2025.<br>
 Actual cost depends on sustained-use discounts, attached GPU quotas, and
 whether your project has promotional or educational credits.</p>
+<div class="section level3">
+<h3 id="key-terms">Key Terms<a class="anchor" aria-label="anchor" href="#key-terms"></a></h3>
+<ul><li>
+<strong>vCPU</strong>: A <em>virtual CPU</em> represents one logical
+core allocated from a physical CPU. Two vCPUs typically correspond to
+one physical core on GCP hardware. More vCPUs allow for greater
+parallelism — useful when loading data, performing CPU-heavy
+preprocessing, or running multi-threaded operations. In GCP machine
+types, memory (RAM) generally scales with vCPUs — doubling vCPUs usually
+doubles available memory.<br></li>
+<li>
+<strong>Memory (GiB)</strong>: System RAM available to the VM.
+Higher RAM supports larger batch sizes, data caching, and in-memory
+preprocessing, reducing disk I/O overhead.<br></li>
+<li>
+<strong>GPU (Graphics Processing Unit)</strong>: Specialized
+hardware for parallel tensor operations used in deep learning model
+training and inference.<br></li>
+<li>
+<strong>Machine type</strong>: Defines CPU and RAM resources;
+determines how many vCPUs and how much memory your instance has.<br></li>
+<li>
+<strong>Machine family</strong>: A group of machine types optimized
+for a specific balance of performance, memory, and cost (e.g.,
+<code>n2-standard-8</code>).<br></li>
+<li>
+<strong>Accelerator</strong>: Optional hardware (such as GPUs or
+TPUs) that can be attached to certain VM families to speed up training
+and inference.<br></li>
+<li>
+<strong>Region</strong>: The physical location of your compute
+resources (e.g., <code>us-central1</code>). Pricing and GPU availability
+can vary by region.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="reference-docs">Reference Docs<a class="anchor" aria-label="anchor" href="#reference-docs"></a></h3>
 <ul><li><a href="https://cloud.google.com/compute/vm-instance-pricing" class="external-link">Compute
@@ -374,87 +408,230 @@ Pricing Overview</a></li>
 </ul></div>
 <div class="section level3">
 <h3 id="key-concepts">Key Concepts<a class="anchor" aria-label="anchor" href="#key-concepts"></a></h3>
-<ul><li><p><strong>Machine type vs. GPU</strong>: The
-<code>machine_type</code> defines CPU and RAM resources — it is
-<em>not</em> a GPU by itself.<br>
-You can attach a GPU by adding <code>accelerator_type</code> and
-<code>accelerator_count</code> (for example,
-<code>NVIDIA_TESLA_T4</code> or <code>NVIDIA_L4</code>).<br>
-Only specialized machine families like <code>A2</code> include GPUs
-automatically.</p></li>
-<li><p><strong>CPU-focused series</strong>: <code>N2</code> and
-<code>C2</code> are optimized for CPU-heavy workloads such as
-preprocessing, feature engineering, or classical ML.</p></li>
-<li><p><strong>GPU-focused series</strong>: GPUs handle deep learning
-workloads. You can attach them to standard families (for example,
-<code>n1-standard-8</code> + <code>NVIDIA_TESLA_T4</code>) or use
-dedicated GPU machine families (<code>A2</code>, <code>A3</code>,
-<code>A4</code>).</p></li>
-<li><p><strong>RAM requirements</strong>: Minimum RAM should be at least
-1.5× dataset size unless your workflow uses batching.</p></li>
-<li><p><strong>Free tier</strong>: Some smaller instance types (for
+<ul><li>
+<strong>Machine type vs. GPU</strong>: The <code>machine_type</code>
+defines CPU and RAM resources — it is not a GPU by itself. You can
+attach a GPU by adding <code>accelerator_type</code> and
+<code>accelerator_count</code> (for example, <code>NVIDIA_L4</code> or
+<code>NVIDIA_TESLA_T4</code>). Only specialized machine families like
+<code>A2</code> include GPUs automatically.<br></li>
+<li>
+<strong>Full names and syntax</strong>: Machine types follow the
+pattern <code>&lt;family&gt;-&lt;series&gt;-&lt;vCPU count&gt;</code>.
+For example:
+<ul><li>
+<code>n2-standard-8</code>: 8 vCPUs, 32 GB RAM<br></li>
+<li>
+<code>c2-standard-8</code>: 8 vCPUs, 32 GB RAM (CPU-optimized)<br></li>
+<li>
+<code>a2-highgpu-1g</code>: 12 vCPUs, 85 GB RAM, and 1 attached A100
+GPU<br></li>
+</ul></li>
+<li>
+<strong>RAM requirements</strong>: Minimum RAM should be at least
+1.5× dataset size unless your workflow uses batching.<br></li>
+<li>
+<strong>Free tier</strong>: Some smaller instance types (for
 example, <code>e2-micro</code>) may qualify for the <a href="https://cloud.google.com/free" class="external-link">GCP Free Tier</a>. Check usage
-limits before running persistent notebooks.</p></li>
+limits before running persistent notebooks.</li>
 </ul></div>
 <div class="section level3">
-<h3 id="common-accelerator-choices">Common Accelerator Choices<a class="anchor" aria-label="anchor" href="#common-accelerator-choices"></a></h3>
-<table class="table"><colgroup><col width="28%"><col width="22%"><col width="28%"><col width="20%"></colgroup><thead><tr class="header"><th>Accelerator Type</th>
+<h3 id="machine-families-overview">Machine Families Overview<a class="anchor" aria-label="anchor" href="#machine-families-overview"></a></h3>
+<p>Different machine families are optimized for different
+workloads.<br>
+Costs below are approximate per-hour rates for instances with 8 vCPUs in
+the <code>us-central1</code> region.</p>
+<table class="table"><colgroup><col width="8%"><col width="15%"><col width="21%"><col width="16%"><col width="30%"><col width="6%"></colgroup><thead><tr class="header"><th>Family</th>
+<th>Optimized For</th>
+<th>Example Machine Type</th>
+<th>Approx. Cost/hr</th>
+<th>Typical Model or Dataset Scale</th>
+<th>Notes</th>
+</tr></thead><tbody><tr class="odd"><td><code>E2</code></td>
+<td>General purpose</td>
+<td><code>e2-standard-8</code></td>
+<td>~$0.25</td>
+<td>Small jobs or lightweight scripts</td>
+<td>Cheapest option; slower CPUs</td>
+</tr><tr class="even"><td><code>N1</code></td>
+<td>Balanced compute (older gen)</td>
+<td><code>n1-standard-8</code></td>
+<td>~$0.35</td>
+<td>Small to mid-sized ML (&lt;100M params)</td>
+<td>Broad GPU compatibility</td>
+</tr><tr class="odd"><td><code>N2</code></td>
+<td>Balanced compute (newer gen)</td>
+<td><code>n2-standard-8</code></td>
+<td>~$0.38</td>
+<td>Mid-sized ML and RAG pipelines (100M–500M params)</td>
+<td>Common choice for notebooks</td>
+</tr><tr class="even"><td><code>C2</code></td>
+<td>Compute optimized</td>
+<td><code>c2-standard-8</code></td>
+<td>~$0.45</td>
+<td>CPU-heavy preprocessing or feature extraction</td>
+<td>High single-thread performance</td>
+</tr><tr class="odd"><td><code>C3</code></td>
+<td>Next-gen compute optimized</td>
+<td><code>c3-standard-8</code></td>
+<td>~$0.50</td>
+<td>High-performance CPU-only workloads</td>
+<td>Faster I/O and networking</td>
+</tr><tr class="even"><td><code>A2</code></td>
+<td>GPU (A100)</td>
+<td><code>a2-highgpu-1g</code></td>
+<td>~$2.93 (with 1×A100)</td>
+<td>Large DL models (0.5B–10B params)</td>
+<td>Fixed GPU counts, quota required</td>
+</tr><tr class="odd"><td><code>A3</code></td>
+<td>GPU (H100)</td>
+<td><code>a3-highgpu-8g</code></td>
+<td>~$32.00 (with 8×H100)</td>
+<td>Transformer-scale models (10B–70B params)</td>
+<td>High throughput, limited quota</td>
+</tr><tr class="even"><td><code>A4</code></td>
+<td>GPU (B200)</td>
+<td><code>a4-highgpu-4g</code></td>
+<td>~$36.00 (with 4×B200)</td>
+<td>Foundation models (70B+ params)</td>
+<td>Highest-end, limited availability</td>
+</tr><tr class="odd"><td>
+<code>T2A</code> / <code>T2D</code>
+</td>
+<td>Arm or AMD CPUs</td>
+<td><code>t2a-standard-8</code></td>
+<td>~$0.20</td>
+<td>Low-cost inference or lightweight workloads</td>
+<td>No GPU support</td>
+</tr></tbody></table><p><strong>Cost notes:</strong><br>
+- Prices vary by region and storage/network configuration.<br>
+- <code>N2</code> instances are a typical choice for cost-effective ML
+workloads.<br>
+- <code>A2–A4</code> families include GPUs by default; all others
+require attaching GPUs manually.</p>
+</div>
+<div class="section level3">
+<h3 id="attaching-gpus-vs--using-gpu-families">Attaching GPUs vs. Using GPU Families<a class="anchor" aria-label="anchor" href="#attaching-gpus-vs--using-gpu-families"></a></h3>
+<p>Attaching a GPU to a standard CPU family (<code>n1</code>,
+<code>n2</code>, or <code>c2</code>) is the most flexible and
+cost-efficient setup for research and medium-scale workloads.<br>
+Dedicated GPU families like <code>A2</code>, <code>A3</code>, and
+<code>A4</code> are designed for very large or multi-GPU training but
+come with higher fixed costs and quota requirements.</p>
+<table class="table"><colgroup><col width="32%"><col width="32%"><col width="17%"><col width="17%"></colgroup><thead><tr class="header"><th>Approach</th>
+<th>Best For</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr></thead><tbody><tr class="odd"><td>Attach GPU to Standard VM (<code>n1</code>/<code>n2</code> +
+<code>NVIDIA_L4</code>/<code>T4</code>)</td>
+<td>Fine-tuning, RAG pipelines, and large-scale inference with models up
+to ~500M–1B params</td>
+<td>Cheaper, flexible CPU/GPU balance, reusable for notebooks and
+jobs</td>
+<td>Not ideal for multi-GPU scaling</td>
+</tr><tr class="even"><td>Use GPU Machine Family
+(<code>A2</code>/<code>A3</code>/<code>A4</code>)</td>
+<td>Multi-GPU training or high-throughput inference with models &gt;1B
+params</td>
+<td>High throughput, optimized GPU interconnects</td>
+<td>Expensive, quota-restricted, fixed GPU count</td>
+</tr></tbody></table><p>For large-scale RAG deployments using very large models (e.g., 7B–70B
+parameters), <code>A2</code> or <code>A3</code> instances may be
+required to hold the model in GPU memory during inference.<br>
+However, when using model sharding or quantized models under 20–40 GB
+total, attached L4 GPUs on <code>n2</code> machines remain
+cost-effective.</p>
+</div>
+<div class="section level3">
+<h3 id="typical-gpu-options-for-attached-configurations">Typical GPU Options for Attached Configurations<a class="anchor" aria-label="anchor" href="#typical-gpu-options-for-attached-configurations"></a></h3>
+<table class="table"><colgroup><col width="9%"><col width="11%"><col width="15%"><col width="15%"><col width="13%"><col width="22%"><col width="11%"></colgroup><thead><tr class="header"><th>GPU Type</th>
 <th>CUDA Version</th>
 <th>Approx. Price/hr</th>
+<th>Model Size Range</th>
+<th>Dataset Scale</th>
+<th>System RAM (Recommended)</th>
 <th>Typical Use</th>
 </tr></thead><tbody><tr class="odd"><td><code>NVIDIA_TESLA_T4</code></td>
 <td>CUDA 11.x–12.x</td>
 <td>~$0.35</td>
-<td>Cost-effective entry GPU for small models</td>
+<td>≤100 M params</td>
+<td>≤10 GB</td>
+<td>≥16 GB</td>
+<td>Entry GPU for CNNs, small transformers</td>
 </tr><tr class="even"><td><code>NVIDIA_L4</code></td>
 <td>CUDA 12.x</td>
 <td>~$0.60</td>
-<td>Balanced option for mid-scale DL</td>
+<td>≤500 M–1 B params</td>
+<td>≤50 GB</td>
+<td>≥32 GB</td>
+<td>Moderate training, RAG inference, fine-tuning</td>
 </tr><tr class="odd"><td><code>NVIDIA_TESLA_V100</code></td>
 <td>CUDA 11.x</td>
 <td>~$2.48</td>
-<td>High-performance training (vision, NLP)</td>
+<td>0.5 B–2 B params</td>
+<td>≤100 GB</td>
+<td>≥64 GB</td>
+<td>High-performance deep learning</td>
 </tr><tr class="even"><td><code>NVIDIA_A100_40GB</code></td>
 <td>CUDA 11.x–12.x</td>
 <td>~$2.93</td>
-<td>Research-scale deep learning workloads</td>
+<td>2 B–10 B params</td>
+<td>≤200 GB</td>
+<td>≥128 GB</td>
+<td>Research-scale model training</td>
 </tr><tr class="odd"><td><code>NVIDIA_H100</code></td>
 <td>CUDA 12.x</td>
 <td>~$4.00</td>
-<td>Transformer-scale model training</td>
+<td>10 B–70 B params</td>
+<td>≤500 GB</td>
+<td>≥256 GB</td>
+<td>Transformer and LLM training/inference</td>
 </tr><tr class="even"><td><code>NVIDIA_B200</code></td>
 <td>CUDA 12.x</td>
 <td>~$5.00+</td>
-<td>Large foundation models and experimental work</td>
+<td>&gt;70 B params</td>
+<td>≥1 TB</td>
+<td>≥512 GB</td>
+<td>Foundation-model or multi-node workloads</td>
 </tr></tbody></table></div>
 <div class="section level3">
-<h3 id="general-notes">General Notes<a class="anchor" aria-label="anchor" href="#general-notes"></a></h3>
-<ul><li>For small datasets, CPUs are often faster to start and cheaper to
-run.<br></li>
-<li>For deep learning, attach a GPU instead of switching the entire
-machine family.<br></li>
-<li>To move from CPU → GPU training, keep the same script and simply
-change:
+<h3 id="example-workload-choices">Example Workload Choices<a class="anchor" aria-label="anchor" href="#example-workload-choices"></a></h3>
 <ul><li>
-<code>container_uri</code> to a GPU-enabled PyTorch image
-(<code>pytorch-gpu.*</code>)</li>
-<li>Add <code>accelerator_type</code> and <code>accelerator_count</code>
-in your <code>CustomTrainingJob</code>.</li>
-</ul></li>
+<strong>RAG with LLMs:</strong> Retrieval-augmented generation
+pipelines rely mainly on CPU and memory for vector retrieval and
+embedding operations, with moderate GPU usage during inference.
+Recommended: <code>n2-standard-8</code> + <code>NVIDIA_L4</code> for
+typical RAG; move to <code>a2-highgpu-1g</code> or
+<code>a3-highgpu</code> if the model exceeds 1B parameters or GPU memory
+limits.<br></li>
+<li>
+<strong>Training a 100M-parameter neural network:</strong> This
+model size fits comfortably on a single mid-tier GPU and benefits from
+faster GPU memory bandwidth. Recommended: <code>n1-standard-8</code> +
+<code>NVIDIA_TESLA_T4</code> for affordability, or
+<code>NVIDIA_L4</code> if training time matters more than cost.<br></li>
+<li>
+<strong>Multi-GPU or LLM fine-tuning (billions of
+parameters):</strong> Large models (1B–70B parameters) often require
+multiple A100, H100, or B200 GPUs in parallel. Recommended:
+<code>a2-highgpu-2g</code> (2×A100) or larger depending on model size
+and parallelism. Cost note: Fine-tuning billion-parameter models can
+easily exceed $200–$500 per hour of GPU time. Even short fine-tunes may
+consume hundreds of dollars in credits. Plan carefully, monitor
+utilization, and test your pipeline with smaller models first.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="example-configurations">Example Configurations<a class="anchor" aria-label="anchor" href="#example-configurations"></a></h3>
-<table style="width:100%;" class="table"><colgroup><col width="12%"><col width="24%"><col width="7%"><col width="12%"><col width="16%"><col width="13%"><col width="12%"></colgroup><thead><tr class="header"><th><strong>Dataset Size</strong></th>
-<th><strong>Recommended Notebook Instance</strong></th>
-<th><strong>vCPU</strong></th>
-<th><strong>Memory (GiB)</strong></th>
-<th><strong>GPU / Accelerator</strong></th>
-<th><strong>Price/hr (USD)</strong></th>
-<th><strong>Typical Use</strong></th>
+<table class="table"><colgroup><col width="12%"><col width="27%"><col width="5%"><col width="13%"><col width="16%"><col width="13%"><col width="11%"></colgroup><thead><tr class="header"><th>Dataset Size</th>
+<th>Recommended Notebook Instance</th>
+<th>vCPU</th>
+<th>Memory (GiB)</th>
+<th>GPU / Accelerator</th>
+<th>Price/hr (USD)</th>
+<th>Typical Use</th>
 </tr></thead><tbody><tr class="odd"><td>&lt; 1 GB</td>
 <td>
-<code>e2-micro</code> <em>(Free Tier)</em>
-</td>
+<code>e2-micro</code> (Free Tier)</td>
 <td>2</td>
 <td>1</td>
 <td>None</td>
@@ -494,17 +671,15 @@ in your <code>CustomTrainingJob</code>.</li>
 <td>Moderate deep learning workloads</td>
 </tr><tr class="even"><td>50 GB</td>
 <td>
-<code>a2-highgpu-2g</code> <em>(2× A100)</em>
-</td>
+<code>a2-highgpu-2g</code> (2× A100)</td>
 <td>24</td>
 <td>170</td>
 <td>2× A100</td>
 <td>~$5.90</td>
-<td>Multi-GPU training, research workloads</td>
+<td>Multi-GPU training, large-model inference</td>
 </tr><tr class="odd"><td>100 GB</td>
 <td>
-<code>a3-highgpu-8g</code> <em>(8× H100)</em>
-</td>
+<code>a3-highgpu-8g</code> (8× H100)</td>
 <td>128</td>
 <td>512</td>
 <td>8× H100</td>
@@ -512,14 +687,26 @@ in your <code>CustomTrainingJob</code>.</li>
 <td>Transformer or LLM fine-tuning</td>
 </tr><tr class="even"><td>1 TB+</td>
 <td>
-<code>a4-highgpu-4g</code> <em>(4× B200)</em>
-</td>
+<code>a4-highgpu-4g</code> (4× B200)</td>
 <td>96</td>
 <td>768</td>
 <td>4× B200</td>
 <td>~$36.00</td>
 <td>Foundation-model scale training</td>
 </tr></tbody></table></div>
+<div class="section level3">
+<h3 id="general-notes">General Notes<a class="anchor" aria-label="anchor" href="#general-notes"></a></h3>
+<ul><li>For small datasets, CPUs are often faster to start and cheaper to
+run.<br></li>
+<li>When moving from CPU to GPU training, keep the same script and
+simply change:
+<ul><li>
+<code>container_uri</code> to a GPU-enabled image (for example,
+<code>pytorch-gpu.*</code>)</li>
+<li>Add <code>accelerator_type</code> and <code>accelerator_count</code>
+in your <code>CustomTrainingJob</code>.</li>
+</ul></li>
+</ul></div>
 <div class="section level3">
 <h3 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a></h3>
 <ol style="list-style-type: decimal"><li>Choose the <code>machine_type</code> for CPU and memory
@@ -530,7 +717,10 @@ resources.<br></li>
 include GPUs automatically.<br></li>
 <li>For most research training jobs, <code>n1-standard-8</code> +
 <code>NVIDIA_TESLA_T4</code> or <code>NVIDIA_L4</code> is a practical
-and affordable starting point.</li>
+and affordable starting point.<br></li>
+<li>Fine-tuning or large-scale inference with billion-parameter models
+can be extremely expensive; validate your workflow with smaller models
+first.</li>
 </ol><!--
 Place links that you need to refer to multiple times across pages here. Delete
 any links that you are not going to use.
