@@ -701,14 +701,20 @@ visiting: <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-co
 <span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
 </div>
 <p><strong>What you’ll see in
-<code>gs://…/artifacts/pytorch/&lt;RUN_ID&gt;/</code>:</strong> -
-<code>model.pt</code> — PyTorch weights (<code>state_dict</code>). -
+<code>gs://…/artifacts/pytorch/&lt;RUN_ID&gt;/</code>:</strong></p>
+<ul><li>
+<code>model.pt</code> — PyTorch weights
+(<code>state_dict</code>).</li>
+<li>
 <code>metrics.json</code> — final val loss, hyperparameters, dataset
-sizes, device, model URI. - <code>eval_history.csv</code> — per‑epoch
-validation loss (for plots/regression checks). -
-<code>training.log</code> — complete stdout/stderr for reproducibility
-and debugging.</p>
-</div>
+sizes, device, model URI.</li>
+<li>
+<code>eval_history.csv</code> — per‑epoch validation loss (for
+plots/regression checks).</li>
+<li>
+<code>training.log</code> — complete stdout/stderr for
+reproducibility and debugging.</li>
+</ul></div>
 </section><section><h2 class="section-heading" id="optional-gpu-training">Optional: GPU training<a class="anchor" aria-label="anchor" href="#optional-gpu-training"></a></h2>
 <hr class="half-width"><p>For larger models or heavier data:</p>
 <div class="codewrapper sourceCode" id="cb13">
