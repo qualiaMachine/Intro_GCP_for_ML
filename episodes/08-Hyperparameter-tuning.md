@@ -136,7 +136,8 @@ The number of total runs is set by `max_trial_count`, and the number of simultan
 
 
 ```python
-metric_spec = {"validation_accuracy": "maximize"}  # matches script print key
+# metric_spec = {"validation_loss": "minimize"} - also stored by train_nn.py
+metric_spec = {"validation_accuracy": "maximize"}
 
 custom_job = aiplatform.CustomJob.from_local_script(
     display_name=f"{LAST_NAME}_pytorch_hpt-trial_{RUN_ID}",
