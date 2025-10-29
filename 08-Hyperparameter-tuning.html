@@ -415,14 +415,14 @@ the number of trials and level of parallelization.</p>
 <h4 id="prepare-training-script-with-metric-logging">1. Prepare training script with metric logging<a class="anchor" aria-label="anchor" href="#prepare-training-script-with-metric-logging"></a></h4>
 <p>Your training script (<code>train_nn.py</code>) should periodically
 print validation accuracy in a format that Vertex AI can capture.</p>
+<p><strong>Vertex AI automatically captures metrics logged in this
+format (<code>key: value</code>). </strong></p>
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="cf">if</span> (epoch <span class="op">+</span> <span class="dv">1</span>) <span class="op">%</span> <span class="dv">100</span> <span class="op">==</span> <span class="dv">0</span> <span class="kw">or</span> epoch <span class="op">==</span> epochs <span class="op">-</span> <span class="dv">1</span>:</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"validation_accuracy: </span><span class="sc">{</span>val_accuracy<span class="sc">:.4f}</span><span class="ss">"</span>, flush<span class="op">=</span><span class="va">True</span>)</span></code></pre>
 </div>
-<p>Vertex AI automatically captures metrics logged in this format
-(<code>key: value</code>).</p>
 </div>
 <div class="section level4">
 <h4 id="define-hyperparameter-search-space">2. Define hyperparameter search space<a class="anchor" aria-label="anchor" href="#define-hyperparameter-search-space"></a></h4>
