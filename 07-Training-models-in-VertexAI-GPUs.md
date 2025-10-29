@@ -134,6 +134,12 @@ Find this file in our repo: `Intro_GCP_for_ML/scripts/train_nn.py`. It does thre
 To test this code, we can run the following:
 
 ```python
+# configure training hyperparameters to use in all model training runs downstream
+MAX_EPOCHS = 500
+LR =  0.001
+PATIENCE = 50
+
+# local training run
 import time as t
 
 start = t.time()
@@ -142,8 +148,9 @@ start = t.time()
 !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
     --train /home/jupyter/train_data.npz \
     --val /home/jupyter/val_data.npz \
-    --epochs 500 \
-    --learning_rate 0.001
+    --epochs $MAX_EPOCHS \
+    --learning_rate $LR \
+    --patience $PATIENCE
 
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
@@ -164,8 +171,10 @@ If applicable (numpy mismatch), run the below code after uncommenting it (select
 # !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
 #     --train /home/jupyter/train_data.npz \
 #     --val /home/jupyter/val_data.npz \
-#     --epochs 500 \
-#     --learning_rate 0.001
+#    --epochs $MAX_EPOCHS \
+#    --learning_rate $LR \
+#    --patience $PATIENCE
+
 
 # print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
@@ -184,16 +193,16 @@ start = t.time()
 !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
     --train /home/jupyter/train_data.npz \
     --val /home/jupyter/val_data.npz \
-    --epochs 500 \
-    --learning_rate 0.001 \
-    --patience 50
+    --epochs $MAX_EPOCHS \
+    --learning_rate $LR \
+    --patience $PATIENCE
 
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
 **Please don't use cloud resources for code that is not reproducible!**
 
-### Evaluate the locally trained model on the held-out test set
+### Evaluate the locally trained model on the validation data
 
 ```python
 import sys, torch, numpy as np
@@ -206,7 +215,7 @@ X_val, y_val = d["X_val"], d["y_val"]
 
 # rebuild model and load weights
 m = TitanicNet()
-state = torch.load("/home/jupyter/model.pt", map_location="cpu")  # same file as ./model.pt
+state = torch.load("/home/jupyter/model.pt", map_location="cpu") 
 m.load_state_dict(state)
 m.eval()
 
@@ -221,6 +230,7 @@ print(f"Local model val accuracy: {acc:.4f}")
 
 ```
 
+We should see an accuracy that matches our best epoch in the local training run. Note that in our setup, early stopping is based on validation loss; not accuracy.
 
 ## Launch the training job 
 
@@ -293,6 +303,42 @@ print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
 - `eval_history.csv` — per‑epoch validation loss (for plots/regression checks).
 - `training.log` — complete stdout/stderr for reproducibility and debugging.
 
+### Evaluate the Vertex-trained model on the validation data
+
+We can check out work to see if this model gives the same result as our "locally" trained model above. First, we'll copy the model from GCS to our notebook.
+```python
+# Copy model.pt from GCS (replace RUN_ID with your run folder)
+!gsutil cp {ARTIFACT_DIR}/model/model.pt /home/jupyter/model_vertex.pt
+!ls
+```
+
+As before, we can run our model evaluation code with this model.
+
+```python
+import sys, torch, numpy as np
+sys.path.append("/home/jupyter/Intro_GCP_for_ML/scripts")
+from train_nn import TitanicNet
+
+# load validation data
+d = np.load("/home/jupyter/val_data.npz")
+X_val, y_val = d["X_val"], d["y_val"]
+
+# rebuild model and load weights
+m = TitanicNet()
+state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")  
+m.load_state_dict(state)
+m.eval()
+
+X_val_t = torch.tensor(X_val, dtype=torch.float32)
+with torch.no_grad():
+    # model already outputs probabilities in (0,1) because final layer is Sigmoid
+    probs = m(X_val_t).squeeze(1)              # shape [N]
+    preds = (probs >= 0.5).long().cpu().numpy()
+
+acc = (preds == y_val).mean()
+print(f"Vertex model val accuracy: {acc:.4f}")
+
+```
 ## GPU-Accelerated Training on Vertex AI
 
 In the previous example, we ran our PyTorch training job on a CPU-only machine using the `pytorch-cpu` container. That setup works well for small models or quick tests since CPU instances are cheaper and start faster.
