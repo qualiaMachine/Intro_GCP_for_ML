@@ -15,23 +15,17 @@ Actual cost depends on sustained-use discounts, attached GPU quotas, and whether
 
 ### Key Concepts
 
-- **Machine type vs. GPU**  
-  The `machine_type` defines CPU and RAM resources — it is *not* a GPU by itself.  
+- **Machine type vs. GPU**: The `machine_type` defines CPU and RAM resources — it is *not* a GPU by itself.  
   You can attach a GPU by adding `accelerator_type` and `accelerator_count` (for example, `NVIDIA_TESLA_T4` or `NVIDIA_L4`).  
   Only specialized machine families like `A2` include GPUs automatically.
 
-- **CPU-focused series**  
-  `N2` and `C2` are optimized for CPU-heavy workloads such as preprocessing, feature engineering, or classical ML.
+- **CPU-focused series**: `N2` and `C2` are optimized for CPU-heavy workloads such as preprocessing, feature engineering, or classical ML.
 
-- **GPU-focused series**  
-  GPUs handle deep learning workloads. You can attach them to standard families (for example, `n1-standard-8` + `NVIDIA_TESLA_T4`) or use dedicated GPU machine families (`A2`, `A3`, `A4`).
+- **GPU-focused series**: GPUs handle deep learning workloads. You can attach them to standard families (for example, `n1-standard-8` + `NVIDIA_TESLA_T4`) or use dedicated GPU machine families (`A2`, `A3`, `A4`).
 
-- **RAM requirements**  
-  Minimum RAM should be at least 1.5× dataset size unless your workflow uses batching.
+- **RAM requirements**: Minimum RAM should be at least 1.5× dataset size unless your workflow uses batching.
 
-- **Free tier**  
-  Some smaller instance types (for example, `e2-micro`) may qualify for the [GCP Free Tier](https://cloud.google.com/free).  
-  Check usage limits before running persistent notebooks.
+- **Free tier**: Some smaller instance types (for example, `e2-micro`) may qualify for the [GCP Free Tier](https://cloud.google.com/free). Check usage limits before running persistent notebooks.
 
 ### Common Accelerator Choices
 
