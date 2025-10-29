@@ -53,9 +53,6 @@ print(f"validation_loss: {val_loss:.6f}", flush=True)
 print(f"validation_accuracy: {val_acc:.6f}", flush=True)
 ```
 
-This is in addition to your existing human-readable line (e.g., `epoch=... val_loss:... val_acc:...`).  
-Patch file you can apply: `train_nn.patch` (provided below). The current script also writes a `metrics.json` with keys like `final_val_accuracy` which we will read later. fileciteturn0file0
-
 #### 2. Define hyperparameter search space
 This step defines which parameters Vertex AI will vary across trials and their allowed ranges. The number of total settings tested is determined later using `max_trial_count`.
 
@@ -244,7 +241,6 @@ print(df[["trial_id","final_val_accuracy","final_val_loss","best_val_loss","best
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
