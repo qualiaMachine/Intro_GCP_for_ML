@@ -14,19 +14,26 @@ exercises: 10
 ::::::::::::::::::::::::::::::::::::: objectives
 
 - Prepare the Titanic dataset and save train/val arrays to compressed `.npz` files in GCS.
-- Submit a **CustomTrainingJob** that runs a PyTorch script and explicitly writes outputs to a chosen `gs://…/artifacts/.../` folder.
+- Submit a *CustomTrainingJob* that runs a PyTorch script and explicitly writes outputs to a chosen `gs://…/artifacts/.../` folder.
 - Co‑locate artifacts: `model.pt` (or `.joblib`), `metrics.json`, `eval_history.csv`, and `training.log` for reproducibility.
 - Choose CPU vs. GPU instances sensibly; understand when distributed training is (not) worth it.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-## Initial setup (controller notebook)
+## Initial setup
 
-## Initial setup (controller notebook)
+#### 1. Open pre-filled notebook
+Navigate to `/Intro_GCP_for_ML/notebooks/06-Training-models-in-VertexAI-GPUs.ipynb` to begin this notebook. Select the *PyTorch* environment (kernel) Local PyTorch is only needed for local tests. Your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
 
-Open a fresh Jupyter notebook in Vertex AI Workbench. Select the **PyTorch** environment (kernel)
+#### 2. CD to instance home directory
+To ensure we're all in the saming starting spot, change directory to your Jupyter home directory.
 
-Note: local PyTorch is only needed for local tests. Your **Vertex AI job** uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
+```python
+%cd /home/jupyter/
+```
+
+#### 3. Set environment variables 
+This code initializes the Vertex AI environment by importing the Python SDK, setting the project, region, and defining a GCS bucket for input/output data.
 
 ```python
 from google.cloud import aiplatform, storage
@@ -37,17 +44,22 @@ BUCKET_NAME = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
 
 print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 
-# Only used for the SDK's small packaging tarball.
+# initializes the Vertex AI environment with the correct project and location. Staging bucket is used for storing the compressed software that's packaged for training/tuning jobs.
 aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}/.vertex_staging") # store tar balls in staging folder 
 ```
 
 ## Prepare data as `.npz`
 
-Why `.npz`?
+Why `.npz`? NumPy's `.npz` files are compressed binary containers that can store multiple arrays (e.g., features and labels) together in a single file. They offer numerous benefits:
 
-- Smaller, faster I/O than CSV for arrays.
-- Natural fit for `torch.utils.data.Dataset` / `DataLoader`.
+- Smaller, faster I/O than CSV for arrays.  
 - One file can hold multiple arrays (`X_train`, `y_train`).
+- Natural fit for `torch.utils.data.Dataset` / `DataLoader`.  
+- **Cloud-friendly:** compressed `.npz` files reduce upload and download times and minimize GCS egress costs. Because each `.npz` is a single binary object, reading it from Google Cloud Storage (GCS) requires only one network call—much faster and cheaper than streaming many small CSVs or images individually.  
+- **Efficient data movement:** when you launch a Vertex AI training job, GCS objects referenced in your script (for example, `gs://.../train_data.npz`) are automatically staged to the job's VM or container at runtime. Vertex copies these objects into its local scratch disk before execution, so subsequent reads (e.g., `np.load(...)`) occur from local storage rather than directly over the network. For small-to-medium datasets, this happens transparently and incurs minimal startup delay.  
+- **Reproducible binary format:** unlike CSV, `.npz` preserves exact dtypes and shapes, ensuring identical results across different environments and containers.  
+- Each GCS object read or listing request incurs a small per-request cost; using a single `.npz` reduces both the number of API calls and associated latency.
+
   
 ```python
 import pandas as pd
@@ -93,34 +105,33 @@ bucket.blob("data/val_data.npz").upload_from_filename("/home/jupyter/val_data.np
 print("Uploaded: gs://%s/data/train_data.npz and val_data.npz" % BUCKET_NAME)
 ```
 
-## Minimal PyTorch training script (`train_nn.py`)
+To check our work (bucket contents), we can again use the following code:
 
+```python
+total_size_bytes = 0
+# bucket = client.bucket(BUCKET_NAME)
+
+for blob in client.list_blobs(BUCKET_NAME):
+    total_size_bytes += blob.size
+    print(blob.name)
+
+total_size_mb = total_size_bytes / (1024**2)
+print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
+```
+
+## Minimal PyTorch training script (`train_nn.py`) - local test
+
+**Outside of this workshop, you should run these kinds of tests on your local laptop or lab PC when possible.** We're using the Workbench VM here only for convenience in this workshop setting, but this does incur a small fee for our running VM. 
+
+- For large datasets, use a small representative sample of the total dataset when testing locally (i.e., just to verify that code is working and model overfits nearly perfectly after training enough epochs)
+- For larger models, use smaller model equivalents (e.g., 100M vs 7B params) when testing locally
+  
 Find this file in our repo: `Intro_GCP_for_ML/scripts/train_nn.py`. It does three things:
 1) loads `.npz` from local or GCS
 2) trains a tiny multilayer perceptron (MLP)
-3) **writes all outputs side‑by‑side** (model + metrics + eval history + training.log) to the same `--model_out` folder.
-   
-```python
-import time as t
+3) writes all outputs side‑by‑side (model + metrics + eval history + training.log) to the same `--model_out` folder.
 
-start = t.time()
-
-# Example: run your custom training script with args
-!python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
-    --train /home/jupyter/train_data.npz \
-    --val /home/jupyter/val_data.npz \
-    --epochs 50 \
-    --learning_rate 0.001
-
-print(f"Total local runtime: {t.time() - start:.2f} seconds")
-```
-
-To address the numpy mismatch, we can run the following code first.
-```python
-!pip install --upgrade --force-reinstall "numpy<2"
-```
-
-Then, rerun.
+To test this code, we can run the following:
 
 ```python
 import time as t
@@ -137,7 +148,59 @@ start = t.time()
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
-## Launch the training job (no base_output_dir)
+If applicable (numpy mismatch), run the below code after uncommenting it (select code and type `Ctrl+/` for multiline uncommenting)
+
+```python
+# # Fix numpy mismatch
+# !pip install --upgrade --force-reinstall "numpy<2"
+
+# # Then, rerun:
+
+# import time as t
+
+# start = t.time()
+
+# # Example: run your custom training script with args
+# !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
+#     --train /home/jupyter/train_data.npz \
+#     --val /home/jupyter/val_data.npz \
+#     --epochs 50 \
+#     --learning_rate 0.001
+
+# print(f"Total local runtime: {t.time() - start:.2f} seconds")
+```
+
+### Reproducibility test
+Without reproducibility, it's impossible to gain reliable insights into the efficacy of our methods. An essential component of applied ML/AI is ensuring our experiments are reproducible. Let's first rerun the same code we did above to verify we get the same result. 
+
+* Take a look near the top of `Intro_GCP_for_ML/scripts/train_nn.py` where we are setting multiple numpy and torch seeds to ensure reproducibility.
+
+```python
+import time as t
+
+start = t.time()
+
+# Example: run your custom training script with args
+!python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
+    --train /home/jupyter/train_data.npz \
+    --val /home/jupyter/val_data.npz \
+    --epochs 50 \
+    --learning_rate 0.001
+
+print(f"Total local runtime: {t.time() - start:.2f} seconds")
+```
+
+**Please don't use cloud resources for code that is not reproducible!**
+
+## Launch the training job 
+
+In the previous episode, we trained an XGBoost model using Vertex AI's CustomTrainingJob interface.  
+Here, we'll do the same for a PyTorch neural network. The structure is nearly identical —  
+we define a training script, select a prebuilt container (CPU or GPU), and specify where  
+to write all outputs in Google Cloud Storage (GCS). The main difference is that PyTorch  
+requires us to save our own model weights and metrics inside the script rather than relying  
+on Vertex to package a model automatically.
+
 
 ```python
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -167,7 +230,7 @@ job.run(
 print("Artifacts folder:", ARTIFACT_DIR)
 ```
 
-**What you’ll see in `gs://…/artifacts/pytorch/<RUN_ID>/`:**
+**What you'll see in `gs://…/artifacts/pytorch/<RUN_ID>/`:**
 - `model.pt` — PyTorch weights (`state_dict`).
 - `metrics.json` — final val loss, hyperparameters, dataset sizes, device, model URI.
 - `eval_history.csv` — per‑epoch validation loss (for plots/regression checks).
@@ -208,11 +271,11 @@ GPU tips:
 ## Distributed training (when to consider)
 
 - **Data parallelism** (DDP) helps when a single GPU is saturated by batch size/throughput. For most workshop‑scale models, a single machine/GPU is simpler and cheaper.
-- **Model parallelism** is for very large networks that don’t fit on one device—overkill for this lesson.
+- **Model parallelism** is for very large networks that don't fit on one device—overkill for this lesson.
 
 ## Monitoring jobs & finding outputs
 
-- Console → Vertex AI → Training → Custom Jobs → your run → “Output directory” shows the container logs and the environment’s `AIP_MODEL_DIR`.
+- Console → Vertex AI → Training → Custom Jobs → your run → “Output directory” shows the container logs and the environment's `AIP_MODEL_DIR`.
 - Your script writes **model + metrics + eval history + training.log** next to `--model_out`, e.g., `gs://<bucket>/artifacts/pytorch/<RUN_ID>/`.
 
 ::::::::::::::::::::::::::::::::::::: keypoints
@@ -221,7 +284,7 @@ GPU tips:
 - Keep artifacts **together** (model, metrics, history, log) in one folder for reproducibility.
 - `.npz` speeds up loading and plays nicely with PyTorch.
 - Start on CPU for small datasets; use GPU only when profiling shows a clear win.
-- Skip `base_output_dir` unless you specifically want Vertex’s default run directory; staging bucket is just for the SDK packaging tarball.
+- Skip `base_output_dir` unless you specifically want Vertex's default run directory; staging bucket is just for the SDK packaging tarball.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 

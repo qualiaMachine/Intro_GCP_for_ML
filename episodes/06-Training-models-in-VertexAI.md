@@ -24,7 +24,7 @@ exercises: 2
 
 ## Initial setup 
 
-#### 1. Open a new .ipynb notebook
+#### 1. Open pre-filled notebook
 Navigate to `/Intro_GCP_for_ML/notebooks/06-Training-models-in-VertexAI.ipynb` to begin this notebook.
 
 #### 2. CD to instance home directory
@@ -34,12 +34,12 @@ To ensure we're all in the saming starting spot, change directory to your Jupyte
 %cd /home/jupyter/
 ```
 
-#### 3. Initialize Vertex AI environment
+#### 3. Set environment variables 
 This code initializes the Vertex AI environment by importing the Python SDK, setting the project, region, and defining a GCS bucket for input/output data.
 
 - `PROJECT_ID`: Identifies your GCP project.  
 - `REGION`: Determines where training jobs run (choose a region close to your data).  
-- `staging_bucket`: A GCS bucket for storing datasets, model artifacts, and job outputs.  
+
 ```python
 from google.cloud import storage
 client = storage.Client()
@@ -50,36 +50,20 @@ BUCKET_NAME = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
 print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 ```
 
-
-#### 4. Get code from GitHub repo (skip if already completed)
-If you didn't complete earlier episodes, clone our code repo before moving forward. Check to make sure we're in our Jupyter home folder first.  
-
-```python
-#%cd /home/jupyter/
-```
-
-```python
-#!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
-```
-
 ## Testing train.py locally in the notebook
 
 ::::::::::::::::::::::::::::::::::::::: challenge
 
 ### Understanding the XGBoost Training Script (GCP version)
 
-Take a moment to review the `train_xgboost.py` script we're using on GCP found in `Intro_GCP-for_ML/scripts/train_xgboost.py`. This script handles preprocessing, training, and saving an XGBoost model, while supporting **local paths** and **GCS (`gs://`) paths**, and it adapts to **Vertex AI** conventions (e.g., `AIP_MODEL_DIR`).
+Take a moment to review the `train_xgboost.py` script we're using on GCP found in `Intro_GCP-for_ML/scripts/train_xgboost.py`. This script handles preprocessing, training, and saving an XGBoost model, while supporting local paths and GCS (`gs://`) paths, and it adapts to Vertex AI conventions (e.g., `AIP_MODEL_DIR`).
 
 Try answering the following questions:
 
 1. **Data preprocessing**: What transformations are applied to the dataset before training?
-
 2. **Training function**: What does the `train_model()` function do? Why print the training time?
-
 3. **Command-line arguments**: What is the purpose of `argparse` in this script? How would you change the number of training rounds?
-
 4. **Handling local vs. GCP runs**: How does the script let you run the same code locally, in Workbench, or as a Vertex AI job? Which environment variable controls where the model artifact is written?
-
 5. **Training and saving the model**: What format is the dataset converted to before training, and why? How does the script save to a local path vs. a `gs://` destination?
 
 After reviewing, discuss any questions or observations with your group.
@@ -92,15 +76,11 @@ After reviewing, discuss any questions or observations with your group.
 ### Solution
 
 1. **Data preprocessing**: The script fills missing values (`Age` with median, `Embarked` with mode), maps categorical fields to numeric (`Sex` → {male:1, female:0}, `Embarked` → {S:0, C:1, Q:2}), and drops non-predictive columns (`Name`, `Ticket`, `Cabin`).
-
 2. **Training function**: `train_model()` constructs and fits an XGBoost model with the provided parameters and prints wall-clock training time. Timing helps compare runs and make sensible scaling choices.
-
 3. **Command-line arguments**: `argparse` lets you set hyperparameters and file paths without editing code (e.g., `--max_depth`, `--eta`, `--num_round`, `--train`). To change rounds:  `python train_xgboost.py --num_round 200`
-
 4. **Handling local vs. GCP runs**:  
    - **Input**: You pass `--train` as either a local path (`train.csv`) or a GCS URI (`gs://bucket/path.csv`). The script automatically detects `gs://` and reads the file directly from Cloud Storage using the Python client.  
    - **Output**: If the environment variable `AIP_MODEL_DIR` is set (as it is in Vertex AI CustomJobs), the trained model is written there—often a `gs://` path. Otherwise, the model is saved in the current working directory, which works seamlessly in both local and Workbench environments.
-
 5. **Training and saving the model**:  
    The training data is converted into an **XGBoost `DMatrix`**, an optimized format that speeds up training and reduces memory use. The trained model is serialized with `joblib`. When saving locally, the file is written directly to disk. If saving to a Cloud Storage path (`gs://...`), the model is first saved to a temporary file and then uploaded to the specified bucket.
 
@@ -148,6 +128,11 @@ print("Downloaded titanic_train.csv")
 ```
 
 ## Local test run of train.py
+
+**Outside of this workshop, you should run these kinds of tests on your local laptop or lab PC when possible.** We're using the Workbench VM here only for convenience in this workshop setting, but this does incur a small fee for our running VM. 
+
+- For large datasets, use a small representative sample of the total dataset when testing locally (i.e., just to verify that code is working and model overfits nearly perfectly after training enough epochs)
+- For larger models, use smaller model equivalents (e.g., 100M vs 7B params) when testing locally
 
 ```python
 import time as t
@@ -197,14 +182,18 @@ job = aiplatform.CustomTrainingJob(
     display_name=f"endemann_xgb_{RUN_ID}",
     script_path="Intro_GCP_for_ML/scripts/train_xgboost.py",
     container_uri="us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest",
-    requirements=["google-cloud-storage"],  # your script uses storage.Client()
+    requirements=["google-cloud-storage"],  # Our train_xgboost.py script uses storage.Client(), which isn't included in the xgboost image. We add it here.
 )
 ```
 
-Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier.  
-The `args` list passes command-line parameters directly into your training script, including hyperparameters and the path to the training data in GCS.  
-`base_output_dir` specifies where all outputs (model, metrics, logs) will be written in Cloud Storage, and `machine_type` controls the compute resources used for training.  
-When `sync=True`, the notebook waits until the job finishes before continuing, making it easier to inspect results immediately after training.
+Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier. **We won't be charged for our selected `MACHINE` until we run the below code using `job.run()`. This marks the point when our script actually begins executing remotely on the Vertex training infrastructure. Once job.run() is called, Vertex handles packaging your training script, transferring it to the managed training environment, provisioning the requested compute instance, and monitoring the run. The job's status and logs can be viewed directly in the Vertex AI Console under Training → Custom jobs.
+
+If you need to cancel or modify a job mid-run, you can do so from the console or via the SDK by calling job.cancel(). When the job completes, Vertex automatically tears down the compute resources so you only pay for the active training time.
+
+- The `args` list passes command-line parameters directly into your training script, including hyperparameters and the path to the training data in GCS.  
+- `base_output_dir` specifies where all outputs (model, metrics, logs) will be written in Cloud Storage
+- `machine_type` controls the compute resources used for training.
+- When `sync=True`, the notebook waits until the job finishes before continuing, making it easier to inspect results immediately after training.
 
 ```python
 job.run(
