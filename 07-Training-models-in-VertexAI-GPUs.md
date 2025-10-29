@@ -241,6 +241,20 @@ job.run(
 print("Artifacts folder:", ARTIFACT_DIR)
 ```
 
+Check our bucket contents to verify expected outputs are there.
+
+```python
+total_size_bytes = 0
+# bucket = client.bucket(BUCKET_NAME)
+
+for blob in client.list_blobs(BUCKET_NAME):
+    total_size_bytes += blob.size
+    print(blob.name)
+
+total_size_mb = total_size_bytes / (1024**2)
+print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
+```
+
 **What you'll see in `gs://…/artifacts/pytorch/<RUN_ID>/`:**
 - `model.pt` — PyTorch weights (`state_dict`).
 - `metrics.json` — final val loss, hyperparameters, dataset sizes, device, model URI.
