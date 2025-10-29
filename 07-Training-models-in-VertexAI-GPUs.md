@@ -238,6 +238,7 @@ job.run(
     base_output_dir=ARTIFACT_DIR,  # sets AIP_MODEL_DIR used by your script
     sync=True,
 )
+print("Artifacts folder:", ARTIFACT_DIR)
 ```
 
 **What you'll see in `gs://…/artifacts/pytorch/<RUN_ID>/`:**
