@@ -274,7 +274,6 @@ job.run(
         "--epochs={MAX_EPOCHS}",
         "--learning_rate={LR}",
         "--patience={PATIENCE}",
-
     ],
     replica_count=1,
     machine_type=MACHINE,
