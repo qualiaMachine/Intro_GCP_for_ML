@@ -81,6 +81,7 @@ import datetime as dt
 client = storage.Client()
 PROJECT_ID = client.project
 REGION = "us-central1"
+LAST_NAME = "DOE"
 BUCKET_NAME = "sinkorswim-johndoe-titanic"  # ADJUST
 aiplatform.init(
     project=PROJECT_ID,
@@ -110,7 +111,7 @@ metric_spec = {"final_val_loss": "minimize"}  # must match metrics.json key writ
 
 # --- build the trial job as a CustomJob; set compute + base_output_dir HERE ---
 custom_job = aiplatform.CustomJob.from_local_script(
-    display_name=f"pytorch_trial_{RUN_ID}",
+    display_name=f"{LAST_NAME}_pytorch_hpt-trial_{RUN_ID}",
     script_path="Intro_GCP_for_ML/scripts/train_nn.py",
     container_uri=IMAGE,
     args=[
@@ -132,8 +133,9 @@ custom_job = aiplatform.CustomJob.from_local_script(
 )
 
 # --- create and run the HPT job (no base_output_dir or machine args here) ---
+DISPLAY_NAME = f"{LAST_NAME}_pytorch_hpt_{RUN_ID}" # since we're in a shared account envirnoment, we'll add our name to the training job to more easily track these jobs down in the Console
 tuning_job = aiplatform.HyperparameterTuningJob(
-    display_name=f"pytorch_hpt_{RUN_ID}",
+    display_name=DISPLAY_NAME,
     custom_job=custom_job,                 # must be a CustomJob (not CustomTrainingJob)
     metric_spec=metric_spec,
     parameter_spec=parameter_spec,
@@ -144,6 +146,7 @@ tuning_job = aiplatform.HyperparameterTuningJob(
 tuning_job.run(sync=True)  # just launch; compute/output were set on the CustomJob above
 
 print("HPT artifacts base:", BASE_DIR)
+
 
 ```
 
