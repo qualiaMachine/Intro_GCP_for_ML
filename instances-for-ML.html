@@ -355,14 +355,22 @@
         
 
 <p>This page provides guidance for selecting compute configurations in
-Google Cloud Platform (GCP) for machine learning workloads.<br>
-While instance size is an important factor, effective performance
-depends on how you pair a machine type with optional GPU
-accelerators.</p>
+Google Cloud Platform (GCP) for machine learning workloads. While
+instance size is an important factor, effective performance depends on
+how you pair a machine type with optional GPU accelerators.</p>
 <p>All pricing estimates are based on public rates for
-<code>us-central1</code> as of October 2025.<br>
-Actual cost depends on sustained-use discounts, attached GPU quotas, and
-whether your project has promotional or educational credits.</p>
+<code>us-central1</code> as of October 2025. Actual cost depends on
+sustained-use discounts, attached GPU quotas, and whether your project
+has promotional or educational credits.</p>
+<div class="section level3">
+<h3 id="reference-docs">Reference Docs<a class="anchor" aria-label="anchor" href="#reference-docs"></a></h3>
+<ul><li><a href="https://cloud.google.com/compute/vm-instance-pricing" class="external-link">Compute
+Engine VM Instance Pricing (applies to notebook backends)</a></li>
+<li><a href="https://cloud.google.com/compute/gpus-pricing" class="external-link">Compute
+Engine GPU Pricing</a></li>
+<li><a href="https://cloud.google.com/compute/all-pricing" class="external-link">All Compute
+Pricing Overview</a></li>
+</ul></div>
 <div class="section level3">
 <h3 id="key-terms">Key Terms<a class="anchor" aria-label="anchor" href="#key-terms"></a></h3>
 <ul><li>
@@ -391,20 +399,20 @@ for a specific balance of performance, memory, and cost (e.g.,
 <li>
 <strong>Accelerator</strong>: Optional hardware (such as GPUs or
 TPUs) that can be attached to certain VM families to speed up training
-and inference.<br></li>
+and inference.</li>
+<li>
+<strong>Accelerator count</strong>: Defines how many GPUs are
+attached to a single VM. Most training jobs begin with
+<code>accelerator_count=1</code>. Increasing the count (for example, to
+2, 4, or 8) enables multi-GPU training, but it also requires
+proportional increases in CPU, memory, and disk I/O to feed data
+efficiently to all GPUs. Performance scaling is rarely linear — expect
+diminishing returns beyond 2–4 GPUs unless your model and batch sizes
+are very large.<br></li>
 <li>
 <strong>Region</strong>: The physical location of your compute
 resources (e.g., <code>us-central1</code>). Pricing and GPU availability
 can vary by region.</li>
-</ul></div>
-<div class="section level3">
-<h3 id="reference-docs">Reference Docs<a class="anchor" aria-label="anchor" href="#reference-docs"></a></h3>
-<ul><li><a href="https://cloud.google.com/compute/vm-instance-pricing" class="external-link">Compute
-Engine VM Instance Pricing (applies to notebook backends)</a></li>
-<li><a href="https://cloud.google.com/compute/gpus-pricing" class="external-link">Compute
-Engine GPU Pricing</a></li>
-<li><a href="https://cloud.google.com/compute/all-pricing" class="external-link">All Compute
-Pricing Overview</a></li>
 </ul></div>
 <div class="section level3">
 <h3 id="key-concepts">Key Concepts<a class="anchor" aria-label="anchor" href="#key-concepts"></a></h3>
@@ -700,11 +708,26 @@ utilization, and test your pipeline with smaller models first.</li>
 run.<br></li>
 <li>When moving from CPU to GPU training, keep the same script and
 simply change:
-<ul><li>
-<code>container_uri</code> to a GPU-enabled image (for example,
-<code>pytorch-gpu.*</code>)</li>
-<li>Add <code>accelerator_type</code> and <code>accelerator_count</code>
-in your <code>CustomTrainingJob</code>.</li>
+<ul><li><p><code>container_uri</code> to a GPU-enabled image (for example,
+<code>pytorch-gpu.*</code>)</p></li>
+<li>
+<p>Add both <code>accelerator_type</code> and
+<code>accelerator_count</code> in your <code>CustomTrainingJob</code>.
+For example:</p>
+<div class="codewrapper sourceCode" id="cb1">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>job.run(</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n2-standard-8"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>    accelerator_type<span class="op">=</span><span class="st">"NVIDIA_L4"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>    accelerator_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACTS,</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>)</span></code></pre>
+</div>
+</li>
+<li><p>Increasing <code>accelerator_count</code> (e.g., 2–4) enables
+parallel training but requires larger datasets and batch sizes to avoid
+idle GPUs.</p></li>
 </ul></li>
 </ul></div>
 <div class="section level3">
