@@ -1544,7 +1544,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1864,7 +1864,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2373,7 +2373,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -2799,7 +2799,7 @@ any links that you are not going to use.
 </div>
 </section></section><section id="aio-07-Training-models-in-VertexAI-GPUs"><p>Content from <a href="07-Training-models-in-VertexAI-GPUs.html">Training Models in Vertex AI: PyTorch Example</a></p>
 <hr>
-<p>Last updated on 2025-10-28 |
+<p>Last updated on 2025-10-29 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/07-Training-models-in-VertexAI-GPUs.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 30 minutes</p>
@@ -2996,6 +2996,17 @@ code:</p>
 test<a class="anchor" aria-label="anchor" href="#minimal-pytorch-training-script-train_nn-py---local-test"></a>
 </h2>
 <hr class="half-width">
+<p><strong>Outside of this workshop, you should run these kinds of tests
+on your local laptop or lab PC when possible.</strong> We’re using the
+Workbench VM here only for convenience in this workshop setting, but
+this does incur a small fee for our running VM.</p>
+<ul>
+<li>For large datasets, use a small representative sample of the total
+dataset when testing locally (i.e., just to verify that code is working
+and model overfits nearly perfectly after training enough epochs)</li>
+<li>For larger models, use smaller model equivalents (e.g., 100M vs 7B
+params) when testing locally</li>
+</ul>
 <p>Find this file in our repo:
 <code>Intro_GCP_for_ML/scripts/train_nn.py</code>. It does three things:
 1) loads <code>.npz</code> from local or GCS 2) trains a tiny multilayer
@@ -3019,71 +3030,61 @@ folder.</p>
 <span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a></span>
 <span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total local runtime: </span><span class="sc">{</span>t<span class="sc">.</span>time() <span class="op">-</span> start<span class="sc">:.2f}</span><span class="ss"> seconds"</span>)</span></code></pre>
 </div>
-<p>To address the numpy mismatch, we can run the following code
-first.</p>
+<p>If applicable (numpy mismatch), run the below code after uncommenting
+it (select code and type <code>Ctrl+/</code> for multiline
+uncommenting)</p>
 <div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">--</span>upgrade <span class="op">--</span>force<span class="op">-</span>reinstall <span class="st">"numpy&lt;2"</span></span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># # Fix numpy mismatch</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co"># !pip install --upgrade --force-reinstall "numpy&lt;2"</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co"># # Then, rerun:</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co"># import time as t</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co"># start = t.time()</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co"># # Example: run your custom training script with args</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co"># !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#     --train /home/jupyter/train_data.npz \</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#     --val /home/jupyter/val_data.npz \</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#     --epochs 50 \</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#     --learning_rate 0.001</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co"># print(f"Total local runtime: {t.time() - start:.2f} seconds")</span></span></code></pre>
 </div>
-<p>Then, rerun.</p>
+</section><section><h2 class="section-heading" id="launch-the-training-job-no-base_output_dir">Launch the training job (no base_output_dir)<a class="anchor" aria-label="anchor" href="#launch-the-training-job-no-base_output_dir"></a>
+</h2>
+<hr class="half-width">
 <div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="im">import</span> time <span class="im">as</span> t</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>start <span class="op">=</span> t.time()</span>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>MODEL_URI <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ss">/model.pt"</span>   <span class="co"># model + metrics + logs will live here together</span></span>
 <span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co"># Example: run your custom training script with args</span></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="op">!</span>python <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span>Intro_GCP_for_ML<span class="op">/</span>scripts<span class="op">/</span>train_nn.py <span class="op">\</span></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    <span class="op">--</span>train <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span>train_data.npz <span class="op">\</span></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>    <span class="op">--</span>val <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span>val_data.npz <span class="op">\</span></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>    <span class="op">--</span>epochs <span class="dv">50</span> <span class="op">\</span></span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>    <span class="op">--</span>learning_rate <span class="fl">0.001</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"pytorch_nn_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"GCP_helpers/train_nn.py"</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-1:latest"</span>,  <span class="co"># or pytorch-gpu.2-1</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"torch"</span>, <span class="st">"numpy"</span>, <span class="st">"fsspec"</span>, <span class="st">"gcsfs"</span>],</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>)</span>
 <span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a></span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total local runtime: </span><span class="sc">{</span>t<span class="sc">.</span>time() <span class="op">-</span> start<span class="sc">:.2f}</span><span class="ss"> seconds"</span>)</span></code></pre>
-</div>
-<p><strong>Outside of this workshop, you should run these kinds of tests
-on your local laptop or lab PC when possible.</strong> We’re using the
-Workbench VM here only for convenience in this workshop setting, but
-this does incur a small fee for our running VM.</p>
-<ul>
-<li>For large datasets, use a small representative sample of the total
-dataset when testing locally (i.e., just to verify that code is working
-and model overfits nearly perfectly after training enough epochs)</li>
-<li>For larger models, use smaller model equivalents (e.g., 100M vs 7B
-params) when testing locally</li>
-</ul></section><section><h2 class="section-heading" id="launch-the-training-job-no-base_output_dir">Launch the training job (no base_output_dir)<a class="anchor" aria-label="anchor" href="#launch-the-training-job-no-base_output_dir"></a>
-</h2>
-<hr class="half-width">
-<div class="codewrapper sourceCode" id="cb9">
-<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>MODEL_URI <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ss">/model.pt"</span>   <span class="co"># model + metrics + logs will live here together</span></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"pytorch_nn_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"GCP_helpers/train_nn.py"</span>,</span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-1:latest"</span>,  <span class="co"># or pytorch-gpu.2-1</span></span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"torch"</span>, <span class="st">"numpy"</span>, <span class="st">"fsspec"</span>, <span class="st">"gcsfs"</span>],</span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>)</span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a></span>
-<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>job.run(</span>
-<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>    args<span class="op">=</span>[</span>
-<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
-<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>        <span class="ss">f"--epochs=200"</span>,</span>
-<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>        <span class="ss">f"--learning_rate=0.001"</span>,</span>
-<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>MODEL_URI<span class="sc">}</span><span class="ss">"</span>,   <span class="co"># drives where *all* artifacts go</span></span>
-<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>    ],</span>
-<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-4"</span>,  <span class="co"># CPU fine for small datasets</span></span>
-<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a>)</span>
-<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a></span>
-<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>job.run(</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>    args<span class="op">=</span>[</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>        <span class="ss">f"--epochs=200"</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>        <span class="ss">f"--learning_rate=0.001"</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>MODEL_URI<span class="sc">}</span><span class="ss">"</span>,   <span class="co"># drives where *all* artifacts go</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>    ],</span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-4"</span>,  <span class="co"># CPU fine for small datasets</span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a>)</span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
 <p><strong>What you’ll see in
 <code>gs://…/artifacts/pytorch/&lt;RUN_ID&gt;/</code>:</strong> -
@@ -3097,30 +3098,30 @@ and debugging.</p>
 </h2>
 <hr class="half-width">
 <p>For larger models or heavier data:</p>
-<div class="codewrapper sourceCode" id="cb10">
+<div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"pytorch_nn_gpu_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"GCP_helpers/train_nn.py"</span>,</span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-1:latest"</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"torch"</span>, <span class="st">"numpy"</span>, <span class="st">"fsspec"</span>, <span class="st">"gcsfs"</span>],</span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>)</span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>job.run(</span>
-<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>    args<span class="op">=</span>[</span>
-<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
-<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
-<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>        <span class="ss">f"--epochs=200"</span>,</span>
-<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>        <span class="ss">f"--learning_rate=0.001"</span>,</span>
-<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>MODEL_URI<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a>    ],</span>
-<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-8"</span>,</span>
-<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a>    accelerator_type<span class="op">=</span><span class="st">"NVIDIA_TESLA_T4"</span>,</span>
-<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a>    accelerator_count<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"pytorch_nn_gpu_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"GCP_helpers/train_nn.py"</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-1:latest"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"torch"</span>, <span class="st">"numpy"</span>, <span class="st">"fsspec"</span>, <span class="st">"gcsfs"</span>],</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>)</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>job.run(</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>    args<span class="op">=</span>[</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>        <span class="ss">f"--epochs=200"</span>,</span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>        <span class="ss">f"--learning_rate=0.001"</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>MODEL_URI<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>    ],</span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-8"</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a>    accelerator_type<span class="op">=</span><span class="st">"NVIDIA_TESLA_T4"</span>,</span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>    accelerator_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a>)</span></code></pre>
 </div>
 <p>GPU tips: - On small problems, GPU startup/transfer overhead can
 erase speedups—benchmark before you scale. - Stick to a single replica
@@ -4010,8 +4011,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/aio.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/aio.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2025-10-28",
-  "datePublished": "2025-10-28"
+  "dateModified": "2025-10-29",
+  "datePublished": "2025-10-29"
 }
 
   </script><script>
