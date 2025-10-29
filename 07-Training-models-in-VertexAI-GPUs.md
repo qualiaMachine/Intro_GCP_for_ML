@@ -164,7 +164,7 @@ If applicable (numpy mismatch), run the below code after uncommenting it (select
 # !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
 #     --train /home/jupyter/train_data.npz \
 #     --val /home/jupyter/val_data.npz \
-#     --epochs 50 \
+#     --epochs 500 \
 #     --learning_rate 0.001
 
 # print(f"Total local runtime: {t.time() - start:.2f} seconds")
@@ -184,13 +184,44 @@ start = t.time()
 !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
     --train /home/jupyter/train_data.npz \
     --val /home/jupyter/val_data.npz \
-    --epochs 50 \
-    --learning_rate 0.001
+    --epochs 500 \
+    --learning_rate 0.001 \
+    --patience 50
 
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
 **Please don't use cloud resources for code that is not reproducible!**
+
+### Evaluate the locally trained model on the held-out test set
+
+```python
+import sys, torch, numpy as np
+sys.path.append("/home/jupyter/Intro_GCP_for_ML/scripts")
+from train_nn import TitanicNet
+
+# load validation data
+d = np.load("/home/jupyter/val_data.npz")
+X_val, y_val = d["X_val"], d["y_val"]
+
+# rebuild model and load weights
+m = TitanicNet()
+state = torch.load("/home/jupyter/model.pt", map_location="cpu") 
+m.load_state_dict(state)
+m.eval()
+
+X_val_t = torch.tensor(X_val, dtype=torch.float32)
+with torch.no_grad():
+    # model already outputs probabilities in (0,1) because final layer is Sigmoid
+    probs = m(X_val_t).squeeze(1)              # shape [N]
+    preds = (probs >= 0.5).long().cpu().numpy()
+
+acc = (preds == y_val).mean()
+print(f"Local model val accuracy: {acc:.4f}")
+
+```
+
+We should see an accuracy that matches our best epoch in the local training run. Note that in our setup, early stopping is based on validation loss; not accuracy.
 
 ## Launch the training job 
 
