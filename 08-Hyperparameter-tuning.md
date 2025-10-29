@@ -105,7 +105,24 @@ ACCELERATOR_COUNT = 0
 ```
 
 #### 5. Configure hyperparameter tuning job
-Set the optimization metric to the printed key `validation_accuracy`. **Always start with one trial to validate your setup before scaling.** 
+When you use Vertex AI Hyperparameter Tuning Jobs, each trial needs a complete, runnable training configuration: the script, its arguments, the container image, and the compute environment.  
+Rather than defining these pieces inline each time, we create a **CustomJob** to hold that configuration.  
+
+The CustomJob acts as the blueprint for running a single training task — specifying exactly what to run and on what resources. The tuner then reuses that job definition across all trials, automatically substituting in new hyperparameter values for each run.  
+
+This approach has a few practical advantages:
+
+- You only define the environment once — machine type, accelerators, and output directories are all reused across trials.  
+- The tuner can safely inject trial-specific parameters (those declared in `parameter_spec`) while leaving other arguments unchanged.  
+- It provides a clean separation between *what a single job does* (`CustomJob`) and *how many times to repeat it with new settings* (`HyperparameterTuningJob`).  
+- It avoids the extra abstraction layers of higher-level wrappers like `CustomTrainingJob`, which automatically package code and environments. Using `CustomJob.from_local_script` keeps the workflow predictable and explicit.
+
+In short:  
+`CustomJob` defines how to run one training run.  
+`HyperparameterTuningJob` defines how to repeat it with different parameter sets and track results.  
+
+The number of total runs is set by `max_trial_count`, and the number of simultaneous runs is controlled by `parallel_trial_count`.  Each trial’s output and metrics are logged under the GCS `base_output_dir`. **ALWAYS START WITH 2 trials** before scaling up `max_trial_count`.
+
 
 ```python
 metric_spec = {"validation_accuracy": "maximize"}  # matches script print key
@@ -128,12 +145,13 @@ custom_job = aiplatform.CustomJob.from_local_script(
 
 DISPLAY_NAME = f"{LAST_NAME}_pytorch_hpt_{RUN_ID}"
 
+# ALWAYS START WITH 2 trials before scaling up `max_trial_count`
 tuning_job = aiplatform.HyperparameterTuningJob(
     display_name=DISPLAY_NAME,
     custom_job=custom_job,                 # must be a CustomJob (not CustomTrainingJob)
     metric_spec=metric_spec,
     parameter_spec=parameter_spec,
-    max_trial_count=10,                    # controls how many configurations are tested
+    max_trial_count=1,                    # controls how many configurations are tested
     parallel_trial_count=2,                # how many run concurrently (keep small for adaptive search)
 )
 
