@@ -121,7 +121,7 @@ In short:
 `CustomJob` defines how to run one training run.  
 `HyperparameterTuningJob` defines how to repeat it with different parameter sets and track results.  
 
-The number of total runs is set by `max_trial_count`, and the number of simultaneous runs is controlled by `parallel_trial_count`.  Each trial’s output and metrics are logged under the GCS `base_output_dir`. **ALWAYS START WITH 1 trial** before scaling up `max_trial_count`.
+The number of total runs is set by `max_trial_count`, and the number of simultaneous runs is controlled by `parallel_trial_count`.  Each trial’s output and metrics are logged under the GCS `base_output_dir`. **ALWAYS START WITH 2 trials** before scaling up `max_trial_count`.
 
 
 ```python
@@ -145,7 +145,7 @@ custom_job = aiplatform.CustomJob.from_local_script(
 
 DISPLAY_NAME = f"{LAST_NAME}_pytorch_hpt_{RUN_ID}"
 
-# ALWAYS START WITH 1 trial before scaling up `max_trial_count`
+# ALWAYS START WITH 2 trials before scaling up `max_trial_count`
 tuning_job = aiplatform.HyperparameterTuningJob(
     display_name=DISPLAY_NAME,
     custom_job=custom_job,                 # must be a CustomJob (not CustomTrainingJob)
