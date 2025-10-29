@@ -637,15 +637,13 @@ that PyTorch requires us to save our own model weights and metrics
 inside the script rather than relying on Vertex to package a model
 automatically.</p>
 <p>Set configuration vars. For our image, we can find the corresponding
-PyTorch image by visiting: <a href="https://docs.cloud.google.com/vertex-ai/docs/predictions/pre-built-containers#pytorch" class="external-link">docs.cloud.google.com/vertex-ai/docs/predictions/pre-built-containers#pytorch</a></p>
-<ul><li>replace “prediction” with “training” in the image paths found from
-the above reference.</li>
-</ul><div class="codewrapper sourceCode" id="cb9">
+PyTorch image by visiting: <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch" class="external-link">cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch</a></p>
+<div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-4:latest'</span> <span class="co"># or pytorch-gpu.2-4</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest'</span> <span class="co"># cpu-only version</span></span>
 <span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span>,  <span class="co"># CPU fine for small datasets</span></span>
 <span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a></span>
 <span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
