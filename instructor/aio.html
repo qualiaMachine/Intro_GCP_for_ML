@@ -1544,7 +1544,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1864,7 +1864,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2181,7 +2181,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -3385,18 +3385,18 @@ parallelization.</li>
 </div>
 </div>
 <p>To conduct efficient hyperparameter tuning with neural networks (or
-any model) in Vertex AI, we’ll use Vertex AI’s <strong>Hyperparameter
-Tuning Jobs</strong>. The key is defining a clear search space, ensuring
-metrics are properly logged, and keeping costs manageable by controlling
-the number of trials and level of parallelization.</p>
+any model) in Vertex AI, we’ll use Vertex AI’s Hyperparameter Tuning
+Jobs. The key is defining a clear search space, ensuring metrics are
+properly logged, and keeping costs manageable by controlling the number
+of trials and level of parallelization.</p>
 <div class="section level3">
 <h3 id="key-steps-for-hyperparameter-tuning">Key steps for hyperparameter tuning<a class="anchor" aria-label="anchor" href="#key-steps-for-hyperparameter-tuning"></a>
 </h3>
 <p>The overall process involves these steps:</p>
 <ol style="list-style-type: decimal">
-<li>Prepare training script and ensure metrics are logged.<br>
+<li>Prepare the training script and ensure metrics are logged.<br>
 </li>
-<li>Define hyperparameter search space.<br>
+<li>Define the hyperparameter search space.<br>
 </li>
 <li>Configure a hyperparameter tuning job in Vertex AI.<br>
 </li>
@@ -3404,12 +3404,12 @@ the number of trials and level of parallelization.</p>
 </li>
 <li>Monitor progress in the Vertex AI Console.<br>
 </li>
-<li>Extract best model and evaluate.</li>
+<li>Extract the best model and inspect recorded metrics.</li>
 </ol>
 <div class="section level4">
 <h4 id="directory-setup">0. Directory setup<a class="anchor" aria-label="anchor" href="#directory-setup"></a>
 </h4>
-<p>Change directory to your Jupyter home folder.</p>
+<p>Change to your Jupyter home folder to keep paths consistent.</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -3420,154 +3420,185 @@ the number of trials and level of parallelization.</p>
 <h4 id="prepare-training-script-with-metric-logging">1. Prepare training script with metric logging<a class="anchor" aria-label="anchor" href="#prepare-training-script-with-metric-logging"></a>
 </h4>
 <p>Your training script (<code>train_nn.py</code>) should periodically
-print validation accuracy in a format that Vertex AI can capture.</p>
-<p><strong>Vertex AI automatically captures metrics logged in this
-format (<code>key: value</code>). </strong></p>
+print validation metrics in a format Vertex AI can capture. Vertex AI
+parses lines like <code>key: value</code> from stdout.</p>
+<p>Add these two lines right after you compute <code>val_loss</code> and
+<code>val_acc</code> inside the epoch loop (the patch below shows
+exactly where):</p>
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="cf">if</span> (epoch <span class="op">+</span> <span class="dv">1</span>) <span class="op">%</span> <span class="dv">100</span> <span class="op">==</span> <span class="dv">0</span> <span class="kw">or</span> epoch <span class="op">==</span> epochs <span class="op">-</span> <span class="dv">1</span>:</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"validation_accuracy: </span><span class="sc">{</span>val_accuracy<span class="sc">:.4f}</span><span class="ss">"</span>, flush<span class="op">=</span><span class="va">True</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"validation_loss: </span><span class="sc">{</span>val_loss<span class="sc">:.6f}</span><span class="ss">"</span>, flush<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"validation_accuracy: </span><span class="sc">{</span>val_acc<span class="sc">:.6f}</span><span class="ss">"</span>, flush<span class="op">=</span><span class="va">True</span>)</span></code></pre>
 </div>
+<p>This is in addition to your existing human-readable line (e.g.,
+<code>epoch=... val_loss:... val_acc:...</code>).<br>
+Patch file you can apply: <code>train_nn.patch</code> (provided below).
+The current script also writes a <code>metrics.json</code> with keys
+like <code>final_val_accuracy</code> which we will read later.
+fileciteturn0file0</p>
 </div>
 <div class="section level4">
 <h4 id="define-hyperparameter-search-space">2. Define hyperparameter search space<a class="anchor" aria-label="anchor" href="#define-hyperparameter-search-space"></a>
 </h4>
-<p>In Vertex AI, you specify hyperparameter ranges when configuring the
-tuning job. You can define both discrete and continuous ranges.</p>
+<p>This step defines which parameters Vertex AI will vary across trials
+and their allowed ranges. The number of total settings tested is
+determined later using <code>max_trial_count</code>.</p>
+<p>Include early-stopping parameters so the tuner can learn good
+stopping behavior for your dataset:</p>
 <div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> aiplatform</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co"># Import the right classes directly</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="im">from</span> google.cloud.aiplatform <span class="im">import</span> hyperparameter_tuning <span class="im">as</span> hpt</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>parameter_spec <span class="op">=</span> {</span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    <span class="st">"epochs"</span>: hpt.IntegerParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="dv">100</span>, <span class="bu">max</span><span class="op">=</span><span class="dv">1000</span>, scale<span class="op">=</span><span class="st">"linear"</span>),</span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>    <span class="st">"learning_rate"</span>: hpt.DoubleParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="fl">0.001</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">0.1</span>, scale<span class="op">=</span><span class="st">"log"</span>),</span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>}</span></code></pre>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="im">from</span> google.cloud.aiplatform <span class="im">import</span> hyperparameter_tuning <span class="im">as</span> hpt</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>parameter_spec <span class="op">=</span> {</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="st">"epochs"</span>: hpt.IntegerParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="dv">100</span>, <span class="bu">max</span><span class="op">=</span><span class="dv">300</span>, scale<span class="op">=</span><span class="st">"linear"</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    <span class="st">"learning_rate"</span>: hpt.DoubleParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="fl">1e-4</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">1e-1</span>, scale<span class="op">=</span><span class="st">"log"</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    <span class="st">"patience"</span>: hpt.IntegerParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="dv">5</span>, <span class="bu">max</span><span class="op">=</span><span class="dv">20</span>, scale<span class="op">=</span><span class="st">"linear"</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>    <span class="st">"min_delta"</span>: hpt.DoubleParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="fl">0.0</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">0.01</span>, scale<span class="op">=</span><span class="st">"linear"</span>),  <span class="co"># improvement threshold on val_loss</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>    <span class="co"># You can also add restore_best as categorical if you want to compare behaviors:</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>    <span class="co"># "restore_best": hpt.CategoricalParameterSpec(values=["true","false"]),</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>}</span></code></pre>
 </div>
-<ul>
-<li>
-<strong>IntegerParameterSpec</strong>: Defines integer ranges.<br>
-</li>
-<li>
-<strong>DoubleParameterSpec</strong>: Defines continuous ranges,
-with optional scaling.</li>
-</ul>
 </div>
 <div class="section level4">
-<h4 id="configure-hyperparameter-tuning-job">3. Configure hyperparameter tuning job<a class="anchor" aria-label="anchor" href="#configure-hyperparameter-tuning-job"></a>
+<h4 id="initialize-vertex-ai-project-and-bucket">3. Initialize Vertex AI, project, and bucket<a class="anchor" aria-label="anchor" href="#initialize-vertex-ai-project-and-bucket"></a>
 </h4>
-<p><strong>Start with a max of 1 trials!</strong> Scale up after
-confirming it’s setup correctly.</p>
+<p>Initialize the Vertex AI SDK and set your staging and artifact
+locations in GCS.</p>
 <div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> aiplatform, storage</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="im">from</span> google.cloud.aiplatform <span class="im">import</span> hyperparameter_tuning <span class="im">as</span> hpt</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co"># --- project/region/bucket init ---</span></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>client <span class="op">=</span> storage.Client()</span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>PROJECT_ID <span class="op">=</span> client.project</span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>REGION <span class="op">=</span> <span class="st">"us-central1"</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">"DOE"</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"sinkorswim-johndoe-titanic"</span>  <span class="co"># ADJUST</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>aiplatform.init(</span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>    project<span class="op">=</span>PROJECT_ID,</span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>    location<span class="op">=</span>REGION,</span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>    staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/.vertex_staging"</span>,</span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>)</span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co"># --- run IDs and output dir ---</span></span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>BASE_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch_hpt/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a></span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co"># --- training container (use TRAINING image) ---</span></span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest'</span> <span class="co"># cpu-only version</span></span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a></span>
-<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co"># --- machine/accelerator for each trial (CPU example) ---</span></span>
-<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span></span>
-<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>ACCELERATOR_TYPE <span class="op">=</span> <span class="va">None</span></span>
-<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a>ACCELERATOR_COUNT <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a></span>
-<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="co"># --- search space (arg names must match train_nn.py argparse flags) ---</span></span>
-<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a>parameter_spec <span class="op">=</span> {</span>
-<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>    <span class="st">"epochs"</span>: hpt.IntegerParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="dv">100</span>, <span class="bu">max</span><span class="op">=</span><span class="dv">300</span>, scale<span class="op">=</span><span class="st">"linear"</span>),</span>
-<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>    <span class="st">"learning_rate"</span>: hpt.DoubleParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="fl">1e-4</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">1e-1</span>, scale<span class="op">=</span><span class="st">"log"</span>),</span>
-<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>}</span>
-<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a></span>
-<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>metric_spec <span class="op">=</span> {<span class="st">"final_val_loss"</span>: <span class="st">"minimize"</span>}  <span class="co"># must match metrics.json key written by your script</span></span>
-<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a></span>
-<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a><span class="co"># --- build the trial job as a CustomJob; set compute + base_output_dir HERE ---</span></span>
-<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a>custom_job <span class="op">=</span> aiplatform.CustomJob.from_local_script(</span>
-<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_hpt-trial_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_nn.py"</span>,</span>
-<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a>    container_uri<span class="op">=</span>IMAGE,</span>
-<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>    args<span class="op">=</span>[</span>
-<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
-<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
-<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a>        <span class="st">"--epochs=200"</span>,</span>
-<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a>        <span class="st">"--learning_rate=0.001"</span>,</span>
-<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a>    ],</span>
-<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a>    base_output_dir<span class="op">=</span>BASE_DIR,</span>
-<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,</span>
-<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a>    accelerator_type<span class="op">=</span><span class="st">"ACCELERATOR_TYPE_UNSPECIFIED"</span>,  <span class="co"># explicitly no GPU</span></span>
-<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a>    accelerator_count<span class="op">=</span><span class="dv">0</span>,                              <span class="co"># also required</span></span>
-<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a>)</span>
-<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a></span>
-<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a><span class="co"># --- create and run the HPT job (no base_output_dir or machine args here) ---</span></span>
-<span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_hpt_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span> <span class="co"># since we're in a shared account envirnoment, we'll add our name to the training job to more easily track these jobs down in the Console</span></span>
-<span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a>tuning_job <span class="op">=</span> aiplatform.HyperparameterTuningJob(</span>
-<span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
-<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,                 <span class="co"># must be a CustomJob (not CustomTrainingJob)</span></span>
-<span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a>    metric_spec<span class="op">=</span>metric_spec,</span>
-<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a>    parameter_spec<span class="op">=</span>parameter_spec,</span>
-<span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a>    max_trial_count<span class="op">=</span><span class="dv">10</span>,</span>
-<span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a>    parallel_trial_count<span class="op">=</span><span class="dv">2</span>,</span>
-<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a>)</span>
-<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a></span>
-<span id="cb4-65"><a href="#cb4-65" tabindex="-1"></a>tuning_job.run(sync<span class="op">=</span><span class="va">True</span>)  <span class="co"># just launch; compute/output were set on the CustomJob above</span></span>
-<span id="cb4-66"><a href="#cb4-66" tabindex="-1"></a></span>
-<span id="cb4-67"><a href="#cb4-67" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"HPT artifacts base:"</span>, BASE_DIR)</span>
-<span id="cb4-68"><a href="#cb4-68" tabindex="-1"></a></span></code></pre>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>client <span class="op">=</span> storage.Client()</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>PROJECT_ID <span class="op">=</span> client.project</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>REGION <span class="op">=</span> <span class="st">"us-central1"</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">"DOE"</span>  <span class="co"># change to your name or unique ID</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"sinkorswim-johndoe-titanic"</span>  <span class="co"># replace with your bucket name</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>aiplatform.init(</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>    project<span class="op">=</span>PROJECT_ID,</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>    location<span class="op">=</span>REGION,</span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>    staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/.vertex_staging"</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>)</span></code></pre>
 </div>
-<ul>
-<li>
-<strong>max_trial_count</strong>: Total number of configurations
-tested.<br>
-</li>
-<li>
-<strong>parallel_trial_count</strong>: Number of trials run at once
-(recommend ≤4 to let adaptive search improve).</li>
-</ul>
 </div>
 <div class="section level4">
-<h4 id="monitor-tuning-job-in-vertex-ai-console">5. Monitor tuning job in Vertex AI Console<a class="anchor" aria-label="anchor" href="#monitor-tuning-job-in-vertex-ai-console"></a>
+<h4 id="define-runtime-configuration">4. Define runtime configuration<a class="anchor" aria-label="anchor" href="#define-runtime-configuration"></a>
 </h4>
-<ol style="list-style-type: decimal">
-<li>Navigate to <strong>Vertex AI &gt; Training &gt; Hyperparameter
-tuning jobs</strong>.<br>
-</li>
-<li>View trial progress, logs, and metrics.<br>
-</li>
-<li>Cancel jobs from the console if needed.</li>
-</ol>
-</div>
-<div class="section level4">
-<h4 id="extract-and-evaluate-the-best-model">6. Extract and evaluate the best model<a class="anchor" aria-label="anchor" href="#extract-and-evaluate-the-best-model"></a>
-</h4>
+<p>Create a unique run ID and set the container, machine type, and base
+output directory for artifacts.</p>
 <div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>best_trial <span class="op">=</span> hpt_job.trials[<span class="dv">0</span>]  <span class="co"># Best trial listed first after completion</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Best hyperparameters:"</span>, best_trial.parameters)</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Best objective value:"</span>, best_trial.final_measurement.metrics)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>BASE_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch_hpt/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest"</span>  <span class="co"># CPU example</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>ACCELERATOR_TYPE <span class="op">=</span> <span class="st">"ACCELERATOR_TYPE_UNSPECIFIED"</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>ACCELERATOR_COUNT <span class="op">=</span> <span class="dv">0</span></span></code></pre>
 </div>
-<p>You can then load the best model artifact from the associated GCS
-path and evaluate on test data.</p>
+</div>
+<div class="section level4">
+<h4 id="configure-hyperparameter-tuning-job">5. Configure hyperparameter tuning job<a class="anchor" aria-label="anchor" href="#configure-hyperparameter-tuning-job"></a>
+</h4>
+<p>Set the optimization metric to the printed key
+<code>validation_accuracy</code>. Start with one trial to validate your
+setup before scaling.</p>
+<div class="codewrapper sourceCode" id="cb6">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>metric_spec <span class="op">=</span> {<span class="st">"validation_accuracy"</span>: <span class="st">"maximize"</span>}  <span class="co"># matches script print key</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>custom_job <span class="op">=</span> aiplatform.CustomJob.from_local_script(</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_hpt-trial_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_nn.py"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>    container_uri<span class="op">=</span>IMAGE,</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>    args<span class="op">=</span>[</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>        <span class="st">"--epochs=200"</span>,                 <span class="co"># HPT will override when sampling</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>        <span class="st">"--learning_rate=0.001"</span>,        <span class="co"># HPT will override when sampling</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>        <span class="st">"--patience=10"</span>,                <span class="co"># HPT will override when sampling</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>        <span class="st">"--min_delta=0.0"</span>,              <span class="co"># HPT will override when sampling</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>        <span class="co"># "--restore_best=true",        # optional categorical param if enabled above</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>    ],</span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>    base_output_dir<span class="op">=</span>BASE_DIR,</span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,</span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a>    accelerator_type<span class="op">=</span>ACCELERATOR_TYPE,</span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>    accelerator_count<span class="op">=</span>ACCELERATOR_COUNT,</span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a>)</span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_hpt_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a>tuning_job <span class="op">=</span> aiplatform.HyperparameterTuningJob(</span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,                 <span class="co"># must be a CustomJob (not CustomTrainingJob)</span></span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a>    metric_spec<span class="op">=</span>metric_spec,</span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a>    parameter_spec<span class="op">=</span>parameter_spec,</span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a>    max_trial_count<span class="op">=</span><span class="dv">10</span>,                    <span class="co"># controls how many configurations are tested</span></span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a>    parallel_trial_count<span class="op">=</span><span class="dv">2</span>,                <span class="co"># how many run concurrently (keep small for adaptive search)</span></span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a>)</span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a></span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a>tuning_job.run(sync<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"HPT artifacts base:"</span>, BASE_DIR)</span></code></pre>
+</div>
+</div>
+<div class="section level4">
+<h4 id="monitor-tuning-job">6. Monitor tuning job<a class="anchor" aria-label="anchor" href="#monitor-tuning-job"></a>
+</h4>
+<p>Open <strong>Vertex AI → Training → Hyperparameter tuning
+jobs</strong> to track trials, parameters, and metrics. You can also
+stop jobs from the console if needed.</p>
+</div>
+<div class="section level4">
+<h4 id="inspect-best-trial-results">7. Inspect best trial results<a class="anchor" aria-label="anchor" href="#inspect-best-trial-results"></a>
+</h4>
+<p>After completion, look up the best configuration and objective value
+from the SDK:</p>
+<div class="codewrapper sourceCode" id="cb7">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>best_trial <span class="op">=</span> tuning_job.trials[<span class="dv">0</span>]  <span class="co"># best-first</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Best hyperparameters:"</span>, best_trial.parameters)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Best validation_accuracy:"</span>, best_trial.final_measurement.metrics)</span></code></pre>
+</div>
+</div>
+<div class="section level4">
+<h4 id="review-recorded-metrics-in-gcs">8. Review recorded metrics in GCS<a class="anchor" aria-label="anchor" href="#review-recorded-metrics-in-gcs"></a>
+</h4>
+<p>Your script writes a <code>metrics.json</code> (with keys such as
+<code>final_val_accuracy</code>, <code>final_val_loss</code>) to each
+trial’s output directory (under <code>BASE_DIR</code>). The snippet
+below aggregates those into a dataframe for side-by-side comparison.</p>
+<div class="codewrapper sourceCode" id="cb8">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> storage</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="im">import</span> json, pandas <span class="im">as</span> pd</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="kw">def</span> list_metrics_from_gcs(base_dir: <span class="bu">str</span>):</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    client <span class="op">=</span> storage.Client()</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    bucket_name <span class="op">=</span> base_dir.replace(<span class="st">"gs://"</span>, <span class="st">""</span>).split(<span class="st">"/"</span>)[<span class="dv">0</span>]</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    prefix <span class="op">=</span> <span class="st">"/"</span>.join(base_dir.replace(<span class="st">"gs://"</span>, <span class="st">""</span>).split(<span class="st">"/"</span>)[<span class="dv">1</span>:])</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>    blobs <span class="op">=</span> client.list_blobs(bucket_name, prefix<span class="op">=</span>prefix)</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>    records <span class="op">=</span> []</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>    <span class="cf">for</span> blob <span class="kw">in</span> blobs:</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>        <span class="cf">if</span> blob.name.endswith(<span class="st">"metrics.json"</span>):</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>            trial_id <span class="op">=</span> blob.name.split(<span class="st">"/"</span>)[<span class="op">-</span><span class="dv">2</span>]</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>            data <span class="op">=</span> json.loads(blob.download_as_text())</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>            data[<span class="st">"trial_id"</span>] <span class="op">=</span> trial_id</span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>            records.append(data)</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(records)</span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>df <span class="op">=</span> list_metrics_from_gcs(BASE_DIR)</span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="bu">print</span>(df[[<span class="st">"trial_id"</span>,<span class="st">"final_val_accuracy"</span>,<span class="st">"final_val_loss"</span>,<span class="st">"best_val_loss"</span>,<span class="st">"best_epoch"</span>,<span class="st">"patience"</span>,<span class="st">"min_delta"</span>,<span class="st">"learning_rate"</span>]].sort_values(<span class="st">"final_val_accuracy"</span>, ascending<span class="op">=</span><span class="va">False</span>))</span></code></pre>
+</div>
 <div id="what-is-the-effect-of-parallelism-in-tuning" class="callout discussion">
 <div class="callout-square">
 <i class="callout-icon" data-feather="message-circle"></i>
@@ -3579,7 +3610,7 @@ tuning?</h3>
 <div class="callout-content">
 <ul>
 <li>How might running 10 trials in parallel differ from running 2 at a
-time in terms of cost, time, and quality of results?<br>
+time in terms of cost, time, and result quality?<br>
 </li>
 <li>When would you want to prioritize speed over adaptive search
 benefits?</li>
@@ -3595,17 +3626,21 @@ benefits?</li>
 <div class="callout-inner">
 <div class="callout-content">
 <ul>
-<li>Vertex AI Hyperparameter Tuning Jobs let you efficiently explore
-parameter spaces using adaptive strategies.<br>
+<li>Vertex AI Hyperparameter Tuning Jobs efficiently explore parameter
+spaces using adaptive strategies.<br>
 </li>
-<li>Always test with <code>max_trial_count=1</code> first to confirm
-your setup works.<br>
+<li>Define parameter ranges in <code>parameter_spec</code>; the number
+of settings tried is controlled later by
+<code>max_trial_count</code>.<br>
 </li>
-<li>Limit <code>parallel_trial_count</code> to a small number (2–4) to
-benefit from adaptive search.<br>
+<li>Keep the printed metric name consistent with
+<code>metric_spec</code> (here: <code>validation_accuracy</code>).<br>
 </li>
-<li>Use GCS for input/output and monitor jobs through the Vertex AI
-Console.</li>
+<li>Limit <code>parallel_trial_count</code> (2–4) to help adaptive
+search.<br>
+</li>
+<li>Use GCS for input/output and aggregate <code>metrics.json</code>
+across trials for detailed analysis.</li>
 </ul>
 </div>
 </div>
@@ -4062,7 +4097,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -4094,7 +4129,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -4124,7 +4159,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →

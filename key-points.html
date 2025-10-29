@@ -525,17 +525,21 @@ packaging tarball.</li>
 </ul></section><section id="08-Hyperparameter-tuning"><h2 class="section-heading"><a href="08-Hyperparameter-tuning.html">Hyperparameter Tuning in Vertex AI: Neural Network Example</a></h2>
 <hr class="half-width">
 <ul>
-<li>Vertex AI Hyperparameter Tuning Jobs let you efficiently explore
-parameter spaces using adaptive strategies.<br>
+<li>Vertex AI Hyperparameter Tuning Jobs efficiently explore parameter
+spaces using adaptive strategies.<br>
 </li>
-<li>Always test with <code>max_trial_count=1</code> first to confirm
-your setup works.<br>
+<li>Define parameter ranges in <code>parameter_spec</code>; the number
+of settings tried is controlled later by
+<code>max_trial_count</code>.<br>
 </li>
-<li>Limit <code>parallel_trial_count</code> to a small number (2–4) to
-benefit from adaptive search.<br>
+<li>Keep the printed metric name consistent with
+<code>metric_spec</code> (here: <code>validation_accuracy</code>).<br>
 </li>
-<li>Use GCS for input/output and monitor jobs through the Vertex AI
-Console.</li>
+<li>Limit <code>parallel_trial_count</code> (2–4) to help adaptive
+search.<br>
+</li>
+<li>Use GCS for input/output and aggregate <code>metrics.json</code>
+across trials for detailed analysis.</li>
 </ul></section><section id="09-Resource-management-cleanup"><h2 class="section-heading"><a href="09-Resource-management-cleanup.html">Resource Management &amp; Monitoring on Vertex AI (GCP)</a></h2>
 <hr class="half-width">
 <ul>
