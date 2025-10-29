@@ -262,32 +262,89 @@ print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
 - `eval_history.csv` — per‑epoch validation loss (for plots/regression checks).
 - `training.log` — complete stdout/stderr for reproducibility and debugging.
 
-## Optional: GPU training
+## GPU-Accelerated Training on Vertex AI
 
-For larger models or heavier data:
+In the previous example, we ran our PyTorch training job on a CPU-only machine using the `pytorch-cpu` container. That setup works well for small models or quick tests since CPU instances are cheaper and start faster.
+
+In this section, we'll attach a GPU to our Vertex AI training job to speed up heavier workloads. The workflow is nearly identical to the CPU version, except for a few changes:
+
+- The container image switches to the GPU-enabled version (`pytorch-gpu.2-4.py310:latest`), which includes CUDA and cuDNN.
+- The machine type (`n1-standard-8`) defines CPU and memory resources, while we now add a GPU accelerator (`NVIDIA_TESLA_T4`, `NVIDIA_L4`, etc.).
+- The training script, arguments, and artifact handling all stay the same.
+
+This makes it easy to start with a CPU run for testing, then scale up to GPU training by changing only the image and adding accelerator parameters.
+
 
 ```python
+import datetime as dt
+from google.cloud import aiplatform
+
+LAST_NAME = "DOE"  # Your last name goes in the job display name so it's easy to find in the Console
+RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+# GCS folder where ALL artifacts (model.pt, metrics.json, eval_history.csv, training.log) will be saved.
+# Your train_nn.py writes to AIP_MODEL_DIR, and base_output_dir (below) sets that variable for the job.
+ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch/{RUN_ID}"
+
+# ---- Container image ----
+# Use a prebuilt TRAINING image that has PyTorch + CUDA. This enables GPU at runtime.
+IMAGE = "us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest"
+
+# ---- Machine vs Accelerator (important!) ----
+# machine_type = the VM's CPU/RAM shape. It is NOT a GPU by itself.
+# We often pick n1-standard-8 as a balanced baseline for single-GPU jobs.
+MACHINE = "n1-standard-8"
+
+# To actually get a GPU, you *attach* one via accelerator_type + accelerator_count.
+# Common choices:
+#   "NVIDIA_TESLA_T4" (cost-effective, widely available)
+#   "NVIDIA_L4"       (newer, CUDA 12.x, good perf/$)
+#   "NVIDIA_TESLA_V100" / "NVIDIA_A100_40GB" (high-end, pricey)
+ACCELERATOR_TYPE = "NVIDIA_TESLA_T4"
+ACCELERATOR_COUNT = 1  # Increase (2,4) only if your code supports multi-GPU (e.g., DDP)
+
+# Alternative (GPU-bundled) machines:
+# If you pick an A2 type like "a2-highgpu-1g", it already includes 1 A100 GPU.
+# In that case, you can omit accelerator_type/accelerator_count entirely.
+# Example:
+# MACHINE = "a2-highgpu-1g"
+# (and then remove the accelerator_* kwargs in job.run)
+
+print(
+    "RUN_ID =", RUN_ID,
+    "\nARTIFACT_DIR =", ARTIFACT_DIR,
+    "\nIMAGE =", IMAGE,
+    "\nMACHINE =", MACHINE,
+    "\nACCELERATOR_TYPE =", ACCELERATOR_TYPE,
+    "\nACCELERATOR_COUNT =", ACCELERATOR_COUNT,
+)
+
+DISPLAY_NAME = f"{LAST_NAME}_pytorch_nn_{RUN_ID}"
+
 job = aiplatform.CustomTrainingJob(
-    display_name=f"pytorch_nn_gpu_{RUN_ID}",
-    script_path="GCP_helpers/train_nn.py",
-    container_uri="us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-1:latest",
-    requirements=["torch", "numpy", "fsspec", "gcsfs"],
+    display_name=DISPLAY_NAME,
+    script_path="Intro_GCP_for_ML/scripts/train_nn.py",  # Your PyTorch trainer
+    container_uri=IMAGE,  # Must be a *training* image (not prediction)
+    # requirements=[]  # Not needed: the image already has torch, numpy, gcs libs
 )
 
 job.run(
     args=[
         f"--train=gs://{BUCKET_NAME}/data/train_data.npz",
         f"--val=gs://{BUCKET_NAME}/data/val_data.npz",
-        f"--epochs=200",
-        f"--learning_rate=0.001",
-        f"--model_out={MODEL_URI}",
+        "--epochs=200",
+        "--learning_rate=0.001",
     ],
-    replica_count=1,
-    machine_type="n1-standard-8",
-    accelerator_type="NVIDIA_TESLA_T4",
-    accelerator_count=1,
-    sync=True,
+    replica_count=1,                 # One worker (simple, cheaper)
+    machine_type=MACHINE,            # CPU/RAM shape of the VM (no GPU implied)
+    accelerator_type=ACCELERATOR_TYPE,   # Attaches the selected GPU model
+    accelerator_count=ACCELERATOR_COUNT, # Number of GPUs to attach
+    base_output_dir=ARTIFACT_DIR,    # Sets AIP_MODEL_DIR used by your script for all artifacts
+    sync=True,                       # Waits for job to finish so you can inspect outputs immediately
 )
+
+print("Artifacts folder:", ARTIFACT_DIR)
+
 ```
 
 GPU tips:
