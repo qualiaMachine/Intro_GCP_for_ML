@@ -651,7 +651,7 @@ visiting: <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-co
 <span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co"># init job (this does not consume any resources)</span></span>
 <span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
 <span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"pytorch_nn_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_xgboost.py"</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_nn.py"</span>,</span>
 <span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>    container_uri<span class="op">=</span>IMAGE)</span></code></pre>
 </div>
 <p>Run the job, paying for our <code>MACHINE</code> on-demand.</p>
