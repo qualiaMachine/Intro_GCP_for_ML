@@ -33,7 +33,10 @@ The overall process involves these steps:
 5. Monitor progress in the Vertex AI Console.  
 6. Extract the best model and inspect recorded metrics.  
 
-#### 0. Directory setup
+#### 0. Initial setup
+
+Navigate to `/Intro_GCP_for_ML/notebooks/08-Hyperparameter-tuning.ipynb` to begin this notebook. Select the *PyTorch* environment (kernel) Local PyTorch is only needed for local tests. Your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
+
 Change to your Jupyter home folder to keep paths consistent.
 
 ```python
