@@ -98,7 +98,7 @@ Create a unique run ID and set the container, machine type, and base output dire
 
 ```python
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
-BASE_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch_hpt/{RUN_ID}"
+ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch_hpt/{RUN_ID}"
 
 IMAGE = "us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest"  # CPU example
 MACHINE = "n1-standard-4"
@@ -122,7 +122,7 @@ custom_job = aiplatform.CustomJob.from_local_script(
         "--learning_rate=0.001",        # HPT will override when sampling
         "--patience=10",                # HPT will override when sampling
     ],
-    base_output_dir=BASE_DIR,
+    base_output_dir=ARTIFACT_DIR,
     machine_type=MACHINE,
     accelerator_type=ACCELERATOR_TYPE,
     accelerator_count=ACCELERATOR_COUNT,
@@ -140,7 +140,7 @@ tuning_job = aiplatform.HyperparameterTuningJob(
 )
 
 tuning_job.run(sync=True)
-print("HPT artifacts base:", BASE_DIR)
+print("HPT artifacts base:", ARTIFACT_DIR)
 ```
 
 #### 6. Monitor tuning job
@@ -156,16 +156,16 @@ print("Best validation_accuracy:", best_trial.final_measurement.metrics)
 ```
 
 #### 8. Review recorded metrics in GCS
-Your script writes a `metrics.json` (with keys such as `final_val_accuracy`, `final_val_loss`) to each trial’s output directory (under `BASE_DIR`). The snippet below aggregates those into a dataframe for side-by-side comparison.
+Your script writes a `metrics.json` (with keys such as `final_val_accuracy`, `final_val_loss`) to each trial’s output directory (under `ARTIFACT_DIR`). The snippet below aggregates those into a dataframe for side-by-side comparison.
 
 ```python
 from google.cloud import storage
 import json, pandas as pd
 
-def list_metrics_from_gcs(base_dir: str):
+def list_metrics_from_gcs(ARTIFACT_DIR: str):
     client = storage.Client()
-    bucket_name = base_dir.replace("gs://", "").split("/")[0]
-    prefix = "/".join(base_dir.replace("gs://", "").split("/")[1:])
+    bucket_name = ARTIFACT_DIR.replace("gs://", "").split("/")[0]
+    prefix = "/".join(ARTIFACT_DIR.replace("gs://", "").split("/")[1:])
     blobs = client.list_blobs(bucket_name, prefix=prefix)
 
     records = []
@@ -177,7 +177,7 @@ def list_metrics_from_gcs(base_dir: str):
             records.append(data)
     return pd.DataFrame(records)
 
-df = list_metrics_from_gcs(BASE_DIR)
+df = list_metrics_from_gcs(ARTIFACT_DIR)
 print(df[["trial_id","final_val_accuracy","final_val_loss","best_val_loss","best_epoch","patience","min_delta","learning_rate"]].sort_values("final_val_accuracy", ascending=False))
 ```
 
