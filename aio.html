@@ -1055,7 +1055,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1858,7 +1858,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2174,7 +2174,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -2365,7 +2365,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -3420,8 +3420,7 @@ it brings its own framework at run time.</p>
 print validation metrics in a format Vertex AI can capture. Vertex AI
 parses lines like <code>key: value</code> from stdout.</p>
 <p>Add these two lines right after you compute <code>val_loss</code> and
-<code>val_acc</code> inside the epoch loop (the patch below shows
-exactly where):</p>
+<code>val_acc</code> inside the epoch loop:</p>
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -3490,7 +3489,7 @@ output directory for artifacts.</p>
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>BASE_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch_hpt/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch_hpt/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest"</span>  <span class="co"># CPU example</span></span>
 <span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span></span>
@@ -3519,7 +3518,7 @@ validate your setup before scaling.</strong></p>
 <span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>        <span class="st">"--learning_rate=0.001"</span>,        <span class="co"># HPT will override when sampling</span></span>
 <span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>        <span class="st">"--patience=10"</span>,                <span class="co"># HPT will override when sampling</span></span>
 <span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>    ],</span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>    base_output_dir<span class="op">=</span>BASE_DIR,</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACT_DIR,</span>
 <span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,</span>
 <span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>    accelerator_type<span class="op">=</span>ACCELERATOR_TYPE,</span>
 <span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>    accelerator_count<span class="op">=</span>ACCELERATOR_COUNT,</span>
@@ -3537,7 +3536,7 @@ validate your setup before scaling.</strong></p>
 <span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a>)</span>
 <span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a></span>
 <span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a>tuning_job.run(sync<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"HPT artifacts base:"</span>, BASE_DIR)</span></code></pre>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"HPT artifacts base:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
 </div>
 <div class="section level4">
@@ -3565,7 +3564,7 @@ from the SDK:</p>
 </h4>
 <p>Your script writes a <code>metrics.json</code> (with keys such as
 <code>final_val_accuracy</code>, <code>final_val_loss</code>) to each
-trial’s output directory (under <code>BASE_DIR</code>). The snippet
+trial’s output directory (under <code>ARTIFACT_DIR</code>). The snippet
 below aggregates those into a dataframe for side-by-side comparison.</p>
 <div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -3573,10 +3572,10 @@ below aggregates those into a dataframe for side-by-side comparison.</p>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> storage</span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="im">import</span> json, pandas <span class="im">as</span> pd</span>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="kw">def</span> list_metrics_from_gcs(base_dir: <span class="bu">str</span>):</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="kw">def</span> list_metrics_from_gcs(ARTIFACT_DIR: <span class="bu">str</span>):</span>
 <span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    client <span class="op">=</span> storage.Client()</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    bucket_name <span class="op">=</span> base_dir.replace(<span class="st">"gs://"</span>, <span class="st">""</span>).split(<span class="st">"/"</span>)[<span class="dv">0</span>]</span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    prefix <span class="op">=</span> <span class="st">"/"</span>.join(base_dir.replace(<span class="st">"gs://"</span>, <span class="st">""</span>).split(<span class="st">"/"</span>)[<span class="dv">1</span>:])</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    bucket_name <span class="op">=</span> ARTIFACT_DIR.replace(<span class="st">"gs://"</span>, <span class="st">""</span>).split(<span class="st">"/"</span>)[<span class="dv">0</span>]</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    prefix <span class="op">=</span> <span class="st">"/"</span>.join(ARTIFACT_DIR.replace(<span class="st">"gs://"</span>, <span class="st">""</span>).split(<span class="st">"/"</span>)[<span class="dv">1</span>:])</span>
 <span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>    blobs <span class="op">=</span> client.list_blobs(bucket_name, prefix<span class="op">=</span>prefix)</span>
 <span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a></span>
 <span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>    records <span class="op">=</span> []</span>
@@ -3588,7 +3587,7 @@ below aggregates those into a dataframe for side-by-side comparison.</p>
 <span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>            records.append(data)</span>
 <span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(records)</span>
 <span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a></span>
-<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>df <span class="op">=</span> list_metrics_from_gcs(BASE_DIR)</span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>df <span class="op">=</span> list_metrics_from_gcs(ARTIFACT_DIR)</span>
 <span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="bu">print</span>(df[[<span class="st">"trial_id"</span>,<span class="st">"final_val_accuracy"</span>,<span class="st">"final_val_loss"</span>,<span class="st">"best_val_loss"</span>,<span class="st">"best_epoch"</span>,<span class="st">"patience"</span>,<span class="st">"min_delta"</span>,<span class="st">"learning_rate"</span>]].sort_values(<span class="st">"final_val_accuracy"</span>, ascending<span class="op">=</span><span class="va">False</span>))</span></code></pre>
 </div>
 <div id="what-is-the-effect-of-parallelism-in-tuning" class="callout discussion">
