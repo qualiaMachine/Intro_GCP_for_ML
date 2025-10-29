@@ -131,6 +131,7 @@ custom_job = aiplatform.CustomJob.from_local_script(
     display_name=f"{LAST_NAME}_pytorch_hpt-trial_{RUN_ID}",
     script_path="/home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py",
     container_uri=IMAGE,
+    requirements=["python-json-logger>=2.0.7"],
     args=[
         f"--train=gs://{BUCKET_NAME}/data/train_data.npz",
         f"--val=gs://{BUCKET_NAME}/data/val_data.npz",
