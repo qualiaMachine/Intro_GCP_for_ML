@@ -1864,7 +1864,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2373,7 +2373,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -3100,44 +3100,48 @@ reproducible!</strong></p>
 </h2>
 <hr class="half-width">
 <p>In the previous episode, we trained an XGBoost model using Vertex
-AI’s CustomTrainingJob interface.<br>
-Here, we’ll do the same for a PyTorch neural network. The structure is
-nearly identical —<br>
-we define a training script, select a prebuilt container (CPU or GPU),
-and specify where<br>
-to write all outputs in Google Cloud Storage (GCS). The main difference
-is that PyTorch<br>
-requires us to save our own model weights and metrics inside the script
-rather than relying<br>
-on Vertex to package a model automatically.</p>
+AI’s CustomTrainingJob interface. Here, we’ll do the same for a PyTorch
+neural network. The structure is nearly identical — we define a training
+script, select a prebuilt container (CPU or GPU), and specify where to
+write all outputs in Google Cloud Storage (GCS). The main difference is
+that PyTorch requires us to save our own model weights and metrics
+inside the script rather than relying on Vertex to package a model
+automatically.</p>
+<p>Set configuration vars. For our image, we can find the corresponding
+PyTorch image by visiting: <a href="https://docs.cloud.google.com/vertex-ai/docs/predictions/pre-built-containers#pytorch" class="external-link">docs.cloud.google.com/vertex-ai/docs/predictions/pre-built-containers#pytorch</a></p>
+<ul>
+<li>replace “prediction” with “training” in the image paths found from
+the above reference.</li>
+</ul>
 <div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>MODEL_URI <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ss">/model.pt"</span>   <span class="co"># model + metrics + logs will live here together</span></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"pytorch_nn_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"GCP_helpers/train_nn.py"</span>,</span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-1:latest"</span>,  <span class="co"># or pytorch-gpu.2-1</span></span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"torch"</span>, <span class="st">"numpy"</span>, <span class="st">"fsspec"</span>, <span class="st">"gcsfs"</span>],</span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>)</span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a></span>
-<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>job.run(</span>
-<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>    args<span class="op">=</span>[</span>
-<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
-<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>        <span class="ss">f"--epochs=200"</span>,</span>
-<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>        <span class="ss">f"--learning_rate=0.001"</span>,</span>
-<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>MODEL_URI<span class="sc">}</span><span class="ss">"</span>,   <span class="co"># drives where *all* artifacts go</span></span>
-<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>    ],</span>
-<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n1-standard-4"</span>,  <span class="co"># CPU fine for small datasets</span></span>
-<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a>)</span>
-<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a></span>
-<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-4:latest'</span> <span class="co"># or pytorch-gpu.2-4</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span>,  <span class="co"># CPU fine for small datasets</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>    display_name<span class="op">=</span><span class="ss">f"pytorch_nn_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_xgboost.py"</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>    container_uri<span class="op">=</span>IMAGE,</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>    requirements<span class="op">=</span>[<span class="st">"torch"</span>, <span class="st">"numpy"</span>, <span class="st">"fsspec"</span>, <span class="st">"gcsfs"</span>],</span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>)</span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>job.run(</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>    args<span class="op">=</span>[</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>        <span class="ss">f"--epochs=200"</span>,</span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a>        <span class="ss">f"--learning_rate=0.001"</span>,</span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>        <span class="ss">f"--model_out=</span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ss">"</span>,   <span class="co"># drives where *all* artifacts go</span></span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>    ],</span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,</span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a>)</span>
+<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
 <p><strong>What you’ll see in
 <code>gs://…/artifacts/pytorch/&lt;RUN_ID&gt;/</code>:</strong> -
@@ -3204,7 +3208,7 @@ training.log</strong> next to <code>--model_out</code>, e.g.,
 </h2>
 <hr class="half-width">
 <p>To learn more about PyTorch and Vertex AI integrations, visit the
-docs: <a href="https://docs.cloud.google.com/vertex-ai/docs/start/pytorch" class="external-link">https://docs.cloud.google.com/vertex-ai/docs/start/pytorch</a></p>
+docs: <a href="https://docs.cloud.google.com/vertex-ai/docs/start/pytorch" class="external-link">docs.cloud.google.com/vertex-ai/docs/start/pytorch</a></p>
 <div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
 <i class="callout-icon" data-feather="key"></i>
