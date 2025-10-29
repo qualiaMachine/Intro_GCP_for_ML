@@ -56,7 +56,7 @@ Why `.npz`? NumPy's `.npz` files are compressed binary containers that can store
 - One file can hold multiple arrays (`X_train`, `y_train`).
 - Natural fit for `torch.utils.data.Dataset` / `DataLoader`.  
 - **Cloud-friendly:** compressed `.npz` files reduce upload and download times and minimize GCS egress costs. Because each `.npz` is a single binary object, reading it from Google Cloud Storage (GCS) requires only one network call—much faster and cheaper than streaming many small CSVs or images individually.  
-- **Efficient data movement:** when you launch a Vertex AI training job, GCS objects referenced in your script (for example, `gs://.../train_data.npz`) are automatically staged to the job’s VM or container at runtime. Vertex copies these objects into its local scratch disk before execution, so subsequent reads (e.g., `np.load(...)`) occur from local storage rather than directly over the network. For small-to-medium datasets, this happens transparently and incurs minimal startup delay.  
+- **Efficient data movement:** when you launch a Vertex AI training job, GCS objects referenced in your script (for example, `gs://.../train_data.npz`) are automatically staged to the job's VM or container at runtime. Vertex copies these objects into its local scratch disk before execution, so subsequent reads (e.g., `np.load(...)`) occur from local storage rather than directly over the network. For small-to-medium datasets, this happens transparently and incurs minimal startup delay.  
 - **Reproducible binary format:** unlike CSV, `.npz` preserves exact dtypes and shapes, ensuring identical results across different environments and containers.  
 - Each GCS object read or listing request incurs a small per-request cost; using a single `.npz` reduces both the number of API calls and associated latency.
 
@@ -171,7 +171,15 @@ If applicable (numpy mismatch), run the below code after uncommenting it (select
 ```
 
 
-## Launch the training job (no base_output_dir)
+## Launch the training job 
+
+In the previous episode, we trained an XGBoost model using Vertex AI's CustomTrainingJob interface.  
+Here, we'll do the same for a PyTorch neural network. The structure is nearly identical —  
+we define a training script, select a prebuilt container (CPU or GPU), and specify where  
+to write all outputs in Google Cloud Storage (GCS). The main difference is that PyTorch  
+requires us to save our own model weights and metrics inside the script rather than relying  
+on Vertex to package a model automatically.
+
 
 ```python
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -201,7 +209,7 @@ job.run(
 print("Artifacts folder:", ARTIFACT_DIR)
 ```
 
-**What you’ll see in `gs://…/artifacts/pytorch/<RUN_ID>/`:**
+**What you'll see in `gs://…/artifacts/pytorch/<RUN_ID>/`:**
 - `model.pt` — PyTorch weights (`state_dict`).
 - `metrics.json` — final val loss, hyperparameters, dataset sizes, device, model URI.
 - `eval_history.csv` — per‑epoch validation loss (for plots/regression checks).
@@ -242,11 +250,11 @@ GPU tips:
 ## Distributed training (when to consider)
 
 - **Data parallelism** (DDP) helps when a single GPU is saturated by batch size/throughput. For most workshop‑scale models, a single machine/GPU is simpler and cheaper.
-- **Model parallelism** is for very large networks that don’t fit on one device—overkill for this lesson.
+- **Model parallelism** is for very large networks that don't fit on one device—overkill for this lesson.
 
 ## Monitoring jobs & finding outputs
 
-- Console → Vertex AI → Training → Custom Jobs → your run → “Output directory” shows the container logs and the environment’s `AIP_MODEL_DIR`.
+- Console → Vertex AI → Training → Custom Jobs → your run → “Output directory” shows the container logs and the environment's `AIP_MODEL_DIR`.
 - Your script writes **model + metrics + eval history + training.log** next to `--model_out`, e.g., `gs://<bucket>/artifacts/pytorch/<RUN_ID>/`.
 
 ::::::::::::::::::::::::::::::::::::: keypoints
@@ -255,7 +263,7 @@ GPU tips:
 - Keep artifacts **together** (model, metrics, history, log) in one folder for reproducibility.
 - `.npz` speeds up loading and plays nicely with PyTorch.
 - Start on CPU for small datasets; use GPU only when profiling shows a clear win.
-- Skip `base_output_dir` unless you specifically want Vertex’s default run directory; staging bucket is just for the SDK packaging tarball.
+- Skip `base_output_dir` unless you specifically want Vertex's default run directory; staging bucket is just for the SDK packaging tarball.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
