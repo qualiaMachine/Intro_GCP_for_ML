@@ -376,30 +376,27 @@ Pricing Overview</a></li>
 </ul></div>
 <div class="section level3">
 <h3 id="key-concepts">Key Concepts<a class="anchor" aria-label="anchor" href="#key-concepts"></a></h3>
-<ul><li><p><strong>Machine type vs. GPU</strong><br>
-The <code>machine_type</code> defines CPU and RAM resources — it is
+<ul><li><p><strong>Machine type vs. GPU</strong>: The
+<code>machine_type</code> defines CPU and RAM resources — it is
 <em>not</em> a GPU by itself.<br>
 You can attach a GPU by adding <code>accelerator_type</code> and
 <code>accelerator_count</code> (for example,
 <code>NVIDIA_TESLA_T4</code> or <code>NVIDIA_L4</code>).<br>
 Only specialized machine families like <code>A2</code> include GPUs
 automatically.</p></li>
-<li><p><strong>CPU-focused series</strong><br><code>N2</code> and <code>C2</code> are optimized for CPU-heavy
-workloads such as preprocessing, feature engineering, or classical
-ML.</p></li>
-<li><p><strong>GPU-focused series</strong><br>
-GPUs handle deep learning workloads. You can attach them to standard
-families (for example, <code>n1-standard-8</code> +
-<code>NVIDIA_TESLA_T4</code>) or use dedicated GPU machine families
-(<code>A2</code>, <code>A3</code>, <code>A4</code>).</p></li>
-<li><p><strong>RAM requirements</strong><br>
-Minimum RAM should be at least 1.5× dataset size unless your workflow
-uses batching.</p></li>
-<li><p><strong>Free tier</strong><br>
-Some smaller instance types (for example, <code>e2-micro</code>) may
-qualify for the <a href="https://cloud.google.com/free" class="external-link">GCP Free
-Tier</a>.<br>
-Check usage limits before running persistent notebooks.</p></li>
+<li><p><strong>CPU-focused series</strong>: <code>N2</code> and
+<code>C2</code> are optimized for CPU-heavy workloads such as
+preprocessing, feature engineering, or classical ML.</p></li>
+<li><p><strong>GPU-focused series</strong>: GPUs handle deep learning
+workloads. You can attach them to standard families (for example,
+<code>n1-standard-8</code> + <code>NVIDIA_TESLA_T4</code>) or use
+dedicated GPU machine families (<code>A2</code>, <code>A3</code>,
+<code>A4</code>).</p></li>
+<li><p><strong>RAM requirements</strong>: Minimum RAM should be at least
+1.5× dataset size unless your workflow uses batching.</p></li>
+<li><p><strong>Free tier</strong>: Some smaller instance types (for
+example, <code>e2-micro</code>) may qualify for the <a href="https://cloud.google.com/free" class="external-link">GCP Free Tier</a>. Check usage
+limits before running persistent notebooks.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="common-accelerator-choices">Common Accelerator Choices<a class="anchor" aria-label="anchor" href="#common-accelerator-choices"></a></h3>
