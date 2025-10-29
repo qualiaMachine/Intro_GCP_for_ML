@@ -528,7 +528,7 @@ different parameter sets and track results.</p>
 the number of simultaneous runs is controlled by
 <code>parallel_trial_count</code>. Each trial’s output and metrics are
 logged under the GCS <code>base_output_dir</code>. <strong>ALWAYS START
-WITH 1 trial</strong> before scaling up
+WITH 2 trials</strong> before scaling up
 <code>max_trial_count</code>.</p>
 <div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -553,7 +553,7 @@ WITH 1 trial</strong> before scaling up
 <span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a></span>
 <span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_hpt_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
 <span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a></span>
-<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co"># ALWAYS START WITH 1 trial before scaling up `max_trial_count`</span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co"># ALWAYS START WITH 2 trials before scaling up `max_trial_count`</span></span>
 <span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a>tuning_job <span class="op">=</span> aiplatform.HyperparameterTuningJob(</span>
 <span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
 <span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,                 <span class="co"># must be a CustomJob (not CustomTrainingJob)</span></span>
@@ -571,7 +571,8 @@ WITH 1 trial</strong> before scaling up
 <h4 id="monitor-tuning-job">6. Monitor tuning job<a class="anchor" aria-label="anchor" href="#monitor-tuning-job"></a></h4>
 <p>Open <strong>Vertex AI → Training → Hyperparameter tuning
 jobs</strong> to track trials, parameters, and metrics. You can also
-stop jobs from the console if needed.</p>
+stop jobs from the console if needed. For MLM25, the folllowing link
+should work: <a href="%5Bhttps://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&amp;project=doit-rci-mlm25-4626%5D" class="external-link">https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&amp;project=doit-rci-mlm25-4626</a>.</p>
 </div>
 <div class="section level4">
 <h4 id="inspect-best-trial-results">7. Inspect best trial results<a class="anchor" aria-label="anchor" href="#inspect-best-trial-results"></a></h4>
