@@ -1054,7 +1054,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -2158,7 +2158,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -2349,7 +2349,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -3690,22 +3690,16 @@ Add the following right after computing <code>val_loss</code> and
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># --- Report metrics to Vertex AI Hyperparameter Tuning ---</span></span>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Eenable Vertex HPT metric reporting </span></span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>    <span class="im">from</span> hypertune <span class="im">import</span> HyperTune</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>    hpt <span class="op">=</span> HyperTune()</span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>    hpt.report_hyperparameter_tuning_metric(</span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>        hyperparameter_metric_tag<span class="op">=</span><span class="st">"validation_loss"</span>,  <span class="co"># must match metric_spec</span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>        metric_value<span class="op">=</span>val_loss,</span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>        global_step<span class="op">=</span>ep,</span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>    )</span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>    <span class="co"># add a second metric to look at accuracy</span></span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>    ht.report_hyperparameter_tuning_metric(</span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>        hyperparameter_metric_tag<span class="op">=</span><span class="st">"validation_accuracy"</span>,</span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>        metric_value<span class="op">=</span>val_acc,</span>
-<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>        global_step<span class="op">=</span>ep)</span>
-<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ImportError</span>:</span>
-<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>    <span class="cf">pass</span></span></code></pre>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>    <span class="co"># cloudml-hypertune is installed on Vertex AI workers; on local it might not be.</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>    <span class="im">from</span> hypertune <span class="im">import</span> HyperTune</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>    _hpt <span class="op">=</span> HyperTune()          <span class="co"># instance scoped to this run</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>    _hpt_enabled <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="cf">except</span> <span class="pp">Exception</span>:</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>    <span class="co"># If the package isn't available (e.g., local run), we simply no-op.</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>    _hpt <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>    _hpt_enabled <span class="op">=</span> <span class="va">False</span></span></code></pre>
 </div>
 <p>This ensures Vertex AI records the validation metric for each trial
 and can rank configurations by performance automatically.</p>
@@ -4464,7 +4458,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -4496,7 +4490,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -4526,7 +4520,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →

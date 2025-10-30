@@ -430,22 +430,16 @@ Add the following right after computing <code>val_loss</code> and
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># --- Report metrics to Vertex AI Hyperparameter Tuning ---</span></span>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Eenable Vertex HPT metric reporting </span></span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>    <span class="im">from</span> hypertune <span class="im">import</span> HyperTune</span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>    hpt <span class="op">=</span> HyperTune()</span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>    hpt.report_hyperparameter_tuning_metric(</span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>        hyperparameter_metric_tag<span class="op">=</span><span class="st">"validation_loss"</span>,  <span class="co"># must match metric_spec</span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>        metric_value<span class="op">=</span>val_loss,</span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>        global_step<span class="op">=</span>ep,</span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>    )</span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>    <span class="co"># add a second metric to look at accuracy</span></span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>    ht.report_hyperparameter_tuning_metric(</span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>        hyperparameter_metric_tag<span class="op">=</span><span class="st">"validation_accuracy"</span>,</span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>        metric_value<span class="op">=</span>val_acc,</span>
-<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>        global_step<span class="op">=</span>ep)</span>
-<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ImportError</span>:</span>
-<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>    <span class="cf">pass</span></span></code></pre>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>    <span class="co"># cloudml-hypertune is installed on Vertex AI workers; on local it might not be.</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>    <span class="im">from</span> hypertune <span class="im">import</span> HyperTune</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>    _hpt <span class="op">=</span> HyperTune()          <span class="co"># instance scoped to this run</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>    _hpt_enabled <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="cf">except</span> <span class="pp">Exception</span>:</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>    <span class="co"># If the package isn't available (e.g., local run), we simply no-op.</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>    _hpt <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>    _hpt_enabled <span class="op">=</span> <span class="va">False</span></span></code></pre>
 </div>
 <p>This ensures Vertex AI records the validation metric for each trial
 and can rank configurations by performance automatically.</p>
