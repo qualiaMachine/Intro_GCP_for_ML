@@ -141,14 +141,27 @@ print("Downloaded titanic_train.csv")
 ```
 
 ```python
-import time as t
+# Training configuration parameters for XGBoost
+MAX_DEPTH = 3         # maximum depth of each decision tree (controls model complexity)
+ETA = 0.1             # learning rate (how much each tree contributes to the overall model)
+SUBSAMPLE = 0.8       # fraction of training samples used per boosting round (prevents overfitting)
+COLSAMPLE = 0.8       # fraction of features (columns) sampled per tree (adds randomness and diversity)
+NUM_ROUND = 100       # number of boosting iterations (trees) to train
 
+import time as t
 start = t.time()
 
-# Example: run your custom training script with args
-!python Intro_GCP_for_ML/scripts/train_xgboost.py --max_depth 3 --eta 0.1 --subsample 0.8 --colsample_bytree 0.8 --num_round 100 --train titanic_train.csv
+# Run the custom training script with hyperparameters defined above
+!python Intro_GCP_for_ML/scripts/train_xgboost.py \
+    --max_depth $MAX_DEPTH \
+    --eta $ETA \
+    --subsample $SUBSAMPLE \
+    --colsample_bytree $COLSAMPLE \
+    --num_round $NUM_ROUND \
+    --train titanic_train.csv
 
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
+
 ```
 
 Training on this small dataset should take <1 minute. Log runtime as a baseline.  You should see the following output file:
