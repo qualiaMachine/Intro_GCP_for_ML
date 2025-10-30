@@ -466,31 +466,41 @@ print("Artifacts folder:", ARTIFACT_DIR)
 ```
 
 ```python
-# Copy model.pt from GCS (replace RUN_ID with your run folder)
-!gsutil cp {ARTIFACT_DIR}/model/model.pt /home/jupyter/model_vertexGPU.pt
-!ls
 import sys, torch, numpy as np
 sys.path.append("/home/jupyter/Intro_GCP_for_ML/scripts")
 from train_nn import TitanicNet
 
-# load validation data
-d = np.load("/home/jupyter/val_data.npz")
-X_val, y_val = d["X_val"], d["y_val"]
+# -----------------
+# download model.pt straight into memory and load weights
+# -----------------
+
+ARTIFACT_PREFIX = f"artifacts/pytorch/{RUN_ID}/model"
+
+MODEL_PATH = f"{ARTIFACT_PREFIX}/model.pt"
+model_blob = bucket.blob(MODEL_PATH)
+model_bytes = model_blob.download_as_bytes()
+
+# load from bytes
+model_pt = io.BytesIO(model_bytes)
 
 # rebuild model and load weights
+state = torch.load(model_pt, map_location="cpu")
 m = TitanicNet()
-state = torch.load("/home/jupyter/model_vertexGPU.pt", map_location="cpu")  
 m.load_state_dict(state)
-m.eval()
+m.eval(); # set model to eval mode
 
-X_val_t = torch.tensor(X_val, dtype=torch.float32)
-with torch.no_grad():
-    # model already outputs probabilities in (0,1) because final layer is Sigmoid
-    probs = m(X_val_t).squeeze(1)              # shape [N]
-    preds = (probs >= 0.5).long().cpu().numpy()
+# -----------------
+# ALT: download copy of model into VM (costs extra storage)
+# -----------------
+# # Copy model.pt from GCS (replace RUN_ID with your run folder)
+# !gsutil cp {ARTIFACT_DIR}/model/model.pt /home/jupyter/model_vertex.pt
+# !ls
+# # rebuild model and load weights
+# m = TitanicNet()
+# state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")  
+# m.load_state_dict(state)
+# m.eval()
 
-acc = (preds == y_val).mean()
-print(f"Vertex model val accuracy: {acc:.4f}")
 ```
 
 GPU tips:
