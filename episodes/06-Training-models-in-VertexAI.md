@@ -46,7 +46,7 @@ client = storage.Client()
 PROJECT_ID = client.project
 REGION = "us-central1"
 BUCKET_NAME = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
-
+LAST_NAME = "DOE" # ADJUST to your last name or name
 print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 ```
 
@@ -251,7 +251,7 @@ Vertex AI provides prebuilt Docker container images for model training. These co
 ```python
 
 job = aiplatform.CustomTrainingJob(
-    display_name=f"endemann_xgb_{RUN_ID}",
+    display_name=f"{LAST_NAME}_xgb_{RUN_ID}",
     script_path="Intro_GCP_for_ML/scripts/train_xgboost.py",
     container_uri="us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest",
 )
