@@ -214,19 +214,22 @@ from train_nn import TitanicNet
 d = np.load("/home/jupyter/val_data.npz")
 X_val, y_val = d["X_val"], d["y_val"]
 
+# tensors
+X_val_t = torch.tensor(X_val, dtype=torch.float32)
+y_val_t = torch.tensor(y_val, dtype=torch.long)
+
 # rebuild model and load weights
 m = TitanicNet()
-state = torch.load("/home/jupyter/model.pt", map_location="cpu") 
+state = torch.load("/home/jupyter/model.pt", map_location="cpu")
 m.load_state_dict(state)
 m.eval()
 
-X_val_t = torch.tensor(X_val, dtype=torch.float32)
 with torch.no_grad():
-    # model already outputs probabilities in (0,1) because final layer is Sigmoid
-    probs = m(X_val_t).squeeze(1)              # shape [N]
-    preds = (probs >= 0.5).long().cpu().numpy()
+    probs = m(X_val_t).squeeze(1)                # [N], sigmoid outputs in (0,1)
+    preds_t = (probs >= 0.5).long()              # [N] int64
+    correct = (preds_t == y_val_t).sum().item()
+    acc = correct / y_val_t.shape[0]
 
-acc = (preds == y_val).mean()
 print(f"Local model val accuracy: {acc:.4f}")
 
 ```
