@@ -317,40 +317,71 @@ print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
 
 ### Evaluate the Vertex-trained model on the validation data
 
-We can check out work to see if this model gives the same result as our "locally" trained model above. First, we'll copy the model from GCS to our notebook.
-```python
-# Copy model.pt from GCS (replace RUN_ID with your run folder)
-!gsutil cp {ARTIFACT_DIR}/model/model.pt /home/jupyter/model_vertex.pt
-!ls
-```
+We can check out work to see if this model gives the same result as our "locally" trained model above. 
 
-As before, we can run our model evaluation code with this model.
+To follow best practices, we will simply load this model into memory from GCS.
 
 ```python
 import sys, torch, numpy as np
 sys.path.append("/home/jupyter/Intro_GCP_for_ML/scripts")
 from train_nn import TitanicNet
 
-# load validation data
-d = np.load("/home/jupyter/val_data.npz")
-X_val, y_val = d["X_val"], d["y_val"]
+# -----------------
+# download model.pt straight into memory and load weights
+# -----------------
+
+ARTIFACT_PREFIX = f"artifacts/pytorch/{RUN_ID}/model"
+
+MODEL_PATH = f"{ARTIFACT_PREFIX}/model.pt"
+model_blob = bucket.blob(MODEL_PATH)
+model_bytes = model_blob.download_as_bytes()
+
+# load from bytes
+model_pt = io.BytesIO(model_bytes)
 
 # rebuild model and load weights
+state = torch.load(model_pt, map_location="cpu")
 m = TitanicNet()
-state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")  
 m.load_state_dict(state)
-m.eval()
+m.eval(); # set model to eval mode
 
-X_val_t = torch.tensor(X_val, dtype=torch.float32)
-with torch.no_grad():
-    # model already outputs probabilities in (0,1) because final layer is Sigmoid
-    probs = m(X_val_t).squeeze(1)              # shape [N]
-    preds = (probs >= 0.5).long().cpu().numpy()
-
-acc = (preds == y_val).mean()
-print(f"Vertex model val accuracy: {acc:.4f}")
+# -----------------
+# ALT: download copy of model into VM (costs extra storage)
+# -----------------
+# # Copy model.pt from GCS (replace RUN_ID with your run folder)
+# !gsutil cp {ARTIFACT_DIR}/model/model.pt /home/jupyter/model_vertex.pt
+# !ls
+# # rebuild model and load weights
+# m = TitanicNet()
+# state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")  
+# m.load_state_dict(state)
+# m.eval()
 
 ```
+
+As before, we can run our model evaluation code with this model.
+
+To follow best practices, we will read our validation data from GCS and avoid having a copy in our VM.
+
+```python
+# read validation data into memory
+VAL_PATH = "data/val_data.npz"
+val_blob = bucket.blob(VAL_PATH)
+val_bytes = val_blob.download_as_bytes()
+d = np.load(io.BytesIO(val_bytes))
+X_val, y_val = d["X_val"], d["y_val"]
+X_val_t = torch.tensor(X_val, dtype=torch.float32)
+
+# get predictions
+with torch.no_grad():
+    probs = m(X_val_t).squeeze(1)         # [N], sigmoid outputs in (0,1)
+    preds_t = (probs >= 0.5).long()       # threshold at 0.5 -> class label 0/1
+    correct = (preds_t == y_val_t).sum().item()
+    acc = correct / y_val_t.shape[0]
+
+print(f"Vertex model val accuracy: {acc:.4f}")
+```
+
 ## GPU-Accelerated Training on Vertex AI
 
 In the previous example, we ran our PyTorch training job on a CPU-only machine using the `pytorch-cpu` container. That setup works well for small models or quick tests since CPU instances are cheaper and start faster.
