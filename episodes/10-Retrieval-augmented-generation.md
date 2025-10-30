@@ -109,7 +109,7 @@ print(len(corpus_df), "chunks created")
 
 ## Step 3: Embed text using Vertex AI
 
-### Choosing an embedding model
+### Choosing an embedding and generator model
 
 Vertex AI currently offers multiple managed embedding models under the **Text Embeddings API** family.  
 For this exercise, we’re using **`text-embedding-004`**, which is Google’s latest general-purpose model optimized for **semantic similarity**, **retrieval**, and **clustering** tasks.  
@@ -130,66 +130,188 @@ If you’d like to explore other options:
 
 
 ```python
-from vertexai.language_models import TextEmbeddingModel
+#############################################
+# 1. Imports and client setup
+#############################################
+
+from google import genai
+from google.genai.types import HttpOptions, EmbedContentConfig, GenerateContentConfig
 import numpy as np
-
-model = TextEmbeddingModel.from_pretrained("text-embedding-004")
-
-def get_embeddings(texts):
-    vecs = []
-    for batch in [texts[i:i+32] for i in range(0, len(texts), 32)]:
-        resp = model.get_embeddings(batch)
-        for r in resp: vecs.append(r.values)
-    return np.array(vecs, dtype="float32")
-
-emb_matrix = get_embeddings(corpus_df.text.tolist())
-print("Embeddings shape:", emb_matrix.shape)
-```
-
-**Cost note:** This is the first paid step — roughly $0.0001–0.0002 per 1k tokens.  
-Cache embeddings locally or in GCS to avoid recharging later.
-
-
-
-## Step 4: Retrieve relevant chunks
-
-```python
 from sklearn.neighbors import NearestNeighbors
 
-nn = NearestNeighbors(metric="cosine", n_neighbors=5)
-nn.fit(emb_matrix)
+# We'll assume you already have:
+#   corpus_df  -> pandas DataFrame with columns: 'text', 'doc', 'chunk_id'
+# If not, you'll need to define/load that before running this cell.
 
-def retrieve(query):
-    q_vec = model.get_embeddings([query])[0].values
-    dist, idx = nn.kneighbors([q_vec], return_distance=True)
-    df = corpus_df.iloc[idx[0]].copy()
-    df["similarity"] = 1 - dist[0]
-    return df.sort_values("similarity", ascending=False)
+
+#############################################
+# 2. Initialize the Gen AI client
+#############################################
+
+# vertexai=True = bill/govern in your GCP project instead of the public endpoint
+client = genai.Client(
+    http_options=HttpOptions(api_version="v1"),
+    vertexai=True,
+    project="doit-rci-mlm25-4626",
+    location="us-central1",
+)
+
+# Generation model for answering questions
+GENERATION_MODEL_ID = "gemini-2.5-pro"        # or "gemini-2.5-flash" for cheaper/faster
+
+# Embedding model for retrieval
+EMBED_MODEL_ID = "gemini-embedding-001"
+
+# Pick an embedding dimensionality and stick to it across corpus + queries.
+EMBED_DIM = 1536  # valid typical choices: 768, 1536, 3072
+
+
 ```
 
-**Cost note:** Retrieval is free (runs locally). Each new query triggers one embedding call.
+```python
+#############################################
+# 3. Helper: get embeddings for a list of texts
+#############################################
+
+def embed_texts(text_list, batch_size=32, dims=EMBED_DIM):
+    """
+    Convert a list of text strings into embedding vectors using gemini-embedding-001.
+    Returns a NumPy array of shape (len(text_list), dims).
+    """
+    vectors = []
+
+    # batch to avoid huge single requests
+    for start in range(0, len(text_list), batch_size):
+        batch = text_list[start:start+batch_size]
+
+        resp = client.models.embed_content(
+            model=EMBED_MODEL_ID,
+            contents=batch,
+            config=EmbedContentConfig(
+                task_type="RETRIEVAL_DOCUMENT",   # optimize embeddings for retrieval/use as chunks
+                output_dimensionality=dims,       # must match EMBED_DIM everywhere
+            ),
+        )
+
+        # resp.embeddings is aligned with 'batch'
+        for emb in resp.embeddings:
+            vectors.append(emb.values)
+
+    return np.array(vectors, dtype="float32")
 
 
+```
+
+```python
+#############################################
+# 4. Embed the corpus and build the NN index
+#############################################
+
+# Create embeddings for every text chunk in the corpus
+emb_matrix = embed_texts(corpus_df["text"].tolist(), dims=EMBED_DIM)
+print("emb_matrix shape:", emb_matrix.shape)   # (num_chunks, EMBED_DIM)
+
+# Fit NearestNeighbors on those embeddings once
+nn = NearestNeighbors(
+    metric="cosine",   # cosine distance is standard for semantic similarity
+    n_neighbors=5,     # default neighborhood size; can override at query time
+)
+nn.fit(emb_matrix)
+
+
+#############################################
+# 5. Retrieval: given a query string, get top-k relevant chunks
+#############################################
+
+def retrieve(query, k=5):
+    """
+    Embed the user query with the SAME embedding model/dim,
+    then find the top-k most similar corpus chunks.
+    Returns a DataFrame of the top matches with a 'similarity' column.
+    """
+
+    # Embed the query to the same dimension space as emb_matrix
+    query_vec = embed_texts([query], dims=EMBED_DIM)[0]   # shape (EMBED_DIM,)
+
+    # Find nearest neighbors using cosine distance
+    distances, indices = nn.kneighbors([query_vec], n_neighbors=k, return_distance=True)
+
+    # Grab those rows from the original corpus
+    result_df = corpus_df.iloc[indices[0]].copy()
+
+    # Convert cosine distance -> cosine similarity (1 - distance)
+    result_df["similarity"] = 1 - distances[0]
+
+    # Sort by similarity descending (highest similarity first)
+    result_df = result_df.sort_values("similarity", ascending=False)
+
+    return result_df
+
+```
+
+```python
+#############################################
+# 6. ask(): build grounded prompt + call Gemini to answer
+#############################################
+
+def ask(query, top_k=5, temperature=0.2):
+    """
+    Retrieval-Augmented Generation:
+    - retrieve context chunks relevant to `query`
+    - stuff those chunks into a prompt
+    - ask Gemini to answer ONLY using that context
+    """
+
+    # Get top_k most relevant text chunks
+    hits = retrieve(query, k=top_k)
+
+    # Build a context block with provenance tags like [doc#chunk-id]
+    context_lines = [
+        f"[{row.doc}#chunk-{row.chunk_id}] {row.text}"
+        for _, row in hits.iterrows()
+    ]
+    context_block = "\n\n".join(context_lines)
+
+    # Instruction prompt for the model
+    prompt = (
+        "You are a sustainability analyst. "
+        "Use only the following context to answer the question.\n\n"
+        f"{context_block}\n\n"
+        f"Q: {query}\n"
+        "A:"
+    )
+
+    # Call the generative model
+    response = client.models.generate_content(
+        model=GENERATION_MODEL_ID,
+        contents=prompt,
+        config=GenerateContentConfig(
+            temperature=temperature,  # lower = more deterministic, factual
+        ),
+    )
+
+    # Return the model's answer text
+    return response.text
+
+```
 
 ## Step 5: Generate answers using Gemini
 
 ```python
-from vertexai.generative_models import GenerativeModel
 
-gmodel = GenerativeModel("gemini-2.5-pro")
+#############################################
+# 7. Test the pipeline end-to-end
+#############################################
 
-def ask(query, top_k=5):
-    hits = retrieve(query).head(top_k)
-    context = "\n\n".join([f"[{r.doc}#chunk-{r.chunk_id}] {r.text}" for _, r in hits.iterrows()])
-    prompt = f"You are a sustainability analyst. Use only the following context to answer the question.\n\n{context}\n\nQ: {query}\nA:"
-    ans = gmodel.generate_content(prompt)
-    return ans.text
+print(
+    ask(
+        "What is the name of the benchmark suite presented in a recent paper "
+        "for measuring inference energy consumption?"
+    )
+)
+# Expected answer: "ML.ENERGY Benchmark"
 
-print(ask("What water usage (WUE) is reported for model training?"))
 ```
-
-**Cost note:** Gemini Flash costs ~$0.00005 per 1k input tokens and ~$0.0002 per 1k output tokens.  
-To stay under $1 for the workshop, limit to short prompts and <100 queries.
 
 
 ## Step 6: Cost summary
