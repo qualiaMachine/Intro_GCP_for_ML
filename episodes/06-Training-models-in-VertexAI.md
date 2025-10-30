@@ -223,8 +223,8 @@ We'll first initialize the Vertex AI platform with our environment variables. We
 from google.cloud import aiplatform
 import datetime as dt
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
-print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/"  # everything will live beside this
+print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}\nartifact_dir = {ARTIFACT_DIR}")
 
 # Staging bucket is only for the SDK's temp code tarball (aiplatform-*.tar.gz)
 aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}/.vertex_staging")
