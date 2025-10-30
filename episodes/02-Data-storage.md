@@ -68,7 +68,7 @@ To upload our Titanic dataset to a GCS bucket, we'll follow these steps:
 4. Use the GCS URI to reference your data in Vertex AI workflows.  
 
 ### 1. Sign in to Google Cloud Console
-- Go to [console.cloud.google.com](https://console.cloud.google.com) and log in with your credentials.  
+- Go to [console.cloud.google.com/welcome?project=doit-rci-mlm25-4626](https://console.cloud.google.com/welcome?project=doit-rci-mlm25-4626) and log in with your credentials.  
 
 ### 2. Navigate to Cloud Storage
 - In the search bar, type **Storage**.  
