@@ -492,7 +492,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>Data preprocessing</strong>: The script fills missing values
@@ -626,14 +626,26 @@ params) when testing locally</li>
 <div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="im">import</span> time <span class="im">as</span> t</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>start <span class="op">=</span> t.time()</span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co"># Example: run your custom training script with args</span></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="op">!</span>python Intro_GCP_for_ML<span class="op">/</span>scripts<span class="op">/</span>train_xgboost.py <span class="op">--</span>max_depth <span class="dv">3</span> <span class="op">--</span>eta <span class="fl">0.1</span> <span class="op">--</span>subsample <span class="fl">0.8</span> <span class="op">--</span>colsample_bytree <span class="fl">0.8</span> <span class="op">--</span>num_round <span class="dv">100</span> <span class="op">--</span>train titanic_train.csv</span>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Training configuration parameters for XGBoost</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>MAX_DEPTH <span class="op">=</span> <span class="dv">3</span>         <span class="co"># maximum depth of each decision tree (controls model complexity)</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>ETA <span class="op">=</span> <span class="fl">0.1</span>             <span class="co"># learning rate (how much each tree contributes to the overall model)</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>SUBSAMPLE <span class="op">=</span> <span class="fl">0.8</span>       <span class="co"># fraction of training samples used per boosting round (prevents overfitting)</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>COLSAMPLE <span class="op">=</span> <span class="fl">0.8</span>       <span class="co"># fraction of features (columns) sampled per tree (adds randomness and diversity)</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>NUM_ROUND <span class="op">=</span> <span class="dv">100</span>       <span class="co"># number of boosting iterations (trees) to train</span></span>
 <span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total local runtime: </span><span class="sc">{</span>t<span class="sc">.</span>time() <span class="op">-</span> start<span class="sc">:.2f}</span><span class="ss"> seconds"</span>)</span></code></pre>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="im">import</span> time <span class="im">as</span> t</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>start <span class="op">=</span> t.time()</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co"># Run the custom training script with hyperparameters defined above</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="op">!</span>python Intro_GCP_for_ML<span class="op">/</span>scripts<span class="op">/</span>train_xgboost.py <span class="op">\</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>    <span class="op">--</span>max_depth $MAX_DEPTH <span class="op">\</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>    <span class="op">--</span>eta $ETA <span class="op">\</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>    <span class="op">--</span>subsample $SUBSAMPLE <span class="op">\</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>    <span class="op">--</span>colsample_bytree $COLSAMPLE <span class="op">\</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>    <span class="op">--</span>num_round $NUM_ROUND <span class="op">\</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>    <span class="op">--</span>train titanic_train.csv</span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total local runtime: </span><span class="sc">{</span>t<span class="sc">.</span>time() <span class="op">-</span> start<span class="sc">:.2f}</span><span class="ss"> seconds"</span>)</span></code></pre>
 </div>
 <p>Training on this small dataset should take &lt;1 minute. Log runtime
 as a baseline. You should see the following output file:</p>
