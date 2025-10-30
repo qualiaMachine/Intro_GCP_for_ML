@@ -446,16 +446,15 @@ You can replace Google-managed APIs with open models such as:<br>
 <code>tiiuae/falcon-7b-instruct</code><br>
 However, this requires a GPU or large CPU VM (e.g.,
 <code>n1-standard-8</code> + <code>T4</code>) and manual model
-management.<br>
-Vertex AI’s managed models (<code>text-embedding-004</code>,
-<code>gemini-2.5-flash-001</code>) are cost-optimized and scalable —
-better for workshops or low-ops setups.</p>
+management. Rather than use a very expensive machine and GPU in
+Workbench, you can launch custom jobs that perform the embedding and
+generation steps. Start with a PyTorch image and add HuggingFace as a
+requirement.</p>
 </section><section><h2 class="section-heading" id="step-1-setup-environment">Step 1: Setup environment<a class="anchor" aria-label="anchor" href="#step-1-setup-environment"></a></h2>
 <hr class="half-width"><div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># !pip install --quiet --upgrade google-cloud-aiplatform google-cloud-storage vertexai pypdf scikit-learn pandas</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">--</span>quiet <span class="op">--</span>upgrade pypdf</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">--</span>quiet <span class="op">--</span>upgrade pypdf</span></code></pre>
 </div>
 <p><strong>Cost note:</strong> Installing packages is free; you’re only
 billed for VM runtime.</p>
