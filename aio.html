@@ -1066,7 +1066,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1854,7 +1854,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -4724,7 +4724,7 @@ affects future embedding cost.</p>
 </h2>
 <hr class="half-width">
 <div class="section level3">
-<h3 id="choosing-an-embedding-model">Choosing an embedding model<a class="anchor" aria-label="anchor" href="#choosing-an-embedding-model"></a>
+<h3 id="choosing-an-embedding-and-generator-model">Choosing an embedding and generator model<a class="anchor" aria-label="anchor" href="#choosing-an-embedding-and-generator-model"></a>
 </h3>
 <p>Vertex AI currently offers multiple managed embedding models under
 the <strong>Text Embeddings API</strong> family.<br>
@@ -4755,68 +4755,189 @@ image + text embeddings for richer use cases.<br>
 <div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="im">from</span> vertexai.language_models <span class="im">import</span> TextEmbeddingModel</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>model <span class="op">=</span> TextEmbeddingModel.from_pretrained(<span class="st">"text-embedding-004"</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="kw">def</span> get_embeddings(texts):</span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>    vecs <span class="op">=</span> []</span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>    <span class="cf">for</span> batch <span class="kw">in</span> [texts[i:i<span class="op">+</span><span class="dv">32</span>] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(texts), <span class="dv">32</span>)]:</span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>        resp <span class="op">=</span> model.get_embeddings(batch)</span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>        <span class="cf">for</span> r <span class="kw">in</span> resp: vecs.append(r.values)</span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>    <span class="cf">return</span> np.array(vecs, dtype<span class="op">=</span><span class="st">"float32"</span>)</span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>emb_matrix <span class="op">=</span> get_embeddings(corpus_df.text.tolist())</span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Embeddings shape:"</span>, emb_matrix.shape)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co">#############################################</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co"># 1. Imports and client setup</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#############################################</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="im">from</span> google <span class="im">import</span> genai</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="im">from</span> google.genai.types <span class="im">import</span> HttpOptions, EmbedContentConfig, GenerateContentConfig</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> NearestNeighbors</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co"># We'll assume you already have:</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#   corpus_df  -&gt; pandas DataFrame with columns: 'text', 'doc', 'chunk_id'</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co"># If not, you'll need to define/load that before running this cell.</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#############################################</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co"># 2. Initialize the Gen AI client</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#############################################</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co"># vertexai=True = bill/govern in your GCP project instead of the public endpoint</span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>client <span class="op">=</span> genai.Client(</span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>    http_options<span class="op">=</span>HttpOptions(api_version<span class="op">=</span><span class="st">"v1"</span>),</span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>    vertexai<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>    project<span class="op">=</span><span class="st">"doit-rci-mlm25-4626"</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>    location<span class="op">=</span><span class="st">"us-central1"</span>,</span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>)</span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co"># Generation model for answering questions</span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>GENERATION_MODEL_ID <span class="op">=</span> <span class="st">"gemini-2.5-pro"</span>        <span class="co"># or "gemini-2.5-flash" for cheaper/faster</span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="co"># Embedding model for retrieval</span></span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a>EMBED_MODEL_ID <span class="op">=</span> <span class="st">"gemini-embedding-001"</span></span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a><span class="co"># Pick an embedding dimensionality and stick to it across corpus + queries.</span></span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>EMBED_DIM <span class="op">=</span> <span class="dv">1536</span>  <span class="co"># valid typical choices: 768, 1536, 3072</span></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a></span></code></pre>
 </div>
-<p><strong>Cost note:</strong> This is the first paid step — roughly
-$0.0001–0.0002 per 1k tokens.<br>
-Cache embeddings locally or in GCS to avoid recharging later.</p>
-</div>
-</section><section><h2 class="section-heading" id="step-4-retrieve-relevant-chunks">Step 4: Retrieve relevant chunks<a class="anchor" aria-label="anchor" href="#step-4-retrieve-relevant-chunks"></a>
-</h2>
-<hr class="half-width">
 <div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> NearestNeighbors</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>nn <span class="op">=</span> NearestNeighbors(metric<span class="op">=</span><span class="st">"cosine"</span>, n_neighbors<span class="op">=</span><span class="dv">5</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>nn.fit(emb_matrix)</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="kw">def</span> retrieve(query):</span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>    q_vec <span class="op">=</span> model.get_embeddings([query])[<span class="dv">0</span>].values</span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>    dist, idx <span class="op">=</span> nn.kneighbors([q_vec], return_distance<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>    df <span class="op">=</span> corpus_df.iloc[idx[<span class="dv">0</span>]].copy()</span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>    df[<span class="st">"similarity"</span>] <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> dist[<span class="dv">0</span>]</span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>    <span class="cf">return</span> df.sort_values(<span class="st">"similarity"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co">#############################################</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co"># 3. Helper: get embeddings for a list of texts</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#############################################</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="kw">def</span> embed_texts(text_list, batch_size<span class="op">=</span><span class="dv">32</span>, dims<span class="op">=</span>EMBED_DIM):</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">    Convert a list of text strings into embedding vectors using gemini-embedding-001.</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">    Returns a NumPy array of shape (len(text_list), dims).</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>    vectors <span class="op">=</span> []</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>    <span class="co"># batch to avoid huge single requests</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>    <span class="cf">for</span> start <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(text_list), batch_size):</span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>        batch <span class="op">=</span> text_list[start:start<span class="op">+</span>batch_size]</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>        resp <span class="op">=</span> client.models.embed_content(</span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>            model<span class="op">=</span>EMBED_MODEL_ID,</span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>            contents<span class="op">=</span>batch,</span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>            config<span class="op">=</span>EmbedContentConfig(</span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>                task_type<span class="op">=</span><span class="st">"RETRIEVAL_DOCUMENT"</span>,   <span class="co"># optimize embeddings for retrieval/use as chunks</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a>                output_dimensionality<span class="op">=</span>dims,       <span class="co"># must match EMBED_DIM everywhere</span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a>            ),</span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a>        )</span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a>        <span class="co"># resp.embeddings is aligned with 'batch'</span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a>        <span class="cf">for</span> emb <span class="kw">in</span> resp.embeddings:</span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a>            vectors.append(emb.values)</span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a>    <span class="cf">return</span> np.array(vectors, dtype<span class="op">=</span><span class="st">"float32"</span>)</span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a></span></code></pre>
 </div>
-<p><strong>Cost note:</strong> Retrieval is free (runs locally). Each
-new query triggers one embedding call.</p>
-</section><section><h2 class="section-heading" id="step-5-generate-answers-using-gemini">Step 5: Generate answers using Gemini<a class="anchor" aria-label="anchor" href="#step-5-generate-answers-using-gemini"></a>
-</h2>
-<hr class="half-width">
 <div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="im">from</span> vertexai.generative_models <span class="im">import</span> GenerativeModel</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>gmodel <span class="op">=</span> GenerativeModel(<span class="st">"gemini-2.5-pro"</span>)</span>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co">#############################################</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co"># 4. Embed the corpus and build the NN index</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#############################################</span></span>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="kw">def</span> ask(query, top_k<span class="op">=</span><span class="dv">5</span>):</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>    hits <span class="op">=</span> retrieve(query).head(top_k)</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>    context <span class="op">=</span> <span class="st">"</span><span class="ch">\n\n</span><span class="st">"</span>.join([<span class="ss">f"[</span><span class="sc">{</span>r<span class="sc">.</span>doc<span class="sc">}</span><span class="ss">#chunk-</span><span class="sc">{</span>r<span class="sc">.</span>chunk_id<span class="sc">}</span><span class="ss">] </span><span class="sc">{</span>r<span class="sc">.</span>text<span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> _, r <span class="kw">in</span> hits.iterrows()])</span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>    prompt <span class="op">=</span> <span class="ss">f"You are a sustainability analyst. Use only the following context to answer the question.</span><span class="ch">\n\n</span><span class="sc">{</span>context<span class="sc">}</span><span class="ch">\n\n</span><span class="ss">Q: </span><span class="sc">{</span>query<span class="sc">}</span><span class="ch">\n</span><span class="ss">A:"</span></span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>    ans <span class="op">=</span> gmodel.generate_content(prompt)</span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>    <span class="cf">return</span> ans.text</span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a></span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="bu">print</span>(ask(<span class="st">"What water usage (WUE) is reported for model training?"</span>))</span></code></pre>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co"># Create embeddings for every text chunk in the corpus</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>emb_matrix <span class="op">=</span> embed_texts(corpus_df[<span class="st">"text"</span>].tolist(), dims<span class="op">=</span>EMBED_DIM)</span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"emb_matrix shape:"</span>, emb_matrix.shape)   <span class="co"># (num_chunks, EMBED_DIM)</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co"># Fit NearestNeighbors on those embeddings once</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>nn <span class="op">=</span> NearestNeighbors(</span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>    metric<span class="op">=</span><span class="st">"cosine"</span>,   <span class="co"># cosine distance is standard for semantic similarity</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>    n_neighbors<span class="op">=</span><span class="dv">5</span>,     <span class="co"># default neighborhood size; can override at query time</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>)</span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>nn.fit(emb_matrix)</span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#############################################</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co"># 5. Retrieval: given a query string, get top-k relevant chunks</span></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#############################################</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="kw">def</span> retrieve(query, k<span class="op">=</span><span class="dv">5</span>):</span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co">    Embed the user query with the SAME embedding model/dim,</span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="co">    then find the top-k most similar corpus chunks.</span></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="co">    Returns a DataFrame of the top matches with a 'similarity' column.</span></span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a>    <span class="co"># Embed the query to the same dimension space as emb_matrix</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a>    query_vec <span class="op">=</span> embed_texts([query], dims<span class="op">=</span>EMBED_DIM)[<span class="dv">0</span>]   <span class="co"># shape (EMBED_DIM,)</span></span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a></span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a>    <span class="co"># Find nearest neighbors using cosine distance</span></span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a>    distances, indices <span class="op">=</span> nn.kneighbors([query_vec], n_neighbors<span class="op">=</span>k, return_distance<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a>    <span class="co"># Grab those rows from the original corpus</span></span>
+<span id="cb6-35"><a href="#cb6-35" tabindex="-1"></a>    result_df <span class="op">=</span> corpus_df.iloc[indices[<span class="dv">0</span>]].copy()</span>
+<span id="cb6-36"><a href="#cb6-36" tabindex="-1"></a></span>
+<span id="cb6-37"><a href="#cb6-37" tabindex="-1"></a>    <span class="co"># Convert cosine distance -&gt; cosine similarity (1 - distance)</span></span>
+<span id="cb6-38"><a href="#cb6-38" tabindex="-1"></a>    result_df[<span class="st">"similarity"</span>] <span class="op">=</span> <span class="dv">1</span> <span class="op">-</span> distances[<span class="dv">0</span>]</span>
+<span id="cb6-39"><a href="#cb6-39" tabindex="-1"></a></span>
+<span id="cb6-40"><a href="#cb6-40" tabindex="-1"></a>    <span class="co"># Sort by similarity descending (highest similarity first)</span></span>
+<span id="cb6-41"><a href="#cb6-41" tabindex="-1"></a>    result_df <span class="op">=</span> result_df.sort_values(<span class="st">"similarity"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-42"><a href="#cb6-42" tabindex="-1"></a></span>
+<span id="cb6-43"><a href="#cb6-43" tabindex="-1"></a>    <span class="cf">return</span> result_df</span></code></pre>
 </div>
-<p><strong>Cost note:</strong> Gemini Flash costs ~$0.00005 per 1k input
-tokens and ~$0.0002 per 1k output tokens.<br>
-To stay under $1 for the workshop, limit to short prompts and &lt;100
-queries.</p>
+<div class="codewrapper sourceCode" id="cb7">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co">#############################################</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co"># 6. ask(): build grounded prompt + call Gemini to answer</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#############################################</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="kw">def</span> ask(query, top_k<span class="op">=</span><span class="dv">5</span>, temperature<span class="op">=</span><span class="fl">0.2</span>):</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">    Retrieval-Augmented Generation:</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">    - retrieve context chunks relevant to `query`</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">    - stuff those chunks into a prompt</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">    - ask Gemini to answer ONLY using that context</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>    <span class="co"># Get top_k most relevant text chunks</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>    hits <span class="op">=</span> retrieve(query, k<span class="op">=</span>top_k)</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>    <span class="co"># Build a context block with provenance tags like [doc#chunk-id]</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>    context_lines <span class="op">=</span> [</span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>        <span class="ss">f"[</span><span class="sc">{</span>row<span class="sc">.</span>doc<span class="sc">}</span><span class="ss">#chunk-</span><span class="sc">{</span>row<span class="sc">.</span>chunk_id<span class="sc">}</span><span class="ss">] </span><span class="sc">{</span>row<span class="sc">.</span>text<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>        <span class="cf">for</span> _, row <span class="kw">in</span> hits.iterrows()</span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>    ]</span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a>    context_block <span class="op">=</span> <span class="st">"</span><span class="ch">\n\n</span><span class="st">"</span>.join(context_lines)</span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a>    <span class="co"># Instruction prompt for the model</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a>    prompt <span class="op">=</span> (</span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a>        <span class="st">"You are a sustainability analyst. "</span></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a>        <span class="st">"Use only the following context to answer the question.</span><span class="ch">\n\n</span><span class="st">"</span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a>        <span class="ss">f"</span><span class="sc">{</span>context_block<span class="sc">}</span><span class="ch">\n\n</span><span class="ss">"</span></span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a>        <span class="ss">f"Q: </span><span class="sc">{</span>query<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a>        <span class="st">"A:"</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a>    )</span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a>    <span class="co"># Call the generative model</span></span>
+<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a>    response <span class="op">=</span> client.models.generate_content(</span>
+<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a>        model<span class="op">=</span>GENERATION_MODEL_ID,</span>
+<span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a>        contents<span class="op">=</span>prompt,</span>
+<span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a>        config<span class="op">=</span>GenerateContentConfig(</span>
+<span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a>            temperature<span class="op">=</span>temperature,  <span class="co"># lower = more deterministic, factual</span></span>
+<span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a>        ),</span>
+<span id="cb7-39"><a href="#cb7-39" tabindex="-1"></a>    )</span>
+<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a></span>
+<span id="cb7-41"><a href="#cb7-41" tabindex="-1"></a>    <span class="co"># Return the model's answer text</span></span>
+<span id="cb7-42"><a href="#cb7-42" tabindex="-1"></a>    <span class="cf">return</span> response.text</span></code></pre>
+</div>
+</div>
+</section><section><h2 class="section-heading" id="step-5-generate-answers-using-gemini">Step 5: Generate answers using Gemini<a class="anchor" aria-label="anchor" href="#step-5-generate-answers-using-gemini"></a>
+</h2>
+<hr class="half-width">
+<div class="codewrapper sourceCode" id="cb8">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#############################################</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co"># 7. Test the pipeline end-to-end</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#############################################</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    ask(</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>        <span class="st">"What is the name of the benchmark suite presented in a recent paper "</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>        <span class="st">"for measuring inference energy consumption?"</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>    )</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>)</span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co"># Expected answer: "ML.ENERGY Benchmark"</span></span></code></pre>
+</div>
 </section><section><h2 class="section-heading" id="step-6-cost-summary">Step 6: Cost summary<a class="anchor" aria-label="anchor" href="#step-6-cost-summary"></a>
 </h2>
 <hr class="half-width">
