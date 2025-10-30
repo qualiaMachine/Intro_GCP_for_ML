@@ -41,6 +41,7 @@ client = storage.Client()
 PROJECT_ID = client.project
 REGION = "us-central1"
 BUCKET_NAME = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
+LAST_NAME = 'DOE' # ADJUST to your last name. Since we're in a shared account envirnoment, this will help us track down jobs in the Console
 
 print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 
@@ -253,8 +254,8 @@ print(f"RUN_ID = {RUN_ID}\nARTIFACT_DIR = {ARTIFACT_DIR}\nMACHINE = {MACHINE}")
 
 ```python
 # init job (this does not consume any resources)
-LAST_NAME = 'DOE' # REPLACE with your last name. Since we're in a shared account envirnoment, this will help us track down jobs in the Console
 DISPLAY_NAME = f"{LAST_NAME}_pytorch_nn_{RUN_ID}" 
+print(DISPLAY_NAME)
 
 # init the job. This does not consume resources until we run job.run()
 job = aiplatform.CustomTrainingJob(
