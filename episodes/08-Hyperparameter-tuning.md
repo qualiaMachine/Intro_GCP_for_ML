@@ -48,23 +48,16 @@ Your training script (`train_nn.py`) should report validation metrics in a way V
 Add the following right after computing `val_loss` and `val_acc` inside your epoch loop:
 
 ```python
-# --- Report metrics to Vertex AI Hyperparameter Tuning ---
+# Eenable Vertex HPT metric reporting 
 try:
+    # cloudml-hypertune is installed on Vertex AI workers; on local it might not be.
     from hypertune import HyperTune
-    hpt = HyperTune()
-    hpt.report_hyperparameter_tuning_metric(
-        hyperparameter_metric_tag="validation_loss",  # must match metric_spec
-        metric_value=val_loss,
-        global_step=ep,
-    )
-    # add a second metric to look at accuracy
-    ht.report_hyperparameter_tuning_metric(
-        hyperparameter_metric_tag="validation_accuracy",
-        metric_value=val_acc,
-        global_step=ep)
-except ImportError:
-    pass
-
+    _hpt = HyperTune()          # instance scoped to this run
+    _hpt_enabled = True
+except Exception:
+    # If the package isn't available (e.g., local run), we simply no-op.
+    _hpt = None
+    _hpt_enabled = False
 ```
 
 This ensures Vertex AI records the validation metric for each trial and can rank configurations by performance automatically.
