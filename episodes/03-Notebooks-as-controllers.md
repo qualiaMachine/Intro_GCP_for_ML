@@ -126,15 +126,9 @@ Check the latest pricing here:
 - [Cloud Storage pricing](https://cloud.google.com/storage/pricing)
 
 
-#### Advanced settings: Networking - Remove External IP Access
+#### Advanced settings: Networking - External IP Access
 
-- *Don't* **Assign External IP address**: Uncheck this option
-  - This ensures your instance is only accessible through secure internal channels rather than the open internet.  
-  - Removing the external IP reduces your attack surface and aligns with campus cybersecurity guidance.  
-
-![Remove External IP](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-networking.jpg){alt="Remove External IP"}
-
-> **Note:** Managed Workbench instances do not allow you to modify network settings after creation.  Be sure to complete this step or you may need to delete the instance and recreate one from scratch.
+- **Assign External IP address**: Leave this option checked — you need an external IP.  
 
 ### Create notebook 
 - Click **Create** to create the instance. Your notebook instance will start in a few minutes. When its status is "Running," you can open JupyterLab and begin working.  
