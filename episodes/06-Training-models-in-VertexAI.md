@@ -104,6 +104,7 @@ Before scaling to multiple or more powerful instances (e.g., GPUs or TPUs), it's
 
 Here is a non-exhaustive list of suggested tests to perform before scaling up your compute needs.
 
+- **Reproducibility** - do you get the same result each time you run your code? If not, set seeds controlling randomness.
 - **Data loads correctly** – dataset loads without errors, expected columns exist, missing values handled.  
 - **Overfitting check** – train on a tiny dataset (e.g., 100 rows). If it doesn't overfit, something is off.  
 - **Loss behavior** – verify training loss decreases and doesn't diverge.  
@@ -154,6 +155,56 @@ Training on this small dataset should take <1 minute. Log runtime as a baseline.
 
 - `xgboost-model`  # Python-serialized XGBoost model (Booster) via joblib; load with joblib.load for reuse.
 
+## Evaluate the trained model on validation data
+
+Now that we've trained and saved an XGBoost model, we want to do the most important sanity check:  
+**Does this model make reasonable predictions on unseen data?**
+
+This step:
+1. Loads the serialized model artifact that was written by `train_xgboost.py`
+2. Loads a test set of Titanic passenger data
+3. Applies the same preprocessing as training
+4. Generates predictions
+5. Computes simple accuracy
+
+First, we'll download the test data
+
+```python
+blob = bucket.blob("titanic_test.csv")
+blob.download_to_filename("titanic_test.csv")
+
+print("Downloaded titanic_test.csv")
+```
+
+Then, we apply the same preprocessing function used by our training script before applying the model to our data.
+
+```python
+import pandas as pd
+import xgboost as xgb
+import joblib
+from sklearn.metrics import accuracy_score
+from Intro_GCP_for_ML.scripts.train_xgboost import preprocess_data  # reuse same preprocessing
+
+# Load test data
+test_df = pd.read_csv("titanic_test.csv")
+
+# Apply same preprocessing from training
+X_test, y_test = preprocess_data(test_df)
+
+# Load trained model from local file
+model = joblib.load("xgboost-model")
+
+# Predict on test data
+dtest = xgb.DMatrix(X_test)
+y_pred = model.predict(dtest)
+y_pred_binary = (y_pred > 0.5).astype(int)
+
+# Compute accuracy
+acc = accuracy_score(y_test, y_pred_binary)
+print(f"Test accuracy: {acc:.3f}")
+```
+
+   
 ## Training via Vertex AI custom training job
 Unlike "local" training using our notebook's VM, this next approach launches a **managed training job** that runs on scalable compute. Vertex AI handles provisioning, scaling, logging, and saving outputs to GCS.  
 
