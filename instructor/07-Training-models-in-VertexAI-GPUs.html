@@ -778,41 +778,69 @@ reproducibility and debugging.</li>
 <div class="section level3">
 <h3 id="evaluate-the-vertex-trained-model-on-the-validation-data">Evaluate the Vertex-trained model on the validation data<a class="anchor" aria-label="anchor" href="#evaluate-the-vertex-trained-model-on-the-validation-data"></a></h3>
 <p>We can check out work to see if this model gives the same result as
-our “locally” trained model above. First, we’ll copy the model from GCS
-to our notebook.</p>
+our “locally” trained model above.</p>
+<p>To follow best practices, we will simply load this model into memory
+from GCS.</p>
 <div class="codewrapper sourceCode" id="cb14">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Copy model.pt from GCS (replace RUN_ID with your run folder)</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="op">!</span>gsutil cp {ARTIFACT_DIR}<span class="op">/</span>model<span class="op">/</span>model.pt <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span>model_vertex.pt</span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="op">!</span>ls</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="im">import</span> sys, torch, numpy <span class="im">as</span> np</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>sys.path.append(<span class="st">"/home/jupyter/Intro_GCP_for_ML/scripts"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="im">from</span> train_nn <span class="im">import</span> TitanicNet</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="co"># -----------------</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="co"># download model.pt straight into memory and load weights</span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co"># -----------------</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>ARTIFACT_PREFIX <span class="op">=</span> <span class="ss">f"artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">/model"</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>MODEL_PATH <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>ARTIFACT_PREFIX<span class="sc">}</span><span class="ss">/model.pt"</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>model_blob <span class="op">=</span> bucket.blob(MODEL_PATH)</span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>model_bytes <span class="op">=</span> model_blob.download_as_bytes()</span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a></span>
+<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a><span class="co"># load from bytes</span></span>
+<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a>model_pt <span class="op">=</span> io.BytesIO(model_bytes)</span>
+<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="co"># rebuild model and load weights</span></span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a>state <span class="op">=</span> torch.load(model_pt, map_location<span class="op">=</span><span class="st">"cpu"</span>)</span>
+<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a>m <span class="op">=</span> TitanicNet()</span>
+<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a>m.load_state_dict(state)</span>
+<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a>m.<span class="bu">eval</span>()<span class="op">;</span> <span class="co"># set model to eval mode</span></span>
+<span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a></span>
+<span id="cb14-24"><a href="#cb14-24" tabindex="-1"></a><span class="co"># -----------------</span></span>
+<span id="cb14-25"><a href="#cb14-25" tabindex="-1"></a><span class="co"># ALT: download copy of model into VM (costs extra storage)</span></span>
+<span id="cb14-26"><a href="#cb14-26" tabindex="-1"></a><span class="co"># -----------------</span></span>
+<span id="cb14-27"><a href="#cb14-27" tabindex="-1"></a><span class="co"># # Copy model.pt from GCS (replace RUN_ID with your run folder)</span></span>
+<span id="cb14-28"><a href="#cb14-28" tabindex="-1"></a><span class="co"># !gsutil cp {ARTIFACT_DIR}/model/model.pt /home/jupyter/model_vertex.pt</span></span>
+<span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a><span class="co"># !ls</span></span>
+<span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="co"># # rebuild model and load weights</span></span>
+<span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a><span class="co"># m = TitanicNet()</span></span>
+<span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a><span class="co"># state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")  </span></span>
+<span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a><span class="co"># m.load_state_dict(state)</span></span>
+<span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a><span class="co"># m.eval()</span></span></code></pre>
 </div>
 <p>As before, we can run our model evaluation code with this model.</p>
+<p>To follow best practices, we will read our validation data from GCS
+and avoid having a copy in our VM.</p>
 <div class="codewrapper sourceCode" id="cb15">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="im">import</span> sys, torch, numpy <span class="im">as</span> np</span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>sys.path.append(<span class="st">"/home/jupyter/Intro_GCP_for_ML/scripts"</span>)</span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="im">from</span> train_nn <span class="im">import</span> TitanicNet</span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co"># load validation data</span></span>
-<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>d <span class="op">=</span> np.load(<span class="st">"/home/jupyter/val_data.npz"</span>)</span>
-<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>X_val, y_val <span class="op">=</span> d[<span class="st">"X_val"</span>], d[<span class="st">"y_val"</span>]</span>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># read validation data into memory</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>VAL_PATH <span class="op">=</span> <span class="st">"data/val_data.npz"</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>val_blob <span class="op">=</span> bucket.blob(VAL_PATH)</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>val_bytes <span class="op">=</span> val_blob.download_as_bytes()</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>d <span class="op">=</span> np.load(io.BytesIO(val_bytes))</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>X_val, y_val <span class="op">=</span> d[<span class="st">"X_val"</span>], d[<span class="st">"y_val"</span>]</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>X_val_t <span class="op">=</span> torch.tensor(X_val, dtype<span class="op">=</span>torch.float32)</span>
 <span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a></span>
-<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co"># rebuild model and load weights</span></span>
-<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>m <span class="op">=</span> TitanicNet()</span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>state <span class="op">=</span> torch.load(<span class="st">"/home/jupyter/model_vertex.pt"</span>, map_location<span class="op">=</span><span class="st">"cpu"</span>)  </span>
-<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>m.load_state_dict(state)</span>
-<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>m.<span class="bu">eval</span>()</span>
-<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a></span>
-<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a>X_val_t <span class="op">=</span> torch.tensor(X_val, dtype<span class="op">=</span>torch.float32)</span>
-<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
-<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a>    <span class="co"># model already outputs probabilities in (0,1) because final layer is Sigmoid</span></span>
-<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a>    probs <span class="op">=</span> m(X_val_t).squeeze(<span class="dv">1</span>)              <span class="co"># shape [N]</span></span>
-<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a>    preds <span class="op">=</span> (probs <span class="op">&gt;=</span> <span class="fl">0.5</span>).<span class="bu">long</span>().cpu().numpy()</span>
-<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a></span>
-<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a>acc <span class="op">=</span> (preds <span class="op">==</span> y_val).mean()</span>
-<span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Vertex model val accuracy: </span><span class="sc">{</span>acc<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co"># get predictions</span></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>    probs <span class="op">=</span> m(X_val_t).squeeze(<span class="dv">1</span>)         <span class="co"># [N], sigmoid outputs in (0,1)</span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>    preds_t <span class="op">=</span> (probs <span class="op">&gt;=</span> <span class="fl">0.5</span>).<span class="bu">long</span>()       <span class="co"># threshold at 0.5 -&gt; class label 0/1</span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>    correct <span class="op">=</span> (preds_t <span class="op">==</span> y_val_t).<span class="bu">sum</span>().item()</span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>    acc <span class="op">=</span> correct <span class="op">/</span> y_val_t.shape[<span class="dv">0</span>]</span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Vertex model val accuracy: </span><span class="sc">{</span>acc<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="gpu-accelerated-training-on-vertex-ai">GPU-Accelerated Training on Vertex AI<a class="anchor" aria-label="anchor" href="#gpu-accelerated-training-on-vertex-ai"></a></h2>
