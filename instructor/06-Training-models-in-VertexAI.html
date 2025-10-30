@@ -269,6 +269,7 @@
 <li><a href="#training-via-vertex-ai-custom-training-job">Training via Vertex AI custom training job</a></li>
 <li><a href="#monitoring-training-jobs-in-the-console">Monitoring training jobs in the Console</a></li>
 <li><a href="#training-artifacts">Training artifacts</a></li>
+<li><a href="#evaluated-the-trained-model-stored-on-gcs">Evaluated the trained model stored on GCS</a></li>
         </ul></div><!--/div.accordion-body-->
     </div><!--/div.accordion-collapse-->
 
@@ -879,6 +880,34 @@ deployment.</li>
 will appear under <code>.vertex_staging/</code> and can be safely
 ignored or auto-deleted via lifecycle rules.</p>
 </div>
+</section><section><h2 class="section-heading" id="evaluated-the-trained-model-stored-on-gcs">Evaluated the trained model stored on GCS<a class="anchor" aria-label="anchor" href="#evaluated-the-trained-model-stored-on-gcs"></a></h2>
+<hr class="half-width"><pre><code>import io
+# Load test data directly into memory
+bucket = client.bucket(BUCKET_NAME)
+blob = bucket.blob("titanic_test.csv")
+test_df = pd.read_csv(io.BytesIO(blob.download_as_bytes()))
+
+
+# Apply same preprocessing logic used during training
+X_test, y_test = preprocess_data(test_df)
+
+# -------------------------
+# 4. Load the model artifact we just pulled from GCS
+# -------------------------
+MODEL_BLOB_PATH = f"artifacts/xgb/{RUN_ID}/model/xgboost-model"
+model_blob = bucket.blob(MODEL_BLOB_PATH)
+model_bytes = model_blob.download_as_bytes()
+model = joblib.load(io.BytesIO(model_bytes))
+
+# -------------------------
+# 5. Run predictions and compute accuracy
+# -------------------------
+dtest = xgb.DMatrix(X_test)
+y_pred_prob = model.predict(dtest)
+y_pred = (y_pred_prob &gt;= 0.5).astype(int)
+
+acc = accuracy_score(y_test, y_pred)
+print(f"Test accuracy (model from Vertex job): {acc:.3f}")</code></pre>
 <div class="section level3">
 <h3 id="when-training-takes-too-long">When training takes too long<a class="anchor" aria-label="anchor" href="#when-training-takes-too-long"></a></h3>
 <p>Two main options in Vertex AI:</p>
