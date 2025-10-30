@@ -49,7 +49,8 @@ Vertex AI’s managed models (`text-embedding-004`, `gemini-2.5-flash-001`) are 
 ## Step 1: Setup environment
 
 ```python
-!pip install --quiet --upgrade google-cloud-aiplatform google-cloud-storage vertexai pypdf scikit-learn pandas
+# !pip install --quiet --upgrade google-cloud-aiplatform google-cloud-storage vertexai pypdf scikit-learn pandas
+!pip install --quiet --upgrade pypdf
 ```
 
 **Cost note:** Installing packages is free; you're only billed for VM runtime.
@@ -77,8 +78,8 @@ print("Initialized:", PROJECT_ID, REGION)
 import zipfile, pathlib, re, pandas as pd
 from pypdf import PdfReader
 
-ZIP_PATH = pathlib.Path("Intro_GCP_VertexAI/data/pdfs_bundle.zip")
-DOC_DIR = pathlib.Path("./docs")
+ZIP_PATH = pathlib.Path("/home/jupyter/Intro_GCP_for_ML/data/pdfs_bundle.zip")
+DOC_DIR = pathlib.Path("/home/jupyter/docs")
 DOC_DIR.mkdir(exist_ok=True)
 
 # unzip
@@ -107,6 +108,26 @@ print(len(corpus_df), "chunks created")
 
 
 ## Step 3: Embed text using Vertex AI
+
+### Choosing an embedding model
+
+Vertex AI currently offers multiple managed embedding models under the **Text Embeddings API** family.  
+For this exercise, we’re using **`text-embedding-004`**, which is Google’s latest general-purpose model optimized for **semantic similarity**, **retrieval**, and **clustering** tasks.  
+
+**Why this model?**
+- Produces 768-dimensional dense vectors suitable for cosine or dot-product similarity.  
+- Handles long passages (up to ~8,000 tokens) and multilingual content.  
+- Tuned for retrieval tasks like RAG, document search, and clustering.  
+- Cost-efficient for classroom-scale workloads (fractions of a cent per document).  
+
+If you’d like to explore other options:
+- Open the [**Vertex AI Model Garden → Text Embeddings**](https://console.cloud.google.com/vertex-ai/model-garden?project=doit-rci-mlm25-4626&pageState=(%22galleryStateKey%22:(%22f%22:(%22g%22:%5B%22goals%22%5D,%22o%22:%5B%22Text%20embeddings%22%5D),%22s%22:%22%22))) in your GCP console.  
+- You’ll find specialized alternatives such as:
+  - **`text-embedding-005` (experimental)** – larger model, higher precision on longer documents.  
+  - **`multimodal-embedding-001`** – supports image + text embeddings for richer use cases.  
+  - **Third-party embeddings (via Model Garden)** – e.g., `bge-large-en`, `cohere-embed-v3`, `all-MiniLM`.  
+
+
 
 ```python
 from vertexai.language_models import TextEmbeddingModel
@@ -155,7 +176,7 @@ def retrieve(query):
 ```python
 from vertexai.generative_models import GenerativeModel
 
-gmodel = GenerativeModel("gemini-2.5-flash-001")
+gmodel = GenerativeModel("gemini-2.5-pro")
 
 def ask(query, top_k=5):
     hits = retrieve(query).head(top_k)
@@ -171,42 +192,7 @@ print(ask("What water usage (WUE) is reported for model training?"))
 To stay under $1 for the workshop, limit to short prompts and <100 queries.
 
 
-
-## Step 6: (Optional) Hugging Face local substitution
-
-To avoid managed API costs, you can install and run local models:
-
-```python
-!pip install --quiet sentence-transformers transformers accelerate bitsandbytes
-```
-
-```python
-from sentence_transformers import SentenceTransformer
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
-
-embedder = SentenceTransformer("all-MiniLM-L6-v2")
-local_embs = embedder.encode(corpus_df.text.tolist())
-
-tok = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-Instruct")
-mdl = AutoModelForCausalLM.from_pretrained("mistralai/Mistral-7B-Instruct", device_map="auto", load_in_4bit=True)
-
-pipe = pipeline("text-generation", model=mdl, tokenizer=tok)
-
-def local_answer(query):
-    hits = retrieve(query).head(3)
-    context = "\n\n".join([f"[{r.doc}] {r.text}" for _, r in hits.iterrows()])
-    prompt = f"Answer based only on this evidence:\n{context}\nQ: {query}\nA:"
-    return pipe(prompt, max_new_tokens=150)[0]["generated_text"]
-```
-
-**Trade-offs:**  
-- Hugging Face embeddings and generation are free but require powerful hardware.  
-- Vertex AI managed models cost less for small workloads and scale to large datasets automatically.  
-- No prebuilt “Hugging Face RAG” image exists on GCP; use `PyTorch` Workbench image and `pip install` as above.
-
-
-
-## Step 7: Cost summary
+## Step 6: Cost summary
 
 | Step | Resource | Example Component | Cost Driver | Typical Range |
 |------|-----------|-------------------|--------------|----------------|
@@ -217,6 +203,11 @@ def local_answer(query):
 | Hugging Face alt | T4 VM | Local model inference | GPU uptime | ~$0.35/hr + egress |
 
 
+## (Optional) Hugging Face local substitution
+
+To avoid managed API costs, you can instead using Hugging Face models. 
+
+```python
 
 ## Key takeaways
 
