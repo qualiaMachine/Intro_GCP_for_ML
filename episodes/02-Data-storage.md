@@ -53,7 +53,7 @@ For most ML workflows in GCP, **Google Cloud Storage (GCS) buckets** are recomme
 - **Easy sharing**: Buckets can be accessed by collaborators with the right IAM roles.  
 - **Integration with Vertex AI and BigQuery**: Read and write data directly using other GCP tools.  
 - **Scalability**: Handles datasets of any size without disk limits.  
-- **Cost efficiency**: Lower cost than persistent disks for long-term storage.  
+- **Cost efficiency**: Lower cost than persistent disks (VM storage) for long-term storage.  
 - **Data persistence**: Durable and highly available across regions.  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
