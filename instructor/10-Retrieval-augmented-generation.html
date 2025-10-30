@@ -303,8 +303,8 @@
 <li><a href="#step-3-embed-text-using-vertex-ai">Step 3: Embed text using Vertex AI</a></li>
 <li><a href="#step-4-retrieve-relevant-chunks">Step 4: Retrieve relevant chunks</a></li>
 <li><a href="#step-5-generate-answers-using-gemini">Step 5: Generate answers using Gemini</a></li>
-<li><a href="#step-6-optional-hugging-face-local-substitution">Step 6: (Optional) Hugging Face local substitution</a></li>
-<li><a href="#step-7-cost-summary">Step 7: Cost summary</a></li>
+<li><a href="#step-6-cost-summary">Step 6: Cost summary</a></li>
+<li><a href="#optional-hugging-face-local-substitution">(Optional) Hugging Face local substitution</a></li>
 <li><a href="#key-takeaways">Key takeaways</a></li>
         </ul></div><!--/div.accordion-body-->
     </div><!--/div.accordion-collapse-->
@@ -457,7 +457,8 @@ better for workshops or low-ops setups.</p>
 <hr class="half-width"><div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">--</span>quiet <span class="op">--</span>upgrade google<span class="op">-</span>cloud<span class="op">-</span>aiplatform google<span class="op">-</span>cloud<span class="op">-</span>storage vertexai pypdf scikit<span class="op">-</span>learn pandas</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># !pip install --quiet --upgrade google-cloud-aiplatform google-cloud-storage vertexai pypdf scikit-learn pandas</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">--</span>quiet <span class="op">--</span>upgrade pypdf</span></code></pre>
 </div>
 <p><strong>Cost note:</strong> Installing packages is free; you’re only
 billed for VM runtime.</p>
@@ -485,8 +486,8 @@ billed for VM runtime.</p>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="im">import</span> zipfile, pathlib, re, pandas <span class="im">as</span> pd</span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="im">from</span> pypdf <span class="im">import</span> PdfReader</span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>ZIP_PATH <span class="op">=</span> pathlib.Path(<span class="st">"Intro_GCP_VertexAI/data/pdfs_bundle.zip"</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>DOC_DIR <span class="op">=</span> pathlib.Path(<span class="st">"./docs"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>ZIP_PATH <span class="op">=</span> pathlib.Path(<span class="st">"/home/jupyter/Intro_GCP_for_ML/data/pdfs_bundle.zip"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>DOC_DIR <span class="op">=</span> pathlib.Path(<span class="st">"/home/jupyter/docs"</span>)</span>
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>DOC_DIR.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a></span>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co"># unzip</span></span>
@@ -512,7 +513,35 @@ billed for VM runtime.</p>
 <p><strong>Cost note:</strong> Only VM runtime applies. Chunk size
 affects future embedding cost.</p>
 </section><section><h2 class="section-heading" id="step-3-embed-text-using-vertex-ai">Step 3: Embed text using Vertex AI<a class="anchor" aria-label="anchor" href="#step-3-embed-text-using-vertex-ai"></a></h2>
-<hr class="half-width"><div class="codewrapper sourceCode" id="cb4">
+<hr class="half-width"><div class="section level3">
+<h3 id="choosing-an-embedding-model">Choosing an embedding model<a class="anchor" aria-label="anchor" href="#choosing-an-embedding-model"></a></h3>
+<p>Vertex AI currently offers multiple managed embedding models under
+the <strong>Text Embeddings API</strong> family.<br>
+For this exercise, we’re using
+<strong><code>text-embedding-004</code></strong>, which is Google’s
+latest general-purpose model optimized for <strong>semantic
+similarity</strong>, <strong>retrieval</strong>, and
+<strong>clustering</strong> tasks.</p>
+<p><strong>Why this model?</strong> - Produces 768-dimensional dense
+vectors suitable for cosine or dot-product similarity.<br>
+- Handles long passages (up to ~8,000 tokens) and multilingual
+content.<br>
+- Tuned for retrieval tasks like RAG, document search, and
+clustering.<br>
+- Cost-efficient for classroom-scale workloads (fractions of a cent per
+document).</p>
+<p>If you’d like to explore other options: - Open the <a href="https://console.cloud.google.com/vertex-ai/model-garden?project=doit-rci-mlm25-4626&amp;pageState=(%22galleryStateKey%22:(%22f%22:(%22g%22:%5B%22goals%22%5D,%22o%22:%5B%22Text%20embeddings%22%5D),%22s%22:%22%22))" class="external-link"><strong>Vertex
+AI Model Garden → Text Embeddings</strong></a> in your GCP
+console.<br>
+- You’ll find specialized alternatives such as: -
+<strong><code>text-embedding-005</code> (experimental)</strong> – larger
+model, higher precision on longer documents.<br>
+- <strong><code>multimodal-embedding-001</code></strong> – supports
+image + text embeddings for richer use cases.<br>
+- <strong>Third-party embeddings (via Model Garden)</strong> – e.g.,
+<code>bge-large-en</code>, <code>cohere-embed-v3</code>,
+<code>all-MiniLM</code>.</p>
+<div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="im">from</span> vertexai.language_models <span class="im">import</span> TextEmbeddingModel</span>
@@ -533,6 +562,7 @@ affects future embedding cost.</p>
 <p><strong>Cost note:</strong> This is the first paid step — roughly
 $0.0001–0.0002 per 1k tokens.<br>
 Cache embeddings locally or in GCS to avoid recharging later.</p>
+</div>
 </section><section><h2 class="section-heading" id="step-4-retrieve-relevant-chunks">Step 4: Retrieve relevant chunks<a class="anchor" aria-label="anchor" href="#step-4-retrieve-relevant-chunks"></a></h2>
 <hr class="half-width"><div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -557,7 +587,7 @@ new query triggers one embedding call.</p>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="im">from</span> vertexai.generative_models <span class="im">import</span> GenerativeModel</span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>gmodel <span class="op">=</span> GenerativeModel(<span class="st">"gemini-2.5-flash-001"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>gmodel <span class="op">=</span> GenerativeModel(<span class="st">"gemini-2.5-pro"</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a></span>
 <span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="kw">def</span> ask(query, top_k<span class="op">=</span><span class="dv">5</span>):</span>
 <span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>    hits <span class="op">=</span> retrieve(query).head(top_k)</span>
@@ -572,42 +602,7 @@ new query triggers one embedding call.</p>
 tokens and ~$0.0002 per 1k output tokens.<br>
 To stay under $1 for the workshop, limit to short prompts and &lt;100
 queries.</p>
-</section><section><h2 class="section-heading" id="step-6-optional-hugging-face-local-substitution">Step 6: (Optional) Hugging Face local substitution<a class="anchor" aria-label="anchor" href="#step-6-optional-hugging-face-local-substitution"></a></h2>
-<hr class="half-width"><p>To avoid managed API costs, you can install and run local models:</p>
-<div class="codewrapper sourceCode" id="cb7">
-<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">--</span>quiet sentence<span class="op">-</span>transformers transformers accelerate bitsandbytes</span></code></pre>
-</div>
-<div class="codewrapper sourceCode" id="cb8">
-<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="im">from</span> sentence_transformers <span class="im">import</span> SentenceTransformer</span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoTokenizer, AutoModelForCausalLM, pipeline</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>embedder <span class="op">=</span> SentenceTransformer(<span class="st">"all-MiniLM-L6-v2"</span>)</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>local_embs <span class="op">=</span> embedder.encode(corpus_df.text.tolist())</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>tok <span class="op">=</span> AutoTokenizer.from_pretrained(<span class="st">"mistralai/Mistral-7B-Instruct"</span>)</span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>mdl <span class="op">=</span> AutoModelForCausalLM.from_pretrained(<span class="st">"mistralai/Mistral-7B-Instruct"</span>, device_map<span class="op">=</span><span class="st">"auto"</span>, load_in_4bit<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>pipe <span class="op">=</span> pipeline(<span class="st">"text-generation"</span>, model<span class="op">=</span>mdl, tokenizer<span class="op">=</span>tok)</span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a></span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="kw">def</span> local_answer(query):</span>
-<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>    hits <span class="op">=</span> retrieve(query).head(<span class="dv">3</span>)</span>
-<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>    context <span class="op">=</span> <span class="st">"</span><span class="ch">\n\n</span><span class="st">"</span>.join([<span class="ss">f"[</span><span class="sc">{</span>r<span class="sc">.</span>doc<span class="sc">}</span><span class="ss">] </span><span class="sc">{</span>r<span class="sc">.</span>text<span class="sc">}</span><span class="ss">"</span> <span class="cf">for</span> _, r <span class="kw">in</span> hits.iterrows()])</span>
-<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a>    prompt <span class="op">=</span> <span class="ss">f"Answer based only on this evidence:</span><span class="ch">\n</span><span class="sc">{</span>context<span class="sc">}</span><span class="ch">\n</span><span class="ss">Q: </span><span class="sc">{</span>query<span class="sc">}</span><span class="ch">\n</span><span class="ss">A:"</span></span>
-<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>    <span class="cf">return</span> pipe(prompt, max_new_tokens<span class="op">=</span><span class="dv">150</span>)[<span class="dv">0</span>][<span class="st">"generated_text"</span>]</span></code></pre>
-</div>
-<p><strong>Trade-offs:</strong><br>
-- Hugging Face embeddings and generation are free but require powerful
-hardware.<br>
-- Vertex AI managed models cost less for small workloads and scale to
-large datasets automatically.<br>
-- No prebuilt “Hugging Face RAG” image exists on GCP; use
-<code>PyTorch</code> Workbench image and <code>pip install</code> as
-above.</p>
-</section><section><h2 class="section-heading" id="step-7-cost-summary">Step 7: Cost summary<a class="anchor" aria-label="anchor" href="#step-7-cost-summary"></a></h2>
+</section><section><h2 class="section-heading" id="step-6-cost-summary">Step 6: Cost summary<a class="anchor" aria-label="anchor" href="#step-6-cost-summary"></a></h2>
 <hr class="half-width"><table class="table"><colgroup><col width="9%"><col width="16%"><col width="28%"><col width="21%"><col width="24%"></colgroup><thead><tr class="header"><th>Step</th>
 <th>Resource</th>
 <th>Example Component</th>
@@ -638,7 +633,11 @@ above.</p>
 <td>Local model inference</td>
 <td>GPU uptime</td>
 <td>~$0.35/hr + egress</td>
-</tr></tbody></table></section><section><h2 class="section-heading" id="key-takeaways">Key takeaways<a class="anchor" aria-label="anchor" href="#key-takeaways"></a></h2>
+</tr></tbody></table></section><section><h2 class="section-heading" id="optional-hugging-face-local-substitution">(Optional) Hugging Face local substitution<a class="anchor" aria-label="anchor" href="#optional-hugging-face-local-substitution"></a></h2>
+<hr class="half-width"><p>To avoid managed API costs, you can instead using Hugging Face
+models.</p>
+<p>```python</p>
+</section><section><h2 class="section-heading" id="key-takeaways">Key takeaways<a class="anchor" aria-label="anchor" href="#key-takeaways"></a></h2>
 <hr class="half-width"><ul><li>Use <strong>Vertex AI managed embeddings</strong> and <strong>Gemini
 Flash</strong> for lightweight, cost-controlled RAG.</li>
 <li>Cache embeddings; reusing them saves most cost.</li>
