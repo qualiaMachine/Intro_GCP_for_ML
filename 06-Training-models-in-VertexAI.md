@@ -333,6 +333,38 @@ It contains everything your training script explicitly writes. In our case, this
 #### System-Generated Files
 Additional system-generated files (e.g., Vertex's `.tar.gz` code package or `executor_output.json`) will appear under `.vertex_staging/` and can be safely ignored or auto-deleted via lifecycle rules.
 
+## Evaluated the trained model stored on GCS
+
+```
+import io
+# Load test data directly into memory
+bucket = client.bucket(BUCKET_NAME)
+blob = bucket.blob("titanic_test.csv")
+test_df = pd.read_csv(io.BytesIO(blob.download_as_bytes()))
+
+
+# Apply same preprocessing logic used during training
+X_test, y_test = preprocess_data(test_df)
+
+# -------------------------
+# 4. Load the model artifact we just pulled from GCS
+# -------------------------
+MODEL_BLOB_PATH = f"artifacts/xgb/{RUN_ID}/model/xgboost-model"
+model_blob = bucket.blob(MODEL_BLOB_PATH)
+model_bytes = model_blob.download_as_bytes()
+model = joblib.load(io.BytesIO(model_bytes))
+
+# -------------------------
+# 5. Run predictions and compute accuracy
+# -------------------------
+dtest = xgb.DMatrix(X_test)
+y_pred_prob = model.predict(dtest)
+y_pred = (y_pred_prob >= 0.5).astype(int)
+
+acc = accuracy_score(y_test, y_pred)
+print(f"Test accuracy (model from Vertex job): {acc:.3f}")
+```
+
 ### When training takes too long  
 
 Two main options in Vertex AI:  
