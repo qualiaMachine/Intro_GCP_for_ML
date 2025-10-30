@@ -57,6 +57,11 @@ try:
         metric_value=val_loss,
         global_step=ep,
     )
+    # add a second metric to look at accuracy
+    ht.report_hyperparameter_tuning_metric(
+        hyperparameter_metric_tag="validation_accuracy",
+        metric_value=val_acc,
+        global_step=ep)
 except ImportError:
     pass
 
