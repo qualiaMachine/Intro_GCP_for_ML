@@ -135,6 +135,11 @@ print("Downloaded titanic_train.csv")
 - For larger models, use smaller model equivalents (e.g., 100M vs 7B params) when testing locally
 
 ```python
+# We need to add xgboost to our VM before running the script
+!pip install xgboost
+```
+
+```python
 import time as t
 
 start = t.time()
