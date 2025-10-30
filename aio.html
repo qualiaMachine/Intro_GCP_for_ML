@@ -1539,7 +1539,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1858,7 +1858,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2174,7 +2174,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -3462,7 +3462,7 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-08-Hyperparameter-tuning"><p>Content from <a href="08-Hyperparameter-tuning.html">Hyperparameter Tuning in Vertex AI: Neural Network Example</a></p>
 <hr>
-<p>Last updated on 2025-10-29 |
+<p>Last updated on 2025-10-30 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/08-Hyperparameter-tuning.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -3565,8 +3565,13 @@ Add the following right after computing <code>val_loss</code> and
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>        metric_value<span class="op">=</span>val_loss,</span>
 <span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>        global_step<span class="op">=</span>ep,</span>
 <span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>    )</span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ImportError</span>:</span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>    <span class="cf">pass</span></span></code></pre>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>    <span class="co"># add a second metric to look at accuracy</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>    ht.report_hyperparameter_tuning_metric(</span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>        hyperparameter_metric_tag<span class="op">=</span><span class="st">"validation_accuracy"</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>        metric_value<span class="op">=</span>val_acc,</span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>        global_step<span class="op">=</span>ep)</span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ImportError</span>:</span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>    <span class="cf">pass</span></span></code></pre>
 </div>
 <p>This ensures Vertex AI records the validation metric for each trial
 and can rank configurations by performance automatically.</p>
@@ -4472,8 +4477,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/aio.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/aio.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2025-10-29",
-  "datePublished": "2025-10-29"
+  "dateModified": "2025-10-30",
+  "datePublished": "2025-10-30"
 }
 
   </script><script>
