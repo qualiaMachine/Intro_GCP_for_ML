@@ -360,7 +360,7 @@ test</a></li>
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Training Models in Vertex AI: PyTorch Example</h1>
-        <p>Last updated on 2025-10-29 |
+        <p>Last updated on 2025-10-30 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/07-Training-models-in-VertexAI-GPUs.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -442,11 +442,12 @@ input/output data.</p>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>PROJECT_ID <span class="op">=</span> client.project</span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>REGION <span class="op">=</span> <span class="st">"us-central1"</span></span>
 <span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"sinkorswim-johndoe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"project = </span><span class="sc">{</span>PROJECT_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">region = </span><span class="sc">{</span>REGION<span class="sc">}</span><span class="ch">\n</span><span class="ss">bucket = </span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co"># initializes the Vertex AI environment with the correct project and location. Staging bucket is used for storing the compressed software that's packaged for training/tuning jobs.</span></span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>aiplatform.init(project<span class="op">=</span>PROJECT_ID, location<span class="op">=</span>REGION, staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/.vertex_staging"</span>) <span class="co"># store tar balls in staging folder </span></span></code></pre>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">'DOE'</span> <span class="co"># ADJUST to your last name. Since we're in a shared account envirnoment, this will help us track down jobs in the Console</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"project = </span><span class="sc">{</span>PROJECT_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">region = </span><span class="sc">{</span>REGION<span class="sc">}</span><span class="ch">\n</span><span class="ss">bucket = </span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co"># initializes the Vertex AI environment with the correct project and location. Staging bucket is used for storing the compressed software that's packaged for training/tuning jobs.</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>aiplatform.init(project<span class="op">=</span>PROJECT_ID, location<span class="op">=</span>REGION, staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/.vertex_staging"</span>) <span class="co"># store tar balls in staging folder </span></span></code></pre>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="prepare-data-as--npz">Prepare data as <code>.npz</code>
@@ -699,8 +700,8 @@ visiting: <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-co
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># init job (this does not consume any resources)</span></span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">'DOE'</span> <span class="co"># REPLACE with your last name. Since we're in a shared account envirnoment, this will help us track down jobs in the Console</span></span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_nn_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span> </span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_nn_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span> </span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="bu">print</span>(DISPLAY_NAME)</span>
 <span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a></span>
 <span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co"># init the job. This does not consume resources until we run job.run()</span></span>
 <span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
@@ -1031,7 +1032,7 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/07-Training-models-in-VertexAI-GPUs.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/07-Training-models-in-VertexAI-GPUs.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2025-10-29",
+  "dateModified": "2025-10-30",
   "datePublished": "2025-10-30"
 }
 
