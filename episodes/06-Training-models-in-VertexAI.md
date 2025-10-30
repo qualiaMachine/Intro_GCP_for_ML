@@ -233,7 +233,7 @@ aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCK
 This next section defines a custom training job in Vertex AI, specifying how and where the training code will run.  It points to your training script (`train_xgboost.py`), uses Google's prebuilt XGBoost training container image, and installs any extra dependencies your script needs (in this case, `google-cloud-storage` for accessing GCS).  The `display_name` sets a readable name for tracking the job in the Vertex AI console.
 
 #### Prebuilt containers for training
-Vertex AI provides prebuilt Docker container images for model training. These containers are organized by machine learning frameworks and framework versions and include common dependencies that you might want to use in your training code. To learn about which PyTorch versions have prebuilt training containers and how to train models with a prebuilt training container, see [Prebuilt containers for custom training](https://docs.cloud.google.com/vertex-ai/docs/predictions/pre-built-containers).
+Vertex AI provides prebuilt Docker container images for model training. These containers are organized by machine learning frameworks and framework versions and include common dependencies that you might want to use in your training code. To learn more about prebuilt training containers, see [Prebuilt containers for custom training](https://docs.cloud.google.com/vertex-ai/docs/training/pre-built-containers).
 
 ```python
 
