@@ -75,7 +75,7 @@ See: [Vertex AI Workbench release notes](https://cloud.google.com/vertex-ai/docs
 
 #### Advanced settings: Machine Type 
 
-- **Machine type**: Select a small machine (e.g., `e2-standard-2`) to act as the controller.  
+- **Machine type**: Select a small machine (e.g., `n2-standard-2`) to act as the controller.  
   - This keeps costs low while you delegate heavy lifting to training jobs.  
   - For guidance on common machine types for ML, refer to [Instances for ML on GCP](../instances-for-ML.html).
 
