@@ -254,7 +254,6 @@ job = aiplatform.CustomTrainingJob(
     display_name=f"endemann_xgb_{RUN_ID}",
     script_path="Intro_GCP_for_ML/scripts/train_xgboost.py",
     container_uri="us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest",
-    requirements=["google-cloud-storage"],  # Our train_xgboost.py script uses storage.Client(), which isn't included in the xgboost image. We add it here.
 )
 ```
 
@@ -271,11 +270,11 @@ If you need to cancel or modify a job mid-run, you can do so from the console or
 job.run(
     args=[
         f"--train=gs://{BUCKET_NAME}/titanic_train.csv",
-        "--max_depth=3",
-        "--eta=0.1",
-        "--subsample=0.8",
-        "--colsample_bytree=0.8",
-        "--num_round=100",
+        f"--max_depth={MAX_DEPTH}",
+        f"--eta={ETA}",
+        f"--subsample={SUBSAMPLE}",
+        f"--colsample_bytree={COLSAMPLE}",
+        f"--num_round={NUM_ROUND}",
     ],
     replica_count=1,
     machine_type=MACHINE, # MACHINE variable defined above; adjust to something more powerful when needed
@@ -284,7 +283,6 @@ job.run(
 )
 
 print("Model + logs folder:", ARTIFACT_DIR)
-
 ```
 
 This launches a managed training job with Vertex AI. It should take 2-5 minutes for the training job to complete. 
