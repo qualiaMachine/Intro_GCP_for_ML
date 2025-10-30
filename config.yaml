@@ -75,6 +75,7 @@ episodes:
 - 07-Training-models-in-VertexAI-GPUs.md
 - 08-Hyperparameter-tuning.md
 - 09-Resource-management-cleanup.md
+- 10-Retrieval-augmented-generation.md
 
 # Information for Learners
 learners: 
