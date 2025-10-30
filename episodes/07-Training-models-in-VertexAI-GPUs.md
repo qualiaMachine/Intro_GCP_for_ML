@@ -503,6 +503,17 @@ m.eval(); # set model to eval mode
 
 ```
 
+```python
+# get predictions
+with torch.no_grad():
+    probs = m(X_val_t).squeeze(1)         # [N], sigmoid outputs in (0,1)
+    preds_t = (probs >= 0.5).long()       # threshold at 0.5 -> class label 0/1
+    correct = (preds_t == y_val_t).sum().item()
+    acc = correct / y_val_t.shape[0]
+
+print(f"Vertex model val accuracy: {acc:.4f}")
+```
+
 GPU tips:
 - On small problems, GPU startup/transfer overhead can erase speedups—benchmark before you scale.
 - Stick to a single replica unless your batch sizes and dataset really warrant data parallelism.
