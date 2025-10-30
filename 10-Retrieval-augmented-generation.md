@@ -41,15 +41,13 @@ This approach powers sustainability-related projects like **WattBot**, which ext
 You can replace Google-managed APIs with open models such as:  
 - **Embeddings:** `sentence-transformers/all-MiniLM-L6-v2`, `BAAI/bge-large-en-v1.5`  
 - **Generators:** `google/gemma-2b-it`, `mistralai/Mistral-7B-Instruct`, or `tiiuae/falcon-7b-instruct`  
-However, this requires a GPU or large CPU VM (e.g., `n1-standard-8` + `T4`) and manual model management.  
-Vertex AI’s managed models (`text-embedding-004`, `gemini-2.5-flash-001`) are cost-optimized and scalable — better for workshops or low-ops setups.
+However, this requires a GPU or large CPU VM (e.g., `n1-standard-8` + `T4`) and manual model management. Rather than use a very expensive machine and GPU in Workbench, you can launch custom jobs that perform the embedding and generation steps. Start with a PyTorch image and add HuggingFace as a requirement.
 
 
 
 ## Step 1: Setup environment
 
 ```python
-# !pip install --quiet --upgrade google-cloud-aiplatform google-cloud-storage vertexai pypdf scikit-learn pandas
 !pip install --quiet --upgrade pypdf
 ```
 
