@@ -122,7 +122,7 @@ client = storage.Client()
 bucket = client.bucket(BUCKET_NAME)
 
 blob = bucket.blob("titanic_train.csv")
-blob.download_to_filename("titanic_train.csv")
+blob.download_to_filename("/home/jupyter/titanic_train.csv")
 
 print("Downloaded titanic_train.csv")
 ```
