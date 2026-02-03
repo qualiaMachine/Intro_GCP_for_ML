@@ -24,11 +24,11 @@ There are two ways to get access to GCP for this lesson. Please wait for a pre-w
 
 #### Option 1) Shared Google Cloud Project
 
-If you are attending this lesson as part of the **Machine Learning Marathon** or **Research Bazaar**, the instructors will provide access to a shared GCP project for all attendees. You do not need to set up your own account. The instructors will add you to a shared account.
+The instructors will provide access to a shared GCP project for all attendees. You do not need to set up your own account. The instructors will add you to a shared account.
 
 What to expect:
 
-* During the lesson, you will log in with your Google account credentials.  
+* During the lesson, you will log in with your Google account credentials and select our shared GCP project.  
 * This setup ensures that all participants have a consistent environment and avoids unexpected billing for attendees.  
 * Please use shared credits responsibly — they are limited and reused for future training events.  
   * Stay within the provided exercises and avoid launching additional compute-heavy workloads (e.g., training large language models).  
@@ -36,7 +36,7 @@ What to expect:
 
 #### Option 2) GCP Free Tier — Skip If Using Shared Project
 
-If you are attending this lesson as part of the Machine Learning Marathon or Research Bazaar, you can skip this step. Otherwise, please follow these instructions:
+If the instructors aren't providing a shared account environment, please follow these instructions:
 
 1. Go to the [GCP Free Tier page](https://cloud.google.com/free) and click **Get started for free**.  
 2. Complete the signup process. The Free Tier includes a $300 credit valid for 90 days and ongoing free usage for some smaller services.  
