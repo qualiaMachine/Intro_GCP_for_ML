@@ -270,7 +270,7 @@
 <li><a href="#training-via-vertex-ai-custom-training-job">Training via Vertex AI custom training job</a></li>
 <li><a href="#monitoring-training-jobs-in-the-console">Monitoring training jobs in the Console</a></li>
 <li><a href="#training-artifacts">Training artifacts</a></li>
-<li><a href="#evaluated-the-trained-model-stored-on-gcs">Evaluated the trained model stored on GCS</a></li>
+<li><a href="#evaluate-the-trained-model-stored-on-gcs">Evaluate the trained model stored on GCS</a></li>
         </ul></div><!--/div.accordion-body-->
     </div><!--/div.accordion-collapse-->
 
@@ -371,7 +371,7 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Training Models in Vertex AI: Intro</h1>
-        <p>Last updated on 2025-10-30 |
+        <p>Last updated on 2026-03-02 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/06-Training-models-in-VertexAI.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -428,7 +428,7 @@ to begin this notebook.</p>
 </div>
 <div class="section level4">
 <h4 id="cd-to-instance-home-directory">2. CD to instance home directory<a class="anchor" aria-label="anchor" href="#cd-to-instance-home-directory"></a></h4>
-<p>To ensure we’re all in the saming starting spot, change directory to
+<p>To ensure we’re all in the same starting spot, change directory to
 your Jupyter home directory.</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -470,7 +470,7 @@ version)</h3>
 <div class="callout-content">
 <p>Take a moment to review the <code>train_xgboost.py</code> script
 we’re using on GCP found in
-<code>Intro_GCP-for_ML/scripts/train_xgboost.py</code>. This script
+<code>Intro_GCP_for_ML/scripts/train_xgboost.py</code>. This script
 handles preprocessing, training, and saving an XGBoost model, while
 supporting local paths and GCS (<code>gs://</code>) paths, and it adapts
 to Vertex AI conventions (e.g., <code>AIP_MODEL_DIR</code>).</p>
@@ -505,7 +505,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>Data preprocessing</strong>: The script fills missing values
@@ -770,15 +770,15 @@ containers for custom training</a>.</p>
 <span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>)</span></code></pre>
 </div>
 <p>Finally, this next block launches the custom training job on Vertex
-AI using the configuration defined earlier. **We won’t be charged for
-our selected <code>MACHINE</code> until we run the below code using
-<code>job.run()</code>. This marks the point when our script actually
-begins executing remotely on the Vertex training infrastructure. Once
-job.run() is called, Vertex handles packaging your training script,
-transferring it to the managed training environment, provisioning the
-requested compute instance, and monitoring the run. The job’s status and
-logs can be viewed directly in the Vertex AI Console under Training →
-Custom jobs.</p>
+AI using the configuration defined earlier. <strong>We won’t be charged
+for our selected <code>MACHINE</code> until we run the below code using
+<code>job.run()</code>.</strong> This marks the point when our script
+actually begins executing remotely on the Vertex training
+infrastructure. Once <code>job.run()</code> is called, Vertex handles
+packaging your training script, transferring it to the managed training
+environment, provisioning the requested compute instance, and monitoring
+the run. The job’s status and logs can be viewed directly in the Vertex
+AI Console under Training → Custom jobs.</p>
 <p>If you need to cancel or modify a job mid-run, you can do so from the
 console or via the SDK by calling job.cancel(). When the job completes,
 Vertex automatically tears down the compute resources so you only pay
@@ -890,34 +890,38 @@ deployment.</li>
 will appear under <code>.vertex_staging/</code> and can be safely
 ignored or auto-deleted via lifecycle rules.</p>
 </div>
-</section><section><h2 class="section-heading" id="evaluated-the-trained-model-stored-on-gcs">Evaluated the trained model stored on GCS<a class="anchor" aria-label="anchor" href="#evaluated-the-trained-model-stored-on-gcs"></a></h2>
-<hr class="half-width"><pre><code>import io
-# Load test data directly into memory
-bucket = client.bucket(BUCKET_NAME)
-blob = bucket.blob("titanic_test.csv")
-test_df = pd.read_csv(io.BytesIO(blob.download_as_bytes()))
-
-
-# Apply same preprocessing logic used during training
-X_test, y_test = preprocess_data(test_df)
-
-# -------------------------
-# 4. Load the model artifact we just pulled from GCS
-# -------------------------
-MODEL_BLOB_PATH = f"artifacts/xgb/{RUN_ID}/model/xgboost-model"
-model_blob = bucket.blob(MODEL_BLOB_PATH)
-model_bytes = model_blob.download_as_bytes()
-model = joblib.load(io.BytesIO(model_bytes))
-
-# -------------------------
-# 5. Run predictions and compute accuracy
-# -------------------------
-dtest = xgb.DMatrix(X_test)
-y_pred_prob = model.predict(dtest)
-y_pred = (y_pred_prob &gt;= 0.5).astype(int)
-
-acc = accuracy_score(y_test, y_pred)
-print(f"Test accuracy (model from Vertex job): {acc:.3f}")</code></pre>
+</section><section><h2 class="section-heading" id="evaluate-the-trained-model-stored-on-gcs">Evaluate the trained model stored on GCS<a class="anchor" aria-label="anchor" href="#evaluate-the-trained-model-stored-on-gcs"></a></h2>
+<hr class="half-width"><div class="codewrapper sourceCode" id="cb13">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="im">import</span> io</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="co"># Load test data directly into memory</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(BUCKET_NAME)</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_test.csv"</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>test_df <span class="op">=</span> pd.read_csv(io.BytesIO(blob.download_as_bytes()))</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co"># Apply same preprocessing logic used during training</span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>X_test, y_test <span class="op">=</span> preprocess_data(test_df)</span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co"># -------------------------</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a><span class="co"># 4. Load the model artifact we just pulled from GCS</span></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co"># -------------------------</span></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a>MODEL_BLOB_PATH <span class="op">=</span> <span class="ss">f"artifacts/xgb/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">/model/xgboost-model"</span></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a>model_blob <span class="op">=</span> bucket.blob(MODEL_BLOB_PATH)</span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a>model_bytes <span class="op">=</span> model_blob.download_as_bytes()</span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a>model <span class="op">=</span> joblib.load(io.BytesIO(model_bytes))</span>
+<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a><span class="co"># -------------------------</span></span>
+<span id="cb13-20"><a href="#cb13-20" tabindex="-1"></a><span class="co"># 5. Run predictions and compute accuracy</span></span>
+<span id="cb13-21"><a href="#cb13-21" tabindex="-1"></a><span class="co"># -------------------------</span></span>
+<span id="cb13-22"><a href="#cb13-22" tabindex="-1"></a>dtest <span class="op">=</span> xgb.DMatrix(X_test)</span>
+<span id="cb13-23"><a href="#cb13-23" tabindex="-1"></a>y_pred_prob <span class="op">=</span> model.predict(dtest)</span>
+<span id="cb13-24"><a href="#cb13-24" tabindex="-1"></a>y_pred <span class="op">=</span> (y_pred_prob <span class="op">&gt;=</span> <span class="fl">0.5</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb13-25"><a href="#cb13-25" tabindex="-1"></a></span>
+<span id="cb13-26"><a href="#cb13-26" tabindex="-1"></a>acc <span class="op">=</span> accuracy_score(y_test, y_pred)</span>
+<span id="cb13-27"><a href="#cb13-27" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test accuracy (model from Vertex job): </span><span class="sc">{</span>acc<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre>
+</div>
 <div class="section level3">
 <h3 id="when-training-takes-too-long">When training takes too long<a class="anchor" aria-label="anchor" href="#when-training-takes-too-long"></a></h3>
 <p>Two main options in Vertex AI:</p>
@@ -1012,7 +1016,7 @@ any links that you are not going to use.
         <p>Materials licensed under <a href="LICENSE.html">CC-BY 4.0</a> by the authors</p>
 
         <p>Template licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" class="external-link">CC-BY 4.0</a> by <a href="https://carpentries.org/" class="external-link">The Carpentries</a></p>
-        <p>Built with <a href="https://github.com/carpentries/sandpaper/tree/0.18.5" class="external-link">sandpaper (0.18.5)</a>, <a href="https://github.com/carpentries/pegboard/tree/0.7.9" class="external-link">pegboard (0.7.9)</a>, and <a href="https://github.com/carpentries/varnish/tree/1.0.9" class="external-link">varnish (1.0.9)</a></p>
+        <p>Built with <a href="https://github.com/carpentries/sandpaper/tree/0.20.0" class="external-link">sandpaper (0.20.0)</a>, <a href="https://github.com/carpentries/pegboard/tree/0.7.9" class="external-link">pegboard (0.7.9)</a>, and <a href="https://github.com/carpentries/varnish/tree/1.0.9" class="external-link">varnish (1.0.9)</a></p>
 		</div>
 		</footer></div> <!-- / div.container -->
 	<div id="to-top">
@@ -1034,8 +1038,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/06-Training-models-in-VertexAI.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/06-Training-models-in-VertexAI.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2025-10-30",
-  "datePublished": "2026-02-24"
+  "dateModified": "2026-03-02",
+  "datePublished": "2026-03-02"
 }
 
   </script><script>

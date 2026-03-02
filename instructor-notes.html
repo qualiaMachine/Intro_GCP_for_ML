@@ -418,14 +418,169 @@
         <h1>Instructor Notes</h1>
         
 
-<p>This is a placeholder file. Please add content here.</p>
+<section><h2 class="section-heading" id="before-the-workshop">Before the Workshop<a class="anchor" aria-label="anchor" href="#before-the-workshop"></a>
+</h2>
+<hr class="half-width">
+<div class="section level3">
+<h3 id="account-setup-12-weeks-prior">Account setup (1–2 weeks prior)<a class="anchor" aria-label="anchor" href="#account-setup-12-weeks-prior"></a>
+</h3>
+<ul>
+<li>Confirm whether you are using a <strong>shared GCP project</strong>
+or asking learners to use <strong>Free Tier</strong> accounts.</li>
+<li>If using a shared project, add all learner Google accounts to the
+project with appropriate IAM roles (at minimum:
+<code>Vertex AI User</code>, <code>Storage Object Admin</code>,
+<code>Compute Viewer</code>).</li>
+<li>Verify GPU quota in the workshop region (<code>us-central1</code>).
+Request increases for <code>NVIDIA_TESLA_T4</code> if needed — quota
+requests can take 1–3 business days.</li>
+<li>Send a pre-workshop email with setup instructions (GitHub account,
+GCP access, data download).</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="test-run">Test run<a class="anchor" aria-label="anchor" href="#test-run"></a>
+</h3>
+<ul>
+<li>Walk through all episodes end-to-end on the shared project at least
+once. GCP UI changes frequently — confirm that screenshots and console
+paths still match.</li>
+<li>Verify that the Vertex AI prebuilt container URIs in episodes 06,
+07, and 08 are still available (container tags get deprecated).</li>
+<li>Confirm that <code>data.zip</code> and <code>pdfs_bundle.zip</code>
+download correctly from the GitHub repository.</li>
+</ul>
+</div>
+</section><section><h2 class="section-heading" id="during-the-workshop">During the Workshop<a class="anchor" aria-label="anchor" href="#during-the-workshop"></a>
+</h2>
+<hr class="half-width">
+<div class="section level3">
+<h3 id="pacing-and-timing">Pacing and timing<a class="anchor" aria-label="anchor" href="#pacing-and-timing"></a>
+</h3>
+<p>The lesson is designed for roughly <strong>4–5 hours</strong> of
+instruction. Suggested time allocation:</p>
+<table class="table">
+<colgroup>
+<col width="24%">
+<col width="56%">
+<col width="18%">
+</colgroup>
+<thead><tr class="header">
+<th>Episode</th>
+<th>Teaching + Exercises</th>
+<th>Notes</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>01 Introduction</td>
+<td>15 min</td>
+<td>Keep brief; learners are eager to get hands-on</td>
+</tr>
+<tr class="even">
+<td>02 Data Storage</td>
+<td>20 min</td>
+<td>First console interaction — go slowly</td>
+</tr>
+<tr class="odd">
+<td>03 Notebooks as Controllers</td>
+<td>30 min</td>
+<td>Expect VM creation to take 3–5 min; fill with discussion</td>
+</tr>
+<tr class="even">
+<td>04 Accessing Data</td>
+<td>30 min</td>
+<td>First notebook coding — check everyone can read from GCS</td>
+</tr>
+<tr class="odd">
+<td>05 GitHub PAT</td>
+<td>25 min</td>
+<td>Can be shortened or made optional if time is tight</td>
+</tr>
+<tr class="even">
+<td>06 Training (XGBoost)</td>
+<td>35 min</td>
+<td>Vertex AI job takes 2–5 min; use wait time for Q&amp;A</td>
+</tr>
+<tr class="odd">
+<td>07 Training (PyTorch + GPU)</td>
+<td>30 min</td>
+<td>GPU jobs may take longer; discuss CPU vs GPU during wait</td>
+</tr>
+<tr class="even">
+<td>08 Hyperparameter Tuning</td>
+<td>45 min</td>
+<td>Start with 1 trial; scale to more only if time allows</td>
+</tr>
+<tr class="odd">
+<td>09 Resource Cleanup</td>
+<td>30 min</td>
+<td>Critical — do not skip. Learners must clean up resources</td>
+</tr>
+<tr class="even">
+<td>10 RAG</td>
+<td>30 min</td>
+<td>Can be shortened to a demo if running behind</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="common-issues">Common issues<a class="anchor" aria-label="anchor" href="#common-issues"></a>
+</h3>
+<ul>
+<li>
+<strong>Bucket permission errors</strong>: The most common blocker.
+Have the <code>gcloud storage buckets add-iam-policy-binding</code>
+commands ready to paste into Cloud Shell.</li>
+<li>
+<strong>VM creation stuck</strong>: If a Workbench Instance gets
+stuck in “Provisioning” for &gt;5 min, try a different zone in the same
+region.</li>
+<li>
+<strong>GPU quota exceeded</strong>: If T4 quota is unavailable,
+fall back to CPU-only training for episodes 07–08. The lesson works
+without GPUs — it just takes longer.</li>
+<li>
+<strong>Numpy version mismatch</strong>: The PyTorch kernel
+sometimes has a numpy 2.x conflict. The fix
+(<code>pip install --upgrade --force-reinstall "numpy&lt;2"</code>) is
+included in episode 07.</li>
+<li>
+<strong>Idle shutdown confusion</strong>: Some learners may find
+their VM stopped mid-workshop. Remind them to increase idle timeout or
+restart the instance.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="tips">Tips<a class="anchor" aria-label="anchor" href="#tips"></a>
+</h3>
+<ul>
+<li>Encourage learners to <strong>add labels/tags to every
+resource</strong> from the start. This is easy to skip but essential for
+cost tracking in shared accounts.</li>
+<li>Remind learners that <strong>Vertex AI training jobs take 2–5
+minutes just for provisioning</strong> before training begins. This is
+normal, not an error.</li>
+<li>When walking through episode 09 (cleanup), verify as a group that no
+endpoints are left deployed and no VMs are still running.</li>
+<li>For the RAG episode, have a backup plan in case the Gemini API is
+temporarily rate-limited. You can demo from pre-computed outputs.</li>
+</ul>
+</div>
+</section><section><h2 class="section-heading" id="after-the-workshop">After the Workshop<a class="anchor" aria-label="anchor" href="#after-the-workshop"></a>
+</h2>
+<hr class="half-width">
+<ul>
+<li>Verify all shared project resources are cleaned up (notebooks
+stopped, endpoints deleted, buckets with only intentional data
+remaining).</li>
+<li>Review billing dashboard for any unexpected charges.</li>
+<li>Collect feedback from learners on pacing and difficulty level.</li>
+</ul>
 <!--
 Place links that you need to refer to multiple times across pages here. Delete
 any links that you are not going to use.
- -->
-
-
-      <section id="aggregate-instructor-notes"></section>
+ --></section><section id="aggregate-instructor-notes"></section>
 </div>
     </main>
 </div>
@@ -452,7 +607,7 @@ any links that you are not going to use.
         <p>Materials licensed under <a href="LICENSE.html">CC-BY 4.0</a> by the authors</p>
 
         <p>Template licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" class="external-link">CC-BY 4.0</a> by <a href="https://carpentries.org/" class="external-link">The Carpentries</a></p>
-        <p>Built with <a href="https://github.com/carpentries/sandpaper/tree/0.18.5" class="external-link">sandpaper (0.18.5)</a>, <a href="https://github.com/carpentries/pegboard/tree/0.7.9" class="external-link">pegboard (0.7.9)</a>, and <a href="https://github.com/carpentries/varnish/tree/1.0.9" class="external-link">varnish (1.0.9)</a></p>
+        <p>Built with <a href="https://github.com/carpentries/sandpaper/tree/0.20.0" class="external-link">sandpaper (0.20.0)</a>, <a href="https://github.com/carpentries/pegboard/tree/0.7.9" class="external-link">pegboard (0.7.9)</a>, and <a href="https://github.com/carpentries/varnish/tree/1.0.9" class="external-link">varnish (1.0.9)</a></p>
 		</div>
 		</footer>
 </div> <!-- / div.container -->
@@ -475,8 +630,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor-notes.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor-notes.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-02-24",
-  "datePublished": "2026-02-24"
+  "dateModified": "2026-03-02",
+  "datePublished": "2026-03-02"
 }
 
   </script><script>

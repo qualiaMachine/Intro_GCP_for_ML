@@ -600,7 +600,7 @@ any links that you are not going to use.
  -->
 </div></section><section id="aio-02-Data-storage"><p>Content from <a href="02-Data-storage.html">Data Storage: Setting up GCS</a></p>
 <hr>
-<p>Last updated on 2025-10-30 |
+<p>Last updated on 2026-03-02 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/02-Data-storage.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -804,7 +804,8 @@ you track your own costs!
 <ul>
 <li>
 <code>project = teamname</code> (your team’s name)</li>
-<li>`name = firstname-lastname’ (your name)</li>
+<li>
+<code>name = firstname-lastname</code> (your name)</li>
 <li>
 <code>purpose=bucket-dataname</code> (include bucket- prefix
 followed by name of dataset)</li>
@@ -957,16 +958,17 @@ will be used to access the data later.</p>
 <hr class="half-width">
 <p>Return to the Google Cloud Console (where we created our bucket and
 VM) and search for “Cloud Shell Editor”. Open a shell editor and run the
-below command, *replacing the bucket name with your bucket’s name`:</p>
+below command, <em>replacing the bucket name with your bucket’s
+name</em>:</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">SH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode sh" tabindex="0"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Grant read permisssions on the bucket</span></span>
+<pre class="sourceCode sh" tabindex="0"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Grant read permissions on the bucket</span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectViewer"</span></span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co"># Grant write permisssions on the bucket</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co"># Grant write permissions on the bucket</span></span>
 <span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
 <span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
 <span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectCreator"</span></span>
@@ -1067,7 +1069,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1195,7 +1197,7 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-03-Notebooks-as-controllers"><p>Content from <a href="03-Notebooks-as-controllers.html">Notebooks as Controllers</a></p>
 <hr>
-<p>Last updated on 2025-10-30 |
+<p>Last updated on 2026-03-02 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/03-Notebooks-as-controllers.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -1342,7 +1344,7 @@ workshop.</li>
 </h4>
 <ul>
 <li>
-<strong>IMPORTANT:</strong> Open the “Advanced optoins menu next
+<strong>IMPORTANT:</strong> Open the “Advanced options” menu next.
 <ul>
 <li>
 <strong>Labels (required for cost tracking):</strong> Under the
@@ -1536,7 +1538,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -1610,7 +1612,7 @@ any links that you are not going to use.
 </div>
 </section></section><section id="aio-04-Accessing-and-managing-data"><p>Content from <a href="04-Accessing-and-managing-data.html">Accessing and Managing Data in GCS with Vertex AI Notebooks</a></p>
 <hr>
-<p>Last updated on 2025-10-27 |
+<p>Last updated on 2026-03-02 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/04-Accessing-and-managing-data.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -1661,7 +1663,7 @@ bucket.</li>
 <h4 id="load-pre-filled-jupyter-notebooks">Load pre-filled Jupyter notebooks<a class="anchor" aria-label="anchor" href="#load-pre-filled-jupyter-notebooks"></a>
 </h4>
 <p>If you haven’t opened your newly created VM from the last episode
-yet, lick <strong>Open JupyterLab</strong> to open the instance in
+yet, click <strong>Open JupyterLab</strong> to open the instance in
 Jupyter Lab. From there, we can create as many Jupyter notebooks as we
 would like within the instance environment.</p>
 <p>We will then select the standard python3 environment to start our
@@ -1719,17 +1721,17 @@ from GCS into memory</em>.</p>
 </div>
 <p>If you get an error, return to the Google Cloud Console (where we
 created our bucket and VM) and search for “Cloud Shell Editor”. Open a
-shell editor and run the below commands, *replacing the bucket name with
-your bucket’s name`:</p>
+shell editor and run the below commands, <em>replacing the bucket name
+with your bucket’s name</em>:</p>
 <div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">SH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode sh" tabindex="0"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Grant read permisssions on the bucket</span></span>
+<pre class="sourceCode sh" tabindex="0"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Grant read permissions on the bucket</span></span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectViewer"</span></span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># Grant write permisssions on the bucket</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># Grant write permissions on the bucket</span></span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
 <span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectCreator"</span></span>
@@ -2214,7 +2216,7 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-06-Training-models-in-VertexAI"><p>Content from <a href="06-Training-models-in-VertexAI.html">Training Models in Vertex AI: Intro</a></p>
 <hr>
-<p>Last updated on 2025-10-30 |
+<p>Last updated on 2026-03-02 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/06-Training-models-in-VertexAI.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -2277,7 +2279,7 @@ to begin this notebook.</p>
 <div class="section level4">
 <h4 id="cd-to-instance-home-directory">2. CD to instance home directory<a class="anchor" aria-label="anchor" href="#cd-to-instance-home-directory"></a>
 </h4>
-<p>To ensure we’re all in the saming starting spot, change directory to
+<p>To ensure we’re all in the same starting spot, change directory to
 your Jupyter home directory.</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -2325,7 +2327,7 @@ version)</h3>
 <div class="callout-content">
 <p>Take a moment to review the <code>train_xgboost.py</code> script
 we’re using on GCP found in
-<code>Intro_GCP-for_ML/scripts/train_xgboost.py</code>. This script
+<code>Intro_GCP_for_ML/scripts/train_xgboost.py</code>. This script
 handles preprocessing, training, and saving an XGBoost model, while
 supporting local paths and GCS (<code>gs://</code>) paths, and it adapts
 to Vertex AI conventions (e.g., <code>AIP_MODEL_DIR</code>).</p>
@@ -2362,7 +2364,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -2661,15 +2663,15 @@ containers for custom training</a>.</p>
 <span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>)</span></code></pre>
 </div>
 <p>Finally, this next block launches the custom training job on Vertex
-AI using the configuration defined earlier. **We won’t be charged for
-our selected <code>MACHINE</code> until we run the below code using
-<code>job.run()</code>. This marks the point when our script actually
-begins executing remotely on the Vertex training infrastructure. Once
-job.run() is called, Vertex handles packaging your training script,
-transferring it to the managed training environment, provisioning the
-requested compute instance, and monitoring the run. The job’s status and
-logs can be viewed directly in the Vertex AI Console under Training →
-Custom jobs.</p>
+AI using the configuration defined earlier. <strong>We won’t be charged
+for our selected <code>MACHINE</code> until we run the below code using
+<code>job.run()</code>.</strong> This marks the point when our script
+actually begins executing remotely on the Vertex training
+infrastructure. Once <code>job.run()</code> is called, Vertex handles
+packaging your training script, transferring it to the managed training
+environment, provisioning the requested compute instance, and monitoring
+the run. The job’s status and logs can be viewed directly in the Vertex
+AI Console under Training → Custom jobs.</p>
 <p>If you need to cancel or modify a job mid-run, you can do so from the
 console or via the SDK by calling job.cancel(). When the job completes,
 Vertex automatically tears down the compute resources so you only pay
@@ -2801,36 +2803,40 @@ deployment.</li>
 will appear under <code>.vertex_staging/</code> and can be safely
 ignored or auto-deleted via lifecycle rules.</p>
 </div>
-</section><section><h2 class="section-heading" id="evaluated-the-trained-model-stored-on-gcs">Evaluated the trained model stored on GCS<a class="anchor" aria-label="anchor" href="#evaluated-the-trained-model-stored-on-gcs"></a>
+</section><section><h2 class="section-heading" id="evaluate-the-trained-model-stored-on-gcs">Evaluate the trained model stored on GCS<a class="anchor" aria-label="anchor" href="#evaluate-the-trained-model-stored-on-gcs"></a>
 </h2>
 <hr class="half-width">
-<pre><code>import io
-# Load test data directly into memory
-bucket = client.bucket(BUCKET_NAME)
-blob = bucket.blob("titanic_test.csv")
-test_df = pd.read_csv(io.BytesIO(blob.download_as_bytes()))
-
-
-# Apply same preprocessing logic used during training
-X_test, y_test = preprocess_data(test_df)
-
-# -------------------------
-# 4. Load the model artifact we just pulled from GCS
-# -------------------------
-MODEL_BLOB_PATH = f"artifacts/xgb/{RUN_ID}/model/xgboost-model"
-model_blob = bucket.blob(MODEL_BLOB_PATH)
-model_bytes = model_blob.download_as_bytes()
-model = joblib.load(io.BytesIO(model_bytes))
-
-# -------------------------
-# 5. Run predictions and compute accuracy
-# -------------------------
-dtest = xgb.DMatrix(X_test)
-y_pred_prob = model.predict(dtest)
-y_pred = (y_pred_prob &gt;= 0.5).astype(int)
-
-acc = accuracy_score(y_test, y_pred)
-print(f"Test accuracy (model from Vertex job): {acc:.3f}")</code></pre>
+<div class="codewrapper sourceCode" id="cb13">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="im">import</span> io</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="co"># Load test data directly into memory</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(BUCKET_NAME)</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_test.csv"</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>test_df <span class="op">=</span> pd.read_csv(io.BytesIO(blob.download_as_bytes()))</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co"># Apply same preprocessing logic used during training</span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>X_test, y_test <span class="op">=</span> preprocess_data(test_df)</span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co"># -------------------------</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a><span class="co"># 4. Load the model artifact we just pulled from GCS</span></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co"># -------------------------</span></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a>MODEL_BLOB_PATH <span class="op">=</span> <span class="ss">f"artifacts/xgb/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">/model/xgboost-model"</span></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a>model_blob <span class="op">=</span> bucket.blob(MODEL_BLOB_PATH)</span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a>model_bytes <span class="op">=</span> model_blob.download_as_bytes()</span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a>model <span class="op">=</span> joblib.load(io.BytesIO(model_bytes))</span>
+<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a><span class="co"># -------------------------</span></span>
+<span id="cb13-20"><a href="#cb13-20" tabindex="-1"></a><span class="co"># 5. Run predictions and compute accuracy</span></span>
+<span id="cb13-21"><a href="#cb13-21" tabindex="-1"></a><span class="co"># -------------------------</span></span>
+<span id="cb13-22"><a href="#cb13-22" tabindex="-1"></a>dtest <span class="op">=</span> xgb.DMatrix(X_test)</span>
+<span id="cb13-23"><a href="#cb13-23" tabindex="-1"></a>y_pred_prob <span class="op">=</span> model.predict(dtest)</span>
+<span id="cb13-24"><a href="#cb13-24" tabindex="-1"></a>y_pred <span class="op">=</span> (y_pred_prob <span class="op">&gt;=</span> <span class="fl">0.5</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb13-25"><a href="#cb13-25" tabindex="-1"></a></span>
+<span id="cb13-26"><a href="#cb13-26" tabindex="-1"></a>acc <span class="op">=</span> accuracy_score(y_test, y_pred)</span>
+<span id="cb13-27"><a href="#cb13-27" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test accuracy (model from Vertex job): </span><span class="sc">{</span>acc<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre>
+</div>
 <div class="section level3">
 <h3 id="when-training-takes-too-long">When training takes too long<a class="anchor" aria-label="anchor" href="#when-training-takes-too-long"></a>
 </h3>
@@ -2896,7 +2902,7 @@ any links that you are not going to use.
 </div>
 </section></section><section id="aio-07-Training-models-in-VertexAI-GPUs"><p>Content from <a href="07-Training-models-in-VertexAI-GPUs.html">Training Models in Vertex AI: PyTorch Example</a></p>
 <hr>
-<p>Last updated on 2025-10-30 |
+<p>Last updated on 2026-03-02 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/07-Training-models-in-VertexAI-GPUs.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -2959,7 +2965,7 @@ it brings its own framework at run time.</p>
 <div class="section level4">
 <h4 id="cd-to-instance-home-directory">2. CD to instance home directory<a class="anchor" aria-label="anchor" href="#cd-to-instance-home-directory"></a>
 </h4>
-<p>To ensure we’re all in the saming starting spot, change directory to
+<p>To ensure we’re all in the same starting spot, change directory to
 your Jupyter home directory.</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -2981,7 +2987,7 @@ input/output data.</p>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>PROJECT_ID <span class="op">=</span> client.project</span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>REGION <span class="op">=</span> <span class="st">"us-central1"</span></span>
 <span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"sinkorswim-johndoe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">'DOE'</span> <span class="co"># ADJUST to your last name. Since we're in a shared account envirnoment, this will help us track down jobs in the Console</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">'DOE'</span> <span class="co"># ADJUST to your last name. Since we're in a shared account environment, this will help us track down jobs in the Console</span></span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a></span>
 <span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"project = </span><span class="sc">{</span>PROJECT_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">region = </span><span class="sc">{</span>REGION<span class="sc">}</span><span class="ch">\n</span><span class="ss">bucket = </span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span>
 <span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a></span>
@@ -3345,7 +3351,7 @@ reproducibility and debugging.</li>
 <div class="section level3">
 <h3 id="evaluate-the-vertex-trained-model-on-the-validation-data">Evaluate the Vertex-trained model on the validation data<a class="anchor" aria-label="anchor" href="#evaluate-the-vertex-trained-model-on-the-validation-data"></a>
 </h3>
-<p>We can check out work to see if this model gives the same result as
+<p>We can check our work to see if this model gives the same result as
 our “locally” trained model above.</p>
 <p>To follow best practices, we will simply load this model into memory
 from GCS.</p>
@@ -3609,7 +3615,7 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-08-Hyperparameter-tuning"><p>Content from <a href="08-Hyperparameter-tuning.html">Hyperparameter Tuning in Vertex AI: Neural Network Example</a></p>
 <hr>
-<p>Last updated on 2025-10-30 |
+<p>Last updated on 2026-03-02 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/08-Hyperparameter-tuning.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -3703,7 +3709,7 @@ Add the following right after computing <code>val_loss</code> and
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Eenable Vertex HPT metric reporting </span></span>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Enable Vertex HPT metric reporting</span></span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="cf">try</span>:</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>    <span class="co"># cloudml-hypertune is installed on Vertex AI workers; on local it might not be.</span></span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>    <span class="im">from</span> hypertune <span class="im">import</span> HyperTune</span>
@@ -3876,8 +3882,9 @@ WITH 1 trial</strong> before scaling up
 </h4>
 <p>Open <strong>Vertex AI → Training → Hyperparameter tuning
 jobs</strong> to track trials, parameters, and metrics. You can also
-stop jobs from the console if needed. For MLM25, the folllowing link
-should work: <a href="%5Bhttps://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&amp;project=doit-rci-mlm25-4626%5D" class="external-link">https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&amp;project=doit-rci-mlm25-4626</a>.</p>
+stop jobs from the console if needed. For MLM25, the following link
+should work: <a href="https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link">Hyperparameter
+tuning jobs</a>.</p>
 </div>
 <div class="section level4">
 <h4 id="inspect-best-trial-results">7. Inspect best trial results<a class="anchor" aria-label="anchor" href="#inspect-best-trial-results"></a>
@@ -4572,7 +4579,7 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-10-Retrieval-augmented-generation"><p>Content from <a href="10-Retrieval-augmented-generation.html">Retrieval-Augmented Generation (RAG) with Vertex AI</a></p>
 <hr>
-<p>Last updated on 2025-10-30 |
+<p>Last updated on 2026-03-02 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/10-Retrieval-augmented-generation.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -4714,9 +4721,8 @@ billed for VM runtime.</p>
 <span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>    <span class="cf">for</span> i, chunk <span class="kw">in</span> <span class="bu">enumerate</span>(chunk_text(re.sub(<span class="vs">r"\s+"</span>, <span class="st">" "</span>, txt))):</span>
 <span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>        rows.append({<span class="st">"doc"</span>: pdf.name, <span class="st">"chunk_id"</span>: i, <span class="st">"text"</span>: chunk})</span>
 <span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>corpus_df <span class="op">=</span> pd.DataFrame(rows)</span>
-<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(corpus_df), <span class="st">"chunks created"</span>)</span></code></pre>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>corpus_df <span class="op">=</span> pd.DataFrame(rows)</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">len</span>(corpus_df), <span class="st">"chunks created"</span>)</span></code></pre>
 </div>
 <p><strong>Cost note:</strong> Only VM runtime applies. Chunk size
 affects future embedding cost.</p>
@@ -4919,7 +4925,7 @@ image + text embeddings for richer use cases.<br>
 <span id="cb7-42"><a href="#cb7-42" tabindex="-1"></a>    <span class="cf">return</span> response.text</span></code></pre>
 </div>
 </div>
-</section><section><h2 class="section-heading" id="step-5-generate-answers-using-gemini">Step 5: Generate answers using Gemini<a class="anchor" aria-label="anchor" href="#step-5-generate-answers-using-gemini"></a>
+</section><section><h2 class="section-heading" id="step-4-generate-answers-using-gemini">Step 4: Generate answers using Gemini<a class="anchor" aria-label="anchor" href="#step-4-generate-answers-using-gemini"></a>
 </h2>
 <hr class="half-width">
 <div class="codewrapper sourceCode" id="cb8">
@@ -4938,7 +4944,7 @@ image + text embeddings for richer use cases.<br>
 <span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>)</span>
 <span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co"># Expected answer: "ML.ENERGY Benchmark"</span></span></code></pre>
 </div>
-</section><section><h2 class="section-heading" id="step-6-cost-summary">Step 6: Cost summary<a class="anchor" aria-label="anchor" href="#step-6-cost-summary"></a>
+</section><section><h2 class="section-heading" id="step-5-cost-summary">Step 5: Cost summary<a class="anchor" aria-label="anchor" href="#step-5-cost-summary"></a>
 </h2>
 <hr class="half-width">
 <table class="table">
@@ -4996,9 +5002,10 @@ image + text embeddings for richer use cases.<br>
 </table></section><section><h2 class="section-heading" id="optional-hugging-face-local-substitution">(Optional) Hugging Face local substitution<a class="anchor" aria-label="anchor" href="#optional-hugging-face-local-substitution"></a>
 </h2>
 <hr class="half-width">
-<p>To avoid managed API costs, you can instead using Hugging Face
-models.</p>
-<p>```python</p>
+<p>To avoid managed API costs, you can use Hugging Face models instead.
+This section is left as an exercise — refer to the Hugging Face
+alternatives listed at the top of this episode for model
+suggestions.</p>
 </section><section><h2 class="section-heading" id="key-takeaways">Key takeaways<a class="anchor" aria-label="anchor" href="#key-takeaways"></a>
 </h2>
 <hr class="half-width">
@@ -5064,7 +5071,7 @@ any links that you are not going to use.
         <p>Materials licensed under <a href="LICENSE.html">CC-BY 4.0</a> by the authors</p>
 
         <p>Template licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" class="external-link">CC-BY 4.0</a> by <a href="https://carpentries.org/" class="external-link">The Carpentries</a></p>
-        <p>Built with <a href="https://github.com/carpentries/sandpaper/tree/0.18.5" class="external-link">sandpaper (0.18.5)</a>, <a href="https://github.com/carpentries/pegboard/tree/0.7.9" class="external-link">pegboard (0.7.9)</a>, and <a href="https://github.com/carpentries/varnish/tree/1.0.9" class="external-link">varnish (1.0.9)</a></p>
+        <p>Built with <a href="https://github.com/carpentries/sandpaper/tree/0.20.0" class="external-link">sandpaper (0.20.0)</a>, <a href="https://github.com/carpentries/pegboard/tree/0.7.9" class="external-link">pegboard (0.7.9)</a>, and <a href="https://github.com/carpentries/varnish/tree/1.0.9" class="external-link">varnish (1.0.9)</a></p>
 		</div>
 		</footer>
 </div> <!-- / div.container -->
@@ -5087,8 +5094,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/aio.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/aio.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-02-24",
-  "datePublished": "2026-02-24"
+  "dateModified": "2026-03-02",
+  "datePublished": "2026-03-02"
 }
 
   </script><script>

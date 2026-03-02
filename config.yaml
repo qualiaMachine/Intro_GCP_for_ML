@@ -40,7 +40,7 @@ source: 'https://github.com/qualiaMachine/Intro_GCP_VertexAI'
 branch: 'main'
 
 # Who to contact if there are any issues
-contact: 'endemann@wisc.edu' # FIXME
+contact: 'endemann@wisc.edu'
 
 # Navigation ------------------------------------------------
 #
