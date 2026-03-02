@@ -96,7 +96,6 @@ for pdf in DOC_DIR.glob("*.pdf"):
     for i, chunk in enumerate(chunk_text(re.sub(r"\s+", " ", txt))):
         rows.append({"doc": pdf.name, "chunk_id": i, "text": chunk})
 
-import pandas as pd
 corpus_df = pd.DataFrame(rows)
 print(len(corpus_df), "chunks created")
 ```
@@ -293,7 +292,7 @@ def ask(query, top_k=5, temperature=0.2):
 
 ```
 
-## Step 5: Generate answers using Gemini
+## Step 4: Generate answers using Gemini
 
 ```python
 
@@ -312,7 +311,7 @@ print(
 ```
 
 
-## Step 6: Cost summary
+## Step 5: Cost summary
 
 | Step | Resource | Example Component | Cost Driver | Typical Range |
 |------|-----------|-------------------|--------------|----------------|
@@ -325,9 +324,7 @@ print(
 
 ## (Optional) Hugging Face local substitution
 
-To avoid managed API costs, you can instead using Hugging Face models. 
-
-```python
+To avoid managed API costs, you can use Hugging Face models instead. This section is left as an exercise — refer to the Hugging Face alternatives listed at the top of this episode for model suggestions.
 
 ## Key takeaways
 

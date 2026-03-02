@@ -57,7 +57,7 @@ We will follow these steps to create our first Workbench Instance:
 
 #### Advanced settings: Details (tagging)
 
-- **IMPORTANT:** Open the "Advanced optoins menu next
+- **IMPORTANT:** Open the "Advanced options" menu next.
   -  **Labels (required for cost tracking):**  Under the Details menu, add the following tags (all lowercase) so that you can track the total cost of your activity on GCP later:
       - `project = teamname` (your team's name)
       - `name = name` (firstname-lastname)
