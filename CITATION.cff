@@ -1,11 +1,11 @@
-# This template CITATION.cff file was generated with cffinit.
+# This CITATION.cff file was generated with cffinit.
 # Visit https://bit.ly/cffinit to replace its contents
 # with information about your lesson.
-# Remember to update this file periodically, 
+# Remember to update this file periodically,
 # ensuring that the author list and other fields remain accurate.
 
 cff-version: 1.2.0
-title: FIXME
+title: 'Intro to Google Cloud Platform (GCP) for Machine Learning'
 message: >-
   Please cite this lesson using the information in this file
   when you refer to it in publications, and/or if you
@@ -13,10 +13,18 @@ message: >-
   training material.
 type: dataset
 authors:
-  - given-names: FIXME
-    family-names: FIXME
+  - given-names: Chris
+    family-names: Endemann
+    email: endemann@wisc.edu
+    affiliation: University of Wisconsin-Madison
 abstract: >-
-  FIXME Replace this with a short abstract describing the
-  lesson, e.g. its target audience and main intended
-  learning objectives.
+  This workshop teaches core workflows for building, training,
+  and tuning ML/AI models in Google Cloud's Vertex AI platform.
+  Participants learn to set up data storage, configure Vertex AI
+  Workbench notebooks as lightweight controllers, launch training
+  and hyperparameter tuning jobs, and optimize resource costs
+  effectively within GCP. The workshop also covers building
+  retrieval-augmented generation (RAG) pipelines using Gemini models.
+  Target audience: researchers and data scientists with basic Python
+  and ML knowledge who want to run ML experiments on cloud infrastructure.
 license: CC-BY-4.0

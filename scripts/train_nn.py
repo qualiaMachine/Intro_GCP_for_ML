@@ -137,7 +137,7 @@ def main():
     sys.stdout = _Tee(sys.stdout, log_buf)
     sys.stderr = _Tee(sys.stderr, log_buf)
 
-    # Eenable Vertex HPT metric reporting 
+    # Enable Vertex HPT metric reporting
     try:
         # cloudml-hypertune is installed on Vertex AI workers; on local it might not be.
         from hypertune import HyperTune
