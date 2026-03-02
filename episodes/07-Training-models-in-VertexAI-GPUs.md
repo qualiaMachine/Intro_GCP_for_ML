@@ -26,7 +26,7 @@ exercises: 10
 Navigate to `/Intro_GCP_for_ML/notebooks/06-Training-models-in-VertexAI-GPUs.ipynb` to begin this notebook. Select the *PyTorch* environment (kernel) Local PyTorch is only needed for local tests. Your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
 
 #### 2. CD to instance home directory
-To ensure we're all in the saming starting spot, change directory to your Jupyter home directory.
+To ensure we're all in the same starting spot, change directory to your Jupyter home directory.
 
 ```python
 %cd /home/jupyter/
@@ -41,7 +41,7 @@ client = storage.Client()
 PROJECT_ID = client.project
 REGION = "us-central1"
 BUCKET_NAME = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
-LAST_NAME = 'DOE' # ADJUST to your last name. Since we're in a shared account envirnoment, this will help us track down jobs in the Console
+LAST_NAME = 'DOE' # ADJUST to your last name. Since we're in a shared account environment, this will help us track down jobs in the Console
 
 print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 
@@ -317,7 +317,7 @@ print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
 
 ### Evaluate the Vertex-trained model on the validation data
 
-We can check out work to see if this model gives the same result as our "locally" trained model above. 
+We can check our work to see if this model gives the same result as our "locally" trained model above.
 
 To follow best practices, we will simply load this model into memory from GCS.
 

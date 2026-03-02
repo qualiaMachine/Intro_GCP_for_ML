@@ -28,7 +28,7 @@ exercises: 2
 Navigate to `/Intro_GCP_for_ML/notebooks/06-Training-models-in-VertexAI.ipynb` to begin this notebook.
 
 #### 2. CD to instance home directory
-To ensure we're all in the saming starting spot, change directory to your Jupyter home directory.
+To ensure we're all in the same starting spot, change directory to your Jupyter home directory.
 
 ```python
 %cd /home/jupyter/
@@ -56,7 +56,7 @@ print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 
 ### Understanding the XGBoost Training Script (GCP version)
 
-Take a moment to review the `train_xgboost.py` script we're using on GCP found in `Intro_GCP-for_ML/scripts/train_xgboost.py`. This script handles preprocessing, training, and saving an XGBoost model, while supporting local paths and GCS (`gs://`) paths, and it adapts to Vertex AI conventions (e.g., `AIP_MODEL_DIR`).
+Take a moment to review the `train_xgboost.py` script we're using on GCP found in `Intro_GCP_for_ML/scripts/train_xgboost.py`. This script handles preprocessing, training, and saving an XGBoost model, while supporting local paths and GCS (`gs://`) paths, and it adapts to Vertex AI conventions (e.g., `AIP_MODEL_DIR`).
 
 Try answering the following questions:
 
@@ -257,7 +257,7 @@ job = aiplatform.CustomTrainingJob(
 )
 ```
 
-Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier. **We won't be charged for our selected `MACHINE` until we run the below code using `job.run()`. This marks the point when our script actually begins executing remotely on the Vertex training infrastructure. Once job.run() is called, Vertex handles packaging your training script, transferring it to the managed training environment, provisioning the requested compute instance, and monitoring the run. The job's status and logs can be viewed directly in the Vertex AI Console under Training → Custom jobs.
+Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier. **We won't be charged for our selected `MACHINE` until we run the below code using `job.run()`.** This marks the point when our script actually begins executing remotely on the Vertex training infrastructure. Once `job.run()` is called, Vertex handles packaging your training script, transferring it to the managed training environment, provisioning the requested compute instance, and monitoring the run. The job's status and logs can be viewed directly in the Vertex AI Console under Training → Custom jobs.
 
 If you need to cancel or modify a job mid-run, you can do so from the console or via the SDK by calling job.cancel(). When the job completes, Vertex automatically tears down the compute resources so you only pay for the active training time.
 
@@ -333,9 +333,9 @@ It contains everything your training script explicitly writes. In our case, this
 #### System-Generated Files
 Additional system-generated files (e.g., Vertex's `.tar.gz` code package or `executor_output.json`) will appear under `.vertex_staging/` and can be safely ignored or auto-deleted via lifecycle rules.
 
-## Evaluated the trained model stored on GCS
+## Evaluate the trained model stored on GCS
 
-```
+```python
 import io
 # Load test data directly into memory
 bucket = client.bucket(BUCKET_NAME)

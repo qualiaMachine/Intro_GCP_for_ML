@@ -48,7 +48,7 @@ Your training script (`train_nn.py`) should report validation metrics in a way V
 Add the following right after computing `val_loss` and `val_acc` inside your epoch loop:
 
 ```python
-# Eenable Vertex HPT metric reporting 
+# Enable Vertex HPT metric reporting
 try:
     # cloudml-hypertune is installed on Vertex AI workers; on local it might not be.
     from hypertune import HyperTune
@@ -174,7 +174,7 @@ print("HPT artifacts base:", ARTIFACT_DIR)
 ```
 
 #### 6. Monitor tuning job
-Open **Vertex AI → Training → Hyperparameter tuning jobs** to track trials, parameters, and metrics. You can also stop jobs from the console if needed. For MLM25, the folllowing link should work: [https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&project=doit-rci-mlm25-4626]([https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&project=doit-rci-mlm25-4626]).
+Open **Vertex AI → Training → Hyperparameter tuning jobs** to track trials, parameters, and metrics. You can also stop jobs from the console if needed. For MLM25, the following link should work: [Hyperparameter tuning jobs](https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&project=doit-rci-mlm25-4626).
 
 #### 7. Inspect best trial results
 After completion, look up the best configuration and objective value from the SDK:

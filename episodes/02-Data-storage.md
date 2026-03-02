@@ -81,7 +81,7 @@ To upload our Titanic dataset to a GCS bucket, we'll follow these steps:
 - **Provide a bucket name**: Enter a globally unique name. For this workshop, we can use the following naming convention to easily locate our buckets: `teamname-firstlastname-dataname` (e.g., sinkorswim-johndoe-titanic)
 - **Add labels (tags) to track costs**: Add labels to track resource usage and billing. If you're working in a shared account, this step is *mandatory*. If not, it's still recommended to help you track your own costs!
     - `project = teamname` (your team's name)
-    - `name = firstname-lastname' (your name)
+    - `name = firstname-lastname` (your name)
     - `purpose=bucket-dataname` (include bucket- prefix followed by name of dataset)
  
 ![Example of Tags for a GCS Bucket](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-tags.jpg){alt="Screenshot showing required tags for a GCS bucket"}
@@ -137,15 +137,15 @@ Click **Create** if everything looks good.
 
 ## Adjust bucket permissions
 
-Return to the Google Cloud Console (where we created our bucket and VM) and search for "Cloud Shell Editor". Open a shell editor and run the below command, *replacing the bucket name with your bucket's name`:
+Return to the Google Cloud Console (where we created our bucket and VM) and search for "Cloud Shell Editor". Open a shell editor and run the below command, *replacing the bucket name with your bucket's name*:
 
 ```sh
-# Grant read permisssions on the bucket
+# Grant read permissions on the bucket
 gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
   --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
   --role="roles/storage.objectViewer"
 
-# Grant write permisssions on the bucket
+# Grant write permissions on the bucket
 gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
   --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
   --role="roles/storage.objectCreator"

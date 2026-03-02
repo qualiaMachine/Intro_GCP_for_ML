@@ -23,7 +23,7 @@ exercises: 10
 ## Initial setup 
 
 #### Load pre-filled Jupyter notebooks 
-If you haven't opened your newly created VM from the last episode yet, lick **Open JupyterLab** to open the instance in Jupyter Lab. From there, we can create as many Jupyter notebooks as we would like within the instance environment. 
+If you haven't opened your newly created VM from the last episode yet, click **Open JupyterLab** to open the instance in Jupyter Lab. From there, we can create as many Jupyter notebooks as we would like within the instance environment. 
 
 We will then select the standard python3 environment to start our first .ipynb notebook (Jupyter notebook). We can use this environment since we aren't doing any training/tuning just yet.
 
@@ -66,15 +66,15 @@ train_data.head()
 
 ```
 
-If you get an error, return to the Google Cloud Console (where we created our bucket and VM) and search for "Cloud Shell Editor". Open a shell editor and run the below commands, *replacing the bucket name with your bucket's name`:
+If you get an error, return to the Google Cloud Console (where we created our bucket and VM) and search for "Cloud Shell Editor". Open a shell editor and run the below commands, *replacing the bucket name with your bucket's name*:
 
 ```sh
-# Grant read permisssions on the bucket
+# Grant read permissions on the bucket
 gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
   --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
   --role="roles/storage.objectViewer"
 
-# Grant write permisssions on the bucket
+# Grant write permissions on the bucket
 gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
   --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
   --role="roles/storage.objectCreator"
