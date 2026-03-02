@@ -1,7 +1,7 @@
 ---
 title: "Using a GitHub Personal Access Token (PAT) to Push/Pull from a Vertex AI Notebook"
-teaching: 25
-exercises: 10
+teaching: 15
+exercises: 5
 ---
 
 :::::::::::::::::::::::::::::::::::::: questions 
@@ -19,6 +19,14 @@ exercises: 10
 - Convert `.ipynb` files to `.py` files for better version control practices in collaborative projects.  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::: callout
+
+### This episode is optional in live workshops
+
+If you're short on time, this episode can be skipped during a live session. It is most useful for learners who are newer to Git or haven't used a Personal Access Token before. In a live workshop, the instructor may choose to skip ahead to the next episode and point learners here as a self-guided reference.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## Step 0: Initial setup
 In the previous episode, we cloned our forked repository as part of the [workshop setup](../setup.html). In this episode, we'll see how to push our code to this fork. Complete these three setup steps before moving forward.

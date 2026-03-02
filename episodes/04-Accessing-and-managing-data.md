@@ -1,7 +1,7 @@
 ---
 title: "Accessing and Managing Data in GCS with Vertex AI Notebooks"
 teaching: 20
-exercises: 10
+exercises: 8
 ---
 
 :::::::::::::::::::::::::::::::::::::: questions 

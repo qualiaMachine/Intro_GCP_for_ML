@@ -18,20 +18,21 @@ title: 'Instructor Notes'
 ## During the Workshop
 
 ### Pacing and timing
-The lesson is designed for roughly **4–5 hours** of instruction. Suggested time allocation:
+The lesson is designed for roughly **5 hours** of instruction (including short breaks). Suggested time allocation:
 
 | Episode | Teaching + Exercises | Notes |
 |---------|---------------------|-------|
-| 01 Introduction | 15 min | Keep brief; learners are eager to get hands-on |
+| 01 Introduction | 12 min | Keep brief; learners are eager to get hands-on |
 | 02 Data Storage | 20 min | First console interaction — go slowly |
 | 03 Notebooks as Controllers | 30 min | Expect VM creation to take 3–5 min; fill with discussion |
-| 04 Accessing Data | 30 min | First notebook coding — check everyone can read from GCS |
-| 05 GitHub PAT | 25 min | Can be shortened or made optional if time is tight |
-| 06 Training (XGBoost) | 35 min | Vertex AI job takes 2–5 min; use wait time for Q&A |
+| 04 Accessing Data | 28 min | First notebook coding — check everyone can read from GCS |
+| 05 GitHub PAT (optional) | 20 min | Skip in live workshops if short on time; point learners here as self-study |
+| 06 Training (XGBoost) | 30 min | Vertex AI job takes 2–5 min; use wait time for Q&A |
 | 07 Training (PyTorch + GPU) | 30 min | GPU jobs may take longer; discuss CPU vs GPU during wait |
-| 08 Hyperparameter Tuning | 45 min | Start with 1 trial; scale to more only if time allows |
-| 09 Resource Cleanup | 30 min | Critical — do not skip. Learners must clean up resources |
+| 08 Hyperparameter Tuning | 50 min | Start with 1 trial; exercises have learners scale up |
+| 09 Resource Cleanup | 40 min | Critical — do not skip. Learners must clean up resources |
 | 10 RAG | 30 min | Can be shortened to a demo if running behind |
+| **Total** | **~290 min** | **~4 hr 50 min, leaving room for breaks to fill 5 hours** |
 
 ### Common issues
 - **Bucket permission errors**: The most common blocker. Have the `gcloud storage buckets add-iam-policy-binding` commands ready to paste into Cloud Shell.

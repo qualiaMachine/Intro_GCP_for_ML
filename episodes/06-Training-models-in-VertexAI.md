@@ -1,7 +1,7 @@
 ---
 title: "Training Models in Vertex AI: Intro"
-teaching: 30
-exercises: 2
+teaching: 25
+exercises: 5
 ---
 
 :::::::::::::::::::::::::::::::::::::: questions 

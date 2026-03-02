@@ -116,7 +116,7 @@ Persistent Disks are fast but cost more than Cloud Storage.
 Typical rates:  
 - **Balanced PD:** ~$0.10–$0.12 / GB / month  
 - **SSD PD:** ~$0.17–$0.20 / GB / month  
-- **Cloud Storage (Standard):** ~$0.026 / GB / month  
+- **Cloud Storage (Standard):** ~$0.02 / GB / month  
 
 > **Rule of thumb:** use PDs only for active work; store everything else in Cloud Storage.  
 > Example: a 200 GB dataset costs **~$24/month on a PD** but only **~$5/month in Cloud Storage**.

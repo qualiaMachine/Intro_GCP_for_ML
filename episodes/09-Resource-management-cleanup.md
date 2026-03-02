@@ -1,7 +1,7 @@
 ---
 title: "Resource Management & Monitoring on Vertex AI (GCP)"
-teaching: 45
-exercises: 20
+teaching: 30
+exercises: 10
 ---
 
 :::::::::::::::::::::::::::::::::::::: questions

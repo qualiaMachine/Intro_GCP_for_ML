@@ -23,7 +23,7 @@ exercises: 10
 ## Initial setup
 
 #### 1. Open pre-filled notebook
-Navigate to `/Intro_GCP_for_ML/notebooks/06-Training-models-in-VertexAI-GPUs.ipynb` to begin this notebook. Select the *PyTorch* environment (kernel) Local PyTorch is only needed for local tests. Your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
+Navigate to `/Intro_GCP_for_ML/notebooks/07-Training-models-in-VertexAI-GPUs.ipynb` to begin this notebook. Select the *PyTorch* environment (kernel) Local PyTorch is only needed for local tests. Your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
 
 #### 2. CD to instance home directory
 To ensure we're all in the same starting spot, change directory to your Jupyter home directory.

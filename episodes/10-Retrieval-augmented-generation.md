@@ -334,11 +334,21 @@ To avoid managed API costs, you can use Hugging Face models instead. This sectio
 - This workflow generalizes to any retrieval task — not just sustainability papers.
 - GCP’s managed tools lower barrier for experimentation while keeping enterprise security and IAM intact.
 
+## What’s next?
+
+This workshop covered the core GCP + Vertex AI workflow: data storage, notebook-driven job submission, training, hyperparameter tuning, and RAG. Here are natural next steps depending on your goals:
+
+- **Vertex AI Pipelines** — Automate multi-step ML workflows (preprocessing → training → evaluation → deployment) as reproducible DAGs using Kubeflow Pipelines or TFX on Vertex AI.
+- **Model Registry & Endpoints** — Register your trained models in Vertex AI’s Model Registry and deploy them as online prediction endpoints for serving.
+- **Vertex AI Experiments** — Track and compare runs systematically, beyond what `metrics.json` files in GCS provide.
+- **BigQuery ML** — If your data lives in BigQuery, you can train and predict directly in SQL without moving data to GCS.
+- **Cost optimization** — Explore [committed use discounts](https://cloud.google.com/compute/docs/instances/committed-use-discounts-overview) and [preemptible/spot VMs](https://cloud.google.com/compute/docs/instances/spot) for significant savings on long-running training workloads.
+
 ::::::::::::::::::::::::::::::::::::: keypoints
 
-- Vertex AI’s RAG stack = low-op, cost-predictable.  
-- Hugging Face = high control, high GPU cost.  
-- Keep data local or in GCS to manage egress and compliance.  
+- Vertex AI’s RAG stack = low-op, cost-predictable.
+- Hugging Face = high control, high GPU cost.
+- Keep data local or in GCS to manage egress and compliance.
 - Always cite retrieved chunks for reproducibility and transparency.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::

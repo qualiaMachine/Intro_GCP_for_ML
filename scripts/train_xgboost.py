@@ -54,9 +54,9 @@ def save_model_any(model, dest_path: str):
 def preprocess_data(df):
     """Preprocess the Titanic dataset for model training."""
     df = df.copy()
-    df["Age"].fillna(df["Age"].median(), inplace=True)
-    df["Embarked"].fillna(df["Embarked"].mode()[0], inplace=True)
-    df.drop(columns=["Name", "Ticket", "Cabin"], inplace=True, errors="ignore")
+    df["Age"] = df["Age"].fillna(df["Age"].median())
+    df["Embarked"] = df["Embarked"].fillna(df["Embarked"].mode()[0])
+    df = df.drop(columns=["Name", "Ticket", "Cabin"], errors="ignore")
     df["Sex"] = df["Sex"].map({"male": 1, "female": 0})
     df["Embarked"] = df["Embarked"].map({"S": 0, "C": 1, "Q": 2})
     X = df.drop(columns=["Survived"])
