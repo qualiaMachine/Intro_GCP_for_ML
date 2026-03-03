@@ -1,6 +1,6 @@
 ---
 title: "Data Storage: Setting up GCS"
-teaching: 15
+teaching: 25
 exercises: 5
 ---
 
@@ -44,17 +44,25 @@ A VM disk is the storage volume attached to a Compute Engine VM or a Vertex AI W
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ### What is a GCS bucket?
-For most ML workflows in GCP, **Google Cloud Storage (GCS) buckets** are recommended. A GCS bucket is a container in Google's object storage service where you can store an essentially unlimited number of files. Data in GCS can be accessed from Vertex AI training jobs, Workbench notebooks, and other GCP services using a *GCS URI* (e.g., `gs://your-bucket-name/your-file.csv`).  
+For most ML workflows in GCP, **Google Cloud Storage (GCS) buckets** are recommended. A GCS bucket is a container in Google's object storage service where you can store an essentially unlimited number of files. Data in GCS can be accessed from Vertex AI training jobs, Workbench notebooks, and other GCP services using a *GCS URI* (e.g., `gs://your-bucket-name/your-file.csv`).
 
-::::::::::::::::::::::::::::::::::::: callout 
+::::::::::::::::::::::::::::::::::::: callout
+
+#### GCS URIs — your cloud file paths
+GCS URIs follow the format `gs://bucket-name/path/to/file.csv`. Think of them as cloud file paths. You'll use these URIs throughout the workshop to reference data in training scripts, notebooks, and SDK calls.
+
+::::::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::: callout
 
 #### Benefits of using GCS (recommended for ML workflows)
-- **Separation of storage and compute**: Data remains available even if VMs or notebooks are deleted.  
-- **Easy sharing**: Buckets can be accessed by collaborators with the right IAM roles.  
-- **Integration with Vertex AI and BigQuery**: Read and write data directly using other GCP tools.  
-- **Scalability**: Handles datasets of any size without disk limits.  
-- **Cost efficiency**: Lower cost than persistent disks (VM storage) for long-term storage.  
-- **Data persistence**: Durable and highly available across regions.  
+- **Separation of storage and compute**: Data remains available even if VMs or notebooks are deleted.
+- **Easy sharing**: Buckets can be accessed by collaborators with the right IAM roles.
+- **Integration with Vertex AI and BigQuery**: Read and write data directly using other GCP tools.
+- **Scalability**: Handles datasets of any size without disk limits.
+- **Cost efficiency**: Lower cost than persistent disks (VM storage) for long-term storage.
+- **Data persistence**: Durable and highly available across regions.
+- **Filesystem mounting**: GCS buckets can be mounted as local directories using [Cloud Storage FUSE](https://cloud.google.com/storage/docs/cloud-storage-fuse/overview), making them accessible like regular filesystems for tools that expect local file paths.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -68,7 +76,8 @@ To upload our Titanic dataset to a GCS bucket, we'll follow these steps:
 4. Use the GCS URI to reference your data in Vertex AI workflows.  
 
 ### 1. Sign in to Google Cloud Console
-- Go to [console.cloud.google.com/welcome?project=doit-rci-mlm25-4626](https://console.cloud.google.com/welcome?project=doit-rci-mlm25-4626) and log in with your credentials. <!-- replace project ID with your own if not using the shared workshop project -->  
+- Go to [console.cloud.google.com](https://console.cloud.google.com/) and log in with your credentials. <!-- shared workshop project URL: https://console.cloud.google.com/welcome?project=doit-rci-mlm25-4626 -->
+- Select your project from the project dropdown at the top of the page. If you're using the shared workshop project, the instructor will provide the project name.
 
 ### 2. Navigate to Cloud Storage
 - In the search bar, type **Storage**.  
@@ -78,19 +87,19 @@ To upload our Titanic dataset to a GCS bucket, we'll follow these steps:
 - Click **Create bucket**.
 
 #### 3a. Getting Started (bucket name and tags)
-- **Provide a bucket name**: Enter a globally unique name. For this workshop, we can use the following naming convention to easily locate our buckets: `teamname-firstlastname-dataname` (e.g., sinkorswim-johndoe-titanic)
-- **Add labels (tags) to track costs**: Add labels to track resource usage and billing. If you're working in a shared account, this step is *mandatory*. If not, it's still recommended to help you track your own costs!
-    - `project = teamname` (your team's name)
-    - `name = firstname-lastname` (your name)
-    - `purpose=bucket-dataname` (include bucket- prefix followed by name of dataset)
+- **Provide a bucket name**: Enter a globally unique name. For this workshop, we can use the following naming convention to easily locate our buckets: `teamname-firstlastname-dataname` (e.g., sinkorswim-johndoe-titanic). If you see a "Bucket name already exists" error, the name is taken — try adding a number or extra initials to make it unique.
+- **Add labels (tags) to track costs**: Add labels to track resource usage and billing. If you're working in a shared account, this step is *mandatory*. If not, it's still recommended to help you track your own costs! In the Labels section, enter the key on the left and the value on the right:
+    - key: `project`, value: `teamname` (your team's name)
+    - key: `name`, value: `firstname-lastname` (your name)
+    - key: `purpose`, value: `bucket-dataname` (include bucket- prefix followed by name of dataset)
  
 ![Example of Tags for a GCS Bucket](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-tags.jpg){alt="Screenshot showing required tags for a GCS bucket"}
 
-#### 3b. Choose where to store your data 
-When creating a storage bucket in Google Cloud, the best practice for most machine learning workflows is to use a regional bucket in the same region as your compute resources (for example, us-central1). This setup provides the lowest latency and avoids network egress charges when training jobs read from storage, while also keeping costs predictable. A multi-region bucket, on the other hand, can make sense if your primary goal is broad availability or if collaborators in different regions need reliable access to the same data; the trade-off is higher cost and the possibility of extra egress charges when pulling data into a specific compute region. For most research projects, a regional bucket with the Standard storage class, uniform access control, and public access prevention enabled offers a good balance of performance, security, and affordability.
+#### 3b. Choose where to store your data
+For ML workflows, use a **regional** bucket in the same region as your compute resources (e.g., `us-central1`). This minimizes latency and avoids egress charges when training jobs read from storage. Multi-region is only needed if collaborators across different regions need reliable access to the same data — the trade-off is higher cost.
 
-  - **Region** (cheapest, good default). For instance, us-central1 (Iowa) costs $0.020 per GB-month.
-  - **Multi-region** (higher redundancy, more expensive).
+  - **Region** (cheapest, good default). For instance, `us-central1` (Iowa) costs $0.020 per GB-month.
+  - **Multi-region** (higher redundancy, more expensive). Useful when broad geographic availability matters more than cost.
 
 ![Choose where to store your data](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-location.jpg){alt="Choose where to store your data"}
 
@@ -99,7 +108,9 @@ When creating a bucket, you'll be asked to choose a storage class, which determi
 
 - **Standard** – best for active ML/AI workflows. Training data is read and written often, so this is the safest default.
 - **Nearline / Coldline / Archive** – designed for backups or rarely accessed files. These cost less per GB to store, but you pay retrieval fees if you read them during training. Not recommended for most ML projects where data access is frequent.
-  
+
+> GCS also supports **lifecycle rules** that can automatically delete objects older than N days or transition them to cheaper storage classes. This is useful for cleaning up experiment artifacts (e.g., old checkpoints). You can configure lifecycle rules after bucket creation under the bucket's **Lifecycle** tab.
+
 > You may see an option to "Enable hierarchical namespace". GCP now offers an option to enable a hierarchical namespace for buckets, but this is mainly useful for large-scale analytics pipelines. For most ML workflows, the standard flat namespace is simpler and fully compatible—so it's best to leave this option off.
   
 #### 3d. Choose how to control access to objects
@@ -111,13 +122,7 @@ When prompted to choose an access control method, choose **uniform access** unle
 - **Fine-grained access:** Allows per-file permissions using ACLs, but adds complexity and is rarely needed outside of web hosting or mixed-access datasets.
 
 #### 3e. Choose how to protect object data
-GCP automatically protects all stored data, but you can enable additional layers of protection depending on your project's needs. For most ML or research workflows, you'll want to balance safety with cost. 
-
-- **Soft delete policy (recommended for shared projects):** Keeps deleted objects recoverable for a short period (default is 7 days). This is useful if team members might accidentally remove data. You can set a custom retention duration, but longer windows increase storage costs.
-- **Object versioning:** Creates new versions of files when they're modified or overwritten. This can be helpful for tracking model outputs or experiment logs but may quickly increase costs. Enable only if you expect frequent overwrites and need rollback capability.
-- **Retention policy (for compliance use only):** Prevents deletion or modification of objects for a fixed time window. This is typically required for regulated data but should be avoided for active ML projects, since it can block normal cleanup and retraining workflows.
-  
-> In short: keep the **default soft delete** unless you have specific compliance requirements. Use **object versioning** sparingly, and avoid **retention locks** unless mandated by policy.
+Leave the default **soft delete** enabled — it keeps deleted objects recoverable for 7 days, which is useful if someone accidentally removes data. Skip **object versioning** (creates new versions on every overwrite, costs add up fast) and **retention policies** (blocks deletion, only needed for regulatory compliance) unless you have a specific reason to enable them.
 
 #### Final check
 After configuring all settings, your bucket settings preview should look similar to the screenshot below (with the bucket name adjusted for your name).
@@ -127,17 +132,36 @@ After configuring all settings, your bucket settings preview should look similar
 Click **Create** if everything looks good.
 
 ### 4. Upload files to the bucket
-- If you haven't yet, download the data for this workshop (Right-click → Save as):  
-   [data.zip](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/data/data.zip)  
+- If you haven't yet, download the data for this workshop (Right-click → Save as):
+   [data.zip](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/data/data.zip)
   - Extract the zip folder contents (Right-click → Extract all on Windows; double-click on macOS).
-- In the bucket dashboard, click **Upload Files**.  
-- Select your Titanic CSVs and upload.  
+  - The zip contains the **Titanic dataset** — passenger information (age, class, fare, etc.) with a survival label. This is a classic binary classification task we'll use for training in later episodes.
+- In the bucket dashboard, click **Upload Files**.
+- Select your Titanic CSVs (`titanic_train.csv` and `titanic_test.csv`) and upload.
 
 **Note the GCS URI for your data** After uploading, click on a file and find its **gs:// URI** (e.g., `gs://sinkorswim-johndoe-titanic/titanic_test.csv`). This URI will be used to access the data later.
 
-## Adjust bucket permissions
+:::::::::::::::::::::::::::::::::::::::: challenge
 
-Return to the Google Cloud Console (where we created our bucket and VM) and search for "Cloud Shell Editor". Open a shell editor and run the below commands, *replacing the bucket name with your bucket's name*.
+### Challenge: Verify Your Bucket Setup
+
+Before moving on, confirm everything is configured correctly:
+
+1. Navigate to your bucket in **Cloud Storage > Buckets**. Can you see your uploaded CSV files listed?
+2. Click on one of the files. What is its `gs://` URI? Write it down — you'll need it in Episode 4.
+3. Go back to the bucket overview and check the **Labels** tab. Are your cost-tracking labels (project, name, purpose) applied?
+
+:::::::::::::::: solution
+
+You should see both `titanic_train.csv` and `titanic_test.csv` in your bucket. The URI should look like `gs://your-bucket-name/titanic_train.csv`. Labels should appear under the bucket's Configuration or Labels tab with the key-value pairs you entered in step 3a.
+
+If any labels are missing, click **Edit labels** on the bucket details page to add them.
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::
+
+## Adjust bucket permissions
 
 We need to grant the Compute Engine default service account three separate IAM roles so that our future Workbench notebooks and training jobs can interact with the bucket:
 
@@ -145,24 +169,55 @@ We need to grant the Compute Engine default service account three separate IAM r
 - **`objectCreator`** — allows uploading new objects. Required for writing model artifacts and logs.
 - **`objectAdmin`** — allows overwriting and deleting objects. Only needed if your workflow re-saves models or cleans up old artifacts.
 
+To run these commands, open **Cloud Shell** — a browser-based terminal built into the Google Cloud Console. Click the terminal icon (**>\_**) in the top-right toolbar of the Console to activate it. Cloud Shell comes with `gcloud` pre-installed and already authenticated to your project.
+
+#### Find your service account
+
+Before running the commands below, you need your project's **Compute Engine default service account**. Run this in Cloud Shell:
+
+```sh
+gcloud iam service-accounts list --filter="displayName:Compute Engine default service account" --format="value(email)"
+```
+
+This will return an email like `123456789-compute@developer.gserviceaccount.com`. Use that value in the commands below.
+
+<!-- shared workshop service account: 549047673858-compute@developer.gserviceaccount.com -->
+
+#### Grant permissions
+
+Replace `YOUR_BUCKET_NAME` with your bucket name and `YOUR_SERVICE_ACCOUNT` with the email from the step above, then run:
+
 ```sh
 # Grant read permissions on the bucket
-gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
-  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+gcloud storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME \
+  --member="serviceAccount:YOUR_SERVICE_ACCOUNT" \
   --role="roles/storage.objectViewer"
 
 # Grant write permissions on the bucket
-gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
-  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+gcloud storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME \
+  --member="serviceAccount:YOUR_SERVICE_ACCOUNT" \
   --role="roles/storage.objectCreator"
 
 # (Only if you also need overwrite/delete)
-gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
-  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+gcloud storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME \
+  --member="serviceAccount:YOUR_SERVICE_ACCOUNT" \
   --role="roles/storage.objectAdmin"
 ```
 
-This grants our future VMs permission to read objects from the bucket.
+<!-- prefilled example:
+gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
+  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+  --role="roles/storage.objectViewer"
+-->
+
+This grants our future VMs permission to read, write, and manage objects in the bucket.
+
+::::::::::::::::::::::::::::::::::::: callout
+
+#### `gcloud storage` vs. `gsutil`
+Older tutorials often reference `gsutil` for Cloud Storage operations. Google now recommends `gcloud storage` as the primary CLI. Both work, but `gcloud storage` is actively maintained and consistent with the rest of the `gcloud` CLI.
+
+::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## Data transfer & storage costs explained  
 GCS costs are based on storage class, data transfer, and operations (requests).  
@@ -197,29 +252,29 @@ GCS costs are based on storage class, data transfer, and operations (requests).
 
 :::::::::::::::: solution
 
-1. **1 GB**:  
-- Storage: 1 GB × $0.02 = $0.02  
-- Egress: 1 GB × $0.12 = $0.12  
-- Requests: ~0 (100 reads well below pricing tier)  
-- **Total: $0.14**
+1. **1 GB**:
+   - Storage: 1 GB × $0.02 = $0.02
+   - Egress: 1 GB × $0.12 = $0.12
+   - Requests: ~0 (100 reads well below pricing tier)
+   - **Total: $0.14**
 
-1. **10 GB**:  
-- Storage: 10 GB × $0.02 = $0.20  
-- Egress: 10 GB × $0.12 = $1.20  
-- Requests: ~0  
-- **Total: $1.40**
+2. **10 GB**:
+   - Storage: 10 GB × $0.02 = $0.20
+   - Egress: 10 GB × $0.12 = $1.20
+   - Requests: ~0
+   - **Total: $1.40**
 
-1. **100 GB**:  
-- Storage: 100 GB × $0.02 = $2.00  
-- Egress: 100 GB × $0.12 = $12.00  
-- Requests: ~0  
-- **Total: $14.00**
+3. **100 GB**:
+   - Storage: 100 GB × $0.02 = $2.00
+   - Egress: 100 GB × $0.12 = $12.00
+   - Requests: ~0
+   - **Total: $14.00**
 
-1. **1 TB (1024 GB)**:  
-- Storage: 1024 GB × $0.02 = $20.48  
-- Egress: 1024 GB × $0.12 = $122.88  
-- Requests: ~0  
-- **Total: $143.36**
+4. **1 TB (1024 GB)**:
+   - Storage: 1024 GB × $0.02 = $20.48
+   - Egress: 1024 GB × $0.12 = $122.88
+   - Requests: ~0
+   - **Total: $143.36**
 
 :::::::::::::::::::::::::
 
@@ -227,10 +282,12 @@ GCS costs are based on storage class, data transfer, and operations (requests).
 
 ## Removing unused data (complete *after* the workshop)
 
-After you are done using your data, remove unused files/buckets to stop costs:  
+After you are done using your data, remove unused files/buckets to stop costs:
 
-- **Option 1: Delete files only** – if you plan to reuse the bucket.  
-- **Option 2: Delete the bucket entirely** – if you no longer need it.
+- **Option 1: Delete files only** – In your bucket, select the files you want to remove and click **Delete**. Use this if you plan to reuse the bucket for new data.
+- **Option 2: Delete the bucket entirely** – In **Cloud Storage > Buckets**, select your bucket and click **Delete**. You'll be asked to confirm by typing the bucket name.
+
+For a detailed walkthrough of cleaning up all workshop resources (buckets, VMs, endpoints, and more), see [Episode 9: Resource Management and Cleanup](09-Resource-management-cleanup.md).
 
 
 ## When does BigQuery come into play?

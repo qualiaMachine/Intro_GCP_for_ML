@@ -30,7 +30,7 @@ The lesson is designed for roughly **5 hours** of instruction (including short b
 | Episode | Teaching + Exercises | Notes |
 |---------|---------------------|-------|
 | 01 Introduction | 12 min | Keep brief; learners are eager to get hands-on |
-| 02 Data Storage | 20 min | First console interaction — go slowly |
+| 02 Data Storage | 30 min | First console interaction — go slowly |
 | 03 Notebooks as Controllers | 30 min | Expect VM creation to take 3–5 min; fill with discussion |
 | 04 Accessing Data | 28 min | First notebook coding — check everyone can read from GCS |
 | 05 GitHub PAT (optional) | 20 min | Skip in live workshops if short on time; point learners here as self-study |
