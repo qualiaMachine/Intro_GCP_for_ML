@@ -14,13 +14,15 @@ exercises: 10
 ::::::::::::::::::::::::::::::::::::: objectives
 
 - Set up and run a hyperparameter tuning job in Vertex AI.  
-- Define search spaces for `ContinuousParameter` and `CategoricalParameter`.  
+- Define search spaces using `DoubleParameterSpec` and `IntegerParameterSpec`.  
 - Log and capture objective metrics for evaluating tuning success.  
 - Optimize tuning setup to balance cost and efficiency, including parallelization.  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-To conduct efficient hyperparameter tuning with neural networks (or any model) in Vertex AI, we'll use Vertex AI's Hyperparameter Tuning Jobs. The key is defining a clear search space, ensuring metrics are properly logged, and keeping costs manageable by controlling the number of trials and level of parallelization.
+In the previous episode you submitted a single PyTorch training job to Vertex AI and inspected its artifacts. That gave you one model trained with one set of hyperparameters. In practice, choices like learning rate, early-stopping patience, and regularization thresholds can dramatically affect model quality — and the best combination is rarely obvious up front.
+
+In this episode we'll use Vertex AI's **Hyperparameter Tuning Jobs** to systematically search for better settings. The key is defining a clear search space, ensuring metrics are properly logged, and keeping costs manageable by controlling the number of trials and level of parallelization.
 
 ### Key steps for hyperparameter tuning
 
@@ -33,22 +35,26 @@ The overall process involves these steps:
 5. Monitor progress in the Vertex AI Console.  
 6. Extract the best model and inspect recorded metrics.  
 
-#### 0. Initial setup
+## Initial setup
 
-Navigate to `/Intro_GCP_for_ML/notebooks/08-Hyperparameter-tuning.ipynb` to begin this notebook. Select the *PyTorch* environment (kernel) Local PyTorch is only needed for local tests. Your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-1` or `pytorch-gpu.2-1`), so it brings its own framework at run time.
+#### 1. Open pre-filled notebook
+Navigate to `/Intro_GCP_for_ML/notebooks/08-Hyperparameter-tuning.ipynb` to begin this notebook. Select the *PyTorch* environment (kernel). Local PyTorch is only needed for local tests — your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-gpu.2-1`), so it brings its own framework at run time.
 
+#### 2. CD to instance home directory
 Change to your Jupyter home folder to keep paths consistent.
 
 ```python
 %cd /home/jupyter/
 ```
 
-#### 1. Prepare training script with metric logging
+## Prepare and configure the tuning job
+
+#### 3. Prepare training script with metric logging
 Your training script (`train_nn.py`) should report validation metrics in a way Vertex AI can track during hyperparameter tuning.
 
 The code below uses the `cloudml-hypertune` library, which is pre-installed on Vertex AI training workers. It reports metrics to Vertex AI so the tuner can compare trials. The `try/except` block lets the same script run locally (where the library isn't installed) without crashing — it simply skips metric reporting in that case.
 
-Add the following right after computing `val_loss` and `val_acc` inside your epoch loop:
+First, add the initialization block near the top of the script (before the training loop). The `try/except` lets the same script run locally — where the library isn't installed — without crashing:
 
 ```python
 # Enable Vertex HPT metric reporting
@@ -63,9 +69,20 @@ except Exception:
     _hpt_enabled = False
 ```
 
-This ensures Vertex AI records the validation metric for each trial and can rank configurations by performance automatically.
+Then, inside the epoch loop, right after computing `val_loss` and `val_acc`, add the actual metric reporting call. The `hyperparameter_metric_tag` **must** match the key you use in `metric_spec` later (e.g., `"validation_accuracy"`):
 
-#### 2. Define hyperparameter search space
+```python
+if _hpt_enabled:
+    _hpt.report_hyperparameter_tuning_metric(
+        hyperparameter_metric_tag="validation_accuracy",
+        metric_value=val_acc,
+        global_step=ep,
+    )
+```
+
+This ensures Vertex AI records the validation metric for each trial and can rank configurations by performance automatically. If this tag doesn't match `metric_spec`, trials will show as **INFEASIBLE**.
+
+#### 4. Define hyperparameter search space
 This step defines which parameters Vertex AI will vary across trials and their allowed ranges. The number of total settings tested is determined later using `max_trial_count`.
 
 Vertex AI uses **Bayesian optimization** by default (internally listed as `"ALGORITHM_UNSPECIFIED"` in the API).  That means if you don’t explicitly specify a search algorithm, Vertex AI automatically applies an adaptive Bayesian strategy to balance exploration (trying new areas of the parameter space) and exploitation (focusing near the best results so far).  Each completed trial helps the tuner model how your objective metric (for example, `validation_accuracy`) changes across parameter values. Subsequent trials then sample new parameter combinations that are statistically more likely to improve performance, which usually yields better results than random or grid search—especially when `max_trial_count` is limited.
@@ -83,7 +100,7 @@ parameter_spec = {
 }
 ```
 
-#### 3. Initialize Vertex AI, project, and bucket
+#### 5. Initialize Vertex AI, project, and bucket
 Initialize the Vertex AI SDK and set your staging and artifact locations in GCS.
 
 ```python
@@ -103,7 +120,7 @@ aiplatform.init(
 )
 ```
 
-#### 4. Define runtime configuration
+#### 6. Define runtime configuration
 Create a unique run ID and set the container, machine type, and base output directory for artifacts. Each variable controls a different aspect of the training environment:
 
 - **`RUN_ID`** — a timestamp that uniquely identifies this tuning session, used to organize artifacts in GCS.
@@ -122,7 +139,7 @@ ACCELERATOR_TYPE = "ACCELERATOR_TYPE_UNSPECIFIED"
 ACCELERATOR_COUNT = 0
 ```
 
-#### 5. Configure hyperparameter tuning job
+#### 7. Configure hyperparameter tuning job
 When you use Vertex AI Hyperparameter Tuning Jobs, each trial needs a complete, runnable training configuration: the script, its arguments, the container image, and the compute environment.  
 Rather than defining these pieces inline each time, we create a **CustomJob** to hold that configuration.  
 
@@ -150,12 +167,13 @@ custom_job = aiplatform.CustomJob.from_local_script(
     display_name=f"{LAST_NAME}_pytorch_hpt-trial_{RUN_ID}",
     script_path="/home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py",
     container_uri=IMAGE,
-    requirements=["python-json-logger>=2.0.7"],
+    requirements=["python-json-logger>=2.0.7"],  # resolves a dependency conflict in the prebuilt container
     args=[
         f"--train=gs://{BUCKET_NAME}/data/train_data.npz",
         f"--val=gs://{BUCKET_NAME}/data/val_data.npz",
         "--learning_rate=0.001",        # HPT will override when sampling
         "--patience=10",                # HPT will override when sampling
+        "--min_delta=0.001",            # HPT will override when sampling
     ],
     base_output_dir=ARTIFACT_DIR,
     machine_type=MACHINE,
@@ -182,10 +200,27 @@ tuning_job.run(sync=True)
 print("HPT artifacts base:", ARTIFACT_DIR)
 ```
 
-#### 6. Monitor tuning job
-Open **Vertex AI → Training → Hyperparameter tuning jobs** to track trials, parameters, and metrics. You can also stop jobs from the console if needed. For MLM25, the following link should work: [Hyperparameter tuning jobs](https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&project=doit-rci-mlm25-4626). <!-- replace project ID with your own if not using the shared workshop project -->
+## Run and analyze results
 
-#### 7. Inspect best trial results
+#### 8. Monitor tuning job
+Open **Vertex AI → Training → Hyperparameter tuning jobs** in the Cloud Console to track trials, parameters, and metrics. You can also stop jobs from the console if needed.
+
+> **Note:** Replace the project ID in the URL below with your own if you are not using the shared workshop project.
+
+For the MLM25 workshop: [Hyperparameter tuning jobs](https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&project=doit-rci-mlm25-4626).
+
+::::::::::::::::::::::::::::::::::::::: callout
+
+### Troubleshooting common HPT issues
+
+- **All trials show INFEASIBLE:** The `hyperparameter_metric_tag` in your training script doesn't match the key in `metric_spec`. Double-check spelling and case — `"validation_accuracy"` is not `"val_accuracy"`.
+- **Quota errors on launch:** Your project may not have enough VM or GPU quota in the selected region. Check **IAM & Admin → Quotas** and request an increase or switch to a smaller `MACHINE` type.
+- **Trial succeeds but metrics are empty:** Make sure `cloudml-hypertune` is importable inside the container. The prebuilt PyTorch containers include it. If using a custom container, add `cloudml-hypertune` to your `requirements`.
+- **Job stuck in PENDING:** Another tuning or training job may be consuming your quota. Check **Vertex AI → Training** for running jobs.
+
+:::::::::::::::::::::::::::::::::::::::::::::::
+
+#### 9. Inspect best trial results
 After completion, look up the best configuration and objective value from the SDK:
 
 ```python
@@ -194,7 +229,7 @@ print("Best hyperparameters:", best_trial.parameters)
 print("Best validation_accuracy:", best_trial.final_measurement.metrics)
 ```
 
-#### 8. Review recorded metrics in GCS
+#### 10. Review recorded metrics in GCS
 Your script writes a `metrics.json` (with keys such as `final_val_accuracy`, `final_val_loss`) to each trial's output directory (under `ARTIFACT_DIR`). The snippet below aggregates those into a dataframe for side-by-side comparison.
 
 ```python
@@ -222,32 +257,25 @@ print(df[["trial_id","final_val_accuracy","final_val_loss","best_val_loss","best
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
-### Exercise 1: Expand the search space
+### Exercise 1: Widen the learning-rate search space
 
-Add `dropout_rate` as a new hyperparameter to the tuning job. Use a continuous range between 0.1 and 0.5.
+The current search space uses `min=1e-4, max=1e-2` for learning rate. Suppose you suspect that slightly larger learning rates (up to `0.1`) might converge faster with early stopping enabled.
 
-1. Add a `dropout_rate` entry to `parameter_spec` using `hpt.DoubleParameterSpec(min=0.1, max=0.5, scale="linear")`.
-2. Add `"--dropout_rate=0.3"` to the `args` list in the `CustomJob` definition (so HPT can override it).
-3. **Do not run the job yet** — just update the configuration and verify it looks correct.
+1. Update `parameter_spec` to widen the `learning_rate` range to `max=0.1`.
+2. Thinking question: Why does `scale="log"` make sense for learning rate but `scale="linear"` makes sense for patience?
+3. **Do not run the job yet** — just update the configuration.
 
 ::::::::::::::::::::::: solution
 
 ```python
 parameter_spec = {
-    "learning_rate": hpt.DoubleParameterSpec(min=1e-4, max=1e-2, scale="log"),
+    "learning_rate": hpt.DoubleParameterSpec(min=1e-4, max=1e-1, scale="log"),
     "patience": hpt.IntegerParameterSpec(min=5, max=20, scale="linear"),
     "min_delta": hpt.DoubleParameterSpec(min=1e-6, max=1e-3, scale="log"),
-    "dropout_rate": hpt.DoubleParameterSpec(min=0.1, max=0.5, scale="linear"),
 }
 ```
 
-And in the `args` list of `CustomJob.from_local_script`, add:
-
-```python
-"--dropout_rate=0.3",    # HPT will override when sampling
-```
-
-Note: For this to actually work end-to-end, `train_nn.py` would also need to accept `--dropout_rate` as an argparse argument and use it in the model architecture. This exercise focuses on the Vertex AI configuration side.
+**Why log vs. linear?** Learning rate values span several orders of magnitude (0.0001 to 0.1), so `scale="log"` ensures the tuner samples evenly across those orders rather than clustering near the high end. Patience is an integer (5–20) where each step is equally meaningful, so `scale="linear"` is appropriate.
 
 :::::::::::::::::::::::::::::::
 
@@ -284,10 +312,17 @@ tuning_job = aiplatform.HyperparameterTuningJob(
 
 ::::::::::::::::::::::::::::::::::::: discussion
 
-### What is the effect of parallelism in tuning?  
+### What is the effect of parallelism in tuning?
 
-- How might running 10 trials in parallel differ from running 2 at a time in terms of cost, time, and result quality?  
-- When would you want to prioritize speed over adaptive search benefits?  
+- How might running 10 trials in parallel differ from running 2 at a time in terms of cost, time, and result quality?
+- When would you want to prioritize speed over adaptive search benefits?
+
+| Factor | High parallelism (e.g., 10) | Low parallelism (e.g., 2) |
+|---|---|---|
+| **Wall-clock time** | Shorter | Longer |
+| **Total cost** | ~Same (slightly more overhead) | ~Same |
+| **Adaptive search quality** | Worse (tuner explores "blind") | Better (tuner learns between batches) |
+| **Best for** | Cheap/short trials, deadlines | Expensive trials, small budgets |
 
 **Cost:**  
 - If you run the same total number of trials, total cost is *roughly unchanged*; you're paying for the same amount of compute, just compressed into a shorter wall-clock window.  
@@ -331,7 +366,7 @@ tuning_job = aiplatform.HyperparameterTuningJob(
 
 - Vertex AI Hyperparameter Tuning Jobs efficiently explore parameter spaces using adaptive strategies.  
 - Define parameter ranges in `parameter_spec`; the number of settings tried is controlled later by `max_trial_count`.  
-- Keep the printed metric name consistent with `metric_spec` (here: `validation_accuracy`).  
+- The `hyperparameter_metric_tag` reported by `cloudml-hypertune` must exactly match the key in `metric_spec`.  
 - Limit `parallel_trial_count` (2–4) to help adaptive search.  
 - Use GCS for input/output and aggregate `metrics.json` across trials for detailed analysis.  
 
