@@ -68,6 +68,8 @@ This keeps costs low (the notebook VM is small) and keeps your work reproducible
 
 This workshop uses the **GCP web console** and **Workbench notebooks** for most tasks because they're visual and easy to follow. But nearly everything we do can also be done from the **`gcloud` command-line tool** — submitting training jobs, managing buckets, checking quotas. [Episode 11](11-CLI-workflows.md) covers the CLI equivalents. If you prefer terminal-based workflows or need to automate jobs in scripts and CI/CD pipelines, that episode shows you how.
 
+**One important caveat:** whether you use the console, notebooks, or CLI, resources you create (VMs, training jobs, endpoints) keep running and billing until you explicitly stop them. There's no automatic shutdown. We cover cleanup habits in [Episode 9](09-Resource-management-cleanup.md), but the short version is: always check for running resources before you walk away.
+
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## A note on cloud costs
