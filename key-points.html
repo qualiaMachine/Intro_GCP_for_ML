@@ -479,14 +479,13 @@ avoid unexpected charges.</li>
 </ul></section><section id="04-Accessing-and-managing-data"><h2 class="section-heading"><a href="04-Accessing-and-managing-data.html">Accessing and Managing Data in GCS with Vertex AI Notebooks</a></h2>
 <hr class="half-width">
 <ul>
-<li>Load data from GCS into memory to avoid managing local copies when
-possible.<br>
-</li>
-<li>Periodically check storage usage and costs to manage your GCS
-budget.<br>
-</li>
-<li>Use Vertex AI Workbench notebooks to upload analysis results back to
-GCS, keeping workflows organized and reproducible.</li>
+<li>Load data from GCS into memory with <code>storage.Client</code> or
+directly via <code>pd.read_csv("gs://...")</code> to avoid managing
+local copies.</li>
+<li>Periodically check storage usage and estimate both storage and
+egress costs to manage your GCS budget.</li>
+<li>Use Vertex AI Workbench notebooks to upload processed results back
+to GCS for sharing and downstream use.</li>
 </ul></section><section id="05-Interacting-with-code-repo"><h2 class="section-heading"><a href="05-Interacting-with-code-repo.html">Using a GitHub Personal Access Token (PAT) to Push/Pull from a Vertex AI Notebook</a></h2>
 <hr class="half-width">
 <ul>
