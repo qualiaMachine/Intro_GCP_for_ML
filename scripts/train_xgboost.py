@@ -56,7 +56,7 @@ def preprocess_data(df):
     df = df.copy()
     df["Age"] = df["Age"].fillna(df["Age"].median())
     df["Embarked"] = df["Embarked"].fillna(df["Embarked"].mode()[0])
-    df = df.drop(columns=["Name", "Ticket", "Cabin"], errors="ignore")
+    df = df.drop(columns=["PassengerId", "Name", "Ticket", "Cabin"], errors="ignore")
     df["Sex"] = df["Sex"].map({"male": 1, "female": 0})
     df["Embarked"] = df["Embarked"].map({"S": 0, "C": 1, "Q": 2})
     X = df.drop(columns=["Survived"])
