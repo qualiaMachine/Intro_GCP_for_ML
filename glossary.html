@@ -468,6 +468,46 @@ versioning, deployment, and comparison across experiments.</li>
 <li>
 <strong>Endpoint</strong>: A deployed model that serves predictions
 through Vertex AI Prediction.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="retrieval-augmented-generation-rag">Retrieval-Augmented Generation (RAG)<a class="anchor" aria-label="anchor" href="#retrieval-augmented-generation-rag"></a></h3>
+<ul><li>
+<strong>Retrieval-Augmented Generation (RAG)</strong>: A pattern
+where an LLM answers questions by first retrieving relevant passages
+from a corpus, then generating a response grounded in those passages.
+This reduces hallucination and allows citation of sources.</li>
+<li>
+<strong>Chunking</strong>: The process of breaking a large document
+into smaller, overlapping text segments so that each segment can be
+independently embedded and retrieved. Common strategies include
+fixed-character, sentence-level, and paragraph-level chunking.</li>
+<li>
+<strong>Embedding</strong>: A dense numerical vector (array of
+floats) that represents the semantic meaning of a piece of text. Texts
+with similar meanings produce vectors that are close together in the
+embedding space, enabling search by meaning rather than exact
+keywords.</li>
+<li>
+<strong>Vector Similarity / Cosine Similarity</strong>: A measure of
+how similar two embedding vectors are. Cosine similarity ranges from -1
+(opposite) to 1 (identical direction). In RAG, it’s used to rank which
+corpus chunks are most relevant to a user’s query.</li>
+<li>
+<strong>Nearest Neighbors</strong>: An algorithm that finds the data
+points (embeddings) closest to a given query point in vector space. Used
+in RAG to retrieve the top-k most relevant chunks for a user’s
+question.</li>
+<li>
+<strong>Grounding</strong>: The practice of constraining an LLM’s
+response to information present in the retrieved context, rather than
+allowing it to generate answers from its general training data.
+Grounding reduces hallucination and improves factual accuracy.</li>
+<li>
+<strong>Task Type (Embedding)</strong>: A parameter passed to
+embedding models like <code>gemini-embedding-001</code> that tells the
+model to optimize its output for a specific use case. Common values:
+<code>RETRIEVAL_DOCUMENT</code> (for corpus text being indexed) and
+<code>RETRIEVAL_QUERY</code> (for user questions being searched).</li>
 </ul><!--
 Place links that you need to refer to multiple times across pages here. Delete
 any links that you are not going to use.

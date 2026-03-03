@@ -581,11 +581,16 @@ in billing reports.</li>
 </ul></section><section id="10-Retrieval-augmented-generation"><h2 class="section-heading"><a href="10-Retrieval-augmented-generation.html">Retrieval-Augmented Generation (RAG) with Vertex AI</a></h2>
 <hr class="half-width">
 <ul>
-<li>Vertex AI’s RAG stack = low-op, cost-predictable.</li>
-<li>Hugging Face = high control, high GPU cost.</li>
-<li>Keep data local or in GCS to manage egress and compliance.</li>
+<li>RAG grounds LLM answers in your own data — retrieve first, then
+generate.</li>
+<li>Vertex AI provides managed embedding and generation APIs that
+require minimal infrastructure.</li>
+<li>Chunk size, retrieval depth (<code>top_k</code>), and prompt design
+are the primary tuning levers.</li>
 <li>Always cite retrieved chunks for reproducibility and
 transparency.</li>
+<li>Embeddings are computed once and reused; generation cost scales with
+query volume.</li>
 </ul></section><section id="11-CLI-workflows"><h2 class="section-heading"><a href="11-CLI-workflows.html">Bonus: CLI Workflows Without Notebooks (Draft)</a></h2>
 <hr class="half-width">
 <ul>
