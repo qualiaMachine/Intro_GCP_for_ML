@@ -783,7 +783,9 @@ steps:</p>
 </h3>
 <ul>
 <li>Go to <a href="https://console.cloud.google.com/welcome?project=doit-rci-mlm25-4626" class="external-link">console.cloud.google.com/welcome?project=doit-rci-mlm25-4626</a>
-and log in with your credentials.</li>
+and log in with your credentials.
+<!-- replace project ID with your own if not using the shared workshop project -->
+</li>
 </ul>
 </div>
 <div class="section level3">
@@ -1099,7 +1101,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1612,7 +1614,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
@@ -2183,7 +2185,7 @@ binary output data that clutters Git diffs.</p>
 <div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="op">!</span>jupytext <span class="op">--</span>to py Interacting<span class="op">-</span><span class="cf">with</span><span class="op">-</span>GCS.ipynb</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="op">!</span>jupytext <span class="op">--</span>to py Interacting<span class="op">-</span><span class="cf">with</span><span class="op">-</span>git.ipynb</span></code></pre>
 </div>
 <ol start="3" style="list-style-type: decimal">
 <li>Convert all notebooks in the current directory.<br>
@@ -2484,7 +2486,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -2890,7 +2892,8 @@ you don’t own in shared projects).</li>
 <div class="section level4">
 <h4 id="visit-training-pipelines-to-verify-its-running-">Visit “training pipelines” to verify it’s running.<a class="anchor" aria-label="anchor" href="#visit-training-pipelines-to-verify-its-running-"></a>
 </h4>
-<p><a href="https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link uri">https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626</a></p>
+<p><a href="https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link uri">https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626</a>
+<!-- replace project ID with your own if not using the shared workshop project --></p>
 </div>
 </section><section><h2 class="section-heading" id="training-artifacts">Training artifacts<a class="anchor" aria-label="anchor" href="#training-artifacts"></a>
 </h2>
@@ -2920,7 +2923,7 @@ It contains everything your training script explicitly writes. In our
 case, this includes:</p>
 <ul>
 <li>
-<strong><code>{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/xgboost-model</code></strong>
+<strong><code>{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/model/xgboost-model</code></strong>
 — Serialized XGBoost model (Booster) saved via <code>joblib</code>;
 reload later with <code>joblib.load()</code> for reuse or
 deployment.</li>
@@ -3454,7 +3457,8 @@ artifacts.<br>
 <li>Cancel jobs from the console if needed (be careful not to stop jobs
 you don’t own in shared projects).</li>
 </ol>
-<p><strong>Quick link</strong>: <a href="https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link uri">https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626</a></p>
+<p><strong>Quick link</strong>: <a href="https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link uri">https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626</a>
+<!-- replace project ID with your own if not using the shared workshop project --></p>
 <p>Check our bucket contents to verify expected outputs are there.</p>
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -3546,15 +3550,16 @@ and avoid having a copy in our VM.</p>
 <span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>d <span class="op">=</span> np.load(io.BytesIO(val_bytes))</span>
 <span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>X_val, y_val <span class="op">=</span> d[<span class="st">"X_val"</span>], d[<span class="st">"y_val"</span>]</span>
 <span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>X_val_t <span class="op">=</span> torch.tensor(X_val, dtype<span class="op">=</span>torch.float32)</span>
-<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a></span>
-<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co"># get predictions</span></span>
-<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>    probs <span class="op">=</span> m(X_val_t).squeeze(<span class="dv">1</span>)         <span class="co"># [N], sigmoid outputs in (0,1)</span></span>
-<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>    preds_t <span class="op">=</span> (probs <span class="op">&gt;=</span> <span class="fl">0.5</span>).<span class="bu">long</span>()       <span class="co"># threshold at 0.5 -&gt; class label 0/1</span></span>
-<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>    correct <span class="op">=</span> (preds_t <span class="op">==</span> y_val_t).<span class="bu">sum</span>().item()</span>
-<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>    acc <span class="op">=</span> correct <span class="op">/</span> y_val_t.shape[<span class="dv">0</span>]</span>
-<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a></span>
-<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Vertex model val accuracy: </span><span class="sc">{</span>acc<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>y_val_t <span class="op">=</span> torch.tensor(y_val, dtype<span class="op">=</span>torch.<span class="bu">long</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co"># get predictions</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>    probs <span class="op">=</span> m(X_val_t).squeeze(<span class="dv">1</span>)         <span class="co"># [N], sigmoid outputs in (0,1)</span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>    preds_t <span class="op">=</span> (probs <span class="op">&gt;=</span> <span class="fl">0.5</span>).<span class="bu">long</span>()       <span class="co"># threshold at 0.5 -&gt; class label 0/1</span></span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>    correct <span class="op">=</span> (preds_t <span class="op">==</span> y_val_t).<span class="bu">sum</span>().item()</span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a>    acc <span class="op">=</span> correct <span class="op">/</span> y_val_t.shape[<span class="dv">0</span>]</span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Vertex model val accuracy: </span><span class="sc">{</span>acc<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="gpu-accelerated-training-on-vertex-ai">GPU-Accelerated Training on Vertex AI<a class="anchor" aria-label="anchor" href="#gpu-accelerated-training-on-vertex-ai"></a>
@@ -4059,7 +4064,8 @@ WITH 1 trial</strong> before scaling up
 jobs</strong> to track trials, parameters, and metrics. You can also
 stop jobs from the console if needed. For MLM25, the following link
 should work: <a href="https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link">Hyperparameter
-tuning jobs</a>.</p>
+tuning jobs</a>.
+<!-- replace project ID with your own if not using the shared workshop project --></p>
 </div>
 <div class="section level4">
 <h4 id="inspect-best-trial-results">7. Inspect best trial results<a class="anchor" aria-label="anchor" href="#inspect-best-trial-results"></a>
@@ -4133,7 +4139,7 @@ configuration and verify it looks correct.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4187,7 +4193,7 @@ search:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4781,7 +4787,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -4813,7 +4819,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -4843,7 +4849,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
@@ -5066,8 +5072,8 @@ clustering.<br>
 - Cost-efficient for classroom-scale workloads (fractions of a cent per
 document).</p>
 <p>If you’d like to explore other options: - Open the <a href="https://console.cloud.google.com/vertex-ai/model-garden?project=doit-rci-mlm25-4626&amp;pageState=(%22galleryStateKey%22:(%22f%22:(%22g%22:%5B%22goals%22%5D,%22o%22:%5B%22Text%20embeddings%22%5D),%22s%22:%22%22))" class="external-link"><strong>Vertex
-AI Model Garden → Text Embeddings</strong></a> in your GCP
-console.<br>
+AI Model Garden → Text Embeddings</strong></a> in your GCP console.
+<!-- replace project ID with your own if not using the shared workshop project --><br>
 - You’ll find specialized alternatives such as: -
 <strong><code>text-embedding-005</code> (experimental)</strong> – larger
 model, higher precision on longer documents.<br>
@@ -5105,7 +5111,7 @@ rather than the public endpoint.</p>
 <span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>client <span class="op">=</span> genai.Client(</span>
 <span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>    http_options<span class="op">=</span>HttpOptions(api_version<span class="op">=</span><span class="st">"v1"</span>),</span>
 <span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>    vertexai<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>    project<span class="op">=</span><span class="st">"doit-rci-mlm25-4626"</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>    project<span class="op">=</span>PROJECT_ID,</span>
 <span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a>    location<span class="op">=</span><span class="st">"us-central1"</span>,</span>
 <span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>)</span>
 <span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a></span>

@@ -515,7 +515,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>Data preprocessing</strong>: The script fills missing values
@@ -873,7 +873,8 @@ artifacts.<br></li>
 you don’t own in shared projects).</li>
 </ol><div class="section level4">
 <h4 id="visit-training-pipelines-to-verify-its-running-">Visit “training pipelines” to verify it’s running.<a class="anchor" aria-label="anchor" href="#visit-training-pipelines-to-verify-its-running-"></a></h4>
-<p><a href="https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link uri">https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626</a></p>
+<p><a href="https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link uri">https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626</a>
+<!-- replace project ID with your own if not using the shared workshop project --></p>
 </div>
 </section><section><h2 class="section-heading" id="training-artifacts">Training artifacts<a class="anchor" aria-label="anchor" href="#training-artifacts"></a></h2>
 <hr class="half-width"><p>After the training run completes, we can manually view our bucket
@@ -899,7 +900,7 @@ using the Google Cloud Console or run the below code.</p>
 It contains everything your training script explicitly writes. In our
 case, this includes:</p>
 <ul><li>
-<strong><code>{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/xgboost-model</code></strong>
+<strong><code>{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/model/xgboost-model</code></strong>
 — Serialized XGBoost model (Booster) saved via <code>joblib</code>;
 reload later with <code>joblib.load()</code> for reuse or
 deployment.</li>
