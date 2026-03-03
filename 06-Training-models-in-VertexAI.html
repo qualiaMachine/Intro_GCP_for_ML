@@ -119,11 +119,11 @@
   Intro to Google Cloud Platform (GCP) for Machine Learning
 </div>
 
-<aside class="col-md-12 lesson-progress"><div style="width: 38%" class="percentage">
-    38%
+<aside class="col-md-12 lesson-progress"><div style="width: 37%" class="percentage">
+    37%
   </div>
   <div class="progress incubator">
-    <div class="progress-bar incubator" role="progressbar" style="width: 38%" aria-valuenow="38" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar incubator" role="progressbar" style="width: 37%" aria-valuenow="37" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
     </div>
   </div>
 </aside><div class="container">
@@ -263,9 +263,9 @@
     <div id="flush-collapsecurrent" class="accordion-collapse collapse show" aria-labelledby="flush-headingcurrent" data-bs-parent="#accordionFlushcurrent">
       <div class="accordion-body">
         <ul><li><a href="#initial-setup">Initial setup</a></li>
-<li><a href="#testing-train.py-locally-in-the-notebook">Testing train.py locally in the notebook</a></li>
+<li><a href="#testing-train_xgboost.py-locally-in-the-notebook">Testing train_xgboost.py locally in the notebook</a></li>
 <li><a href="#download-data-into-notebook-environment">Download data into notebook environment</a></li>
-<li><a href="#local-test-run-of-train.py">Local test run of train.py</a></li>
+<li><a href="#local-test-run-of-train_xgboost.py">Local test run of train_xgboost.py</a></li>
 <li><a href="#evaluate-the-trained-model-on-validation-data">Evaluate the trained model on validation data</a></li>
 <li><a href="#training-via-vertex-ai-custom-training-job">Training via Vertex AI custom training job</a></li>
 <li><a href="#monitoring-training-jobs-in-the-console">Monitoring training jobs in the Console</a></li>
@@ -465,7 +465,7 @@ region close to your data).</li>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"project = </span><span class="sc">{</span>PROJECT_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">region = </span><span class="sc">{</span>REGION<span class="sc">}</span><span class="ch">\n</span><span class="ss">bucket = </span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
 </div>
 </div>
-</section><section><h2 class="section-heading" id="testing-train-py-locally-in-the-notebook">Testing train.py locally in the notebook<a class="anchor" aria-label="anchor" href="#testing-train-py-locally-in-the-notebook"></a></h2>
+</section><section><h2 class="section-heading" id="testing-train_xgboost-py-locally-in-the-notebook">Testing train_xgboost.py locally in the notebook<a class="anchor" aria-label="anchor" href="#testing-train_xgboost-py-locally-in-the-notebook"></a></h2>
 <hr class="half-width"><p>Before submitting a managed training job to Vertex AI, let’s first
 examine and test the training script on our notebook VM. This ensures
 the code runs without errors before we spend money on cloud compute.</p>
@@ -515,15 +515,15 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>Data preprocessing</strong>: The script fills missing values
 (<code>Age</code> with median, <code>Embarked</code> with mode), maps
 categorical fields to numeric (<code>Sex</code> → {male:1, female:0},
 <code>Embarked</code> → {S:0, C:1, Q:2}), and drops non-predictive
-columns (<code>Name</code>, <code>Ticket</code>,
-<code>Cabin</code>).</li>
+columns (<code>PassengerId</code>, <code>Name</code>,
+<code>Ticket</code>, <code>Cabin</code>).</li>
 <li>
 <strong>Training function</strong>: <code>train_model()</code>
 constructs and fits an XGBoost model with the provided parameters and
@@ -566,51 +566,31 @@ specified bucket.</li>
 </div>
 <p>Before scaling training jobs onto managed resources, it’s essential
 to test your training script locally. This prevents wasting GPU/TPU time
-on bugs or misconfigured code.</p>
+on bugs or misconfigured code. Skipping these checks can lead to silent
+data bugs, runtime blowups at scale, inefficient experiments, or broken
+model artifacts.</p>
 <div class="section level3">
-<h3 id="guidelines-for-testing-ml-pipelines-before-scaling">Guidelines for testing ML pipelines before scaling<a class="anchor" aria-label="anchor" href="#guidelines-for-testing-ml-pipelines-before-scaling"></a></h3>
+<h3 id="sanity-checks-before-scaling">Sanity checks before scaling<a class="anchor" aria-label="anchor" href="#sanity-checks-before-scaling"></a></h3>
 <ul><li>
-<strong>Run tests locally first</strong> with small datasets.<br></li>
+<strong>Reproducibility</strong> – Do you get the same result each
+time? If not, set seeds controlling randomness.</li>
 <li>
-<strong>Use a subset of your dataset</strong> (1–5%) for fast
-checks.<br></li>
+<strong>Data loads correctly</strong> – Dataset loads without
+errors, expected columns exist, missing values handled.</li>
 <li>
-<strong>Start with minimal compute</strong> before moving to larger
-accelerators.<br></li>
+<strong>Overfitting check</strong> – Train on a tiny dataset (e.g.,
+100 rows). If it doesn’t overfit, something is off.</li>
 <li>
-<strong>Log key metrics</strong> such as loss curves and
-runtimes.<br></li>
+<strong>Loss behavior</strong> – Verify training loss decreases and
+doesn’t diverge.</li>
 <li>
-<strong>Verify correctness first</strong> before scaling up.</li>
-</ul></div>
-<div class="section level3">
-<h3 id="what-tests-should-we-do-before-scaling">What tests should we do before scaling?<a class="anchor" aria-label="anchor" href="#what-tests-should-we-do-before-scaling"></a></h3>
-<p>Before scaling to multiple or more powerful instances (e.g., GPUs or
-TPUs), it’s important to run a few sanity checks. Skipping these can
-lead to: silent data bugs, runtime blowups at scale, inefficient
-experiments, or broken model artifacts.</p>
-<p>Here is a non-exhaustive list of suggested tests to perform before
-scaling up your compute needs.</p>
-<ul><li>
-<strong>Reproducibility</strong> - do you get the same result each
-time you run your code? If not, set seeds controlling randomness.</li>
+<strong>Runtime estimate</strong> – Get a rough sense of training
+time on small data before committing to large compute.</li>
 <li>
-<strong>Data loads correctly</strong> – dataset loads without
-errors, expected columns exist, missing values handled.<br></li>
+<strong>Memory estimate</strong> – Check approximate memory use to
+choose the right machine type.</li>
 <li>
-<strong>Overfitting check</strong> – train on a tiny dataset (e.g.,
-100 rows). If it doesn’t overfit, something is off.<br></li>
-<li>
-<strong>Loss behavior</strong> – verify training loss decreases and
-doesn’t diverge.<br></li>
-<li>
-<strong>Runtime estimate</strong> – get a rough sense of training
-time on small data.<br></li>
-<li>
-<strong>Memory estimate</strong> – check approximate memory
-use.<br></li>
-<li>
-<strong>Save &amp; reload</strong> – ensure model saves, reloads,
+<strong>Save &amp; reload</strong> – Ensure model saves, reloads,
 and infers without errors.</li>
 </ul></div>
 </section><section><h2 class="section-heading" id="download-data-into-notebook-environment">Download data into notebook environment<a class="anchor" aria-label="anchor" href="#download-data-into-notebook-environment"></a></h2>
@@ -623,17 +603,14 @@ read directly from GCS.</p>
 <div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> storage</span>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(BUCKET_NAME)</span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>client <span class="op">=</span> storage.Client()</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(BUCKET_NAME)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_train.csv"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>blob.download_to_filename(<span class="st">"/home/jupyter/titanic_train.csv"</span>)</span>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_train.csv"</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>blob.download_to_filename(<span class="st">"/home/jupyter/titanic_train.csv"</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Downloaded titanic_train.csv"</span>)</span></code></pre>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Downloaded titanic_train.csv"</span>)</span></code></pre>
 </div>
-</section><section><h2 class="section-heading" id="local-test-run-of-train-py">Local test run of train.py<a class="anchor" aria-label="anchor" href="#local-test-run-of-train-py"></a></h2>
+</section><section><h2 class="section-heading" id="local-test-run-of-train_xgboost-py">Local test run of train_xgboost.py<a class="anchor" aria-label="anchor" href="#local-test-run-of-train_xgboost-py"></a></h2>
 <hr class="half-width"><p><strong>Outside of this workshop, you should run these kinds of tests
 on your local laptop or lab PC when possible.</strong> We’re using the
 Workbench VM here only for convenience in this workshop setting, but
@@ -676,8 +653,8 @@ params) when testing locally</li>
 <p>Training on this small dataset should take &lt;1 minute. Log runtime
 as a baseline. You should see the following output file:</p>
 <ul><li>
-<code>xgboost-model</code> # Python-serialized XGBoost model
-(Booster) via joblib; load with joblib.load for reuse.</li>
+<code>xgboost-model</code> — Serialized XGBoost model (Booster) via
+joblib; load with <code>joblib.load()</code> for reuse.</li>
 </ul></section><section><h2 class="section-heading" id="evaluate-the-trained-model-on-validation-data">Evaluate the trained model on validation data<a class="anchor" aria-label="anchor" href="#evaluate-the-trained-model-on-validation-data"></a></h2>
 <hr class="half-width"><p>Now that we’ve trained and saved an XGBoost model, we want to do the
 most important sanity check:<br><strong>Does this model make reasonable predictions on unseen
@@ -697,6 +674,22 @@ predictions 5. Computes simple accuracy</p>
 </div>
 <p>Then, we apply the same preprocessing function used by our training
 script before applying the model to our data.</p>
+<blockquote>
+<p><strong>Note:</strong> The <code>import</code> below treats the repo
+as a Python package. This works because we cloned the repo into
+<code>/home/jupyter/</code> and the directory contains an
+<code>__init__.py</code>. If you get an <code>ImportError</code>, make
+sure your working directory is <code>/home/jupyter/</code> (run
+<code>%cd /home/jupyter/</code> first).</p>
+</blockquote>
+<blockquote>
+<p><strong>Note on test data:</strong> The training script internally
+splits its input data 80/20 for training and validation. The
+<code>titanic_test.csv</code> file we use here is a <strong>separate,
+held-out test set</strong> that was never seen during training — not
+even by the internal validation split. This gives us an unbiased measure
+of model performance.</p>
+</blockquote>
 <div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -723,6 +716,44 @@ script before applying the model to our data.</p>
 <span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co"># Compute accuracy</span></span>
 <span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>acc <span class="op">=</span> accuracy_score(y_test, y_pred_binary)</span>
 <span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test accuracy: </span><span class="sc">{</span>acc<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre>
+</div>
+<p>You should see test accuracy in the range of
+<strong>0.78–0.82</strong>. If accuracy is significantly lower,
+double-check that the test data downloaded correctly and that the
+preprocessing matches the training script.</p>
+<div id="experiment-with-hyperparameters" class="callout discussion">
+<div class="callout-square">
+<i class="callout-icon" data-feather="message-circle"></i>
+</div>
+<span class="callout-header">Discussion</span>
+<div id="experiment-with-hyperparameters" class="callout-inner">
+<h3 class="callout-title">Experiment with hyperparameters</h3>
+<div class="callout-content">
+<p>Try changing <code>NUM_ROUND</code> to <code>200</code> and
+re-running the local training and evaluation cells above. Does accuracy
+improve? How does the runtime change? Then try
+<code>MAX_DEPTH = 6</code>. What happens to accuracy — does the model
+improve, or does it start overfitting?</p>
+</div>
+</div>
+</div>
+<div id="accordionSolution2" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
+  <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
+</button>
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div class="accordion-body">
+<p>Increasing <code>NUM_ROUND</code> from 100 to 200 may marginally
+improve accuracy but roughly doubles runtime. Increasing
+<code>MAX_DEPTH</code> from 3 to 6 lets trees capture more complex
+patterns but can lead to overfitting on a small dataset like Titanic —
+you may see training accuracy increase while test accuracy stays flat or
+drops. This is why testing hyperparameters locally before scaling is
+important.</p>
+</div>
+</div>
+</div>
 </div>
 </section><section><h2 class="section-heading" id="training-via-vertex-ai-custom-training-job">Training via Vertex AI custom training job<a class="anchor" aria-label="anchor" href="#training-via-vertex-ai-custom-training-job"></a></h2>
 <hr class="half-width"><p>Unlike “local” training using our notebook’s VM, this next approach
@@ -768,10 +799,16 @@ variables. We’ll also set a <code>RUN_ID</code> and
 <p>This next section defines a custom training job in Vertex AI,
 specifying how and where the training code will run. It points to your
 training script (<code>train_xgboost.py</code>), uses Google’s prebuilt
-XGBoost training container image, and installs any extra dependencies
-your script needs (in this case, <code>google-cloud-storage</code> for
-accessing GCS). The <code>display_name</code> sets a readable name for
-tracking the job in the Vertex AI console.</p>
+XGBoost training container image (which already includes common
+dependencies like <code>google-cloud-storage</code>), and sets a
+<code>display_name</code> for tracking the job in the Vertex AI
+console.</p>
+<blockquote>
+<p><strong>Tip:</strong> If your script needs packages not included in
+the prebuilt container, you can pass a <code>requirements</code> list to
+<code>CustomTrainingJob</code> (e.g.,
+<code>requirements=["scikit-learn&gt;=1.3"]</code>).</p>
+</blockquote>
 <div class="section level4">
 <h4 id="prebuilt-containers-for-training">Prebuilt containers for training<a class="anchor" aria-label="anchor" href="#prebuilt-containers-for-training"></a></h4>
 <p>Vertex AI provides prebuilt Docker container images for model
@@ -793,7 +830,10 @@ containers for custom training</a>.</p>
 <p>Finally, this next block launches the custom training job on Vertex
 AI using the configuration defined earlier. <strong>We won’t be charged
 for our selected <code>MACHINE</code> until we run the below code using
-<code>job.run()</code>.</strong> This marks the point when our script
+<code>job.run()</code>.</strong> For an <code>n1-standard-4</code>
+running 2–5 minutes, expect a cost of roughly
+<strong>$0.01–$0.02</strong> — negligible, but good to be aware of as
+you scale to larger machines. This marks the point when our script
 actually begins executing remotely on the Vertex training
 infrastructure. Once <code>job.run()</code> is called, Vertex handles
 packaging your training script, transferring it to the managed training
@@ -872,10 +912,40 @@ artifacts.<br></li>
 <li>Cancel jobs from the console if needed (be careful not to stop jobs
 you don’t own in shared projects).</li>
 </ol><div class="section level4">
-<h4 id="visit-training-pipelines-to-verify-its-running-">Visit “training pipelines” to verify it’s running.<a class="anchor" aria-label="anchor" href="#visit-training-pipelines-to-verify-its-running-"></a></h4>
-<p><a href="https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link uri">https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626</a>
-<!-- replace project ID with your own if not using the shared workshop project --></p>
+<h4 id="visit-the-console-to-verify-its-running-">Visit the console to verify it’s running.<a class="anchor" aria-label="anchor" href="#visit-the-console-to-verify-its-running-"></a></h4>
+<p>Navigate to <strong>Vertex AI &gt; Training &gt; Custom Jobs</strong>
+in the <a href="https://console.cloud.google.com/vertex-ai/training/custom-jobs" class="external-link">Google
+Cloud Console</a> to view your running or completed jobs.</p>
 </div>
+<div class="section level3">
+<h3 id="if-your-job-fails">If your job fails<a class="anchor" aria-label="anchor" href="#if-your-job-fails"></a></h3>
+<p>Job failures are common when first getting started. Here’s how to
+debug:</p>
+<ol style="list-style-type: decimal"><li>
+<strong>Check the logs first.</strong> In the Console, click your
+job name → <strong>Logs</strong> tab. The error message is usually near
+the bottom.</li>
+<li>
+<strong>Common failure modes:</strong>
+<ul><li>
+<strong>Quota exceeded</strong> — Your project may not have enough
+quota for the requested machine type. Check <strong>IAM &amp; Admin &gt;
+Quotas</strong>.</li>
+<li>
+<strong>Script error</strong> — A bug in your training script. The
+traceback will appear in the logs. Fix the bug and re-run locally before
+resubmitting.</li>
+<li>
+<strong>Wrong container</strong> — Mismatched framework version or
+CPU/GPU container. Verify your <code>container_uri</code>.</li>
+<li>
+<strong>Permission denied on GCS</strong> — The training service
+account can’t access your bucket. Check bucket permissions.</li>
+</ul></li>
+<li>
+<strong>Re-test locally</strong> with the same arguments before
+resubmitting to avoid burning compute time on the same error.</li>
+</ol></div>
 </section><section><h2 class="section-heading" id="training-artifacts">Training artifacts<a class="anchor" aria-label="anchor" href="#training-artifacts"></a></h2>
 <hr class="half-width"><p>After the training run completes, we can manually view our bucket
 using the Google Cloud Console or run the below code.</p>
@@ -883,14 +953,13 @@ using the Google Cloud Console or run the below code.</p>
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>total_size_bytes <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co"># bucket = client.bucket(BUCKET_NAME)</span></span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(BUCKET_NAME):</span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>    total_size_bytes <span class="op">+=</span> blob.size</span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>    <span class="bu">print</span>(blob.name)</span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>total_size_mb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)</span>
-<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(BUCKET_NAME):</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>    total_size_bytes <span class="op">+=</span> blob.size</span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>    <span class="bu">print</span>(blob.name)</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>total_size_mb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
 </div>
 <div class="section level4">
 <h4 id="training-artifacts-artifact_dir">Training Artifacts → <code>ARTIFACT_DIR</code>
@@ -922,58 +991,114 @@ production workflows.</p>
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="im">import</span> io</span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="co"># Load test data directly into memory</span></span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(BUCKET_NAME)</span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_test.csv"</span>)</span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>test_df <span class="op">=</span> pd.read_csv(io.BytesIO(blob.download_as_bytes()))</span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co"># Load test data directly from GCS into memory</span></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(BUCKET_NAME)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_test.csv"</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>test_df <span class="op">=</span> pd.read_csv(io.BytesIO(blob.download_as_bytes()))</span>
 <span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a></span>
 <span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="co"># Apply same preprocessing logic used during training</span></span>
 <span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>X_test, y_test <span class="op">=</span> preprocess_data(test_df)</span>
 <span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co"># -------------------------</span></span>
-<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a><span class="co"># 4. Load the model artifact we just pulled from GCS</span></span>
-<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co"># -------------------------</span></span>
-<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a>MODEL_BLOB_PATH <span class="op">=</span> <span class="ss">f"artifacts/xgb/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">/model/xgboost-model"</span></span>
-<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a>model_blob <span class="op">=</span> bucket.blob(MODEL_BLOB_PATH)</span>
-<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a>model_bytes <span class="op">=</span> model_blob.download_as_bytes()</span>
-<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a>model <span class="op">=</span> joblib.load(io.BytesIO(model_bytes))</span>
-<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a></span>
-<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a><span class="co"># -------------------------</span></span>
-<span id="cb13-20"><a href="#cb13-20" tabindex="-1"></a><span class="co"># 5. Run predictions and compute accuracy</span></span>
-<span id="cb13-21"><a href="#cb13-21" tabindex="-1"></a><span class="co"># -------------------------</span></span>
-<span id="cb13-22"><a href="#cb13-22" tabindex="-1"></a>dtest <span class="op">=</span> xgb.DMatrix(X_test)</span>
-<span id="cb13-23"><a href="#cb13-23" tabindex="-1"></a>y_pred_prob <span class="op">=</span> model.predict(dtest)</span>
-<span id="cb13-24"><a href="#cb13-24" tabindex="-1"></a>y_pred <span class="op">=</span> (y_pred_prob <span class="op">&gt;=</span> <span class="fl">0.5</span>).astype(<span class="bu">int</span>)</span>
-<span id="cb13-25"><a href="#cb13-25" tabindex="-1"></a></span>
-<span id="cb13-26"><a href="#cb13-26" tabindex="-1"></a>acc <span class="op">=</span> accuracy_score(y_test, y_pred)</span>
-<span id="cb13-27"><a href="#cb13-27" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test accuracy (model from Vertex job): </span><span class="sc">{</span>acc<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co"># Load the model artifact from GCS</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a>MODEL_BLOB_PATH <span class="op">=</span> <span class="ss">f"artifacts/xgb/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">/model/xgboost-model"</span></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a>model_blob <span class="op">=</span> bucket.blob(MODEL_BLOB_PATH)</span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a>model_bytes <span class="op">=</span> model_blob.download_as_bytes()</span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a>model <span class="op">=</span> joblib.load(io.BytesIO(model_bytes))</span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="co"># Run predictions and compute accuracy</span></span>
+<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a>dtest <span class="op">=</span> xgb.DMatrix(X_test)</span>
+<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a>y_pred_prob <span class="op">=</span> model.predict(dtest)</span>
+<span id="cb13-20"><a href="#cb13-20" tabindex="-1"></a>y_pred <span class="op">=</span> (y_pred_prob <span class="op">&gt;=</span> <span class="fl">0.5</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb13-21"><a href="#cb13-21" tabindex="-1"></a></span>
+<span id="cb13-22"><a href="#cb13-22" tabindex="-1"></a>acc <span class="op">=</span> accuracy_score(y_test, y_pred)</span>
+<span id="cb13-23"><a href="#cb13-23" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test accuracy (model from Vertex job): </span><span class="sc">{</span>acc<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre>
+</div>
+<div id="compare-local-vs.-vertex-ai-accuracy" class="callout discussion">
+<div class="callout-square">
+<i class="callout-icon" data-feather="message-circle"></i>
+</div>
+<span class="callout-header">Discussion</span>
+<div id="compare-local-vs.-vertex-ai-accuracy" class="callout-inner">
+<h3 class="callout-title">Compare local vs. Vertex AI accuracy</h3>
+<div class="callout-content">
+<p>Compare the test accuracy from your local training run with the
+accuracy from the Vertex AI job. Are they the same? Why or why not?</p>
+</div>
+</div>
+</div>
+<div id="accordionSolution3" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
+  <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
+</button>
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div class="accordion-body">
+<p>The two accuracy values should be very close or identical. Both runs
+execute the same <code>train_xgboost.py</code> script with the same
+hyperparameters and the same data. XGBoost’s
+<code>binary:logistic</code> objective is deterministic given the same
+input, so the models should produce matching predictions. If they
+differ, check that you used the same hyperparameter values in both runs
+and that the data in GCS matches the local copy.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="explore-job-logs-in-the-console" class="callout discussion">
+<div class="callout-square">
+<i class="callout-icon" data-feather="message-circle"></i>
+</div>
+<span class="callout-header">Discussion</span>
+<div id="explore-job-logs-in-the-console" class="callout-inner">
+<h3 class="callout-title">Explore job logs in the Console</h3>
+<div class="callout-content">
+<p>Navigate to <strong>Vertex AI &gt; Training &gt; Custom Jobs</strong>
+in the Google Cloud Console. Find your most recent job and click on it.
+Can you locate:</p>
+<ol style="list-style-type: decimal"><li>The <strong>Logs</strong> tab showing your script’s
+<code>print()</code> output?</li>
+<li>The training time printed by <code>train_model()</code>?</li>
+<li>The output artifact path?</li>
+</ol></div>
+</div>
+</div>
+<div id="accordionSolution4" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
+  <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
+</button>
+<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div class="accordion-body">
+<ol style="list-style-type: decimal"><li>Click your job name, then select the <strong>Logs</strong> tab (or
+<strong>View logs</strong> link). Your script’s <code>print()</code>
+statements — including train/val sizes, training time, and model save
+path — appear in the log stream.</li>
+<li>Look for the line <code>Training time: X.XX seconds</code> in the
+logs. This comes from the <code>train_model()</code> function in
+<code>train_xgboost.py</code>.</li>
+<li>The artifact path is shown in the log line
+<code>Model saved to gs://...</code> and also appears in the job details
+panel under output configuration.</li>
+</ol></div>
+</div>
+</div>
 </div>
 <div class="section level3">
-<h3 id="when-training-takes-too-long">When training takes too long<a class="anchor" aria-label="anchor" href="#when-training-takes-too-long"></a></h3>
-<p>Two main options in Vertex AI:</p>
-<p><strong>Option 1: Upgrade to more powerful machine
-types</strong><br>
-- The simplest way to reduce training time is to use a larger machine or
-add GPUs (e.g., T4, V100, A100).<br>
-- This works best for small or medium datasets (&lt;10 GB) and avoids
-the coordination overhead of distributed training.<br>
-- GPUs and TPUs can accelerate deep learning workloads
-significantly.</p>
+<h3 id="looking-ahead-when-training-takes-too-long">Looking ahead: when training takes too long<a class="anchor" aria-label="anchor" href="#looking-ahead-when-training-takes-too-long"></a></h3>
+<p>The Titanic dataset is tiny, so our job finishes in minutes. In your
+real work, you’ll encounter datasets and models where a single training
+run takes hours or days. When that happens, Vertex AI gives you two main
+levers:</p>
+<p><strong>Option 1: Upgrade to more powerful machine types</strong> -
+Use a larger machine or add GPUs (e.g., T4, V100, A100). This is the
+simplest approach and works well for datasets under ~10 GB.</p>
 <p><strong>Option 2: Use distributed training with multiple
-replicas</strong><br>
-- Vertex AI supports distributed training for many frameworks.<br>
-- The dataset is split across replicas, each training a portion of the
-data with synchronized gradient updates.<br>
-- This approach is most useful for large datasets and long-running
-jobs.</p>
-<p><strong>When distributed training makes sense</strong><br>
-- Dataset size exceeds 10–50 GB.<br>
-- Training on a single machine takes more than 10 hours.<br>
-- The model is a deep learning workload that scales naturally across
-GPUs or TPUs.</p>
-<p>We will explore both options more in depth in the next episode when
-we train a neural network.</p>
+replicas</strong> - Split the dataset across replicas with synchronized
+gradient updates. This becomes worthwhile when datasets exceed 10–50 GB
+or single-machine training takes more than 10 hours.</p>
+<p>We’ll explore both options hands-on in the next episode when we train
+a PyTorch neural network with GPU acceleration.</p>
 <div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
 <i class="callout-icon" data-feather="key"></i>
