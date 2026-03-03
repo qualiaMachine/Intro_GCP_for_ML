@@ -183,7 +183,7 @@ print("HPT artifacts base:", ARTIFACT_DIR)
 ```
 
 #### 6. Monitor tuning job
-Open **Vertex AI → Training → Hyperparameter tuning jobs** to track trials, parameters, and metrics. You can also stop jobs from the console if needed. For MLM25, the following link should work: [Hyperparameter tuning jobs](https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&project=doit-rci-mlm25-4626).
+Open **Vertex AI → Training → Hyperparameter tuning jobs** to track trials, parameters, and metrics. You can also stop jobs from the console if needed. For MLM25, the following link should work: [Hyperparameter tuning jobs](https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&project=doit-rci-mlm25-4626). <!-- replace project ID with your own if not using the shared workshop project -->
 
 #### 7. Inspect best trial results
 After completion, look up the best configuration and objective value from the SDK:

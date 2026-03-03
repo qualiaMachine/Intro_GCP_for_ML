@@ -124,7 +124,7 @@ For this exercise, we’re using **`text-embedding-004`**, which is Google’s l
 - Cost-efficient for classroom-scale workloads (fractions of a cent per document).  
 
 If you’d like to explore other options:
-- Open the [**Vertex AI Model Garden → Text Embeddings**](https://console.cloud.google.com/vertex-ai/model-garden?project=doit-rci-mlm25-4626&pageState=(%22galleryStateKey%22:(%22f%22:(%22g%22:%5B%22goals%22%5D,%22o%22:%5B%22Text%20embeddings%22%5D),%22s%22:%22%22))) in your GCP console.  
+- Open the [**Vertex AI Model Garden → Text Embeddings**](https://console.cloud.google.com/vertex-ai/model-garden?project=doit-rci-mlm25-4626&pageState=(%22galleryStateKey%22:(%22f%22:(%22g%22:%5B%22goals%22%5D,%22o%22:%5B%22Text%20embeddings%22%5D),%22s%22:%22%22))) in your GCP console. <!-- replace project ID with your own if not using the shared workshop project -->  
 - You’ll find specialized alternatives such as:
   - **`text-embedding-005` (experimental)** – larger model, higher precision on longer documents.  
   - **`multimodal-embedding-001`** – supports image + text embeddings for richer use cases.  
@@ -157,7 +157,7 @@ from sklearn.neighbors import NearestNeighbors
 client = genai.Client(
     http_options=HttpOptions(api_version="v1"),
     vertexai=True,
-    project="doit-rci-mlm25-4626",
+    project=PROJECT_ID,
     location="us-central1",
 )
 

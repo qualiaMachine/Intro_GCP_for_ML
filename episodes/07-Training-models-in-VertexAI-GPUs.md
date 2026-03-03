@@ -294,7 +294,7 @@ print("Artifacts folder:", ARTIFACT_DIR)
 3. Click on your job name to see status, logs, and output model artifacts.  
 4. Cancel jobs from the console if needed (be careful not to stop jobs you don't own in shared projects).
 
-**Quick link**: https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&project=doit-rci-mlm25-4626
+**Quick link**: https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&project=doit-rci-mlm25-4626 <!-- replace project ID with your own if not using the shared workshop project -->
 
 Check our bucket contents to verify expected outputs are there.
 
@@ -373,6 +373,7 @@ val_bytes = val_blob.download_as_bytes()
 d = np.load(io.BytesIO(val_bytes))
 X_val, y_val = d["X_val"], d["y_val"]
 X_val_t = torch.tensor(X_val, dtype=torch.float32)
+y_val_t = torch.tensor(y_val, dtype=torch.long)
 
 # get predictions
 with torch.no_grad():
