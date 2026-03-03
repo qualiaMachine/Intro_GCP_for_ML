@@ -447,12 +447,11 @@
 <div class="inner">
 <h3 class="card-title">Questions</h3>
 <ul>
-<li>What problem does GCP aim to solve for ML researchers?<br>
-</li>
-<li>How does using a notebook as a controller help organize ML workflows
-in the cloud?<br>
-</li>
-<li>How does GCP compare to AWS for ML workflows?</li>
+<li>Why would I run ML experiments in the cloud instead of on my laptop
+or an HPC cluster?</li>
+<li>What does GCP offer for machine learning, and how is it
+organized?</li>
+<li>What is the “notebook as controller” pattern?</li>
 </ul>
 </div>
 </div>
@@ -462,108 +461,166 @@ in the cloud?<br>
 <div class="inner bordered">
 <h3 class="card-title">Objectives</h3>
 <ul>
-<li>Understand the basic role of GCP in supporting ML research.<br>
-</li>
-<li>Recognize how a notebook can serve as a controller for cloud
-resources.<br>
-</li>
-<li>Compare GCP and AWS approaches to building and managing ML
-workflows.</li>
+<li>Identify when cloud compute makes sense for ML work.</li>
+<li>Describe what GCP and Vertex AI provide for ML researchers.</li>
+<li>Explain the notebook-as-controller pattern used throughout this
+workshop.</li>
 </ul>
 </div>
 </div>
 </div>
 </div>
 </div>
-<p>Google Cloud Platform (GCP) provides the basic building blocks
-researchers need to run machine learning (ML) experiments at scale.
-Instead of working only on your laptop or a high-performance computing
-(HPC) cluster, you can spin up compute resources on demand, store
-datasets in the cloud, and run low-cost notebooks that act as a
-“controller” for larger training and tuning jobs.</p>
-<p>This workshop focuses on <em>using a simple notebook environment as
-the control center</em> for your ML workflow. You write and debug code
-in a Vertex AI Workbench notebook, then submit training and tuning jobs
-to Vertex AI’s compute infrastructure — keeping your notebook
-lightweight while GCP handles the heavy lifting.</p>
-<div class="section level3">
-<h3 id="why-use-gcp-for-machine-learning-and-ai">Why use GCP for machine learning and AI?<a class="anchor" aria-label="anchor" href="#why-use-gcp-for-machine-learning-and-ai"></a>
-</h3>
-<p>GCP provides several advantages that make it a strong option for
-applied ML:</p>
-<ul>
-<li>
-<p><strong>Flexible compute</strong>: You can choose the hardware
-that fits your workload:</p>
+<section><h2 class="section-heading" id="why-run-ml-in-the-cloud">Why run ML in the cloud?<a class="anchor" aria-label="anchor" href="#why-run-ml-in-the-cloud"></a>
+</h2>
+<hr class="half-width">
+<p>You have ML code that works on your laptop. But at some point you
+need more — a bigger GPU, a dataset that won’t fit on disk, or the
+ability to run dozens of training experiments overnight. You could
+invest in local hardware or compete for time on a shared HPC cluster,
+but cloud platforms let you rent exactly the hardware you need, for
+exactly as long as you need it, and then shut it down.</p>
+<p>Google Cloud Platform (GCP) is one of several clouds that supports
+this. The rest of this episode explains what GCP offers for ML and how
+the pieces fit together.</p>
+</section><section><h2 class="section-heading" id="what-gcp-provides-for-ml">What GCP provides for ML<a class="anchor" aria-label="anchor" href="#what-gcp-provides-for-ml"></a>
+</h2>
+<hr class="half-width">
+<p>GCP gives you three things that matter for applied ML research:</p>
+<p><strong>Flexible compute.</strong> You pick the hardware that fits
+your workload:</p>
 <ul>
 <li>
 <strong>CPUs</strong> for lightweight models, preprocessing, or
 feature engineering.</li>
 <li>
-<strong>GPUs</strong> (e.g., NVIDIA T4, V100, A100) for training
+<strong>GPUs</strong> (NVIDIA T4, V100, A100, etc.) for training
 deep learning models.</li>
 <li>
-<strong>TPUs (Tensor Processing Units)</strong> for TensorFlow or
-JAX-based deep learning. TPUs are custom Google hardware optimized for
-matrix operations and can provide strong performance and energy
-efficiency for compatible workloads. Google has reported better
-performance-per-watt compared to GPUs in many TensorFlow benchmarks,
-though <em>these gains depend heavily on model type and
-implementation</em>. Historically, TPU support has been limited for
-PyTorch users, and while Google is improving PyTorch integration, the
-TPU ecosystem still works best for TensorFlow and JAX workflows.</li>
+<strong>TPUs</strong> (Tensor Processing Units) — Google’s custom
+hardware for matrix-heavy workloads. TPUs work best with TensorFlow and
+JAX; PyTorch support is improving but still less mature.</li>
 </ul>
-</li>
-<li><p><strong>Data storage and access</strong>: Google Cloud Storage
-(GCS) buckets act like S3 on AWS — an easy way to store and share
-datasets between experiments and collaborators.</p></li>
-<li><p><strong>From scratch workflows</strong>: Instead of depending on
-a fully managed ML service, you bring your own frameworks (PyTorch,
-TensorFlow, scikit-learn, etc.) and run your code the same way you would
-on your laptop or HPC cluster, but with scalable cloud
-resources.</p></li>
-<li><p><strong>Cost visibility</strong>: Billing dashboards and
-project-level budgets make it easier to track costs and stay within
-research budgets.</p></li>
-<li><p><strong>Sustainability focus</strong>: Google aims to operate
-entirely on <em>carbon-free energy by 2030</em>. Combined with the TPU’s
-focus on efficient matrix computation, this gives GCP a potential edge
-for researchers interested in energy-conscious ML — though
-<em>real-world energy efficiency varies by workload and
-utilization</em>.</p></li>
-</ul>
-<p>In short, GCP provides infrastructure that you control from a
-notebook environment, allowing you to build and run ML workflows just as
-you would locally, but with access to scalable hardware and storage.</p>
+<p><strong>Scalable storage.</strong> Google Cloud Storage (GCS) buckets
+give you a place to store datasets, scripts, and model artifacts that
+any job or notebook can access. Think of it as a shared filesystem for
+your project.</p>
+<p><strong>Managed ML services.</strong> Vertex AI is Google’s ML
+platform. It wraps compute, storage, and tooling into a set of services
+designed for ML workflows — managed notebooks, training jobs,
+hyperparameter tuning, model hosting, and access to foundation models
+like Gemini.</p>
+</section><section><h2 class="section-heading" id="how-the-pieces-fit-together-vertex-ai">How the pieces fit together: Vertex AI<a class="anchor" aria-label="anchor" href="#how-the-pieces-fit-together-vertex-ai"></a>
+</h2>
+<hr class="half-width">
+<p>Google Cloud has many products and brand names. Here are the ones
+you’ll use in this workshop and how they relate:</p>
+<table class="table">
+<colgroup>
+<col width="35%">
+<col width="64%">
+</colgroup>
+<thead><tr class="header">
+<th>Term</th>
+<th>What it is</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><strong>GCP</strong></td>
+<td>Google Cloud Platform — the overall cloud: compute, storage,
+networking.</td>
+</tr>
+<tr class="even">
+<td><strong>Vertex AI</strong></td>
+<td>Google’s ML platform — notebooks, training jobs, tuning, model
+hosting. Everything below lives under this umbrella.</td>
+</tr>
+<tr class="odd">
+<td><strong>Workbench</strong></td>
+<td>Managed Jupyter notebooks that run on a Compute Engine VM. Your
+interactive environment.</td>
+</tr>
+<tr class="even">
+<td><strong>Custom Jobs</strong></td>
+<td>Managed training runs on dedicated hardware. You submit code; Vertex
+AI provisions a machine, runs it, and shuts it down.</td>
+</tr>
+<tr class="odd">
+<td><strong>Cloud Storage (GCS)</strong></td>
+<td>Object storage for files. Similar to AWS S3.</td>
+</tr>
+<tr class="even">
+<td><strong>Compute Engine</strong></td>
+<td>Virtual machines you configure with CPUs, GPUs, or TPUs. Workbench
+and training jobs run on Compute Engine under the hood.</td>
+</tr>
+<tr class="odd">
+<td><strong>Gemini</strong></td>
+<td>Google’s family of large language models, accessed through the
+Vertex AI API.</td>
+</tr>
+</tbody>
+</table>
+<p>For a full list of terms, see the <a href="glossary.html">Glossary</a>.</p>
+</section><section><h2 class="section-heading" id="the-notebook-as-controller-pattern">The notebook-as-controller pattern<a class="anchor" aria-label="anchor" href="#the-notebook-as-controller-pattern"></a>
+</h2>
+<hr class="half-width">
+<p>The central idea of this workshop is simple. You work in a small,
+cheap Jupyter notebook in the cloud (a <strong>Vertex AI
+Workbench</strong> instance). That notebook is your control panel — you
+write code, explore data, and inspect results there. But when it’s time
+to train a model, you don’t train inside the notebook. Instead, you use
+the <strong>Vertex AI Python SDK</strong> to submit a training job to a
+separate, more powerful machine (with GPUs, more memory, etc.). When the
+job finishes, results land in <strong>Cloud Storage</strong> and you
+pull them back into your notebook.</p>
+<p>This keeps costs low (the notebook VM is small) and keeps your work
+reproducible (each job is a clean, logged run on dedicated
+hardware).</p>
+<div id="console-notebooks-or-cli-your-choice" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
 </div>
-<div class="section level3">
-<h3 id="a-note-on-cloud-costs">A note on cloud costs<a class="anchor" aria-label="anchor" href="#a-note-on-cloud-costs"></a>
-</h3>
-<p>Cloud computing is not free — you pay for the compute, storage, and
-API calls you use. But it’s worth putting those costs in context:</p>
+<span class="callout-header">Callout</span>
+<div id="console-notebooks-or-cli-your-choice" class="callout-inner">
+<h3 class="callout-title">Console, notebooks, or CLI — your choice</h3>
+<div class="callout-content">
+<p>This workshop uses the <strong>GCP web console</strong> and
+<strong>Workbench notebooks</strong> for most tasks because they’re
+visual and easy to follow. But nearly everything we do can also be done
+from the <strong><code>gcloud</code> command-line tool</strong> —
+submitting training jobs, managing buckets, checking quotas. <a href="11-CLI-workflows.html">Episode 11</a> covers the CLI equivalents.
+If you prefer terminal-based workflows or need to automate jobs in
+scripts and CI/CD pipelines, that episode shows you how.</p>
+<p><strong>One important caveat:</strong> whether you use the console,
+notebooks, or CLI, resources you create (VMs, training jobs, endpoints)
+keep running and billing until you explicitly stop them. There’s no
+automatic shutdown. We cover cleanup habits in <a href="09-Resource-management-cleanup.html">Episode 9</a>, but the short
+version is: always check for running resources before you walk away.</p>
+</div>
+</div>
+</div>
+</section><section><h2 class="section-heading" id="a-note-on-cloud-costs">A note on cloud costs<a class="anchor" aria-label="anchor" href="#a-note-on-cloud-costs"></a>
+</h2>
+<hr class="half-width">
+<p>Cloud computing is not free, but it’s worth putting costs in
+context:</p>
 <ul>
 <li>
-<strong>Hardware is expensive and evolves fast.</strong> A single
-A100 GPU costs ~$15,000 and is outdated within a few years. Cloud lets
-you rent the latest hardware by the hour without a capital purchase or a
-depreciation schedule.</li>
-<li>
-<strong>Managing hardware takes people.</strong> On-premises
-clusters require staff for procurement, installation, driver updates,
-cooling, and security. Cloud offloads that operational burden so
-researchers can focus on research.</li>
+<strong>Hardware is expensive and ages fast.</strong> A single A100
+GPU costs ~$15,000 and is outdated within a few years. Cloud lets you
+rent the latest hardware by the hour.</li>
 <li>
 <strong>You pay only for what you use.</strong> Stop a VM and the
-meter stops. This is especially valuable for bursty research workloads —
-a week of intensive training followed by months of writing.</li>
+meter stops — valuable for bursty research workloads.</li>
 <li>
 <strong>Budgets and alerts keep you safe.</strong> GCP billing
-dashboards, budget alerts, and quotas help prevent surprise bills. We
-cover cleanup practices in <a href="09-Resource-management-cleanup.html">Episode 9</a>.</li>
+dashboards and budget alerts help prevent surprise bills. We cover
+cleanup in <a href="09-Resource-management-cleanup.html">Episode
+9</a>.</li>
 </ul>
-<p>The key is to be intentional: choose the right machine size, stop
-resources when idle, and monitor spending. We’ll reinforce these habits
-throughout the workshop.</p>
+<p>The key habit: choose the right machine size, stop resources when
+idle, and monitor spending. We’ll reinforce this throughout.</p>
 <div id="for-uw-madison-researchers" class="callout">
 <div class="callout-square">
 <i class="callout-icon" data-feather="bell"></i>
@@ -582,10 +639,8 @@ Computing Pilot</a> drops F&amp;A overhead from 55.5% to
 account, saving ~$2,950 per $10,000 spent.</li>
 <li>
 <strong>NIH STRIDES discounts</strong> — Negotiated pricing on GCP,
-AWS, and Azure services for NIH-funded researchers, layered on top of UW
-rates. Exact discounts vary by service and are shared through program
-resellers. See <a href="https://kb.wisc.edu/109813" class="external-link">STRIDES at
-UW-Madison</a> or contact <a href="mailto:STRIDES@nih.gov">STRIDES@nih.gov</a>.</li>
+AWS, and Azure services for NIH-funded researchers. See <a href="https://kb.wisc.edu/109813" class="external-link">STRIDES at UW-Madison</a> or contact
+<a href="mailto:STRIDES@nih.gov">STRIDES@nih.gov</a>.</li>
 <li>
 <strong>Google Cloud Research Credits</strong> — Up to
 <strong>$5,000</strong> in free credits for faculty and postdocs ($1,000
@@ -593,125 +648,32 @@ for PhD students). <a href="https://edu.google.com/intl/ALL_us/programs/credits/
 here</a>.</li>
 <li>
 <strong>Free on-campus GPUs</strong> — <a href="https://chtc.cs.wisc.edu/" class="external-link">CHTC</a> provides access to hundreds of
-GPUs (including A100s) at no cost. Great for workloads that don’t need
-cloud-specific services.</li>
+GPUs (including A100s) at no cost.</li>
 <li>
 <strong>Support</strong> — The <a href="mailto:cloud-services@cio.wisc.edu">Public Cloud Team</a> offers
 weekly office hours and architecture consultations. The <a href="https://hub.datascience.wisc.edu/communities/mlx/" class="external-link">ML+X
 community</a> holds monthly meetings on ML/AI topics.</li>
 </ul>
 <p>See the <a href="uw-madison-cloud-resources.html">UW-Madison Cloud
-Resources</a> page for the full list of discounts, contacts, and how to
-request a UW cloud account.</p>
+Resources</a> page for the full list.</p>
 </div>
 </div>
 </div>
-</div>
-<div class="section level3">
-<h3 id="gcp-and-vertex-ai-a-quick-orientation">GCP and Vertex AI: a quick orientation<a class="anchor" aria-label="anchor" href="#gcp-and-vertex-ai-a-quick-orientation"></a>
-</h3>
-<p>Google Cloud has many products and brand names. The table below maps
-the key terms you’ll encounter in this workshop to what they actually
-do.</p>
-<table class="table">
-<colgroup>
-<col width="16%">
-<col width="30%">
-<col width="52%">
-</colgroup>
-<thead><tr class="header">
-<th>Term</th>
-<th>What it is</th>
-<th>Where you’ll see it</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td><strong>GCP (Google Cloud Platform)</strong></td>
-<td>The overall cloud platform — compute, storage, networking, and
-managed services.</td>
-<td>Everything in this workshop runs on GCP.</td>
-</tr>
-<tr class="even">
-<td><strong>Vertex AI</strong></td>
-<td>Google’s umbrella brand for ML/AI services. It includes Workbench
-notebooks, training jobs, hyperparameter tuning, Model Garden, and
-more.</td>
-<td>Episodes 3–10 all use Vertex AI services.</td>
-</tr>
-<tr class="odd">
-<td><strong>Vertex AI Workbench</strong></td>
-<td>A managed Jupyter notebook environment that runs on a Compute Engine
-VM. Think of it as “Jupyter in the cloud” with GCP authentication built
-in.</td>
-<td>Episode 3 — where we create our notebook.</td>
-</tr>
-<tr class="even">
-<td><strong>Cloud Storage (GCS)</strong></td>
-<td>Object storage for datasets, model artifacts, and scripts. Similar
-to AWS S3.</td>
-<td>Episode 2 — where we upload training data.</td>
-</tr>
-<tr class="odd">
-<td><strong>Compute Engine</strong></td>
-<td>Virtual machines (VMs) you can configure with CPUs, GPUs, or TPUs.
-Workbench notebooks run on Compute Engine VMs under the hood.</td>
-<td>Episodes 6–8 — the machines that run training jobs.</td>
-</tr>
-<tr class="even">
-<td><strong>Gemini</strong></td>
-<td>Google’s family of large language models (LLMs), used for text
-generation, embeddings, and multimodal tasks. Accessed through the
-Vertex AI API.</td>
-<td>Episode 10 — RAG pipeline uses Gemini for generation and
-embeddings.</td>
-</tr>
-<tr class="odd">
-<td><strong>Model Garden</strong></td>
-<td>A catalog of foundation models (Google and third-party) available
-through Vertex AI.</td>
-<td>Episode 10 — where you can browse embedding and generation
-models.</td>
-</tr>
-</tbody>
-</table>
-<div id="what-about-aws" class="callout">
-<div class="callout-square">
-<i class="callout-icon" data-feather="bell"></i>
-</div>
-<span class="callout-header">Callout</span>
-<div id="what-about-aws" class="callout-inner">
-<h3 class="callout-title">What about AWS?</h3>
-<div class="callout-content">
-<p>In many respects, GCP and AWS offer comparable capabilities for ML
-research. Both provide scalable compute, storage, and tooling to support
-everything from quick experiments to production pipelines. AWS typically
-offers a broader range of GPU and CPU instance types, along with mature
-managed services like SageMaker and tighter integration with enterprise
-infrastructure. GCP, on the other hand, emphasizes the use of TensorFlow
-and JAX, and the availability of TPUs — which may offer energy
-advantages for certain workloads.</p>
-<p>Ultimately, the choice often comes down to framework preference,
-familiarity, and existing resources, rather than major functional
-differences between the two platforms.</p>
-</div>
-</div>
-</div>
-<div id="comparing-infrastructures" class="callout discussion">
+<div id="your-current-setup" class="callout discussion">
 <div class="callout-square">
 <i class="callout-icon" data-feather="message-circle"></i>
 </div>
 <span class="callout-header">Discussion</span>
-<div id="comparing-infrastructures" class="callout-inner">
-<h3 class="callout-title">Comparing infrastructures</h3>
+<div id="your-current-setup" class="callout-inner">
+<h3 class="callout-title">Your current setup</h3>
 <div class="callout-content">
-<p>Think about your current research setup:<br>
-- Do you mostly use your laptop, HPC cluster, AWS, or GCP for ML
-experiments?<br>
-- Which environment feels most transparent for understanding costs and
-reproducibility?<br>
-- If you could offload one infrastructure challenge (e.g., installing
-GPU drivers, managing storage, or setting up environments), what would
-it be and why?</p>
+<p>Think about how you currently run ML experiments:</p>
+<ul>
+<li>What hardware do you use — laptop, HPC cluster, cloud?</li>
+<li>What’s the biggest infrastructure pain point in your workflow (GPU
+access, environment setup, data transfer, cost)?</li>
+<li>What would you most like to offload to a managed service?</li>
+</ul>
 <p>Take 3–5 minutes to discuss with a partner or share in the workshop
 chat.</p>
 </div>
@@ -725,21 +687,15 @@ chat.</p>
 <div class="callout-inner">
 <div class="callout-content">
 <ul>
-<li>GCP and AWS both provide the essential components for running ML
-workloads at scale.<br>
-</li>
-<li>GCP emphasizes simplicity, open frameworks, and TPU access; AWS
-offers broader hardware and automation options.<br>
-</li>
-<li>TPUs are efficient for TensorFlow and JAX, but GPU-based workflows
-(common on AWS) remain more flexible across frameworks.<br>
-</li>
-<li>Both platforms now provide strong cost tracking and sustainability
-tools, with only minor differences in interface and ecosystem
-integration.<br>
-</li>
-<li>Using a notebook as a controller provides reproducibility and helps
-manage compute and storage resources consistently across clouds.</li>
+<li>Cloud platforms let you rent hardware on demand instead of buying or
+waiting for shared resources.</li>
+<li>GCP organizes its ML services under Vertex AI — notebooks, training
+jobs, tuning, and model hosting.</li>
+<li>The notebook-as-controller pattern keeps your notebook cheap while
+offloading heavy training to dedicated Vertex AI jobs.</li>
+<li>Everything in this workshop can also be done from the
+<code>gcloud</code> CLI (<a href="11-CLI-workflows.html">Episode
+11</a>).</li>
 </ul>
 </div>
 </div>
@@ -748,7 +704,7 @@ manage compute and storage resources consistently across clouds.</li>
 Place links that you need to refer to multiple times across pages here. Delete
 any links that you are not going to use.
  -->
-</div></section><section id="aio-02-Data-storage"><p>Content from <a href="02-Data-storage.html">Data Storage: Setting up GCS</a></p>
+</section></section><section id="aio-02-Data-storage"><p>Content from <a href="02-Data-storage.html">Data Storage: Setting up GCS</a></p>
 <hr>
 <p>Last updated on 2026-03-03 |
 
@@ -2081,7 +2037,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -2428,7 +2384,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -5782,9 +5738,9 @@ config file that describes the job.</p>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">--config</span><span class="op">=</span>xgb_job.yaml</span></code></pre>
 </div>
 <p>Vertex AI provisions a VM, runs your training container, and writes
-outputs to the <code>baseOutputDirectory</code>. You can close your
-terminal and the job keeps running — there is no need to keep a notebook
-open.</p>
+outputs to the <code>baseOutputDirectory</code>. The job runs on GCP’s
+infrastructure, not on your machine — you can close your terminal and it
+keeps going.</p>
 </div>
 <div class="section level3">
 <h3 id="gpu-example-pytorch">GPU example (PyTorch)<a class="anchor" aria-label="anchor" href="#gpu-example-pytorch"></a>
@@ -5824,7 +5780,7 @@ open.</p>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    <span class="at">--config</span><span class="op">=</span>pytorch_gpu_job.yaml</span></code></pre>
 </div>
 </div>
-</section><section><h2 class="section-heading" id="step-4-monitor-and-manage-jobs">Step 4: Monitor and manage jobs<a class="anchor" aria-label="anchor" href="#step-4-monitor-and-manage-jobs"></a>
+</section><section><h2 class="section-heading" id="step-4-monitor-jobs">Step 4: Monitor jobs<a class="anchor" aria-label="anchor" href="#step-4-monitor-jobs"></a>
 </h2>
 <hr class="half-width">
 <div class="section level3">
@@ -5851,42 +5807,80 @@ etc.), and creation time.</p>
 output streams to your terminal in real time.</p>
 </div>
 <div class="section level3">
-<h3 id="cancel-a-running-job">Cancel a running job<a class="anchor" aria-label="anchor" href="#cancel-a-running-job"></a>
+<h3 id="hyperparameter-tuning-jobs">Hyperparameter tuning jobs<a class="anchor" aria-label="anchor" href="#hyperparameter-tuning-jobs"></a>
 </h3>
+<p>The <code>gcloud ai hp-tuning-jobs</code> family works the same
+way:</p>
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs cancel JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs stream-logs JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
 </div>
+<p>Creating HP tuning jobs via YAML is more verbose — for complex tuning
+configs, the Python SDK (<a href="08-Hyperparameter-tuning.html">Episode
+8</a>) is often more readable.</p>
 </div>
-<div class="section level3">
-<h3 id="delete-a-completed-job">Delete a completed job<a class="anchor" aria-label="anchor" href="#delete-a-completed-job"></a>
-</h3>
+</section><section><h2 class="section-heading" id="step-5-check-for-running-resources-dont-skip-this">Step 5: Check for running resources (don’t skip this)<a class="anchor" aria-label="anchor" href="#step-5-check-for-running-resources-dont-skip-this"></a>
+</h2>
+<hr class="half-width">
+<p>The biggest risk with CLI workflows is submitting a job — or leaving
+a notebook VM running — and forgetting about it. Unlike a Workbench
+notebook where you can see tabs and running kernels, the CLI gives you
+no visual reminder that something is still billing you. Jobs and VMs
+keep running whether or not your terminal is open.</p>
+<p><strong>Get in the habit of checking before you walk
+away:</strong></p>
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs delete JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Training jobs still running</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1 <span class="at">--filter</span><span class="op">=</span><span class="st">"state=JOB_STATE_RUNNING"</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co"># HP tuning jobs still running</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs list <span class="at">--region</span><span class="op">=</span>us-central1 <span class="at">--filter</span><span class="op">=</span><span class="st">"state=JOB_STATE_RUNNING"</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co"># Endpoints still deployed (these bill 24/7, even when idle)</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co"># Workbench notebook VMs still running</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances list <span class="at">--location</span><span class="op">=</span>us-central1-a</span></code></pre>
 </div>
-</div>
-<div class="section level3">
-<h3 id="hyperparameter-tuning-jobs">Hyperparameter tuning jobs<a class="anchor" aria-label="anchor" href="#hyperparameter-tuning-jobs"></a>
-</h3>
-<p>The <code>gcloud ai hp-tuning-jobs</code> family works the same way.
-You provide a YAML config with the parameter search space:</p>
+<p>If anything shows up that you don’t need, shut it down:</p>
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># List HP tuning jobs</span></span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Cancel a running training job</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs cancel JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span>
 <span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co"># Cancel</span></span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs cancel JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co"># Undeploy a model from an endpoint (stops the per-hour charge)</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints undeploy-model ENDPOINT_ID <span class="dt">\</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>    <span class="at">--region</span><span class="op">=</span>us-central1 <span class="dt">\</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>    <span class="at">--deployed-model-id</span><span class="op">=</span>DEPLOYED_MODEL_ID</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co"># Stop a Workbench notebook VM</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances stop INSTANCE_NAME <span class="at">--location</span><span class="op">=</span>us-central1-a</span></code></pre>
 </div>
-<p>Creating HP tuning jobs via YAML is more verbose — for complex tuning
-configs, the Python SDK (episode 08) is often more readable. Use
-whichever fits your workflow.</p>
+<div id="cost-leaks-are-silent" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
 </div>
-</section><section><h2 class="section-heading" id="step-5-download-results">Step 5: Download results<a class="anchor" aria-label="anchor" href="#step-5-download-results"></a>
+<span class="callout-header">Callout</span>
+<div id="cost-leaks-are-silent" class="callout-inner">
+<h3 class="callout-title">Cost leaks are silent</h3>
+<div class="callout-content">
+<p>A forgotten endpoint bills ~$1.50–$3/hour depending on machine type —
+that’s <strong>$36–$72/day</strong> doing nothing. A GPU training job
+you accidentally submitted twice burns money until you cancel it.
+There’s no pop-up warning; you’ll only find out on your billing
+dashboard or when you hit a quota.</p>
+<p>Build the habit: <strong>every time you finish a CLI session, run the
+check commands above.</strong> For a more thorough cleanup checklist,
+see <a href="09-Resource-management-cleanup.html">Episode 9</a>.</p>
+</div>
+</div>
+</div>
+</section><section><h2 class="section-heading" id="step-6-download-results">Step 6: Download results<a class="anchor" aria-label="anchor" href="#step-6-download-results"></a>
 </h2>
 <hr class="half-width">
 <p>After a job succeeds, download artifacts from GCS:</p>
@@ -5971,7 +5965,7 @@ Custom Jobs</strong>.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6005,7 +5999,7 @@ notebook.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb17">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6040,7 +6034,7 @@ the accuracy value.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb18">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6116,6 +6110,8 @@ outside of Workbench VMs.</li>
 the browser.</li>
 <li>Shell scripts checked into version control are more reproducible
 than notebooks with hidden state.</li>
+<li>CLI workflows give no visual reminder of running resources — always
+check for active jobs, endpoints, and VMs before walking away.</li>
 <li>Notebooks and CLI workflows are complementary — use each where it
 fits best.</li>
 </ul>

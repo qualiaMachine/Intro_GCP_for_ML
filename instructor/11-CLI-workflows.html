@@ -311,8 +311,9 @@
 <li><a href="#step-1-install-and-authenticate">Step 1: Install and authenticate</a></li>
 <li><a href="#step-2-upload-data-to-gcs">Step 2: Upload data to GCS</a></li>
 <li><a href="#step-3-submit-a-training-job">Step 3: Submit a training job</a></li>
-<li><a href="#step-4-monitor-and-manage-jobs">Step 4: Monitor and manage jobs</a></li>
-<li><a href="#step-5-download-results">Step 5: Download results</a></li>
+<li><a href="#step-4-monitor-jobs">Step 4: Monitor jobs</a></li>
+<li><a href="#step-5-check-for-running-resources-dont-skip-this">Step 5: Check for running resources (don’t skip this)</a></li>
+<li><a href="#step-6-download-results">Step 6: Download results</a></li>
 <li><a href="#putting-it-all-together-a-shell-script">Putting it all together: a shell script</a></li>
 <li><a href="#when-to-use-notebooks-vs.-cli">When to use notebooks vs. CLI</a></li>
         </ul></div><!--/div.accordion-body-->
@@ -593,9 +594,9 @@ config file that describes the job.</p>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">--config</span><span class="op">=</span>xgb_job.yaml</span></code></pre>
 </div>
 <p>Vertex AI provisions a VM, runs your training container, and writes
-outputs to the <code>baseOutputDirectory</code>. You can close your
-terminal and the job keeps running — there is no need to keep a notebook
-open.</p>
+outputs to the <code>baseOutputDirectory</code>. The job runs on GCP’s
+infrastructure, not on your machine — you can close your terminal and it
+keeps going.</p>
 </div>
 <div class="section level3">
 <h3 id="gpu-example-pytorch">GPU example (PyTorch)<a class="anchor" aria-label="anchor" href="#gpu-example-pytorch"></a></h3>
@@ -634,7 +635,7 @@ open.</p>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    <span class="at">--config</span><span class="op">=</span>pytorch_gpu_job.yaml</span></code></pre>
 </div>
 </div>
-</section><section><h2 class="section-heading" id="step-4-monitor-and-manage-jobs">Step 4: Monitor and manage jobs<a class="anchor" aria-label="anchor" href="#step-4-monitor-and-manage-jobs"></a></h2>
+</section><section><h2 class="section-heading" id="step-4-monitor-jobs">Step 4: Monitor jobs<a class="anchor" aria-label="anchor" href="#step-4-monitor-jobs"></a></h2>
 <hr class="half-width"><div class="section level3">
 <h3 id="list-jobs">List jobs<a class="anchor" aria-label="anchor" href="#list-jobs"></a></h3>
 <div class="codewrapper sourceCode" id="cb9">
@@ -657,39 +658,77 @@ etc.), and creation time.</p>
 output streams to your terminal in real time.</p>
 </div>
 <div class="section level3">
-<h3 id="cancel-a-running-job">Cancel a running job<a class="anchor" aria-label="anchor" href="#cancel-a-running-job"></a></h3>
+<h3 id="hyperparameter-tuning-jobs">Hyperparameter tuning jobs<a class="anchor" aria-label="anchor" href="#hyperparameter-tuning-jobs"></a></h3>
+<p>The <code>gcloud ai hp-tuning-jobs</code> family works the same
+way:</p>
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs cancel JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs stream-logs JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
 </div>
+<p>Creating HP tuning jobs via YAML is more verbose — for complex tuning
+configs, the Python SDK (<a href="08-Hyperparameter-tuning.html">Episode
+8</a>) is often more readable.</p>
 </div>
-<div class="section level3">
-<h3 id="delete-a-completed-job">Delete a completed job<a class="anchor" aria-label="anchor" href="#delete-a-completed-job"></a></h3>
+</section><section><h2 class="section-heading" id="step-5-check-for-running-resources-dont-skip-this">Step 5: Check for running resources (don’t skip this)<a class="anchor" aria-label="anchor" href="#step-5-check-for-running-resources-dont-skip-this"></a></h2>
+<hr class="half-width"><p>The biggest risk with CLI workflows is submitting a job — or leaving
+a notebook VM running — and forgetting about it. Unlike a Workbench
+notebook where you can see tabs and running kernels, the CLI gives you
+no visual reminder that something is still billing you. Jobs and VMs
+keep running whether or not your terminal is open.</p>
+<p><strong>Get in the habit of checking before you walk
+away:</strong></p>
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs delete JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Training jobs still running</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1 <span class="at">--filter</span><span class="op">=</span><span class="st">"state=JOB_STATE_RUNNING"</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co"># HP tuning jobs still running</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs list <span class="at">--region</span><span class="op">=</span>us-central1 <span class="at">--filter</span><span class="op">=</span><span class="st">"state=JOB_STATE_RUNNING"</span></span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co"># Endpoints still deployed (these bill 24/7, even when idle)</span></span>
+<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co"># Workbench notebook VMs still running</span></span>
+<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances list <span class="at">--location</span><span class="op">=</span>us-central1-a</span></code></pre>
 </div>
-</div>
-<div class="section level3">
-<h3 id="hyperparameter-tuning-jobs">Hyperparameter tuning jobs<a class="anchor" aria-label="anchor" href="#hyperparameter-tuning-jobs"></a></h3>
-<p>The <code>gcloud ai hp-tuning-jobs</code> family works the same way.
-You provide a YAML config with the parameter search space:</p>
+<p>If anything shows up that you don’t need, shut it down:</p>
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># List HP tuning jobs</span></span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Cancel a running training job</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs cancel JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span>
 <span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co"># Cancel</span></span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs cancel JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co"># Undeploy a model from an endpoint (stops the per-hour charge)</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints undeploy-model ENDPOINT_ID <span class="dt">\</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>    <span class="at">--region</span><span class="op">=</span>us-central1 <span class="dt">\</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>    <span class="at">--deployed-model-id</span><span class="op">=</span>DEPLOYED_MODEL_ID</span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co"># Stop a Workbench notebook VM</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances stop INSTANCE_NAME <span class="at">--location</span><span class="op">=</span>us-central1-a</span></code></pre>
 </div>
-<p>Creating HP tuning jobs via YAML is more verbose — for complex tuning
-configs, the Python SDK (episode 08) is often more readable. Use
-whichever fits your workflow.</p>
+<div id="cost-leaks-are-silent" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
 </div>
-</section><section><h2 class="section-heading" id="step-5-download-results">Step 5: Download results<a class="anchor" aria-label="anchor" href="#step-5-download-results"></a></h2>
+<span class="callout-header">Callout</span>
+<div id="cost-leaks-are-silent" class="callout-inner">
+<h3 class="callout-title">Cost leaks are silent</h3>
+<div class="callout-content">
+<p>A forgotten endpoint bills ~$1.50–$3/hour depending on machine type —
+that’s <strong>$36–$72/day</strong> doing nothing. A GPU training job
+you accidentally submitted twice burns money until you cancel it.
+There’s no pop-up warning; you’ll only find out on your billing
+dashboard or when you hit a quota.</p>
+<p>Build the habit: <strong>every time you finish a CLI session, run the
+check commands above.</strong> For a more thorough cleanup checklist,
+see <a href="09-Resource-management-cleanup.html">Episode 9</a>.</p>
+</div>
+</div>
+</div>
+</section><section><h2 class="section-heading" id="step-6-download-results">Step 6: Download results<a class="anchor" aria-label="anchor" href="#step-6-download-results"></a></h2>
 <hr class="half-width"><p>After a job succeeds, download artifacts from GCS:</p>
 <div class="codewrapper sourceCode" id="cb14">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -770,7 +809,7 @@ Custom Jobs</strong>.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -804,7 +843,7 @@ notebook.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb17">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -839,7 +878,7 @@ the accuracy value.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb18">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -891,6 +930,8 @@ outside of Workbench VMs.</li>
 the browser.</li>
 <li>Shell scripts checked into version control are more reproducible
 than notebooks with hidden state.</li>
+<li>CLI workflows give no visual reminder of running resources — always
+check for active jobs, endpoints, and VMs before walking away.</li>
 <li>Notebooks and CLI workflows are complementary — use each where it
 fits best.</li>
 </ul></div>

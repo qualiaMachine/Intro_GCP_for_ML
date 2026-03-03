@@ -434,21 +434,15 @@
 <section id="01-Introduction"><h2 class="section-heading"><a href="01-Introduction.html">Overview of Google Cloud for Machine Learning and AI</a></h2>
 <hr class="half-width">
 <ul>
-<li>GCP and AWS both provide the essential components for running ML
-workloads at scale.<br>
-</li>
-<li>GCP emphasizes simplicity, open frameworks, and TPU access; AWS
-offers broader hardware and automation options.<br>
-</li>
-<li>TPUs are efficient for TensorFlow and JAX, but GPU-based workflows
-(common on AWS) remain more flexible across frameworks.<br>
-</li>
-<li>Both platforms now provide strong cost tracking and sustainability
-tools, with only minor differences in interface and ecosystem
-integration.<br>
-</li>
-<li>Using a notebook as a controller provides reproducibility and helps
-manage compute and storage resources consistently across clouds.</li>
+<li>Cloud platforms let you rent hardware on demand instead of buying or
+waiting for shared resources.</li>
+<li>GCP organizes its ML services under Vertex AI — notebooks, training
+jobs, tuning, and model hosting.</li>
+<li>The notebook-as-controller pattern keeps your notebook cheap while
+offloading heavy training to dedicated Vertex AI jobs.</li>
+<li>Everything in this workshop can also be done from the
+<code>gcloud</code> CLI (<a href="11-CLI-workflows.html">Episode
+11</a>).</li>
 </ul></section><section id="02-Data-storage"><h2 class="section-heading"><a href="02-Data-storage.html">Data Storage: Setting up GCS</a></h2>
 <hr class="half-width">
 <ul>
@@ -603,6 +597,8 @@ outside of Workbench VMs.</li>
 the browser.</li>
 <li>Shell scripts checked into version control are more reproducible
 than notebooks with hidden state.</li>
+<li>CLI workflows give no visual reminder of running resources — always
+check for active jobs, endpoints, and VMs before walking away.</li>
 <li>Notebooks and CLI workflows are complementary — use each where it
 fits best.</li>
 </ul></section>
