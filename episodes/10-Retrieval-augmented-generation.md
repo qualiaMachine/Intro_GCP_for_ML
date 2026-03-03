@@ -114,20 +114,20 @@ print(len(corpus_df), "chunks created")
 
 ### Choosing an embedding and generator model
 
-Vertex AI currently offers multiple managed embedding models under the **Text Embeddings API** family.  
-For this exercise, we’re using **`text-embedding-004`**, which is Google’s latest general-purpose model optimized for **semantic similarity**, **retrieval**, and **clustering** tasks.  
+Vertex AI offers several managed embedding models through the **Gemini API** and the older **Text Embeddings API**.
+For this exercise, we’re using **`gemini-embedding-001`**, Google’s latest general-purpose embedding model optimized for **semantic similarity**, **retrieval**, and **clustering** tasks.
 
 **Why this model?**
-- Produces 768-dimensional dense vectors suitable for cosine or dot-product similarity.  
-- Handles long passages (up to ~8,000 tokens) and multilingual content.  
-- Tuned for retrieval tasks like RAG, document search, and clustering.  
-- Cost-efficient for classroom-scale workloads (fractions of a cent per document).  
+- Supports configurable output dimensions (768, 1536, or 3072) — we use 1536 for a good balance of quality and speed.
+- Handles long passages (up to ~8,000 tokens) and multilingual content.
+- Tuned for retrieval tasks like RAG, document search, and clustering.
+- Cost-efficient for classroom-scale workloads (fractions of a cent per document).
 
 If you’d like to explore other options:
-- Open the [**Vertex AI Model Garden → Text Embeddings**](https://console.cloud.google.com/vertex-ai/model-garden?project=doit-rci-mlm25-4626&pageState=(%22galleryStateKey%22:(%22f%22:(%22g%22:%5B%22goals%22%5D,%22o%22:%5B%22Text%20embeddings%22%5D),%22s%22:%22%22))) in your GCP console. <!-- replace project ID with your own if not using the shared workshop project -->  
-- You’ll find specialized alternatives such as:
-  - **`text-embedding-005` (experimental)** – larger model, higher precision on longer documents.  
-  - **`multimodal-embedding-001`** – supports image + text embeddings for richer use cases.  
+- Open the [**Vertex AI Model Garden → Text Embeddings**](https://console.cloud.google.com/vertex-ai/model-garden?project=doit-rci-mlm25-4626&pageState=(%22galleryStateKey%22:(%22f%22:(%22g%22:%5B%22goals%22%5D,%22o%22:%5B%22Text%20embeddings%22%5D),%22s%22:%22%22))) in your GCP console. <!-- replace project ID with your own if not using the shared workshop project -->
+- You’ll find alternatives such as:
+  - **`text-embedding-005`** – older model, still widely used; 768-dimensional output.
+  - **`multimodal-embedding-001`** – supports image + text embeddings for richer use cases.
   - **Third-party embeddings (via Model Garden)** – e.g., `bge-large-en`, `cohere-embed-v3`, `all-MiniLM`.  
 
 
@@ -180,10 +180,12 @@ Next, we define a helper function that converts text strings into numerical vect
 # 3. Helper: get embeddings for a list of texts
 #############################################
 
-def embed_texts(text_list, batch_size=32, dims=EMBED_DIM):
+def embed_texts(text_list, batch_size=32, dims=EMBED_DIM, task_type="RETRIEVAL_DOCUMENT"):
     """
     Convert a list of text strings into embedding vectors using gemini-embedding-001.
     Returns a NumPy array of shape (len(text_list), dims).
+
+    task_type: "RETRIEVAL_DOCUMENT" for corpus chunks, "RETRIEVAL_QUERY" for user queries.
     """
     vectors = []
 
@@ -195,7 +197,7 @@ def embed_texts(text_list, batch_size=32, dims=EMBED_DIM):
             model=EMBED_MODEL_ID,
             contents=batch,
             config=EmbedContentConfig(
-                task_type="RETRIEVAL_DOCUMENT",   # optimize embeddings for retrieval/use as chunks
+                task_type=task_type,              # RETRIEVAL_DOCUMENT for chunks, RETRIEVAL_QUERY for queries
                 output_dimensionality=dims,       # must match EMBED_DIM everywhere
             ),
         )
@@ -240,7 +242,7 @@ def retrieve(query, k=5):
     """
 
     # Embed the query to the same dimension space as emb_matrix
-    query_vec = embed_texts([query], dims=EMBED_DIM)[0]   # shape (EMBED_DIM,)
+    query_vec = embed_texts([query], dims=EMBED_DIM, task_type="RETRIEVAL_QUERY")[0]  # shape (EMBED_DIM,)
 
     # Find nearest neighbors using cosine distance
     distances, indices = nn.kneighbors([query_vec], n_neighbors=k, return_distance=True)
@@ -334,7 +336,7 @@ Understanding the cost of each pipeline component helps you decide where to opti
 | Step | Resource | Example Component | Cost Driver | Typical Range |
 |------|-----------|-------------------|--------------|----------------|
 | VM runtime | Vertex AI Workbench | `n1-standard-4` | Uptime (hourly) | ~$0.20/hr |
-| Embeddings | text-embedding-004 | Managed API | Tokens embedded | ~$0.10 / 1M tokens |
+| Embeddings | gemini-embedding-001 | Managed API | Tokens embedded | ~$0.10 / 1M tokens |
 | Retrieval | Local NN | CPU only | None | Free |
 | Generation | gemini-2.5-flash-001 | Managed API | Input/output tokens | ~$0.25 / 1M tokens |
 | Hugging Face alt | T4 VM | Local model inference | GPU uptime | ~$0.35/hr + egress |
