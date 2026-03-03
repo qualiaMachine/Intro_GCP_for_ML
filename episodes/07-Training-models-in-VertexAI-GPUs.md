@@ -51,15 +51,12 @@ aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCK
 
 ## Prepare data as `.npz`
 
-Why `.npz`? NumPy's `.npz` files are compressed binary containers that can store multiple arrays (e.g., features and labels) together in a single file. They offer numerous benefits:
+Why `.npz`? NumPy's `.npz` files are compressed binary containers that can store multiple arrays (e.g., features and labels) together in a single file:
 
-- Smaller, faster I/O than CSV for arrays.  
-- One file can hold multiple arrays (`X_train`, `y_train`).
-- Natural fit for `torch.utils.data.Dataset` / `DataLoader`.  
-- **Cloud-friendly:** compressed `.npz` files reduce upload and download times and minimize GCS egress costs. Because each `.npz` is a single binary object, reading it from Google Cloud Storage (GCS) requires only one network call—much faster and cheaper than streaming many small CSVs or images individually.  
-- **Efficient data movement:** when you launch a Vertex AI training job, GCS objects referenced in your script (for example, `gs://.../train_data.npz`) are automatically staged to the job's VM or container at runtime. Vertex copies these objects into its local scratch disk before execution, so subsequent reads (e.g., `np.load(...)`) occur from local storage rather than directly over the network. For small-to-medium datasets, this happens transparently and incurs minimal startup delay.  
-- **Reproducible binary format:** unlike CSV, `.npz` preserves exact dtypes and shapes, ensuring identical results across different environments and containers.  
-- Each GCS object read or listing request incurs a small per-request cost; using a single `.npz` reduces both the number of API calls and associated latency.
+- **Compact & fast:** smaller than CSV, and one file can hold multiple arrays (`X_train`, `y_train`).
+- **Cloud-friendly:** each `.npz` is a single GCS object — one network call to read instead of streaming many small files, reducing latency and egress costs.
+- **Vertex AI integration:** when you launch a training job, GCS objects are automatically staged to the job VM's local scratch disk, so `np.load(...)` reads from local storage at runtime.
+- **Reproducible:** unlike CSV, `.npz` preserves exact dtypes and shapes across environments.
 
   
 ```python
@@ -75,25 +72,25 @@ blob = bucket.blob("titanic_train.csv")
 df = pd.read_csv(io.BytesIO(blob.download_as_bytes()))
 
 # Minimal preprocessing to numeric arrays
-sex_enc = LabelEncoder().fit(df["Sex"])            # Fit label encoder on 'Sex' column (male/female)
-df["Sex"] = sex_enc.transform(df["Sex"])           # Convert 'Sex' to numeric values (e.g., male=1, female=0)
-df["Embarked"] = df["Embarked"].fillna("S")       # Replace missing embarkation ports with most common ('S')
-emb_enc = LabelEncoder().fit(df["Embarked"])       # Fit label encoder on 'Embarked' column (S/C/Q)
-df["Embarked"] = emb_enc.transform(df["Embarked"]) # Convert embarkation categories to numeric codes
-df["Age"] = df["Age"].fillna(df["Age"].median())   # Fill missing ages with median (robust to outliers)
-df["Fare"] = df["Fare"].fillna(df["Fare"].median())# Fill missing fares with median to avoid NaNs
+sex_enc = LabelEncoder().fit(df["Sex"])
+df["Sex"] = sex_enc.transform(df["Sex"])
+df["Embarked"] = df["Embarked"].fillna("S")
+emb_enc = LabelEncoder().fit(df["Embarked"])
+df["Embarked"] = emb_enc.transform(df["Embarked"])
+df["Age"] = df["Age"].fillna(df["Age"].median())
+df["Fare"] = df["Fare"].fillna(df["Fare"].median())
 
-X = df[["Pclass","Sex","Age","SibSp","Parch","Fare","Embarked"]].values  # Select numeric feature columns as input
-y = df["Survived"].values                                                # Target variable (1=survived, 0=did not survive)
+X = df[["Pclass","Sex","Age","SibSp","Parch","Fare","Embarked"]].values
+y = df["Survived"].values
 
-scaler = StandardScaler()                                                # Initialize standard scaler for standardization (best practice for neural net training)
-X = scaler.fit_transform(X)                                              # Scale features to mean=0, std=1 for stable training
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
 
-X_train, X_val, y_train, y_val = train_test_split(                       # Split dataset into training and validation sets
-    X, y, test_size=0.2, random_state=42)                                # 80% training, 20% validation (fixed random seed)
+X_train, X_val, y_train, y_val = train_test_split(
+    X, y, test_size=0.2, random_state=42)
 
-np.savez("/home/jupyter/train_data.npz", X_train=X_train, y_train=y_train)             # Save training arrays to compressed .npz file
-np.savez("/home/jupyter/val_data.npz",   X_val=X_val,   y_val=y_val)                   # Save validation arrays to compressed .npz file
+np.savez("/home/jupyter/train_data.npz", X_train=X_train, y_train=y_train)
+np.savez("/home/jupyter/val_data.npz",   X_val=X_val,   y_val=y_val)
 
 ```
 
@@ -128,9 +125,19 @@ print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
 - For larger models, use smaller model equivalents (e.g., 100M vs 7B params) when testing locally
   
 Find this file in our repo: `Intro_GCP_for_ML/scripts/train_nn.py`. It does three things:
-1) loads `.npz` from local or GCS
-2) trains a tiny multilayer perceptron (MLP)
-3) writes all outputs side‑by‑side (model + metrics + eval history + training.log) to the same `--model_out` folder.
+1) loads `.npz` from local or GCS paths (transparently handles both)
+2) trains a small neural network (a 3-layer MLP) with early stopping
+3) writes all outputs side‑by‑side (model + metrics + eval history + training.log) to the folder specified by the `AIP_MODEL_DIR` environment variable (set automatically by Vertex AI via `base_output_dir`), falling back to the current directory for local runs.
+
+::::::::::::::::::::::::::::::::::::: callout
+### What's inside `train_nn.py`? (Quick reference)
+You don't need to understand every line of the PyTorch code for this workshop — the focus is on how to package and run *any* training script on Vertex AI. That said, here's a quick orientation:
+
+- **GCS helpers** (top of file): `read_npz_any()` and `save_*_any()` functions detect `gs://` paths and use the GCS Python client automatically. This is the key pattern that makes the same script work locally and in the cloud.
+- **`AIP_MODEL_DIR`**: Vertex AI sets this environment variable to tell your script where to write artifacts. The script reads it at the top of `main()`.
+- **Model**: A small feedforward network (`TitanicNet`) — the architecture details aren't important for this lesson.
+- **Early stopping**: Training halts when validation loss stops improving (controlled by `--patience`). This saves compute time and cost on cloud jobs.
+:::::::::::::::::::::::::::::::::::::::::::::::::
 
 To test this code, we can run the following:
 
@@ -156,29 +163,15 @@ start = t.time()
 print(f"Total local runtime: {t.time() - start:.2f} seconds")
 ```
 
-If applicable (numpy mismatch), run the below code after uncommenting it (select code and type `Ctrl+/` for multiline uncommenting)
+::::::::::::::::::::::::::::::::::::::: callout
+### NumPy version mismatch?
+If the cell above fails with a NumPy error (e.g., `module 'numpy' has no attribute ...`), run this fix and then re-run the training cell:
 
 ```python
-# # Fix numpy mismatch
-# !pip install --upgrade --force-reinstall "numpy<2"
-
-# # Then, rerun:
-
-# import time as t
-
-# start = t.time()
-
-# # Example: run your custom training script with args
-# !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \
-#     --train /home/jupyter/train_data.npz \
-#     --val /home/jupyter/val_data.npz \
-#    --epochs $MAX_EPOCHS \
-#    --learning_rate $LR \
-#    --patience $PATIENCE
-
-
-# print(f"Total local runtime: {t.time() - start:.2f} seconds")
+!pip install --upgrade --force-reinstall "numpy<2"
 ```
+The PyTorch kernel occasionally ships with NumPy 2.x, which has breaking API changes.
+::::::::::::::::::::::::::::::::::::::
 
 ### Reproducibility test
 Without reproducibility, it's impossible to gain reliable insights into the efficacy of our methods. An essential component of applied ML/AI is ensuring our experiments are reproducible. Let's first rerun the same code we did above to verify we get the same result. 
@@ -222,7 +215,7 @@ y_val_t = torch.tensor(y_val, dtype=torch.long)
 
 # rebuild model and load weights
 m = TitanicNet()
-state = torch.load("/home/jupyter/model.pt", map_location="cpu")
+state = torch.load("/home/jupyter/model.pt", map_location="cpu", weights_only=True)
 m.load_state_dict(state)
 m.eval()
 
@@ -249,7 +242,7 @@ For our image, we can find the corresponding PyTorch image by visiting: [cloud.g
 import datetime as dt
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
 ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch/{RUN_ID}"
-IMAGE = 'us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest' # cpu-only version
+IMAGE = 'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-4.py310:latest' # cpu-only version
 MACHINE = "n1-standard-4" # CPU fine for small datasets
 
 print(f"RUN_ID = {RUN_ID}\nARTIFACT_DIR = {ARTIFACT_DIR}\nMACHINE = {MACHINE}")
@@ -294,7 +287,7 @@ print("Artifacts folder:", ARTIFACT_DIR)
 3. Click on your job name to see status, logs, and output model artifacts.  
 4. Cancel jobs from the console if needed (be careful not to stop jobs you don't own in shared projects).
 
-**Quick link**: https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&project=doit-rci-mlm25-4626 <!-- replace project ID with your own if not using the shared workshop project -->
+**Quick link** (replace `YOUR_PROJECT_ID`): `https://console.cloud.google.com/vertex-ai/training/training-pipelines?project=YOUR_PROJECT_ID`
 
 Check our bucket contents to verify expected outputs are there.
 
@@ -342,7 +335,7 @@ model_bytes = model_blob.download_as_bytes()
 model_pt = io.BytesIO(model_bytes)
 
 # rebuild model and load weights
-state = torch.load(model_pt, map_location="cpu")
+state = torch.load(model_pt, map_location="cpu", weights_only=True)
 m = TitanicNet()
 m.load_state_dict(state)
 m.eval(); # set model to eval mode
@@ -355,7 +348,7 @@ m.eval(); # set model to eval mode
 # !ls
 # # rebuild model and load weights
 # m = TitanicNet()
-# state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")  
+# state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu", weights_only=True)  
 # m.load_state_dict(state)
 # m.eval()
 
@@ -387,21 +380,22 @@ print(f"Vertex model val accuracy: {acc:.4f}")
 
 ## GPU-Accelerated Training on Vertex AI
 
-In the previous example, we ran our PyTorch training job on a CPU-only machine using the `pytorch-cpu` container. That setup works well for small models or quick tests since CPU instances are cheaper and start faster.
+Our CPU job above worked fine for this small dataset. In practice, you'd switch to a GPU when training takes too long on CPU — typically with larger models (millions of parameters) or larger datasets (hundreds of thousands of rows). For the Titanic dataset, the GPU will likely be *slower* end-to-end due to provisioning overhead, but we'll run it here to learn the workflow.
 
-In this section, we'll attach a GPU to our Vertex AI training job to speed up heavier workloads. The workflow is nearly identical to the CPU version, except for a few changes:
+The changes from CPU to GPU are minimal — this is one of the advantages of Vertex AI's container-based approach:
 
 - The container image switches to the GPU-enabled version (`pytorch-gpu.2-4.py310:latest`), which includes CUDA and cuDNN.
-- The machine type (`n1-standard-8`) defines CPU and memory resources, while we now add a GPU accelerator (`NVIDIA_TESLA_T4`, `NVIDIA_L4`, etc.). **For guidance on selecting a machine type and accelerator, visit the [Compute for ML](https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html) resource.**
+- The machine type (`n1-standard-8`) defines CPU and memory resources, while we add a GPU accelerator (`NVIDIA_TESLA_T4`, `NVIDIA_L4`, etc.). **For guidance on selecting a machine type and accelerator, visit the [Compute for ML](https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html) resource.**
 - The training script, arguments, and artifact handling all stay the same.
 
-This makes it easy to start with a CPU run for testing, then scale up to GPU training by changing only the image and adding accelerator parameters.
-
+::::::::::::::::::::::::::::::::::::: callout
+### GPU quota unavailable?
+If your job fails with a quota error, don't worry — re-run using the CPU configuration from the previous section. The results will be identical, just slower. GPU quota requests can take 1–3 business days to process.
+:::::::::::::::::::::::::::::::::::::
 
 ```python
 from google.cloud import aiplatform
 
-LAST_NAME = "DOE"  # Your last name goes in the job display name so it's easy to find in the Console
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
 
 # GCS folder where ALL artifacts (model.pt, metrics.json, eval_history.csv, training.log) will be saved.
@@ -489,7 +483,7 @@ model_bytes = model_blob.download_as_bytes()
 model_pt = io.BytesIO(model_bytes)
 
 # rebuild model and load weights
-state = torch.load(model_pt, map_location="cpu")
+state = torch.load(model_pt, map_location="cpu", weights_only=True)
 m = TitanicNet()
 m.load_state_dict(state)
 m.eval(); # set model to eval mode
@@ -502,7 +496,7 @@ m.eval(); # set model to eval mode
 # !ls
 # # rebuild model and load weights
 # m = TitanicNet()
-# state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")
+# state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu", weights_only=True)
 # m.load_state_dict(state)
 # m.eval()
 
@@ -521,26 +515,46 @@ with torch.no_grad():
 print(f"Vertex model val accuracy: {acc:.4f}")
 ```
 
-Keep these GPU considerations in mind when deciding whether to use GPU acceleration:
+:::::::::::::::::::::::::::::::::::::::: challenge
+
+### Cloud workflow review
+
+Now that you've run both a CPU and GPU training job, answer the following:
+
+1. **Artifact location**: Where did Vertex AI write your model artifacts? How does `base_output_dir` in `job.run()` relate to the `AIP_MODEL_DIR` environment variable inside the container?
+2. **CPU vs. GPU job time**: Compare the wall-clock times of your CPU and GPU jobs (visible in the Console under **Vertex AI > Training > Custom Jobs**). Which was faster? Why might the GPU job be *slower* for this dataset?
+3. **Container choice**: We used `pytorch-cpu.2-4.py310` for the CPU job and `pytorch-gpu.2-4.py310` for the GPU job. What would happen if you used the CPU container but still passed `accelerator_type` and `accelerator_count`?
+4. **Cost awareness**: You used `n1-standard-4` for CPU and `n1-standard-8` + T4 for GPU. Using the [Compute for ML](https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html) resource, estimate the relative hourly cost difference between these configurations.
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+:::::::::::::::::::::::::::::::::::::::: solution
+
+### Solution
+
+1. `base_output_dir` tells the Vertex AI SDK to set the `AIP_MODEL_DIR` environment variable inside the training container. Your script reads `os.environ.get("AIP_MODEL_DIR", ".")` and writes all artifacts there. The result is everything lands under `gs://<bucket>/artifacts/pytorch/<RUN_ID>/model/`.
+2. For the small Titanic dataset (~700 training rows), the CPU job is typically faster end-to-end. GPU jobs incur extra overhead: provisioning the accelerator, loading CUDA libraries, and transferring data to the GPU. GPU acceleration pays off when training itself is the bottleneck (larger models, larger batches).
+3. The job would either fail or ignore the GPU. The CPU container doesn't include CUDA/cuDNN, so even if a GPU is attached to the VM, PyTorch can't use it. Always match your container image to your hardware configuration.
+4. Approximate on-demand rates (us-central1): `n1-standard-4` is ~$0.19/hr; `n1-standard-8` + 1x T4 is ~$0.54/hr (VM) + ~$0.35/hr (T4) = ~$0.89/hr total. The GPU configuration is roughly 4–5x more expensive per hour — worth it only when training speedup exceeds that cost ratio.
+
+:::::::::::::::::::::::::::::::::::::::
+
+### GPU and scaling considerations
 
 - On small problems, GPU startup/transfer overhead can erase speedups — benchmark before you scale.
-- Stick to a single replica unless your batch sizes and dataset really warrant data parallelism.
-
-## Distributed training (when to consider)
-
-- **Data parallelism** (DDP) helps when a single GPU is saturated by batch size/throughput. For most workshop‑scale models, a single machine/GPU is simpler and cheaper.
-- **Model parallelism** is for very large networks that don't fit on one device—overkill for this lesson.
+- Stick to a single GPU unless your workload genuinely saturates it. Multi-GPU (data parallelism / DDP) and model parallelism exist for large-scale training but add significant complexity and cost — well beyond this workshop's scope.
 
 ## Additional resources
 To learn more about PyTorch and Vertex AI integrations, visit the docs: [docs.cloud.google.com/vertex-ai/docs/start/pytorch](https://docs.cloud.google.com/vertex-ai/docs/start/pytorch)
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
-- Use **CustomTrainingJob** with a prebuilt PyTorch container; let your script control outputs via `--model_out`.
-- Keep artifacts **together** (model, metrics, history, log) in one folder for reproducibility.
-- `.npz` speeds up loading and plays nicely with PyTorch.
-- Start on CPU for small datasets; use GPU only when profiling shows a clear win.
-- Skip `base_output_dir` unless you specifically want Vertex's default run directory; staging bucket is just for the SDK packaging tarball.
+- Use **CustomTrainingJob** with a prebuilt PyTorch container; your script reads `AIP_MODEL_DIR` (set automatically by `base_output_dir`) to know where to write artifacts.
+- Keep artifacts **together** (model, metrics, history, log) in one GCS folder for reproducibility.
+- `.npz` is a compact, cloud-friendly format — one GCS read per file, preserves exact dtypes.
+- Start on CPU for small datasets; add a GPU only when training time justifies the extra provisioning overhead and cost.
+- `staging_bucket` is just for the SDK's packaging tarball — `base_output_dir` is where your script's actual artifacts go.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
