@@ -24,37 +24,23 @@ Google Cloud Platform (GCP) provides the basic building blocks researchers need 
 
 This workshop focuses on *using a simple notebook environment as the control center* for your ML workflow. You write and debug code in a Vertex AI Workbench notebook, then submit training and tuning jobs to Vertex AI's compute infrastructure — keeping your notebook lightweight while GCP handles the heavy lifting.
 
-### GCP and Vertex AI: a quick orientation
-
-Google Cloud has many products and brand names. The table below maps the key terms you'll encounter in this workshop to what they actually do.
-
-| Term | What it is | Where you'll see it |
-|------|-----------|-------------------|
-| **GCP (Google Cloud Platform)** | The overall cloud platform — compute, storage, networking, and managed services. | Everything in this workshop runs on GCP. |
-| **Vertex AI** | Google's umbrella brand for ML/AI services. It includes Workbench notebooks, training jobs, hyperparameter tuning, Model Garden, and more. | Episodes 3–10 all use Vertex AI services. |
-| **Vertex AI Workbench** | A managed Jupyter notebook environment that runs on a Compute Engine VM. Think of it as "Jupyter in the cloud" with GCP authentication built in. | Episode 3 — where we create our notebook. |
-| **Cloud Storage (GCS)** | Object storage for datasets, model artifacts, and scripts. Similar to AWS S3. | Episode 2 — where we upload training data. |
-| **Compute Engine** | Virtual machines (VMs) you can configure with CPUs, GPUs, or TPUs. Workbench notebooks run on Compute Engine VMs under the hood. | Episodes 6–8 — the machines that run training jobs. |
-| **Gemini** | Google's family of large language models (LLMs), used for text generation, embeddings, and multimodal tasks. Accessed through the Vertex AI API. | Episode 10 — RAG pipeline uses Gemini for generation and embeddings. |
-| **Model Garden** | A catalog of foundation models (Google and third-party) available through Vertex AI. | Episode 10 — where you can browse embedding and generation models. |
-
 ### Why use GCP for machine learning?
 
 GCP provides several advantages that make it a strong option for applied ML:
 
-- **Flexible compute**: You can choose the hardware that fits your workload:  
-  - **CPUs** for lightweight models, preprocessing, or feature engineering.  
-  - **GPUs** (e.g., NVIDIA T4, V100, A100) for training deep learning models.  
-  - **TPUs (Tensor Processing Units)** for TensorFlow or JAX-based deep learning. TPUs are custom Google hardware optimized for matrix operations and can provide strong performance and energy efficiency for compatible workloads. Google has reported better performance-per-watt compared to GPUs in many TensorFlow benchmarks, though *these gains depend heavily on model type and implementation*.  
+- **Flexible compute**: You can choose the hardware that fits your workload:
+  - **CPUs** for lightweight models, preprocessing, or feature engineering.
+  - **GPUs** (e.g., NVIDIA T4, V100, A100) for training deep learning models.
+  - **TPUs (Tensor Processing Units)** for TensorFlow or JAX-based deep learning. TPUs are custom Google hardware optimized for matrix operations and can provide strong performance and energy efficiency for compatible workloads. Google has reported better performance-per-watt compared to GPUs in many TensorFlow benchmarks, though *these gains depend heavily on model type and implementation*.
     Historically, TPU support has been limited for PyTorch users, and while Google is improving PyTorch integration, the TPU ecosystem still works best for TensorFlow and JAX workflows.
 
-- **Data storage and access**: Google Cloud Storage (GCS) buckets act like S3 on AWS — an easy way to store and share datasets between experiments and collaborators.  
+- **Data storage and access**: Google Cloud Storage (GCS) buckets act like S3 on AWS — an easy way to store and share datasets between experiments and collaborators.
 
-- **From scratch workflows**: Instead of depending on a fully managed ML service, you bring your own frameworks (PyTorch, TensorFlow, scikit-learn, etc.) and run your code the same way you would on your laptop or HPC cluster, but with scalable cloud resources.  
+- **From scratch workflows**: Instead of depending on a fully managed ML service, you bring your own frameworks (PyTorch, TensorFlow, scikit-learn, etc.) and run your code the same way you would on your laptop or HPC cluster, but with scalable cloud resources.
 
-- **Cost visibility**: Billing dashboards and project-level budgets make it easier to track costs and stay within research budgets.  
+- **Cost visibility**: Billing dashboards and project-level budgets make it easier to track costs and stay within research budgets.
 
-- **Sustainability focus**: Google aims to operate entirely on *carbon-free energy by 2030*. Combined with the TPU's focus on efficient matrix computation, this gives GCP a potential edge for researchers interested in energy-conscious ML — though *real-world energy efficiency varies by workload and utilization*.  
+- **Sustainability focus**: Google aims to operate entirely on *carbon-free energy by 2030*. Combined with the TPU's focus on efficient matrix computation, this gives GCP a potential edge for researchers interested in energy-conscious ML — though *real-world energy efficiency varies by workload and utilization*.
 
 In short, GCP provides infrastructure that you control from a notebook environment, allowing you to build and run ML workflows just as you would locally, but with access to scalable hardware and storage.
 
@@ -85,12 +71,26 @@ See the [UW-Madison Cloud Resources](../uw-madison-cloud-resources.html) page fo
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
+### GCP and Vertex AI: a quick orientation
+
+Google Cloud has many products and brand names. The table below maps the key terms you'll encounter in this workshop to what they actually do.
+
+| Term | What it is | Where you'll see it |
+|------|-----------|-------------------|
+| **GCP (Google Cloud Platform)** | The overall cloud platform — compute, storage, networking, and managed services. | Everything in this workshop runs on GCP. |
+| **Vertex AI** | Google's umbrella brand for ML/AI services. It includes Workbench notebooks, training jobs, hyperparameter tuning, Model Garden, and more. | Episodes 3–10 all use Vertex AI services. |
+| **Vertex AI Workbench** | A managed Jupyter notebook environment that runs on a Compute Engine VM. Think of it as "Jupyter in the cloud" with GCP authentication built in. | Episode 3 — where we create our notebook. |
+| **Cloud Storage (GCS)** | Object storage for datasets, model artifacts, and scripts. Similar to AWS S3. | Episode 2 — where we upload training data. |
+| **Compute Engine** | Virtual machines (VMs) you can configure with CPUs, GPUs, or TPUs. Workbench notebooks run on Compute Engine VMs under the hood. | Episodes 6–8 — the machines that run training jobs. |
+| **Gemini** | Google's family of large language models (LLMs), used for text generation, embeddings, and multimodal tasks. Accessed through the Vertex AI API. | Episode 10 — RAG pipeline uses Gemini for generation and embeddings. |
+| **Model Garden** | A catalog of foundation models (Google and third-party) available through Vertex AI. | Episode 10 — where you can browse embedding and generation models. |
+
 ::::::::::::::::::::::::::::::::::::: callout
 
 ### What about AWS?
 
-In many respects, GCP and AWS offer comparable capabilities for ML research. Both provide scalable compute, storage, and tooling to support everything from quick experiments to production pipelines.  
-AWS typically offers a broader range of GPU and CPU instance types, along with mature managed services like SageMaker and tighter integration with enterprise infrastructure. GCP, on the other hand, emphasizes the use of TensorFlow and JAX, and the availability of TPUs — which may offer energy advantages for certain workloads.  
+In many respects, GCP and AWS offer comparable capabilities for ML research. Both provide scalable compute, storage, and tooling to support everything from quick experiments to production pipelines.
+AWS typically offers a broader range of GPU and CPU instance types, along with mature managed services like SageMaker and tighter integration with enterprise infrastructure. GCP, on the other hand, emphasizes the use of TensorFlow and JAX, and the availability of TPUs — which may offer energy advantages for certain workloads.
 
 Ultimately, the choice often comes down to framework preference, familiarity, and existing resources, rather than major functional differences between the two platforms.
 
