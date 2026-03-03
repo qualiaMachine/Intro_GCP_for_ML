@@ -36,7 +36,7 @@ Within the Jupyter notebook, run the following command to clone the lesson repo 
 Then, navigate to `/Intro_GCP_for_ML/notebooks/04-Accessing-and-managing-data.ipynb` to begin the first notebook.
 
 #### Set up GCP environment
-Before interacting with GCS, we need to authenticate and initialize the client libraries. This ensures our notebook can talk to GCP securely.
+Before interacting with GCS, we need to authenticate and initialize the client libraries. The `storage.Client()` call below creates a connection to Google Cloud Storage using the credentials already attached to your Workbench VM (no manual login needed). Printing the project ID confirms the client initialized correctly and is pointed at the right GCP project.
 
 ```python
 from google.cloud import storage
@@ -108,6 +108,8 @@ blob.download_to_filename(local_path)
 
 ## Checking storage usage of a bucket
 
+It's good practice to periodically check how much data you've stored in a bucket. This helps you estimate costs before they show up on your bill. The code below iterates over every object in the bucket and sums up their sizes.
+
 ```python
 total_size_bytes = 0
 bucket = client.bucket(bucket_name)
@@ -120,6 +122,8 @@ print(f"Total size of bucket '{bucket_name}': {total_size_mb:.2f} MB")
 ```
 
 ## Estimating storage costs
+
+Using the total size from the previous step, we can estimate monthly and annual storage costs based on GCS Standard pricing. This gives you a quick sense of how much your bucket costs to maintain.
 
 ```python
 storage_price_per_gb = 0.02  # $/GB/month for Standard storage

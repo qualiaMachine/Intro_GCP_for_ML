@@ -44,7 +44,10 @@ Change to your Jupyter home folder to keep paths consistent.
 ```
 
 #### 1. Prepare training script with metric logging
-Your training script (`train_nn.py`) should report validation metrics in a way Vertex AI can track during hyperparameter tuning.  
+Your training script (`train_nn.py`) should report validation metrics in a way Vertex AI can track during hyperparameter tuning.
+
+The code below uses the `cloudml-hypertune` library, which is pre-installed on Vertex AI training workers. It reports metrics to Vertex AI so the tuner can compare trials. The `try/except` block lets the same script run locally (where the library isn't installed) without crashing — it simply skips metric reporting in that case.
+
 Add the following right after computing `val_loss` and `val_acc` inside your epoch loop:
 
 ```python
@@ -101,7 +104,13 @@ aiplatform.init(
 ```
 
 #### 4. Define runtime configuration
-Create a unique run ID and set the container, machine type, and base output directory for artifacts.
+Create a unique run ID and set the container, machine type, and base output directory for artifacts. Each variable controls a different aspect of the training environment:
+
+- **`RUN_ID`** — a timestamp that uniquely identifies this tuning session, used to organize artifacts in GCS.
+- **`ARTIFACT_DIR`** — the GCS folder where all trial outputs (models, metrics, logs) will be written.
+- **`IMAGE`** — the prebuilt Docker container that includes PyTorch and its dependencies.
+- **`MACHINE`** — the VM shape (CPU/RAM) for each trial. Start small for testing.
+- **`ACCELERATOR_TYPE` / `ACCELERATOR_COUNT`** — set to unspecified/0 for CPU-only runs. Change these to attach a GPU when needed.
 
 ```python
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")

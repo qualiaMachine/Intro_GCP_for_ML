@@ -37,7 +37,9 @@ exercises: 10
 
 ## A daily “shutdown checklist” (use now, automate later)
 
-1) **Workbench notebooks** — stop the runtime/instance when you’re done.  
+Follow this checklist at the end of each working session to prevent surprise bills. These are the most common cost leaks in research and workshop environments.
+
+1) **Workbench notebooks** — stop the runtime/instance when you’re done.
 2) **Custom/HPT jobs** — confirm no jobs stuck in `RUNNING`.  
 3) **Endpoints** — undeploy models and delete unused endpoints.  
 4) **Batch predictions** — ensure no jobs queued or running.  
@@ -76,6 +78,9 @@ Vertex AI has two notebook flavors; follow the matching steps:
 ## Cleaning up training, tuning, and batch jobs
 
 ### Audit with CLI
+
+Use these commands to list all jobs in your region. Each command prints a table showing the job ID, display name, state (e.g., `JOB_STATE_SUCCEEDED`, `JOB_STATE_RUNNING`, `JOB_STATE_FAILED`), and creation time. Look for any jobs stuck in `RUNNING` — those are still consuming resources and billing you.
+
 ```bash
 # Custom training jobs
 gcloud ai custom-jobs list --region=us-central1
@@ -96,6 +101,8 @@ gcloud ai custom-jobs delete JOB_ID --region=us-central1
 > Tip: Keep one “golden” successful job per experiment, then remove the rest to reduce console clutter and artifact storage.
 
 ## Undeploy models and delete endpoints (major cost pitfall)
+
+Deployed endpoints are billed per node-hour 24/7, even if no one is sending prediction requests. This makes forgotten endpoints one of the most expensive mistakes in GCP. Always undeploy models before deleting the endpoint itself.
 
 ### Find endpoints and deployed models
 ```bash
@@ -126,7 +133,10 @@ gsutil ls -r gs://YOUR_BUCKET/** | head -n 50
 ```
 
 ### Lifecycle policy example
-Keep workshop artifacts tidy by auto‑deleting temporary outputs and capping old versions.
+Keep workshop artifacts tidy by auto‑deleting temporary outputs and capping old versions. A lifecycle policy is a JSON configuration that tells GCS to automatically delete or transition objects based on rules you define. Below, we create two rules:
+
+- **Rule 1**: Delete any object under the `tmp/` prefix that is older than 7 days.
+- **Rule 2**: If object versioning is enabled, keep only the 3 most recent versions and delete older ones.
 
 1) Save as `lifecycle.json`:
 ```json

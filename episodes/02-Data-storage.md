@@ -137,7 +137,13 @@ Click **Create** if everything looks good.
 
 ## Adjust bucket permissions
 
-Return to the Google Cloud Console (where we created our bucket and VM) and search for "Cloud Shell Editor". Open a shell editor and run the below command, *replacing the bucket name with your bucket's name*:
+Return to the Google Cloud Console (where we created our bucket and VM) and search for "Cloud Shell Editor". Open a shell editor and run the below commands, *replacing the bucket name with your bucket's name*.
+
+We need to grant the Compute Engine default service account three separate IAM roles so that our future Workbench notebooks and training jobs can interact with the bucket:
+
+- **`objectViewer`** — allows reading (downloading) objects from the bucket. Required for loading training data.
+- **`objectCreator`** — allows uploading new objects. Required for writing model artifacts and logs.
+- **`objectAdmin`** — allows overwriting and deleting objects. Only needed if your workflow re-saves models or cleans up old artifacts.
 
 ```sh
 # Grant read permissions on the bucket

@@ -47,6 +47,8 @@ However, this requires a GPU or large CPU VM (e.g., `n1-standard-8` + `T4`) and 
 
 ## Step 1: Setup environment
 
+We need the `pypdf` library to extract text from PDF files. The `--quiet` flag suppresses verbose install output, and `--upgrade` ensures we have the latest version.
+
 ```python
 !pip install --quiet --upgrade pypdf
 ```
@@ -54,6 +56,8 @@ However, this requires a GPU or large CPU VM (e.g., `n1-standard-8` + `T4`) and 
 **Cost note:** Installing packages is free; you're only billed for VM runtime.
 
 ### Initialize project
+
+We initialize two client libraries here because they serve different purposes. The `aiplatform` SDK (used in earlier episodes for training jobs) handles resource management, while the `vertexai` SDK provides access to Google's foundation models (embeddings and Gemini). Both need to know your project ID and region.
 
 ```python
 from google.cloud import aiplatform
@@ -71,6 +75,8 @@ print("Initialized:", PROJECT_ID, REGION)
 
 
 ## Step 2: Extract and chunk PDFs
+
+Before we can search our documents, we need to break them into smaller pieces ("chunks"). LLMs have limited context windows and embedding models work best on passages rather than entire papers. The code below extracts text from each PDF and splits it into overlapping chunks of ~1,200 characters. The overlap ensures that sentences at chunk boundaries aren't lost.
 
 ```python
 import zipfile, pathlib, re, pandas as pd
@@ -126,6 +132,8 @@ If you’d like to explore other options:
 
 
 
+The following code sets up the Gen AI client and chooses our embedding and generation models. We use `vertexai=True` to route API calls through your GCP project (for billing and governance) rather than the public endpoint.
+
 ```python
 #############################################
 # 1. Imports and client setup
@@ -165,6 +173,8 @@ EMBED_DIM = 1536  # valid typical choices: 768, 1536, 3072
 
 ```
 
+Next, we define a helper function that converts text strings into numerical vectors (embeddings). It processes texts in batches to avoid hitting API request-size limits. The `RETRIEVAL_DOCUMENT` task type tells the model to optimize embeddings for search/retrieval use cases.
+
 ```python
 #############################################
 # 3. Helper: get embeddings for a list of texts
@@ -198,6 +208,8 @@ def embed_texts(text_list, batch_size=32, dims=EMBED_DIM):
 
 
 ```
+
+Now we embed all the corpus chunks and build a nearest-neighbors index for fast retrieval. The `NearestNeighbors` model from scikit-learn uses cosine similarity to find the chunks most relevant to a query. We also define a `retrieve()` function that embeds a user question and returns the top-k matching chunks.
 
 ```python
 #############################################
@@ -245,6 +257,8 @@ def retrieve(query, k=5):
     return result_df
 
 ```
+
+Finally, the `ask()` function ties the full RAG pipeline together: it retrieves relevant chunks, constructs a prompt that includes only those chunks as context, and sends the prompt to Gemini for a grounded answer. The `temperature` parameter controls how creative the model's response is — lower values produce more factual, deterministic answers.
 
 ```python
 #############################################
@@ -294,6 +308,8 @@ def ask(query, top_k=5, temperature=0.2):
 
 ## Step 4: Generate answers using Gemini
 
+With all the pieces in place, let's test the full pipeline end-to-end. The `ask()` function retrieves relevant chunks from our corpus, passes them as context to Gemini, and returns a grounded answer with citations.
+
 ```python
 
 #############################################
@@ -312,6 +328,8 @@ print(
 
 
 ## Step 5: Cost summary
+
+Understanding the cost of each pipeline component helps you decide where to optimize. The table below breaks down what you pay for at each stage. For a small workshop with a handful of PDFs, total costs are typically well under $1.
 
 | Step | Resource | Example Component | Cost Driver | Typical Range |
 |------|-----------|-------------------|--------------|----------------|

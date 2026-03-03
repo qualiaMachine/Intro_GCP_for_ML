@@ -205,6 +205,8 @@ print(f"Total local runtime: {t.time() - start:.2f} seconds")
 
 ### Evaluate the locally trained model on the validation data
 
+Let's load the model we just trained and run it against the validation set. This confirms the saved weights produce the expected accuracy before we move to cloud training.
+
 ```python
 import sys, torch, numpy as np
 sys.path.append("/home/jupyter/Intro_GCP_for_ML/scripts")
@@ -308,7 +310,7 @@ total_size_mb = total_size_bytes / (1024**2)
 print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
 ```
 
-**What you'll see in `gs://…/artifacts/pytorch/<RUN_ID>/`:**
+After the job completes, your training script writes several output files to the GCS artifact directory. Here's what you'll find in `gs://…/artifacts/pytorch/<RUN_ID>/`:
 
 - `model.pt` — PyTorch weights (`state_dict`).
 - `metrics.json` — final val loss, hyperparameters, dataset sizes, device, model URI.
@@ -465,6 +467,8 @@ job.run(
 print("Artifacts folder:", ARTIFACT_DIR)
 ```
 
+Just as we did for the CPU job, let's evaluate the GPU-trained model to confirm it produces the same accuracy. We load the model weights directly from GCS into memory.
+
 ```python
 import sys, torch, numpy as np
 sys.path.append("/home/jupyter/Intro_GCP_for_ML/scripts")
@@ -497,11 +501,13 @@ m.eval(); # set model to eval mode
 # !ls
 # # rebuild model and load weights
 # m = TitanicNet()
-# state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")  
+# state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")
 # m.load_state_dict(state)
 # m.eval()
 
 ```
+
+With the model loaded, we run predictions on the validation set and compute accuracy. Because we set random seeds in `train_nn.py`, this should match the CPU job's accuracy.
 
 ```python
 # get predictions
@@ -514,8 +520,9 @@ with torch.no_grad():
 print(f"Vertex model val accuracy: {acc:.4f}")
 ```
 
-GPU tips:
-- On small problems, GPU startup/transfer overhead can erase speedups—benchmark before you scale.
+Keep these GPU considerations in mind when deciding whether to use GPU acceleration:
+
+- On small problems, GPU startup/transfer overhead can erase speedups — benchmark before you scale.
 - Stick to a single replica unless your batch sizes and dataset really warrant data parallelism.
 
 ## Distributed training (when to consider)
