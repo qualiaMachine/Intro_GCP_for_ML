@@ -1,5 +1,5 @@
 ---
-title: "Overview of Google Cloud for Machine Learning"
+title: "Overview of Google Cloud for Machine Learning and AI"
 teaching: 10
 exercises: 2
 ---
