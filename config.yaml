@@ -76,6 +76,7 @@ episodes:
 - 08-Hyperparameter-tuning.md
 - 09-Resource-management-cleanup.md
 - 10-Retrieval-augmented-generation.md
+- 11-CLI-workflows.md
 
 # Information for Learners
 learners: 
