@@ -13,7 +13,6 @@ ignore_list = [
     "02-Data-storage.md",
     "03-Notebooks-as-controllers.md",
     "05-Interacting-with-code-repo.md",
-    "09-Resource-management-cleanup.md"
 ]
 
 # Ensure notebooks directory exists
