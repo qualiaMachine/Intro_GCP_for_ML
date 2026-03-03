@@ -24,7 +24,7 @@ Google Cloud Platform (GCP) provides the basic building blocks researchers need 
 
 This workshop focuses on *using a simple notebook environment as the control center* for your ML workflow. You write and debug code in a Vertex AI Workbench notebook, then submit training and tuning jobs to Vertex AI's compute infrastructure — keeping your notebook lightweight while GCP handles the heavy lifting.
 
-### Why use GCP for machine learning?
+### Why use GCP for machine learning and AI?
 
 GCP provides several advantages that make it a strong option for applied ML:
 
