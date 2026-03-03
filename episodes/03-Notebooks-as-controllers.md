@@ -27,7 +27,23 @@ Google Cloud Workbench provides JupyterLab-based environments that can be used t
 ## Using the notebook as a controller
 The notebook instance functions as a *controller* to manage more resource-intensive tasks. By selecting a modest machine type (e.g., `n1-standard-4`), you can perform lightweight operations locally in the notebook while using the **Vertex AI Python SDK** to launch compute-heavy jobs on larger machines (e.g., GPU-accelerated) when needed.  
 
-This approach minimizes costs while giving you access to scalable infrastructure for demanding tasks like model training, batch prediction, and hyperparameter tuning.  
+This approach minimizes costs while giving you access to scalable infrastructure for demanding tasks like model training, batch prediction, and hyperparameter tuning.
+
+::::::::::::::::::::::::::::::::::::: callout
+
+#### You don't need a notebook to use Vertex AI
+
+We use Jupyter notebooks in this workshop because they're convenient for teaching — you can see code, output, and explanations in one place. But **notebooks are not required** for any of the workflows covered here. Everything we do through the Python SDK (submitting training jobs, running hyperparameter tuning, calling the Gemini API) can also be done from:
+
+- A **plain Python script** run from your terminal or an HPC scheduler.
+- The **`gcloud` CLI** (e.g., `gcloud ai custom-jobs create ...`) for submitting and managing jobs directly from the command line.
+- A **CI/CD pipeline** (GitHub Actions, Cloud Build, etc.) that triggers training runs automatically.
+
+If you're more comfortable working from a terminal, SSH session, or shell script, the same Vertex AI SDK calls work identically outside of a notebook. The notebook is just a convenient wrapper — the real work happens in the training scripts and SDK calls.
+
+**That said, Workbench notebooks do make one thing much easier: authentication.** A Workbench VM automatically inherits the permissions of its attached service account, so calls to Cloud Storage, Vertex AI, and the Gemini API "just work" with no extra setup. If you run the same code from your laptop or an HPC cluster, you'll need to configure [Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials) (e.g., `gcloud auth application-default login`) or provide a service account key. It's straightforward, but it is an extra step — and in a shared workshop environment, the notebook's built-in auth avoids a lot of troubleshooting.
+
+::::::::::::::::::::::::::::::::::::::::::::::::
 
 We will follow these steps to create our first Workbench Instance:
 
