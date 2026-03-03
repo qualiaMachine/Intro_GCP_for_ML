@@ -403,12 +403,12 @@ learning tasks?<br></li>
 <div class="card-body">
 <div class="inner bordered">
 <h3 class="card-title">Objectives</h3>
-<ul><li>Describe how to use Vertex AI Workbench notebooks for ML
-workflows.<br></li>
-<li>Set up a Jupyter-based Workbench instance as a controller to manage
-compute tasks.<br></li>
-<li>Use the Vertex AI SDK to launch training and tuning jobs on scalable
-instances.</li>
+<ul><li>Describe how Vertex AI Workbench notebooks fit into ML workflows on
+GCP.</li>
+<li>Set up a Jupyter-based Workbench Instance as a lightweight
+controller to manage compute tasks.</li>
+<li>Configure a Workbench Instance with appropriate machine type,
+labels, and idle shutdown for cost-efficient orchestration.</li>
 </ul></div>
 </div>
 </div>
@@ -423,59 +423,26 @@ going forward, as other Workbench environments are being deprecated.</p>
 <p>Workbench Instances come with JupyterLab 3 pre-installed and are
 configured with GPU-enabled ML frameworks (TensorFlow, PyTorch, etc.),
 making it easy to start experimenting without additional setup. Learn
-more in the <a href="https://cloud.google.com/vertex-ai/docs/workbench/instances/introduction?_gl=1*r0g0e9*_ga*MTczMzg4NDE1OC4xNzU4MzEyMTE0*_ga_WH2QY8WWF5*czE3NTg1NTczMzkkbzMkZzEkdDE3NTg1NjIxNzgkajI3JGwwJGgw" class="external-link">Workbench
+more in the <a href="https://cloud.google.com/vertex-ai/docs/workbench/instances/introduction" class="external-link">Workbench
 Instances documentation</a>.</p>
 </blockquote>
 </section><section><h2 class="section-heading" id="using-the-notebook-as-a-controller">Using the notebook as a controller<a class="anchor" aria-label="anchor" href="#using-the-notebook-as-a-controller"></a></h2>
 <hr class="half-width"><p>The notebook instance functions as a <em>controller</em> to manage
 more resource-intensive tasks. By selecting a modest machine type (e.g.,
-<code>n1-standard-4</code>), you can perform lightweight operations
+<code>n2-standard-2</code>), you can perform lightweight operations
 locally in the notebook while using the <strong>Vertex AI Python
 SDK</strong> to launch compute-heavy jobs on larger machines (e.g.,
 GPU-accelerated) when needed.</p>
 <p>This approach minimizes costs while giving you access to scalable
 infrastructure for demanding tasks like model training, batch
 prediction, and hyperparameter tuning.</p>
-<div id="you-dont-need-a-notebook-to-use-vertex-ai" class="callout">
-<div class="callout-square">
-<i class="callout-icon" data-feather="bell"></i>
-</div>
-<span class="callout-header">Callout</span>
-<div id="you-dont-need-a-notebook-to-use-vertex-ai" class="callout-inner">
-<h3 class="callout-title">You don’t need a notebook to use Vertex
-AI</h3>
-<div class="callout-content">
-<p>We use Jupyter notebooks in this workshop because they’re convenient
-for teaching — you can see code, output, and explanations in one place.
-But <strong>notebooks are not required</strong> for any of the workflows
-covered here. Everything we do through the Python SDK (submitting
-training jobs, running hyperparameter tuning, calling the Gemini API)
-can also be done from:</p>
-<ul><li>A <strong>plain Python script</strong> run from your terminal or an
-HPC scheduler.</li>
-<li>The <strong><code>gcloud</code> CLI</strong> (e.g.,
-<code>gcloud ai custom-jobs create ...</code>) for submitting and
-managing jobs directly from the command line.</li>
-<li>A <strong>CI/CD pipeline</strong> (GitHub Actions, Cloud Build,
-etc.) that triggers training runs automatically.</li>
-</ul><p>If you’re more comfortable working from a terminal, SSH session, or
-shell script, the same Vertex AI SDK calls work identically outside of a
-notebook. The notebook is just a convenient wrapper — the real work
-happens in the training scripts and SDK calls.</p>
-<p><strong>That said, Workbench notebooks do make one thing much easier:
-authentication.</strong> A Workbench VM automatically inherits the
-permissions of its attached service account, so calls to Cloud Storage,
-Vertex AI, and the Gemini API “just work” with no extra setup. If you
-run the same code from your laptop or an HPC cluster, you’ll need to
-configure <a href="https://cloud.google.com/docs/authentication/application-default-credentials" class="external-link">Application
-Default Credentials</a> (e.g.,
-<code>gcloud auth application-default login</code>) or provide a service
-account key. It’s straightforward, but it is an extra step — and in a
-shared workshop environment, the notebook’s built-in auth avoids a lot
-of troubleshooting.</p>
-</div>
-</div>
-</div>
+<p>One practical advantage of Workbench notebooks:
+<strong>authentication is automatic.</strong> A Workbench VM inherits
+the permissions of its attached service account, so calls to Cloud
+Storage, Vertex AI, and the Gemini API work with no extra credential
+setup. If you run the same code from your laptop or an HPC cluster,
+you’ll need to configure <a href="https://cloud.google.com/docs/authentication/application-default-credentials" class="external-link">Application
+Default Credentials</a> separately.</p>
 <p>We will follow these steps to create our first Workbench
 Instance:</p>
 <div class="section level3">
@@ -520,12 +487,11 @@ increases idle costs.</li>
 otherwise, it adds unnecessary images.</li>
 </ul></li>
 <li>
-<strong>Network in this project:</strong> Required selection
-<ul><li>This option must be selected; shared environments do not allow using
-external or default networks.<br></li>
-<li>This ensures your instance connects to the shared VPC for the
-workshop.</li>
-</ul></li>
+<strong>Network in this project:</strong> If you’re working in a
+shared workshop environment, select the network provided by your
+administrator (shared environments typically do not allow using external
+or default networks). If using a personal GCP project, the default
+network is fine.</li>
 <li>
 <strong>Network / Subnetwork:</strong> Leave as pre-filled. <img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-settings1.jpg" alt="Notebook settings (part1)" class="figure"></li>
 </ul></div>
@@ -550,20 +516,12 @@ train, tune, RAG, etc.)</li>
 </figure></div>
 <div class="section level4">
 <h4 id="advanced-settings-environment">Advanced Settings: Environment<a class="anchor" aria-label="anchor" href="#advanced-settings-environment"></a></h4>
-<p>While we won’t modify environment settings during this workshop, it’s
-useful to understand what these options control when creating or editing
-a Workbench Instance in Vertex AI Workbench.</p>
-<p>All Workbench environments use JupyterLab 3 by default, with the
-latest NVIDIA GPU drivers, CUDA libraries, and Intel optimizations
-preinstalled. You can optionally select JupyterLab 4 (currently in
-preview) or provide a custom container image to run your own environment
-(for example, a Docker image containing specialized ML frameworks or
-dependencies). If needed, you can also specify a post-startup script
-stored in Cloud Storage (<code>gs://path/to/script.sh</code>) to
-automatically configure the instance (install packages, mount buckets,
-etc.) when it boots.</p>
-<p>See: <a href="https://cloud.google.com/vertex-ai/docs/release-notes" class="external-link">Vertex AI
-Workbench release notes</a> for supported versions and base images.</p>
+<p>Leave environment settings at their defaults for this workshop.
+Workbench uses JupyterLab 3 by default with NVIDIA GPU drivers, CUDA,
+and common ML frameworks preinstalled. For future reference, you can
+optionally select JupyterLab 4, provide a custom Docker image, or
+specify a post-startup script (<code>gs://path/to/script.sh</code>) to
+auto-configure the instance at boot.</p>
 </div>
 <div class="section level4">
 <h4 id="advanced-settings-machine-type">Advanced settings: Machine Type<a class="anchor" aria-label="anchor" href="#advanced-settings-machine-type"></a></h4>
@@ -582,72 +540,42 @@ doing anything in your notebook, lower the default idle shutdown time to
 </figure></div>
 <div class="section level4">
 <h4 id="advanced-settings-disks">Advanced Settings: Disks<a class="anchor" aria-label="anchor" href="#advanced-settings-disks"></a></h4>
-<p>Each Vertex AI Workbench instance uses <strong>Persistent Disks
-(PDs)</strong> to store your system files and data. You’ll configure two
-disks when creating a notebook: a <strong>boot disk</strong> (for the
-operating system and installed software) and a <strong>data
-disk</strong> (for your datasets, checkpoints, and outputs). We’ll leave
-these at their default settings, but it’s useful to understand the
-settings for future work.</p>
-<div class="section level5">
-<h5 id="boot-disk">Boot Disk<a class="anchor" aria-label="anchor" href="#boot-disk"></a></h5>
-<p>Keep this fixed at <strong>100 GB (Balanced PD)</strong> — the
-default minimum.<br>
-It holds the OS, JupyterLab, and ML libraries but not your
-datasets.<br>
-Estimated cost: about <strong>$10 / month (~$0.014 / hr)</strong>.<br>
-You rarely need to resize this, though you can increase to
-<strong>150–200 GB</strong> if you plan to install large environments,
-custom CUDA builds, or multiple frameworks.</p>
+<p>Leave disk settings at their defaults for this workshop. Each
+Workbench Instance has two disks: a <strong>boot disk</strong> (100 GB —
+holds the OS and libraries) and a <strong>data disk</strong> (150 GB
+default — holds your datasets and outputs). Both use Balanced Persistent
+Disks. Keep “Delete to trash” unchecked so deleted files free space
+immediately.</p>
+<p><strong>Rule of thumb:</strong> allocate ≈ 2× your dataset size for
+the data disk, and keep bulk data in Cloud Storage (<code>gs://</code>)
+rather than on local disk — PDs cost ~$0.10/GB/month vs. ~$0.02/GB/month
+for Cloud Storage.</p>
+<div id="disk-sizing-and-cost-details" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
 </div>
-<div class="section level5">
-<h5 id="data-disk">Data Disk<a class="anchor" aria-label="anchor" href="#data-disk"></a></h5>
-<p>This is where your datasets, checkpoints, and outputs live.<br>
-Use a <strong>Balanced PD</strong> by default, or an <strong>SSD
-PD</strong> only for high-I/O workloads.<br>
-A good rule of thumb is to allocate <strong>≈ 2× your dataset
-size</strong>, with a <strong>minimum of 150 GB</strong> and a
-<strong>maximum of 1 TB</strong>.<br>
-For example: - 20 GB dataset → 150 GB data disk (minimum)<br>
-- 100 GB dataset → 200 GB data disk<br>
-- Larger datasets → keep the full dataset in <strong>Cloud Storage
-(<code>gs://</code>)</strong> and copy only subsets locally.</p>
-<blockquote>
-<p>Persistent Disks can be resized anytime without downtime, so it’s
-best to start small and expand when needed.</p>
-</blockquote>
+<span class="callout-header">Callout</span>
+<div id="disk-sizing-and-cost-details" class="callout-inner">
+<h3 class="callout-title">Disk sizing and cost details</h3>
+<div class="callout-content">
+<ul><li>
+<strong>Boot disk:</strong> Rarely needs resizing. Increase to
+150–200 GB only for large custom environments or multiple
+frameworks.</li>
+<li>
+<strong>Data disk:</strong> Use SSD PD only for high-I/O workloads.
+Disks can be resized anytime without downtime, so start small and expand
+when needed.</li>
+<li>
+<strong>Cost comparison:</strong> A 200 GB dataset costs ~$24/month
+on a PD but only ~$5/month in Cloud Storage.</li>
+<li>
+<strong>Pricing:</strong> <a href="https://cloud.google.com/compute/disks-image-pricing" class="external-link">Persistent
+Disk pricing</a> · <a href="https://cloud.google.com/storage/pricing" class="external-link">Cloud Storage
+pricing</a>
+</li>
+</ul></div>
 </div>
-<div class="section level5">
-<h5 id="deletion-behavior">Deletion behavior<a class="anchor" aria-label="anchor" href="#deletion-behavior"></a></h5>
-<p>The ‘Delete to trash’ option is <strong>unchecked by
-default</strong>, which is what you want.<br>
-When left unchecked, deleted files are removed immediately, freeing up
-disk space right away.<br>
-If you check this box, files will move to the system trash instead —
-meaning they still take up space (and cost) until you empty it.</p>
-<blockquote>
-<p><strong>Keep this unchecked</strong> to avoid paying for deleted
-files that remain in the trash.</p>
-</blockquote>
-</div>
-<div class="section level5">
-<h5 id="cost-awareness">Cost awareness<a class="anchor" aria-label="anchor" href="#cost-awareness"></a></h5>
-<p>Persistent Disks are fast but cost more than Cloud Storage.<br>
-Typical rates:<br>
-- <strong>Balanced PD:</strong> ~$0.10–$0.12 / GB / month<br>
-- <strong>SSD PD:</strong> ~$0.17–$0.20 / GB / month<br>
-- <strong>Cloud Storage (Standard):</strong> ~$0.02 / GB / month</p>
-<blockquote>
-<p><strong>Rule of thumb:</strong> use PDs only for active work; store
-everything else in Cloud Storage.<br>
-Example: a 200 GB dataset costs <strong>~$24/month on a PD</strong> but
-only <strong>~$5/month in Cloud Storage</strong>.</p>
-</blockquote>
-<p>Check the latest pricing here:<br>
-- <a href="https://cloud.google.com/compute/disks-image-pricing" class="external-link">Persistent
-Disk &amp; Image pricing</a><br>
-- <a href="https://cloud.google.com/storage/pricing" class="external-link">Cloud Storage
-pricing</a></p>
 </div>
 </div>
 <div class="section level4">
@@ -659,33 +587,22 @@ checked — you need an external IP.</li>
 </div>
 <div class="section level3">
 <h3 id="create-notebook">Create notebook<a class="anchor" aria-label="anchor" href="#create-notebook"></a></h3>
-<ul><li>Click <strong>Create</strong> to create the instance. Your notebook
-instance will start in a few minutes. When its status is “Running,” you
-can open JupyterLab and begin working.</li>
-</ul></div>
-<div class="section level3">
-<h3 id="managing-training-and-tuning-with-the-controller-notebook">Managing training and tuning with the controller notebook<a class="anchor" aria-label="anchor" href="#managing-training-and-tuning-with-the-controller-notebook"></a></h3>
-<p>In the following episodes, we will use the <strong>Vertex AI Python
-SDK (<code>google-cloud-aiplatform</code>)</strong> from this notebook
-to submit compute-heavy tasks on more powerful machines. Examples
-include:</p>
-<ul><li>Training a model on a GPU-backed instance.<br></li>
-<li>Running hyperparameter tuning jobs managed by Vertex AI.</li>
-</ul><p>This pattern keeps costs low by running your notebook on a modest VM
-while only incurring charges for larger resources when they are actively
-in use.</p>
-<div id="challenge-notebook-roles" class="callout challenge">
+<ul><li>Click <strong>Create</strong> to create the instance. Provisioning
+typically takes 3–5 minutes. You’ll see the status change from
+“Provisioning” to “Running” with a green checkmark. While waiting, work
+through the challenges below.</li>
+</ul><div id="challenge-1-notebook-roles" class="callout challenge">
 <div class="callout-square">
 <i class="callout-icon" data-feather="zap"></i>
 </div>
 <span class="callout-header">Challenge</span>
-<div id="challenge-notebook-roles" class="callout-inner">
-<h3 class="callout-title">Challenge: Notebook Roles</h3>
+<div id="challenge-1-notebook-roles" class="callout-inner">
+<h3 class="callout-title">Challenge 1: Notebook Roles</h3>
 <div class="callout-content">
 <p>Your university provides different compute options: laptops, on-prem
 HPC, and GCP.</p>
 <ul><li>What role does a <strong>Workbench Instance notebook</strong> play
-compared to an HPC login node or a laptop-based JupyterLab?<br></li>
+compared to an HPC login node or a laptop-based JupyterLab?</li>
 <li>Which tasks should stay in the notebook (lightweight control,
 visualization) versus being launched to larger cloud resources?</li>
 </ul></div>
@@ -698,32 +615,141 @@ visualization) versus being launched to larger cloud resources?</li>
 </button>
 <div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
-<p>The notebook serves as a lightweight control plane.<br>
-- Like an HPC login node, it is not meant for heavy computation.<br>
-- Suitable for small preprocessing, visualization, and orchestrating
-jobs.<br>
-- Resource-intensive tasks (training, tuning, batch jobs) should be
+<p>The notebook serves as a lightweight control plane. - Like an HPC
+login node, it is not meant for heavy computation. - Suitable for small
+preprocessing, visualization, and orchestrating jobs. -
+Resource-intensive tasks (training, tuning, batch jobs) should be
 submitted to scalable cloud resources (GPU/large VM instances) via the
 Vertex AI SDK.</p>
 </div>
 </div>
 </div>
 </div>
+<div id="challenge-2-controller-cost-estimate" class="callout challenge">
+<div class="callout-square">
+<i class="callout-icon" data-feather="zap"></i>
+</div>
+<span class="callout-header">Challenge</span>
+<div id="challenge-2-controller-cost-estimate" class="callout-inner">
+<h3 class="callout-title">Challenge 2: Controller Cost Estimate</h3>
+<div class="callout-content">
+<p>Your controller notebook uses an <code>n2-standard-2</code> instance
+(~$0.07/hr).</p>
+<ul><li>Estimate the monthly cost if you use it 8 hours/day, 5 days/week,
+with idle shutdown enabled.</li>
+<li>Compare that to leaving it running 24/7 for the same month.</li>
+</ul></div>
+</div>
+</div>
+<div id="accordionSolution2" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
+  <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
+</button>
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div class="accordion-body">
+<ul><li>
+<strong>With idle shutdown:</strong> 8 hrs × 5 days × 4 weeks = 160
+hrs → 160 × $0.07 ≈ <strong>$11.20/month</strong>
+</li>
+<li>
+<strong>Running 24/7:</strong> 24 hrs × 30 days = 720 hrs → 720 ×
+$0.07 ≈ <strong>$50.40/month</strong>
+</li>
+<li>Idle shutdown saves you ~$39/month on a single small controller
+instance. The savings are even larger for bigger machine types.</li>
+</ul></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section level3">
+<h3 id="managing-your-instance">Managing your instance<a class="anchor" aria-label="anchor" href="#managing-your-instance"></a></h3>
+<p>You don’t have to wait for idle shutdown — you can <strong>manually
+stop</strong> your instance anytime from the Workbench Instances list by
+selecting the checkbox and clicking <strong>Stop</strong>. To resume
+work, click <strong>Start</strong>. You only pay for compute while the
+instance is running (disk charges continue while stopped).</p>
+<p>To permanently remove an instance, select it and click
+<strong>Delete</strong>. Full cleanup is covered in Episode 9.</p>
+</div>
+<div class="section level3">
+<h3 id="managing-training-and-tuning-with-the-controller-notebook">Managing training and tuning with the controller notebook<a class="anchor" aria-label="anchor" href="#managing-training-and-tuning-with-the-controller-notebook"></a></h3>
+<p>In the following episodes, we will use the <strong>Vertex AI Python
+SDK (<code>google-cloud-aiplatform</code>)</strong> from this notebook
+to submit compute-heavy tasks on more powerful machines. Examples
+include:</p>
+<ul><li>Training a model on a GPU-backed instance.</li>
+<li>Running hyperparameter tuning jobs managed by Vertex AI.</li>
+</ul><p>This pattern keeps costs low by running your notebook on a modest VM
+while only incurring charges for larger resources when they are actively
+in use.</p>
+<div id="you-dont-need-a-notebook-to-use-vertex-ai" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="you-dont-need-a-notebook-to-use-vertex-ai" class="callout-inner">
+<h3 class="callout-title">You don’t need a notebook to use Vertex
+AI</h3>
+<div class="callout-content">
+<p>We use Jupyter notebooks in this workshop because they’re convenient
+for teaching — you can see code, output, and explanations in one place.
+But <strong>notebooks are not required</strong> for any of the workflows
+covered here. Everything we do through the Python SDK (submitting
+training jobs, running hyperparameter tuning, calling the Gemini API)
+can also be done from:</p>
+<ul><li>A <strong>plain Python script</strong> run from your terminal or an
+HPC scheduler.</li>
+<li>The <strong><code>gcloud</code> CLI</strong> (e.g.,
+<code>gcloud ai custom-jobs create ...</code>) for submitting and
+managing jobs directly from the command line.</li>
+<li>A <strong>CI/CD pipeline</strong> (GitHub Actions, Cloud Build,
+etc.) that triggers training runs automatically.</li>
+</ul><p>If you’re more comfortable working from a terminal, SSH session, or
+shell script, the same Vertex AI SDK calls work identically outside of a
+notebook. The notebook is just a convenient wrapper — the real work
+happens in the training scripts and SDK calls.</p>
+</div>
+</div>
+</div>
+<div id="troubleshooting" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="troubleshooting" class="callout-inner">
+<h3 class="callout-title">Troubleshooting</h3>
+<div class="callout-content">
+<ul><li>
+<strong>VM stuck in “Provisioning” for more than 5 minutes?</strong>
+Try deleting the instance and re-creating it in a different zone within
+the same region (e.g., <code>us-central1-b</code> instead of
+<code>us-central1-a</code>).</li>
+<li>
+<strong>Instance stopped unexpectedly?</strong> Check the idle
+shutdown setting — it may have timed out. Restart from the Instances
+list by clicking <strong>Start</strong>.</li>
+<li>
+<strong>Can’t see the project or get permission errors?</strong>
+Ensure you’re signed into the correct Google account and that IAM
+permissions have propagated (this can take a few minutes after initial
+setup).</li>
+</ul></div>
+</div>
+</div>
 </div>
 <div class="section level3">
 <h3 id="load-pre-filled-jupyter-notebooks">Load pre-filled Jupyter notebooks<a class="anchor" aria-label="anchor" href="#load-pre-filled-jupyter-notebooks"></a></h3>
-<p>Once your newly created <em>instance</em> shows as
-<code>Active</code> (green checkmark), click <strong>Open
-JupyterLab</strong> to open the instance in Jupyter Lab. From there, we
-can create as many Jupyter notebooks as we would like within the
-instance environment.</p>
-<p>We will then select the standard python3 environment to start our
-first .ipynb notebook (Jupyter notebook). We can use this environment
-since we aren’t doing any training/tuning just yet.</p>
-<p>Within the Jupyter notebook, run the following command to clone the
-lesson repository into our Jupyter environment. This repository contains
-pre-filled notebooks for each episode and the training scripts we’ll use
-later, so you won’t need to write boilerplate code from scratch.</p>
+<p>Once your instance shows as “Running” (green checkmark), click
+<strong>Open JupyterLab</strong>. From the Launcher, select
+<strong>Python 3 (ipykernel)</strong> under Notebook to create a new
+notebook — we don’t need the TensorFlow or PyTorch kernels yet, as those
+are used in later episodes for training jobs.</p>
+<p>Run the following command to clone the lesson repository. This
+contains pre-filled notebooks for each episode and the training scripts
+we’ll use later, so you won’t need to write boilerplate code from
+scratch.</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">SH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -731,7 +757,7 @@ later, so you won’t need to write boilerplate code from scratch.</p>
 </div>
 <p>Then, navigate to
 <code>/Intro_GCP_for_ML/notebooks/04-Accessing-and-managing-data.ipynb</code>
-to begin the first notebook.</p>
+to begin the next episode.</p>
 <div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
 <i class="callout-icon" data-feather="key"></i>
@@ -740,19 +766,22 @@ to begin the first notebook.</p>
 <div class="callout-inner">
 <div class="callout-content">
 <ul><li>Use a small Workbench Instance notebook as a controller to manage
-larger, resource-intensive tasks.<br></li>
+larger, resource-intensive tasks.</li>
+<li>Workbench VMs automatically inherit service account permissions,
+simplifying authentication for Cloud Storage, Vertex AI, and Gemini API
+calls.</li>
 <li>Always navigate to the “Instances” tab in Workbench, since older
-notebook types are deprecated.<br></li>
+notebook types are deprecated.</li>
 <li>Choose the same region for your Workbench Instance and storage
-bucket to avoid extra transfer costs.<br></li>
+bucket to avoid extra transfer costs.</li>
 <li>Submit training and tuning jobs to scalable instances using the
-Vertex AI SDK.<br></li>
+Vertex AI SDK.</li>
 <li>Labels help track costs effectively, especially in shared or
-multi-project environments.<br></li>
+multi-project environments.</li>
 <li>Workbench Instances come with JupyterLab 3 and GPU frameworks
-preinstalled, making them an easy entry point for ML workflows.<br></li>
-<li>Enable idle auto-stop to avoid unexpected charges when notebooks are
-left running.</li>
+preinstalled, making them an easy entry point for ML workflows.</li>
+<li>Enable idle auto-stop and manually stop instances when not in use to
+avoid unexpected charges.</li>
 </ul></div>
 </div>
 </div>
