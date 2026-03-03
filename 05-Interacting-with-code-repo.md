@@ -1,7 +1,7 @@
 ---
 title: "Using a GitHub Personal Access Token (PAT) to Push/Pull from a Vertex AI Notebook"
-teaching: 25
-exercises: 10
+teaching: 15
+exercises: 5
 ---
 
 :::::::::::::::::::::::::::::::::::::: questions 
@@ -19,6 +19,14 @@ exercises: 10
 - Convert `.ipynb` files to `.py` files for better version control practices in collaborative projects.  
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::: callout
+
+### This episode is optional in live workshops
+
+If you're short on time, this episode can be skipped during a live session. It is most useful for learners who are newer to Git or haven't used a Personal Access Token before. In a live workshop, the instructor may choose to skip ahead to the next episode and point learners here as a self-guided reference.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## Step 0: Initial setup
 In the previous episode, we cloned our forked repository as part of the [workshop setup](../setup.html). In this episode, we'll see how to push our code to this fork. Complete these three setup steps before moving forward.
@@ -53,6 +61,8 @@ When working in Vertex AI Workbench notebooks, you may often need to push code u
 
 #### Use `getpass` to prompt for username and PAT
 
+We use Python’s `getpass` module to securely prompt for the PAT. Unlike `input()`, which displays what you type on screen, `getpass.getpass()` hides the typed characters — so your token won’t be visible in the notebook output or to anyone watching your screen.
+
 ```python
 import getpass
 
@@ -64,6 +74,8 @@ token = getpass.getpass("GitHub Personal Access Token (PAT): ")
 This way credentials aren’t hard-coded into your notebook.
 
 ## Step 2: Configure Git settings
+
+Before making commits, tell Git who you are. These settings are stored globally on the VM and will persist until the instance is deleted.
 
 ```python
 !git config --global user.name "Your Name" 
@@ -77,7 +89,9 @@ This way credentials aren’t hard-coded into your notebook.
 
 Tracking `.py` files instead of `.ipynb` helps with cleaner version control. Notebooks store outputs and metadata, which makes diffs noisy. `.py` files are lighter and easier to review.
 
-1. Install Jupytext.  
+Jupytext is a tool that converts between notebook formats (`.ipynb`) and plain-text formats (`.py`, `.md`). It preserves cell structure while stripping out the binary output data that clutters Git diffs.
+
+1. Install Jupytext.
 ```python
 !pip install jupytext
 ```
@@ -98,6 +112,8 @@ for nb in [f for f in os.listdir() if f.endswith('.ipynb')]:
 ```
 
 ## Step 4: Add and commit `.py` files
+
+Now stage and commit the converted `.py` files. Make sure you're in the root of your cloned repository before running these commands.
 
 ```python
 %cd /home/jupyter/your-repo

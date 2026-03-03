@@ -1,7 +1,7 @@
 ---
 title: "Hyperparameter Tuning in Vertex AI: Neural Network Example"
-teaching: 60
-exercises: 0
+teaching: 40
+exercises: 10
 ---
 
 :::::::::::::::::::::::::::::::::::::: questions 
@@ -44,7 +44,10 @@ Change to your Jupyter home folder to keep paths consistent.
 ```
 
 #### 1. Prepare training script with metric logging
-Your training script (`train_nn.py`) should report validation metrics in a way Vertex AI can track during hyperparameter tuning.  
+Your training script (`train_nn.py`) should report validation metrics in a way Vertex AI can track during hyperparameter tuning.
+
+The code below uses the `cloudml-hypertune` library, which is pre-installed on Vertex AI training workers. It reports metrics to Vertex AI so the tuner can compare trials. The `try/except` block lets the same script run locally (where the library isn't installed) without crashing — it simply skips metric reporting in that case.
+
 Add the following right after computing `val_loss` and `val_acc` inside your epoch loop:
 
 ```python
@@ -101,7 +104,13 @@ aiplatform.init(
 ```
 
 #### 4. Define runtime configuration
-Create a unique run ID and set the container, machine type, and base output directory for artifacts.
+Create a unique run ID and set the container, machine type, and base output directory for artifacts. Each variable controls a different aspect of the training environment:
+
+- **`RUN_ID`** — a timestamp that uniquely identifies this tuning session, used to organize artifacts in GCS.
+- **`ARTIFACT_DIR`** — the GCS folder where all trial outputs (models, metrics, logs) will be written.
+- **`IMAGE`** — the prebuilt Docker container that includes PyTorch and its dependencies.
+- **`MACHINE`** — the VM shape (CPU/RAM) for each trial. Start small for testing.
+- **`ACCELERATOR_TYPE` / `ACCELERATOR_COUNT`** — set to unspecified/0 for CPU-only runs. Change these to attach a GPU when needed.
 
 ```python
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -210,6 +219,68 @@ def list_metrics_from_gcs(ARTIFACT_DIR: str):
 df = list_metrics_from_gcs(ARTIFACT_DIR)
 print(df[["trial_id","final_val_accuracy","final_val_loss","best_val_loss","best_epoch","patience","min_delta","learning_rate"]].sort_values("final_val_accuracy", ascending=False))
 ```
+
+::::::::::::::::::::::::::::::::::::: challenge
+
+### Exercise 1: Expand the search space
+
+Add `dropout_rate` as a new hyperparameter to the tuning job. Use a continuous range between 0.1 and 0.5.
+
+1. Add a `dropout_rate` entry to `parameter_spec` using `hpt.DoubleParameterSpec(min=0.1, max=0.5, scale="linear")`.
+2. Add `"--dropout_rate=0.3"` to the `args` list in the `CustomJob` definition (so HPT can override it).
+3. **Do not run the job yet** — just update the configuration and verify it looks correct.
+
+::::::::::::::::::::::: solution
+
+```python
+parameter_spec = {
+    "learning_rate": hpt.DoubleParameterSpec(min=1e-4, max=1e-2, scale="log"),
+    "patience": hpt.IntegerParameterSpec(min=5, max=20, scale="linear"),
+    "min_delta": hpt.DoubleParameterSpec(min=1e-6, max=1e-3, scale="log"),
+    "dropout_rate": hpt.DoubleParameterSpec(min=0.1, max=0.5, scale="linear"),
+}
+```
+
+And in the `args` list of `CustomJob.from_local_script`, add:
+
+```python
+"--dropout_rate=0.3",    # HPT will override when sampling
+```
+
+Note: For this to actually work end-to-end, `train_nn.py` would also need to accept `--dropout_rate` as an argparse argument and use it in the model architecture. This exercise focuses on the Vertex AI configuration side.
+
+:::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::: challenge
+
+### Exercise 2: Scale up trials
+
+After verifying your single-trial sanity check completed successfully, modify the tuning job configuration to run a proper search:
+
+1. Set `max_trial_count=6` and `parallel_trial_count=2`.
+2. Before running, estimate the approximate cost: if each trial takes ~5 minutes on an `n1-standard-4` (~$0.19/hr), how much would 6 trials cost?
+3. Run the updated job and monitor it in the Vertex AI Console.
+
+::::::::::::::::::::::: solution
+
+```python
+tuning_job = aiplatform.HyperparameterTuningJob(
+    display_name=DISPLAY_NAME,
+    custom_job=custom_job,
+    metric_spec=metric_spec,
+    parameter_spec=parameter_spec,
+    max_trial_count=6,
+    parallel_trial_count=2,
+)
+```
+
+**Cost estimate:** 6 trials x 5 min each = 30 minutes of compute. At ~$0.19/hr for `n1-standard-4`, that's roughly $0.10 total. With `parallel_trial_count=2`, wall-clock time would be approximately 15 minutes (3 batches of 2 trials). The adaptive search can still learn between batches since parallelism is kept low relative to total trials.
+
+:::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: discussion
 

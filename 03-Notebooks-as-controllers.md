@@ -85,7 +85,7 @@ See: [Vertex AI Workbench release notes](https://cloud.google.com/vertex-ai/docs
 
 #### Advanced Settings: Disks
 
-Each Vertex AI Workbench instance uses **Persistent Disks (PDs)** to store your system files and data. You'll configure two disks when creating a notebook: a **boot disk** and a **data disk**. We'll leave these at their default settings, but it's useful to understand the settings for future work.
+Each Vertex AI Workbench instance uses **Persistent Disks (PDs)** to store your system files and data. You'll configure two disks when creating a notebook: a **boot disk** (for the operating system and installed software) and a **data disk** (for your datasets, checkpoints, and outputs). We'll leave these at their default settings, but it's useful to understand the settings for future work.
 
 ##### Boot Disk
 Keep this fixed at **100 GB (Balanced PD)** — the default minimum.  
@@ -116,7 +116,7 @@ Persistent Disks are fast but cost more than Cloud Storage.
 Typical rates:  
 - **Balanced PD:** ~$0.10–$0.12 / GB / month  
 - **SSD PD:** ~$0.17–$0.20 / GB / month  
-- **Cloud Storage (Standard):** ~$0.026 / GB / month  
+- **Cloud Storage (Standard):** ~$0.02 / GB / month  
 
 > **Rule of thumb:** use PDs only for active work; store everything else in Cloud Storage.  
 > Example: a 200 GB dataset costs **~$24/month on a PD** but only **~$5/month in Cloud Storage**.
@@ -167,7 +167,7 @@ Once your newly created *instance* shows as `Active` (green checkmark), click **
 
 We will then select the standard python3 environment to start our first .ipynb notebook (Jupyter notebook). We can use this environment since we aren't doing any training/tuning just yet.
 
-Within the Jupyter notebook, run the following command to clone the lesson repo into our Jupyter environment:
+Within the Jupyter notebook, run the following command to clone the lesson repository into our Jupyter environment. This repository contains pre-filled notebooks for each episode and the training scripts we'll use later, so you won't need to write boilerplate code from scratch.
 
 ```sh
 !git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
