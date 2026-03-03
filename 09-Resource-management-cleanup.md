@@ -8,101 +8,131 @@ exercises: 10
 
 - How do I monitor and control Vertex AI, Workbench, and GCS costs day‑to‑day?
 - What *specifically* should I stop, delete, or schedule to avoid surprise charges?
-- How can I automate cleanup and set alerting so leaks get caught quickly?
+- How do I set budget alerts so cost leaks get caught quickly?
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: objectives
 
-- Identify all major cost drivers across Vertex AI (training jobs, endpoints, Workbench notebooks, batch prediction) and GCS.
-- Practice safe cleanup for **Managed** and **User‑Managed** Workbench notebooks, training/tuning jobs, batch predictions, models, endpoints, and artifacts.
-- Configure budgets, labels, and basic lifecycle policies to keep costs predictable.
-- Use `gcloud`/`gsutil` commands for auditing and rapid cleanup; understand when to prefer the Console.
-- Draft simple automation patterns (Cloud Scheduler + `gcloud`) to enforce idle shutdown.
+- Identify the major cost drivers across Vertex AI (training jobs, endpoints, Workbench notebooks) and GCS, with ballpark costs.
+- Practice safe cleanup for Workbench Instances, training/tuning jobs, batch predictions, models, and endpoints.
+- Set a budget alert and apply labels to keep costs visible and predictable.
+- Use `gcloud` commands for auditing and rapid cleanup.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-## What costs you money on GCP (quick map)
+You've now run training jobs, tuning jobs, and possibly deployed models across the previous episodes. Before moving on, let's make sure none of those resources are still billing you — and learn the habits that prevent surprise charges going forward.
 
-- **Vertex AI training jobs** (Custom Jobs, Hyperparameter Tuning Jobs) — billed per VM/GPU hour while running.
-- **Vertex AI endpoints (online prediction)** — billed per node‑hour *24/7 while deployed*, even if idle.
-- **Vertex AI batch prediction jobs** — billed for the job’s compute while running.
-- **Vertex AI Workbench notebooks** — the backing VM and disk bill while running (and disks bill even when stopped).
-- **GCS buckets** — storage class, object count/size, versioning, egress, and request ops.
-- **Artifact Registry** (containers, models) — storage for images and large artifacts.
-- **Network egress** — downloading data out of GCP (e.g., to your laptop) incurs cost.
-- **Logging/Monitoring** — high‑volume logs/metrics can add up (rare in small workshops, real in prod).
+::::::::::::::::::::::::::::::::::::: callout
 
-> Rule of thumb: **Endpoints left deployed** and **notebooks left running** are the most common surprise bills in education/research settings.
+### Continuing to Episodes 10–11?
 
-## A daily “shutdown checklist” (use now, automate later)
+If you plan to work through **Episode 10 (RAG)** or **Episode 11 (CLI Workflows)** after this one, **keep your Workbench Instance and GCS bucket** — just make sure to **stop the notebook runtime** when you're not actively using it. You can come back to the full teardown checklist at the very end of the workshop.
 
-Follow this checklist at the end of each working session to prevent surprise bills. These are the most common cost leaks in research and workshop environments.
+::::::::::::::::::::::::::::::::::::::::::::::::
 
-1) **Workbench notebooks** — stop the runtime/instance when you’re done.
-2) **Custom/HPT jobs** — confirm no jobs stuck in `RUNNING`.  
-3) **Endpoints** — undeploy models and delete unused endpoints.  
-4) **Batch predictions** — ensure no jobs queued or running.  
-5) **Artifacts** — delete large intermediate artifacts you won’t reuse.  
-6) **GCS** — keep only one “source of truth”; avoid duplicate datasets in multiple buckets/regions.
+## Check your current spend first
+
+Before cleaning anything up, find out where you stand. Open the **Cloud Console** and navigate to:
+
+**Billing → Reports**
+
+- Set the time range to **This month** (or **Today** for workshop use).
+- Group by **Service** to see which GCP services are costing the most.
+- Look for **Compute Engine** (backs Workbench VMs and training jobs), **Vertex AI**, and **Cloud Storage**.
+
+This is the single most important dashboard to bookmark. If you only learn one thing from this episode, it's where to find this page.
+
+You can also check from the CLI:
+
+```bash
+# Quick check: is my project accumulating Vertex AI resources right now?
+gcloud ai endpoints list --region=us-central1
+gcloud workbench instances list --location=us-central1-a
+gcloud ai custom-jobs list --region=us-central1 --filter="state=JOB_STATE_RUNNING"
+```
 
 
-## Shutting down Vertex AI Workbench notebooks
+## What costs you money on GCP (and how much)
 
-Vertex AI has two notebook flavors; follow the matching steps:
+Not all resources cost equally. Here are the main cost drivers you'll encounter in this workshop, ordered from most to least dangerous:
 
-### Managed Notebooks (recommended for workshops)
-- **Console**: Vertex AI → **Workbench** → **Managed notebooks** → select runtime → **Stop**.  
-- **Idle shutdown**: Edit runtime → enable **Idle shutdown** (e.g., 60–120 min).  
-- **CLI**:
-  ```bash
-  # List managed runtimes (adjust region)
-  gcloud notebooks runtimes list --location=us-central1
-  # Stop a runtime
-  gcloud notebooks runtimes stop RUNTIME_NAME --location=us-central1
-  ```
+| Resource | Billing model | Ballpark cost | Risk level |
+|----------|--------------|---------------|------------|
+| **Vertex AI endpoints** | Per node‑hour, **24/7 while deployed** | ~$4.50/day for one `n1-standard-4` node | **High** — bills even with zero traffic |
+| **Workbench Instances** (running) | Per VM‑hour + GPU | ~$0.19/hr CPU‑only (`n1-standard-4`); add ~$0.35/hr per T4 GPU | **High** — easy to forget overnight |
+| **Training / HPT jobs** | Per VM/GPU‑hour while running | Same VM rates; auto‑stops when done | **Medium** — usually self‑limiting |
+| **Workbench disks** (stopped VM) | Per GB‑month for persistent disk | ~$0.04/GB/month (~$4/month for 100 GB) | **Low** — small but adds up |
+| **GCS storage** | Per GB‑month + operations + egress | ~$0.02/GB/month (Standard) | **Low** — cheap until multi‑TB |
+| **Network egress** | Per GB downloaded out of GCP | ~$0.12/GB | **Low** — avoid large downloads to local |
 
-### User‑Managed Notebooks
-- **Console**: Vertex AI → **Workbench** → **User‑managed notebooks** → select instance → **Stop**.  
-- **CLI**:
-  ```bash
-  # List user-managed instances (adjust zone)
-  gcloud notebooks instances list --location=us-central1-b
-  # Stop an instance
-  gcloud notebooks instances stop INSTANCE_NAME --location=us-central1-b
-  ```
+> **Rule of thumb:** Endpoints left deployed and notebooks left running are the most common surprise bills in education and research settings.
 
-> **Disks still cost money while the VM is stopped.** Delete old runtimes/instances *and* their disks if you’re done with them.
+
+## Shutting down Workbench Instances
+
+In Episode 3 we created a **Workbench Instance** — the currently recommended notebook environment. Here's how to stop or delete it:
+
+### Stop via Console
+Vertex AI → **Workbench** → **Instances** tab → select your instance → **Stop**.
+
+### Stop via CLI
+```bash
+# List all Workbench Instances in your zone
+gcloud workbench instances list --location=us-central1-a
+
+# Stop an instance (stops VM billing; disk charges continue)
+gcloud workbench instances stop INSTANCE_NAME --location=us-central1-a
+```
+
+### Delete when you're done for good
+```bash
+# Permanently delete the instance and its disk
+gcloud workbench instances delete INSTANCE_NAME --location=us-central1-a --quiet
+```
+
+### Enable idle shutdown (recommended)
+You can configure your instance to auto‑stop after a period of inactivity, so you never accidentally leave it running overnight:
+
+- **Console**: Select your instance → **Edit** → set **Idle shutdown** to 60–120 minutes.
+- **At creation time**: Add `--idle-shutdown-timeout=60` to your `gcloud workbench instances create` command.
+
+> **Disks still cost money while the VM is stopped** (~$4/month for 100 GB). If you're completely done with an instance, **delete** it rather than just stopping it.
 
 
 ## Cleaning up training, tuning, and batch jobs
 
+Training and HPT jobs automatically stop billing when they finish, but it's good practice to audit for jobs stuck in `RUNNING` and to delete old jobs you no longer need.
+
 ### Audit with CLI
-
-Use these commands to list all jobs in your region. Each command prints a table showing the job ID, display name, state (e.g., `JOB_STATE_SUCCEEDED`, `JOB_STATE_RUNNING`, `JOB_STATE_FAILED`), and creation time. Look for any jobs stuck in `RUNNING` — those are still consuming resources and billing you.
-
 ```bash
 # Custom training jobs
 gcloud ai custom-jobs list --region=us-central1
+
 # Hyperparameter tuning jobs
 gcloud ai hp-tuning-jobs list --region=us-central1
+
 # Batch prediction jobs
 gcloud ai batch-prediction-jobs list --region=us-central1
 ```
 
-### Stop/delete as needed
+Each command prints a table showing the job ID, display name, state (e.g., `JOB_STATE_SUCCEEDED`, `JOB_STATE_RUNNING`), and creation time. Look for any jobs stuck in `RUNNING` — those are still consuming resources.
+
+### Cancel or delete as needed
 ```bash
-# Example: cancel a custom job
+# Cancel a running job
 gcloud ai custom-jobs cancel JOB_ID --region=us-central1
-# Delete a completed job you no longer need to retain
+
+# Delete a completed job you no longer need
 gcloud ai custom-jobs delete JOB_ID --region=us-central1
 ```
 
-> Tip: Keep one “golden” successful job per experiment, then remove the rest to reduce console clutter and artifact storage.
+> **Tip:** Keep one "golden" successful job per experiment for reference, then delete the rest to reduce console clutter.
+
 
 ## Undeploy models and delete endpoints (major cost pitfall)
 
-Deployed endpoints are billed per node-hour 24/7, even if no one is sending prediction requests. This makes forgotten endpoints one of the most expensive mistakes in GCP. Always undeploy models before deleting the endpoint itself.
+Deployed endpoints are billed per node‑hour **24/7**, even with zero prediction traffic. A single forgotten endpoint can cost ~$135/month. Always undeploy models before deleting the endpoint.
 
 ### Find endpoints and deployed models
 ```bash
@@ -112,140 +142,134 @@ gcloud ai endpoints describe ENDPOINT_ID --region=us-central1
 
 ### Undeploy and delete
 ```bash
-# Undeploy the model from the endpoint (stops node-hour charges)
-gcloud ai endpoints undeploy-model ENDPOINT_ID   --deployed-model-id=DEPLOYED_MODEL_ID   --region=us-central1   --quiet
+# Step 1: Undeploy the model (stops node-hour billing)
+gcloud ai endpoints undeploy-model ENDPOINT_ID \
+  --deployed-model-id=DEPLOYED_MODEL_ID \
+  --region=us-central1 \
+  --quiet
 
-# Delete the endpoint if you no longer need it
-gcloud ai endpoints delete ENDPOINT_ID --region=us-central1 --quiet
+# Step 2: Delete the endpoint itself
+gcloud ai endpoints delete ENDPOINT_ID \
+  --region=us-central1 \
+  --quiet
 ```
 
-> **Model Registry**: If you keep models registered but don’t serve them, you won’t pay endpoint node‑hours. Periodically prune stale model versions to reduce storage.
+> **Model Registry note:** Keeping a model *registered* (but not deployed to an endpoint) does not incur node‑hour charges. You only pay a small amount for the model artifact storage in GCS.
 
 
-## GCS housekeeping (lifecycle policies, versioning, egress)
+## GCS housekeeping
 
-### Quick size & contents
+### Check bucket size
 ```bash
 # Human-readable bucket size
-gsutil du -sh gs://YOUR_BUCKET
-# List recursively
-gsutil ls -r gs://YOUR_BUCKET/** | head -n 50
+gcloud storage du gs://YOUR_BUCKET --summarize --readable-sizes
+
+# List top-level contents
+gcloud storage ls gs://YOUR_BUCKET
 ```
 
-### Lifecycle policy example
-Keep workshop artifacts tidy by auto‑deleting temporary outputs and capping old versions. A lifecycle policy is a JSON configuration that tells GCS to automatically delete or transition objects based on rules you define. Below, we create two rules:
+> **Note:** `gsutil` commands (e.g., `gsutil du`, `gsutil ls`) still work but are being replaced by `gcloud storage`. We use the newer syntax here.
 
-- **Rule 1**: Delete any object under the `tmp/` prefix that is older than 7 days.
-- **Rule 2**: If object versioning is enabled, keep only the 3 most recent versions and delete older ones.
+### Lifecycle policies
+A lifecycle policy tells GCS to automatically delete or transition objects based on rules you define. This is useful for cleaning up temporary training outputs.
 
-1) Save as `lifecycle.json`:
+Save the following as `lifecycle.json`:
 ```json
 {
-  "rule": [
-    {
-      "action": {"type": "Delete"},
-      "condition": {"age": 7, "matchesPrefix": ["tmp/"]}
-    },
-    {
-      "action": {"type": "Delete"},
-      "condition": {"numNewerVersions": 3}
-    }
-  ]
+  "lifecycle": {
+    "rule": [
+      {
+        "action": {"type": "Delete"},
+        "condition": {"age": 7, "matchesPrefix": ["tmp/"]}
+      },
+      {
+        "action": {"type": "Delete"},
+        "condition": {"numNewerVersions": 3}
+      }
+    ]
+  }
 }
 ```
-2) Apply to bucket:
+
+- **Rule 1**: Auto‑delete any object under `tmp/` that is older than 7 days.
+- **Rule 2**: If versioning is enabled, keep only the 3 most recent versions.
+
+Apply it:
 ```bash
-gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET
-gsutil lifecycle get gs://YOUR_BUCKET
+gcloud storage buckets update gs://YOUR_BUCKET --lifecycle-file=lifecycle.json
+
+# Verify
+gcloud storage buckets describe gs://YOUR_BUCKET --format="yaml(lifecycle)"
 ```
 
 ### Egress reminder
-Downloading out of GCP (to local machines) incurs egress charges. Prefer **in‑cloud** training/evaluation and share results via GCS links.
+Downloading data out of GCP to your laptop costs ~$0.12/GB. Prefer **in‑cloud** training and evaluation, and share results via GCS links rather than local downloads.
 
 
+## Labels and budgets
 
-## Labels, budgets, and cost visibility
+### Standardize labels on all resources
+Labels let you track costs per user, team, or experiment in billing reports. Apply them consistently:
 
-### Standardize **labels** on all resources
-Use the same labels everywhere (notebooks, jobs, buckets) so billing exports can attribute costs.
+- Examples: `owner=yourname`, `team=ml-workshop`, `purpose=titanic-demo`
+- The Vertex AI Python SDK supports labels on job creation; `gcloud` commands accept `--labels=key=value,...`
 
-- Examples: `owner=yourname`, `team=ml-workshop`, `purpose=titanic-demo`, `env=dev`
-- CLI examples:
-  ```bash
-  # Add labels to a custom job on creation (Python SDK supports labels, too)
-  # gcloud example when applicable:
-  gcloud ai custom-jobs create --labels=owner=yourname,purpose=titanic-demo ...
-  ```
+### Set budget alerts (do this now)
+This is the single most protective action you can take:
 
-### Set **budgets & alerts**
-- In **Billing → Budgets & alerts**, create a budget for your project with thresholds (e.g., 50%, 80%, 100%).  
-- Add **forecast‑based** alerts to catch trends early (e.g., projected to exceed budget).  
-- Send email to multiple maintainers (not just you).
+1. Go to **Billing → Budgets & alerts** in the Cloud Console.
+2. Click **Create budget**.
+3. Set a budget amount (e.g., $10 or $25 for a workshop).
+4. Set alert thresholds at **50%**, **80%**, and **100%**.
+5. Add **forecast‑based alerts** to catch trends before you hit the limit.
+6. Make sure email notifications go to **all project maintainers**, not just you.
 
-### Enable **billing export** (optional but powerful)
-- Export billing to **BigQuery** to slice by service, label, or SKU.  
-- Build a simple Data Studio/Looker Studio dashboard for workshop visibility.
-
-
-
-## Monitoring and alerts (catch leaks quickly)
-
-- **Cloud Monitoring dashboards**: Track notebook VM uptime, endpoint deployment counts, and job error rates.  
-- **Alerting policies**: Trigger notifications when:
-  - A **Workbench runtime** has been **running > N hours** outside workshop hours.
-  - An **endpoint node count > 0** for > 60 minutes after a workshop ends.
-  - **Spend forecast** exceeds budget threshold.
-
-> Keep alerts few and actionable. Route to email or Slack (via webhook) where your team will see them.
-
-
-
-## Quotas and guardrails
-
-- **Quotas** (IAM & Admin → Quotas): cap GPU count, custom job limits, and endpoint nodes to protect budgets.  
-- **IAM**: least privilege for service accounts used by notebooks and jobs; avoid wide `Editor` grants.  
-- **Org policies** (if available): disallow costly regions/accelerators you don’t plan to use.
-
-
-
-## Automating the boring parts
-
-### Nightly auto‑stop for idle notebooks
-Use **Cloud Scheduler** to run a daily command that stops notebooks after hours.
-
-```bash
-# Cloud Scheduler job (runs daily 22:00) to stop a specific managed runtime
-gcloud scheduler jobs create http stop-runtime-job   --schedule="0 22 * * *"   --uri="https://notebooks.googleapis.com/v1/projects/PROJECT_ID/locations/us-central1/runtimes/RUNTIME_NAME:stop"   --http-method=POST   --oidc-service-account-email=SERVICE_ACCOUNT@PROJECT_ID.iam.gserviceaccount.com
-```
-
-> Alternative: call `gcloud notebooks runtimes list` in a small Cloud Run job, filter by `last_active_time`, and stop any runtime idle > 2h.
-
-### Weekly endpoint sweep
-- List endpoints; undeploy any with zero recent traffic (check logs/metrics), then delete stale endpoints.  
-- Scriptable with `gcloud ai endpoints list/describe` in Cloud Run or Cloud Functions on a schedule.
-
+> **For production use:** You can export detailed billing data to BigQuery for cost analysis by service, label, or SKU. See the [billing export documentation](https://cloud.google.com/billing/docs/how-to/export-data-bigquery) for setup instructions.
 
 
 ## Common pitfalls and quick fixes
 
-- **Forgotten endpoints** → **Undeploy** models; **delete** endpoints you don’t need.  
-- **Notebook left running all weekend** → Enable **Idle shutdown**; schedule nightly stop.  
-- **Duplicate datasets** across buckets/regions → consolidate; set **lifecycle** to purge `tmp/`.  
-- **Too many parallel HPT trials** → cap `parallel_trial_count` (2–4) and increase `max_trial_count` gradually.  
-- **Orphaned artifacts** in Artifact Registry/GCS → prune old images/artifacts after promoting a single “golden” run.
+| Pitfall | Fix |
+|---------|-----|
+| Forgotten endpoint billing 24/7 | Undeploy models → delete endpoint |
+| Notebook left running over weekend | Enable **idle shutdown** (60–120 min) |
+| Duplicate datasets across buckets | Consolidate to one bucket; set lifecycle to purge `tmp/` |
+| Too many parallel HPT trials | Cap `parallel_trial_count` to 2–4 |
+| Don't know what's costing money | Check **Billing → Reports**; add labels to all resources |
 
+::::::::::::::::::::::::::::::::::::: callout
+
+### Going further: automating cleanup
+
+Once you move from workshop use to regular research, consider automating resource cleanup:
+
+- **Cloud Scheduler** can run a nightly job to stop idle Workbench Instances via the Vertex AI API.
+- **Cloud Functions** or **Cloud Run** can periodically sweep for forgotten endpoints.
+- **Budget alerts** can trigger Pub/Sub messages that automatically shut down resources when spend exceeds a threshold.
+
+These are beyond the scope of this workshop, but the [Cloud Scheduler documentation](https://cloud.google.com/scheduler/docs) is a good starting point.
+
+::::::::::::::::::::::::::::::::::::::::::::::::
 
 
 :::::::::::::::::::::::::::::::::::::::: challenge
 
-### Challenge 1 — Find and stop idle notebooks
-List your notebooks and identify any runtime/instance that has likely been idle for >2 hours. Stop it via CLI.
+### Challenge 1 — Check your spend and set a budget
 
-**Hints**: `gcloud notebooks runtimes list`, `gcloud notebooks instances list`, `... stop`
+1. Navigate to **Billing → Reports** in the Cloud Console. Find your project's current‑month spend grouped by service.
+2. Navigate to **Billing → Budgets & alerts**. Create a **$10 budget** with alert thresholds at 50% and 100%.
 
 :::::::::::::::: solution
 
-Use `gcloud notebooks runtimes list --location=REGION` (Managed) or `gcloud notebooks instances list --location=ZONE` (User‑Managed) to find candidates, then stop them with the corresponding `... stop` command.
+1. In the Cloud Console, click the **Navigation menu (☰)** → **Billing** → **Reports**. Set time range to "This month" and group by "Service." You should see Compute Engine, Vertex AI, and Cloud Storage if you've been running workshop exercises.
+
+2. Go to **Billing** → **Budgets & alerts** → **Create budget**. Set:
+   - **Name**: `workshop-budget`
+   - **Amount**: `$10`
+   - **Thresholds**: 50% ($5) and 100% ($10)
+   - **Alerts to**: your email address
+
+Click **Finish** to activate the budget.
 
 ::::::::::::::::
 
@@ -253,39 +277,156 @@ Use `gcloud notebooks runtimes list --location=REGION` (Managed) or `gcloud note
 
 :::::::::::::::::::::::::::::::::::::::: challenge
 
-### Challenge 2 — Write a lifecycle policy
-Create and apply a lifecycle rule that (a) deletes objects under `tmp/` after 7 days, and (b) retains only 3 versions of any object.
+### Challenge 2 — Find and stop idle notebooks
 
-**Hint**: `gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET`
+List all running Workbench Instances in your zone and stop any you are not actively using.
+
+```bash
+gcloud workbench instances list --location=us-central1-a
+```
 
 :::::::::::::::: solution
 
-Use the JSON policy shown above, then run `gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET` and verify with `gsutil lifecycle get ...`.
+```bash
+# List instances — look for STATE=ACTIVE
+gcloud workbench instances list --location=us-central1-a
 
-:::::::::::::::::::::::::
+# Stop an instance you're not using
+gcloud workbench instances stop INSTANCE_NAME --location=us-central1-a
+```
+
+If the instance shows `STATE=ACTIVE` and you're not currently working in it, stop it. You can restart it later with `gcloud workbench instances start`.
+
+::::::::::::::::
+
 ::::::::::::::::::::::::::::::::::::::::
 
 :::::::::::::::::::::::::::::::::::::::: challenge
 
 ### Challenge 3 — Endpoint sweep
-List deployed endpoints in your region, undeploy any model you don’t need, and delete the endpoint if it’s no longer required.
 
-**Hints**: `gcloud ai endpoints list`, `... describe`, `... undeploy-model`, `... delete`
+List all deployed endpoints in your region, undeploy any model you don't need, and delete the endpoint.
 
 :::::::::::::::: solution
 
-`gcloud ai endpoints list --region=REGION` → pick `ENDPOINT_ID` → `gcloud ai endpoints undeploy-model ENDPOINT_ID --deployed-model-id=DEPLOYED_MODEL_ID --region=REGION --quiet` → if not needed, `gcloud ai endpoints delete ENDPOINT_ID --region=REGION --quiet`.
+```bash
+# List all endpoints
+gcloud ai endpoints list --region=us-central1
 
-:::::::::::::::::::::::::
+# Pick an endpoint ID from the list, then inspect it
+gcloud ai endpoints describe ENDPOINT_ID --region=us-central1
+
+# Undeploy the model (find DEPLOYED_MODEL_ID in the describe output)
+gcloud ai endpoints undeploy-model ENDPOINT_ID \
+  --deployed-model-id=DEPLOYED_MODEL_ID \
+  --region=us-central1 \
+  --quiet
+
+# Delete the now-empty endpoint
+gcloud ai endpoints delete ENDPOINT_ID \
+  --region=us-central1 \
+  --quiet
+```
+
+::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::: challenge
+
+### Challenge 4 — Write and apply a lifecycle policy
+
+Create a GCS lifecycle rule that deletes objects under `tmp/` after 7 days and keeps only 3 versions of versioned objects. Apply it to your bucket.
+
+:::::::::::::::: solution
+
+Save the following as `lifecycle.json`:
+```json
+{
+  "lifecycle": {
+    "rule": [
+      {
+        "action": {"type": "Delete"},
+        "condition": {"age": 7, "matchesPrefix": ["tmp/"]}
+      },
+      {
+        "action": {"type": "Delete"},
+        "condition": {"numNewerVersions": 3}
+      }
+    ]
+  }
+}
+```
+
+Apply and verify:
+```bash
+gcloud storage buckets update gs://YOUR_BUCKET --lifecycle-file=lifecycle.json
+gcloud storage buckets describe gs://YOUR_BUCKET --format="yaml(lifecycle)"
+```
+
+::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::: challenge
+
+### Challenge 5 — Full workshop teardown
+
+If you are done with all episodes, perform a complete cleanup:
+
+1. Stop or delete your Workbench Instance.
+2. Verify no endpoints are deployed.
+3. Delete any completed training/tuning jobs you don't need.
+4. Check your GCS bucket — remove any files you don't want to keep, or delete the bucket entirely.
+
+:::::::::::::::: solution
+
+```bash
+# 1. Delete your Workbench Instance
+gcloud workbench instances delete INSTANCE_NAME \
+  --location=us-central1-a --quiet
+
+# 2. Confirm no endpoints remain
+gcloud ai endpoints list --region=us-central1
+# (If any appear, undeploy models and delete them as shown above)
+
+# 3. Delete old training jobs
+gcloud ai custom-jobs list --region=us-central1
+gcloud ai custom-jobs delete JOB_ID --region=us-central1
+
+gcloud ai hp-tuning-jobs list --region=us-central1
+gcloud ai hp-tuning-jobs delete JOB_ID --region=us-central1
+
+# 4. Remove your GCS bucket (WARNING: this deletes all data in the bucket)
+gcloud storage rm -r gs://YOUR_BUCKET
+```
+
+After cleanup, check **Billing → Reports** one more time to confirm no services are still accumulating charges.
+
+::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
+
+## End‑of‑session checklist
+
+Before you close your laptop, run through this quick checklist:
+
+1. **Workbench Instances** — stopped (or deleted if you're done for good).
+2. **Training / HPT jobs** — no jobs stuck in `RUNNING`.
+3. **Endpoints** — all models undeployed; unused endpoints deleted.
+4. **GCS** — no large temporary files lingering; lifecycle policy in place.
+5. **Budget alert** — set and sending to your email.
+
+> Bookmark **Billing → Reports** and check it at the start of each session. A 10‑second glance can save you from a surprise bill.
+
 ::::::::::::::::::::::::::::::::::::: keypoints
 
-- Endpoints and running notebooks are the most common cost leaks; undeploy/stop first.
-- Prefer **Managed Notebooks** with **Idle shutdown**; schedule nightly auto‑stop.
+- **Check Billing → Reports** regularly — know what you're spending before it surprises you.
+- **Endpoints** and **running notebooks** are the most common cost leaks; undeploy and stop first.
+- **Set a budget alert** — it's the single most protective action you can take.
+- Configure **idle shutdown** on Workbench Instances so forgotten notebooks auto‑stop.
 - Keep storage tidy with **GCS lifecycle policies** and avoid duplicate datasets.
-- Standardize **labels**, set **budgets**, and enable **billing export** for visibility.
-- Use `gcloud`/`gsutil` to audit and clean quickly; automate with Scheduler + Cloud Run/Functions.
+- Use **labels** on all resources so you can trace costs in billing reports.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::

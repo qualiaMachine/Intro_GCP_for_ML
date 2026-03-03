@@ -52,7 +52,8 @@ The lesson is designed for roughly **5 hours** of instruction (including short b
 ### Tips
 - Encourage learners to **add labels/tags to every resource** from the start. This is easy to skip but essential for cost tracking in shared accounts.
 - Remind learners that **Vertex AI training jobs take 2–5 minutes just for provisioning** before training begins. This is normal, not an error.
-- When walking through episode 09 (cleanup), verify as a group that no endpoints are left deployed and no VMs are still running.
+- When walking through episode 09 (cleanup), verify as a group that no endpoints are left deployed and no VMs are still running. Remind learners who plan to continue to episodes 10–11 to **stop** (not delete) their Workbench Instance and keep their GCS bucket.
+- Episode 09 now includes a "Check your spend" section — use this as a live demo so learners can see the Billing Reports dashboard. Walk through the budget alert setup (Challenge 1) together as a class if time permits.
 - For the RAG episode, have a backup plan in case the Gemini API is temporarily rate-limited. You can demo from pre-computed outputs.
 
 ## After the Workshop
