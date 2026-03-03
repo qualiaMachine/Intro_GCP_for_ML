@@ -427,6 +427,46 @@ GPU-accelerated) when needed.</p>
 <p>This approach minimizes costs while giving you access to scalable
 infrastructure for demanding tasks like model training, batch
 prediction, and hyperparameter tuning.</p>
+<div id="you-dont-need-a-notebook-to-use-vertex-ai" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="you-dont-need-a-notebook-to-use-vertex-ai" class="callout-inner">
+<h3 class="callout-title">You don’t need a notebook to use Vertex
+AI</h3>
+<div class="callout-content">
+<p>We use Jupyter notebooks in this workshop because they’re convenient
+for teaching — you can see code, output, and explanations in one place.
+But <strong>notebooks are not required</strong> for any of the workflows
+covered here. Everything we do through the Python SDK (submitting
+training jobs, running hyperparameter tuning, calling the Gemini API)
+can also be done from:</p>
+<ul><li>A <strong>plain Python script</strong> run from your terminal or an
+HPC scheduler.</li>
+<li>The <strong><code>gcloud</code> CLI</strong> (e.g.,
+<code>gcloud ai custom-jobs create ...</code>) for submitting and
+managing jobs directly from the command line.</li>
+<li>A <strong>CI/CD pipeline</strong> (GitHub Actions, Cloud Build,
+etc.) that triggers training runs automatically.</li>
+</ul><p>If you’re more comfortable working from a terminal, SSH session, or
+shell script, the same Vertex AI SDK calls work identically outside of a
+notebook. The notebook is just a convenient wrapper — the real work
+happens in the training scripts and SDK calls.</p>
+<p><strong>That said, Workbench notebooks do make one thing much easier:
+authentication.</strong> A Workbench VM automatically inherits the
+permissions of its attached service account, so calls to Cloud Storage,
+Vertex AI, and the Gemini API “just work” with no extra setup. If you
+run the same code from your laptop or an HPC cluster, you’ll need to
+configure <a href="https://cloud.google.com/docs/authentication/application-default-credentials" class="external-link">Application
+Default Credentials</a> (e.g.,
+<code>gcloud auth application-default login</code>) or provide a service
+account key. It’s straightforward, but it is an extra step — and in a
+shared workshop environment, the notebook’s built-in auth avoids a lot
+of troubleshooting.</p>
+</div>
+</div>
+</div>
 <p>We will follow these steps to create our first Workbench
 Instance:</p>
 <div class="section level3">
@@ -647,7 +687,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.<br>
 - Like an HPC login node, it is not meant for heavy computation.<br>
