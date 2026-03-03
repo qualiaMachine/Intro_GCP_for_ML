@@ -552,8 +552,9 @@ spaces using adaptive strategies.<br>
 of settings tried is controlled later by
 <code>max_trial_count</code>.<br>
 </li>
-<li>Keep the printed metric name consistent with
-<code>metric_spec</code> (here: <code>validation_accuracy</code>).<br>
+<li>The <code>hyperparameter_metric_tag</code> reported by
+<code>cloudml-hypertune</code> must exactly match the key in
+<code>metric_spec</code>.<br>
 </li>
 <li>Limit <code>parallel_trial_count</code> (2–4) to help adaptive
 search.<br>
