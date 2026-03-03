@@ -6,54 +6,75 @@ exercises: 2
 
 ::::::::::::::::::::::::::::::::::::: questions
 
-- What problem does GCP aim to solve for ML researchers?  
-- How does using a notebook as a controller help organize ML workflows in the cloud?  
-- How does GCP compare to AWS for ML workflows?  
+- Why would I run ML experiments in the cloud instead of on my laptop or an HPC cluster?
+- What is the "notebook as controller" pattern, and why does this workshop use it?
+- What will we actually build during this workshop?
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: objectives
 
-- Understand the basic role of GCP in supporting ML research.  
-- Recognize how a notebook can serve as a controller for cloud resources.  
-- Compare GCP and AWS approaches to building and managing ML workflows.  
+- Identify when cloud compute makes sense for ML work.
+- Describe the notebook-as-controller pattern used throughout this workshop.
+- Map the workshop episodes to the stages of an ML workflow.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-Google Cloud Platform (GCP) provides the basic building blocks researchers need to run machine learning (ML) experiments at scale. Instead of working only on your laptop or a high-performance computing (HPC) cluster, you can spin up compute resources on demand, store datasets in the cloud, and run low-cost notebooks that act as a "controller" for larger training and tuning jobs.
+## The problem
 
-This workshop focuses on *using a simple notebook environment as the control center* for your ML workflow. You write and debug code in a Vertex AI Workbench notebook, then submit training and tuning jobs to Vertex AI's compute infrastructure — keeping your notebook lightweight while GCP handles the heavy lifting.
+You have ML code that works on your laptop. But at some point you need more — a bigger GPU, a dataset that won't fit on disk, or the ability to run dozens of training experiments overnight. You could invest in local hardware or compete for time on a shared HPC cluster, but cloud platforms let you rent exactly the hardware you need, for exactly as long as you need it, and then shut it down.
 
-### Why use GCP for machine learning?
+This workshop teaches you to do that on **Google Cloud Platform (GCP)**, using a pattern we call **notebook as controller**.
 
-GCP provides several advantages that make it a strong option for applied ML:
+## The pattern: notebook as controller
 
-- **Flexible compute**: You can choose the hardware that fits your workload:
-  - **CPUs** for lightweight models, preprocessing, or feature engineering.
-  - **GPUs** (e.g., NVIDIA T4, V100, A100) for training deep learning models.
-  - **TPUs (Tensor Processing Units)** for TensorFlow or JAX-based deep learning. TPUs are custom Google hardware optimized for matrix operations and can provide strong performance and energy efficiency for compatible workloads. Google has reported better performance-per-watt compared to GPUs in many TensorFlow benchmarks, though *these gains depend heavily on model type and implementation*.
-    Historically, TPU support has been limited for PyTorch users, and while Google is improving PyTorch integration, the TPU ecosystem still works best for TensorFlow and JAX workflows.
+The central idea is simple. You work in a small, cheap Jupyter notebook in the cloud (a **Vertex AI Workbench** instance). That notebook is your control panel — you write code, explore data, and inspect results there. But when it's time to train a model, you don't train inside the notebook. Instead, you use the **Vertex AI Python SDK** to submit a training job to a separate, more powerful machine (with GPUs, more memory, etc.). When the job finishes, results land in **Cloud Storage** and you pull them back into your notebook.
 
-- **Data storage and access**: Google Cloud Storage (GCS) buckets act like S3 on AWS — an easy way to store and share datasets between experiments and collaborators.
+This keeps costs low (the notebook VM is small) and keeps your work reproducible (each job is a clean, logged run on dedicated hardware).
 
-- **From scratch workflows**: Instead of depending on a fully managed ML service, you bring your own frameworks (PyTorch, TensorFlow, scikit-learn, etc.) and run your code the same way you would on your laptop or HPC cluster, but with scalable cloud resources.
+## What we'll build
 
-- **Cost visibility**: Billing dashboards and project-level budgets make it easier to track costs and stay within research budgets.
+Over the course of this workshop you'll go from an empty GCP project to a working ML pipeline. Here's the path:
 
-- **Sustainability focus**: Google aims to operate entirely on *carbon-free energy by 2030*. Combined with the TPU's focus on efficient matrix computation, this gives GCP a potential edge for researchers interested in energy-conscious ML — though *real-world energy efficiency varies by workload and utilization*.
+| Episode | What you'll do |
+|---------|---------------|
+| **2 – Data Storage** | Create a Cloud Storage bucket and upload training data. |
+| **3 – Notebooks as Controllers** | Launch a Workbench notebook and connect it to your project. |
+| **4 – Accessing Data** | Read data from Cloud Storage into your notebook. |
+| **5 – Code Repos** | Pull training scripts from a Git repository into your environment. |
+| **6 – Training (CPU)** | Submit your first Vertex AI training job on a CPU machine. |
+| **7 – Training (GPU)** | Re-run the same job on a GPU and compare performance. |
+| **8 – Hyperparameter Tuning** | Let Vertex AI search for the best model configuration automatically. |
+| **9 – Cleanup** | Tear down resources and avoid surprise bills. |
+| **10 – RAG** | Build a retrieval-augmented generation pipeline with Gemini. |
+| **11 – CLI Workflows** | Run GCP operations from the command line instead of the console. |
 
-In short, GCP provides infrastructure that you control from a notebook environment, allowing you to build and run ML workflows just as you would locally, but with access to scalable hardware and storage.
+Every episode after this one is hands-on. By the end you'll understand not just *how* to use these services, but *when* each one is worth the cost.
 
-### A note on cloud costs
+## GCP vocabulary cheat sheet
 
-Cloud computing is not free — you pay for the compute, storage, and API calls you use. But it's worth putting those costs in context:
+Google Cloud has a lot of brand names. Here are the ones that matter for this workshop:
 
-- **Hardware is expensive and evolves fast.** A single A100 GPU costs ~$15,000 and is outdated within a few years. Cloud lets you rent the latest hardware by the hour without a capital purchase or a depreciation schedule.
-- **Managing hardware takes people.** On-premises clusters require staff for procurement, installation, driver updates, cooling, and security. Cloud offloads that operational burden so researchers can focus on research.
-- **You pay only for what you use.** Stop a VM and the meter stops. This is especially valuable for bursty research workloads — a week of intensive training followed by months of writing.
-- **Budgets and alerts keep you safe.** GCP billing dashboards, budget alerts, and quotas help prevent surprise bills. We cover cleanup practices in [Episode 9](09-Resource-management-cleanup.md).
+| Term | What it is |
+|------|-----------|
+| **GCP** | Google Cloud Platform — the overall cloud: compute, storage, networking. |
+| **Vertex AI** | Google's ML platform — notebooks, training jobs, tuning, model hosting. |
+| **Workbench** | Managed Jupyter notebooks that run on a Compute Engine VM. |
+| **Cloud Storage (GCS)** | Object storage for files (datasets, scripts, model artifacts). Like AWS S3. |
+| **Compute Engine** | Virtual machines you configure with CPUs, GPUs, or TPUs. |
+| **Gemini** | Google's family of large language models, accessed through Vertex AI. |
 
-The key is to be intentional: choose the right machine size, stop resources when idle, and monitor spending. We'll reinforce these habits throughout the workshop.
+For a full list of terms, see the [Glossary](../learners/glossary.md).
+
+## A note on cloud costs
+
+Cloud computing is not free, but it's worth putting costs in context:
+
+- **Hardware is expensive and ages fast.** A single A100 GPU costs ~$15,000 and is outdated within a few years. Cloud lets you rent the latest hardware by the hour.
+- **You pay only for what you use.** Stop a VM and the meter stops — valuable for bursty research workloads.
+- **Budgets and alerts keep you safe.** GCP billing dashboards and budget alerts help prevent surprise bills. We cover cleanup in [Episode 9](09-Resource-management-cleanup.md).
+
+The key habit: choose the right machine size, stop resources when idle, and monitor spending. We'll reinforce this throughout.
 
 ::::::::::::::::::::::::::::::::::::: callout
 
@@ -62,58 +83,33 @@ The key is to be intentional: choose the right machine size, stop resources when
 If you're at UW-Madison, the university offers several resources that can significantly reduce your cloud costs:
 
 - **Reduced overhead on grants** — The [Cloud Computing Pilot](https://rsp.wisc.edu/proposalprep/cloudComputeInfo.cfm) drops F&A overhead from 55.5% to **26%** on cloud expenses when using a UW-provisioned account, saving ~$2,950 per $10,000 spent.
-- **NIH STRIDES discounts** — Negotiated pricing on GCP, AWS, and Azure services for NIH-funded researchers, layered on top of UW rates. Exact discounts vary by service and are shared through program resellers. See [STRIDES at UW-Madison](https://kb.wisc.edu/109813) or contact [STRIDES@nih.gov](mailto:STRIDES@nih.gov).
+- **NIH STRIDES discounts** — Negotiated pricing on GCP, AWS, and Azure services for NIH-funded researchers. See [STRIDES at UW-Madison](https://kb.wisc.edu/109813) or contact [STRIDES@nih.gov](mailto:STRIDES@nih.gov).
 - **Google Cloud Research Credits** — Up to **$5,000** in free credits for faculty and postdocs ($1,000 for PhD students). [Apply here](https://edu.google.com/intl/ALL_us/programs/credits/research/).
-- **Free on-campus GPUs** — [CHTC](https://chtc.cs.wisc.edu/) provides access to hundreds of GPUs (including A100s) at no cost. Great for workloads that don't need cloud-specific services.
+- **Free on-campus GPUs** — [CHTC](https://chtc.cs.wisc.edu/) provides access to hundreds of GPUs (including A100s) at no cost.
 - **Support** — The [Public Cloud Team](mailto:cloud-services@cio.wisc.edu) offers weekly office hours and architecture consultations. The [ML+X community](https://hub.datascience.wisc.edu/communities/mlx/) holds monthly meetings on ML/AI topics.
 
-See the [UW-Madison Cloud Resources](../uw-madison-cloud-resources.html) page for the full list of discounts, contacts, and how to request a UW cloud account.
-
-::::::::::::::::::::::::::::::::::::::::::::::::
-
-### GCP and Vertex AI: a quick orientation
-
-Google Cloud has many products and brand names. The table below maps the key terms you'll encounter in this workshop to what they actually do.
-
-| Term | What it is | Where you'll see it |
-|------|-----------|-------------------|
-| **GCP (Google Cloud Platform)** | The overall cloud platform — compute, storage, networking, and managed services. | Everything in this workshop runs on GCP. |
-| **Vertex AI** | Google's umbrella brand for ML/AI services. It includes Workbench notebooks, training jobs, hyperparameter tuning, Model Garden, and more. | Episodes 3–10 all use Vertex AI services. |
-| **Vertex AI Workbench** | A managed Jupyter notebook environment that runs on a Compute Engine VM. Think of it as "Jupyter in the cloud" with GCP authentication built in. | Episode 3 — where we create our notebook. |
-| **Cloud Storage (GCS)** | Object storage for datasets, model artifacts, and scripts. Similar to AWS S3. | Episode 2 — where we upload training data. |
-| **Compute Engine** | Virtual machines (VMs) you can configure with CPUs, GPUs, or TPUs. Workbench notebooks run on Compute Engine VMs under the hood. | Episodes 6–8 — the machines that run training jobs. |
-| **Gemini** | Google's family of large language models (LLMs), used for text generation, embeddings, and multimodal tasks. Accessed through the Vertex AI API. | Episode 10 — RAG pipeline uses Gemini for generation and embeddings. |
-| **Model Garden** | A catalog of foundation models (Google and third-party) available through Vertex AI. | Episode 10 — where you can browse embedding and generation models. |
-
-::::::::::::::::::::::::::::::::::::: callout
-
-### What about AWS?
-
-In many respects, GCP and AWS offer comparable capabilities for ML research. Both provide scalable compute, storage, and tooling to support everything from quick experiments to production pipelines.
-AWS typically offers a broader range of GPU and CPU instance types, along with mature managed services like SageMaker and tighter integration with enterprise infrastructure. GCP, on the other hand, emphasizes the use of TensorFlow and JAX, and the availability of TPUs — which may offer energy advantages for certain workloads.
-
-Ultimately, the choice often comes down to framework preference, familiarity, and existing resources, rather than major functional differences between the two platforms.
+See the [UW-Madison Cloud Resources](../uw-madison-cloud-resources.html) page for the full list.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
-### Comparing infrastructures  
-Think about your current research setup:  
-- Do you mostly use your laptop, HPC cluster, AWS, or GCP for ML experiments?  
-- Which environment feels most transparent for understanding costs and reproducibility?  
-- If you could offload one infrastructure challenge (e.g., installing GPU drivers, managing storage, or setting up environments), what would it be and why?  
+### Your current setup
 
-Take 3–5 minutes to discuss with a partner or share in the workshop chat.  
+Think about how you currently run ML experiments:
+
+- What hardware do you use — laptop, HPC cluster, cloud?
+- What's the biggest infrastructure pain point in your workflow (GPU access, environment setup, data transfer, cost)?
+- What would you most like to offload to a managed service?
+
+Take 3–5 minutes to discuss with a partner or share in the workshop chat.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
-- GCP and AWS both provide the essential components for running ML workloads at scale.  
-- GCP emphasizes simplicity, open frameworks, and TPU access; AWS offers broader hardware and automation options.  
-- TPUs are efficient for TensorFlow and JAX, but GPU-based workflows (common on AWS) remain more flexible across frameworks.  
-- Both platforms now provide strong cost tracking and sustainability tools, with only minor differences in interface and ecosystem integration.  
-- Using a notebook as a controller provides reproducibility and helps manage compute and storage resources consistently across clouds.  
+- Cloud platforms let you rent hardware on demand instead of buying or waiting for shared resources.
+- The notebook-as-controller pattern keeps your notebook cheap while offloading heavy training to dedicated Vertex AI jobs.
+- This workshop walks through the full cycle: data storage → notebook setup → training → tuning → cleanup.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
