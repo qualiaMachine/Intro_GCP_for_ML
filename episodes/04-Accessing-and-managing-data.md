@@ -66,24 +66,7 @@ train_data.head()
 
 ```
 
-If you get an error, return to the Google Cloud Console (where we created our bucket and VM) and search for "Cloud Shell Editor". Open a shell editor and run the below commands, *replacing the bucket name with your bucket's name*:
-
-```sh
-# Grant read permissions on the bucket
-gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
-  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
-  --role="roles/storage.objectViewer"
-
-# Grant write permissions on the bucket
-gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
-  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
-  --role="roles/storage.objectCreator"
-
-# (Only if you also need overwrite/delete)
-gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
-  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
-  --role="roles/storage.objectAdmin"
-```
+If you get a permission error, revisit the **Adjust bucket permissions** section in [Episode 2: Data Storage](02-Data-storage.md) to grant the necessary IAM roles to your Compute Engine service account via Cloud Shell.
 
 ### B) Downloading a local copy  
 
