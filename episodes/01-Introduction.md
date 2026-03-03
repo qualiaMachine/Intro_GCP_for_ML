@@ -7,64 +7,68 @@ exercises: 2
 ::::::::::::::::::::::::::::::::::::: questions
 
 - Why would I run ML experiments in the cloud instead of on my laptop or an HPC cluster?
-- What is the "notebook as controller" pattern, and why does this workshop use it?
-- What will we actually build during this workshop?
+- What does GCP offer for machine learning, and how is it organized?
+- What is the "notebook as controller" pattern?
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: objectives
 
 - Identify when cloud compute makes sense for ML work.
-- Describe the notebook-as-controller pattern used throughout this workshop.
-- Map the workshop episodes to the stages of an ML workflow.
+- Describe what GCP and Vertex AI provide for ML researchers.
+- Explain the notebook-as-controller pattern used throughout this workshop.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-## The problem
+## Why run ML in the cloud?
 
 You have ML code that works on your laptop. But at some point you need more — a bigger GPU, a dataset that won't fit on disk, or the ability to run dozens of training experiments overnight. You could invest in local hardware or compete for time on a shared HPC cluster, but cloud platforms let you rent exactly the hardware you need, for exactly as long as you need it, and then shut it down.
 
-This workshop teaches you to do that on **Google Cloud Platform (GCP)**, using a pattern we call **notebook as controller**.
+Google Cloud Platform (GCP) is one of several clouds that supports this. The rest of this episode explains what GCP offers for ML and how the pieces fit together.
 
-## The pattern: notebook as controller
+## What GCP provides for ML
 
-The central idea is simple. You work in a small, cheap Jupyter notebook in the cloud (a **Vertex AI Workbench** instance). That notebook is your control panel — you write code, explore data, and inspect results there. But when it's time to train a model, you don't train inside the notebook. Instead, you use the **Vertex AI Python SDK** to submit a training job to a separate, more powerful machine (with GPUs, more memory, etc.). When the job finishes, results land in **Cloud Storage** and you pull them back into your notebook.
+GCP gives you three things that matter for applied ML research:
 
-This keeps costs low (the notebook VM is small) and keeps your work reproducible (each job is a clean, logged run on dedicated hardware).
+**Flexible compute.** You pick the hardware that fits your workload:
 
-## What we'll build
+- **CPUs** for lightweight models, preprocessing, or feature engineering.
+- **GPUs** (NVIDIA T4, V100, A100, etc.) for training deep learning models.
+- **TPUs** (Tensor Processing Units) — Google's custom hardware for matrix-heavy workloads. TPUs work best with TensorFlow and JAX; PyTorch support is improving but still less mature.
 
-Over the course of this workshop you'll go from an empty GCP project to a working ML pipeline. Here's the path:
+**Scalable storage.** Google Cloud Storage (GCS) buckets give you a place to store datasets, scripts, and model artifacts that any job or notebook can access. Think of it as a shared filesystem for your project.
 
-| Episode | What you'll do |
-|---------|---------------|
-| **2 – Data Storage** | Create a Cloud Storage bucket and upload training data. |
-| **3 – Notebooks as Controllers** | Launch a Workbench notebook and connect it to your project. |
-| **4 – Accessing Data** | Read data from Cloud Storage into your notebook. |
-| **5 – Code Repos** | Pull training scripts from a Git repository into your environment. |
-| **6 – Training (CPU)** | Submit your first Vertex AI training job on a CPU machine. |
-| **7 – Training (GPU)** | Re-run the same job on a GPU and compare performance. |
-| **8 – Hyperparameter Tuning** | Let Vertex AI search for the best model configuration automatically. |
-| **9 – Cleanup** | Tear down resources and avoid surprise bills. |
-| **10 – RAG** | Build a retrieval-augmented generation pipeline with Gemini. |
-| **11 – CLI Workflows** | Run GCP operations from the command line instead of the console. |
+**Managed ML services.** Vertex AI is Google's ML platform. It wraps compute, storage, and tooling into a set of services designed for ML workflows — managed notebooks, training jobs, hyperparameter tuning, model hosting, and access to foundation models like Gemini.
 
-Every episode after this one is hands-on. By the end you'll understand not just *how* to use these services, but *when* each one is worth the cost.
+## How the pieces fit together: Vertex AI
 
-## GCP vocabulary cheat sheet
-
-Google Cloud has a lot of brand names. Here are the ones that matter for this workshop:
+Google Cloud has many products and brand names. Here are the ones you'll use in this workshop and how they relate:
 
 | Term | What it is |
 |------|-----------|
 | **GCP** | Google Cloud Platform — the overall cloud: compute, storage, networking. |
-| **Vertex AI** | Google's ML platform — notebooks, training jobs, tuning, model hosting. |
-| **Workbench** | Managed Jupyter notebooks that run on a Compute Engine VM. |
-| **Cloud Storage (GCS)** | Object storage for files (datasets, scripts, model artifacts). Like AWS S3. |
-| **Compute Engine** | Virtual machines you configure with CPUs, GPUs, or TPUs. |
-| **Gemini** | Google's family of large language models, accessed through Vertex AI. |
+| **Vertex AI** | Google's ML platform — notebooks, training jobs, tuning, model hosting. Everything below lives under this umbrella. |
+| **Workbench** | Managed Jupyter notebooks that run on a Compute Engine VM. Your interactive environment. |
+| **Custom Jobs** | Managed training runs on dedicated hardware. You submit code; Vertex AI provisions a machine, runs it, and shuts it down. |
+| **Cloud Storage (GCS)** | Object storage for files. Similar to AWS S3. |
+| **Compute Engine** | Virtual machines you configure with CPUs, GPUs, or TPUs. Workbench and training jobs run on Compute Engine under the hood. |
+| **Gemini** | Google's family of large language models, accessed through the Vertex AI API. |
 
 For a full list of terms, see the [Glossary](../learners/glossary.md).
+
+## The notebook-as-controller pattern
+
+The central idea of this workshop is simple. You work in a small, cheap Jupyter notebook in the cloud (a **Vertex AI Workbench** instance). That notebook is your control panel — you write code, explore data, and inspect results there. But when it's time to train a model, you don't train inside the notebook. Instead, you use the **Vertex AI Python SDK** to submit a training job to a separate, more powerful machine (with GPUs, more memory, etc.). When the job finishes, results land in **Cloud Storage** and you pull them back into your notebook.
+
+This keeps costs low (the notebook VM is small) and keeps your work reproducible (each job is a clean, logged run on dedicated hardware).
+
+::::::::::::::::::::::::::::::::::::: callout
+
+### Console, notebooks, or CLI — your choice
+
+This workshop uses the **GCP web console** and **Workbench notebooks** for most tasks because they're visual and easy to follow. But nearly everything we do can also be done from the **`gcloud` command-line tool** — submitting training jobs, managing buckets, checking quotas. [Episode 11](11-CLI-workflows.md) covers the CLI equivalents. If you prefer terminal-based workflows or need to automate jobs in scripts and CI/CD pipelines, that episode shows you how.
+
+::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## A note on cloud costs
 
@@ -109,7 +113,8 @@ Take 3–5 minutes to discuss with a partner or share in the workshop chat.
 ::::::::::::::::::::::::::::::::::::: keypoints
 
 - Cloud platforms let you rent hardware on demand instead of buying or waiting for shared resources.
+- GCP organizes its ML services under Vertex AI — notebooks, training jobs, tuning, and model hosting.
 - The notebook-as-controller pattern keeps your notebook cheap while offloading heavy training to dedicated Vertex AI jobs.
-- This workshop walks through the full cycle: data storage → notebook setup → training → tuning → cleanup.
+- Everything in this workshop can also be done from the `gcloud` CLI ([Episode 11](11-CLI-workflows.md)).
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
