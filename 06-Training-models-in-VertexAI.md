@@ -309,7 +309,7 @@ In our setup, we're intentionally using the simpler **CustomTrainingJob** path. 
 
 #### Visit "training pipelines" to verify it's running.
 
-https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&project=doit-rci-mlm25-4626
+https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&project=doit-rci-mlm25-4626 <!-- replace project ID with your own if not using the shared workshop project -->
 
 ## Training artifacts
 
@@ -331,7 +331,7 @@ print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
 This is your *intended output location*, set via `base_output_dir`.  
 It contains everything your training script explicitly writes. In our case, this includes:
 
-- **`{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/xgboost-model`** — Serialized XGBoost model (Booster) saved via `joblib`; reload later with `joblib.load()` for reuse or deployment.  
+- **`{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/model/xgboost-model`** — Serialized XGBoost model (Booster) saved via `joblib`; reload later with `joblib.load()` for reuse or deployment.  
 
 
 #### System-Generated Files
