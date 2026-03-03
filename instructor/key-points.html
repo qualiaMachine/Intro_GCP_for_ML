@@ -530,18 +530,20 @@ Vertex AI Console.</li>
 <hr class="half-width">
 <ul>
 <li>Use <strong>CustomTrainingJob</strong> with a prebuilt PyTorch
-container; let your script control outputs via
-<code>--model_out</code>.</li>
+container; your script reads <code>AIP_MODEL_DIR</code> (set
+automatically by <code>base_output_dir</code>) to know where to write
+artifacts.</li>
 <li>Keep artifacts <strong>together</strong> (model, metrics, history,
-log) in one folder for reproducibility.</li>
+log) in one GCS folder for reproducibility.</li>
 <li>
-<code>.npz</code> speeds up loading and plays nicely with
-PyTorch.</li>
-<li>Start on CPU for small datasets; use GPU only when profiling shows a
-clear win.</li>
-<li>Skip <code>base_output_dir</code> unless you specifically want
-Vertex’s default run directory; staging bucket is just for the SDK
-packaging tarball.</li>
+<code>.npz</code> is a compact, cloud-friendly format — one GCS read
+per file, preserves exact dtypes.</li>
+<li>Start on CPU for small datasets; add a GPU only when training time
+justifies the extra provisioning overhead and cost.</li>
+<li>
+<code>staging_bucket</code> is just for the SDK’s packaging tarball
+— <code>base_output_dir</code> is where your script’s actual artifacts
+go.</li>
 </ul></section><section id="08-Hyperparameter-tuning"><h2 class="section-heading"><a href="08-Hyperparameter-tuning.html">Hyperparameter Tuning in Vertex AI: Neural Network Example</a></h2>
 <hr class="half-width">
 <ul>

@@ -277,7 +277,6 @@
 test</a></li>
 <li><a href="#launch-the-training-job">Launch the training job</a></li>
 <li><a href="#gpu-accelerated-training-on-vertex-ai">GPU-Accelerated Training on Vertex AI</a></li>
-<li><a href="#distributed-training-when-to-consider">Distributed training (when to consider)</a></li>
 <li><a href="#additional-resources">Additional resources</a></li>
         </ul></div><!--/div.accordion-body-->
     </div><!--/div.accordion-collapse-->
@@ -475,34 +474,23 @@ input/output data.</p>
 <a class="anchor" aria-label="anchor" href="#prepare-data-as--npz"></a></h2>
 <hr class="half-width"><p>Why <code>.npz</code>? NumPy’s <code>.npz</code> files are compressed
 binary containers that can store multiple arrays (e.g., features and
-labels) together in a single file. They offer numerous benefits:</p>
-<ul><li>Smaller, faster I/O than CSV for arrays.<br></li>
-<li>One file can hold multiple arrays (<code>X_train</code>,
+labels) together in a single file:</p>
+<ul><li>
+<strong>Compact &amp; fast:</strong> smaller than CSV, and one file
+can hold multiple arrays (<code>X_train</code>,
 <code>y_train</code>).</li>
-<li>Natural fit for <code>torch.utils.data.Dataset</code> /
-<code>DataLoader</code>.<br></li>
 <li>
-<strong>Cloud-friendly:</strong> compressed <code>.npz</code> files
-reduce upload and download times and minimize GCS egress costs. Because
-each <code>.npz</code> is a single binary object, reading it from Google
-Cloud Storage (GCS) requires only one network call—much faster and
-cheaper than streaming many small CSVs or images individually.<br></li>
+<strong>Cloud-friendly:</strong> each <code>.npz</code> is a single
+GCS object — one network call to read instead of streaming many small
+files, reducing latency and egress costs.</li>
 <li>
-<strong>Efficient data movement:</strong> when you launch a Vertex
-AI training job, GCS objects referenced in your script (for example,
-<code>gs://.../train_data.npz</code>) are automatically staged to the
-job’s VM or container at runtime. Vertex copies these objects into its
-local scratch disk before execution, so subsequent reads (e.g.,
-<code>np.load(...)</code>) occur from local storage rather than directly
-over the network. For small-to-medium datasets, this happens
-transparently and incurs minimal startup delay.<br></li>
+<strong>Vertex AI integration:</strong> when you launch a training
+job, GCS objects are automatically staged to the job VM’s local scratch
+disk, so <code>np.load(...)</code> reads from local storage at
+runtime.</li>
 <li>
-<strong>Reproducible binary format:</strong> unlike CSV,
-<code>.npz</code> preserves exact dtypes and shapes, ensuring identical
-results across different environments and containers.<br></li>
-<li>Each GCS object read or listing request incurs a small per-request
-cost; using a single <code>.npz</code> reduces both the number of API
-calls and associated latency.</li>
+<strong>Reproducible:</strong> unlike CSV, <code>.npz</code>
+preserves exact dtypes and shapes across environments.</li>
 </ul><div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -518,25 +506,25 @@ calls and associated latency.</li>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(io.BytesIO(blob.download_as_bytes()))</span>
 <span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a></span>
 <span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co"># Minimal preprocessing to numeric arrays</span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>sex_enc <span class="op">=</span> LabelEncoder().fit(df[<span class="st">"Sex"</span>])            <span class="co"># Fit label encoder on 'Sex' column (male/female)</span></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>df[<span class="st">"Sex"</span>] <span class="op">=</span> sex_enc.transform(df[<span class="st">"Sex"</span>])           <span class="co"># Convert 'Sex' to numeric values (e.g., male=1, female=0)</span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>df[<span class="st">"Embarked"</span>] <span class="op">=</span> df[<span class="st">"Embarked"</span>].fillna(<span class="st">"S"</span>)       <span class="co"># Replace missing embarkation ports with most common ('S')</span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>emb_enc <span class="op">=</span> LabelEncoder().fit(df[<span class="st">"Embarked"</span>])       <span class="co"># Fit label encoder on 'Embarked' column (S/C/Q)</span></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>df[<span class="st">"Embarked"</span>] <span class="op">=</span> emb_enc.transform(df[<span class="st">"Embarked"</span>]) <span class="co"># Convert embarkation categories to numeric codes</span></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>df[<span class="st">"Age"</span>] <span class="op">=</span> df[<span class="st">"Age"</span>].fillna(df[<span class="st">"Age"</span>].median())   <span class="co"># Fill missing ages with median (robust to outliers)</span></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>df[<span class="st">"Fare"</span>] <span class="op">=</span> df[<span class="st">"Fare"</span>].fillna(df[<span class="st">"Fare"</span>].median())<span class="co"># Fill missing fares with median to avoid NaNs</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>sex_enc <span class="op">=</span> LabelEncoder().fit(df[<span class="st">"Sex"</span>])</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>df[<span class="st">"Sex"</span>] <span class="op">=</span> sex_enc.transform(df[<span class="st">"Sex"</span>])</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>df[<span class="st">"Embarked"</span>] <span class="op">=</span> df[<span class="st">"Embarked"</span>].fillna(<span class="st">"S"</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>emb_enc <span class="op">=</span> LabelEncoder().fit(df[<span class="st">"Embarked"</span>])</span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>df[<span class="st">"Embarked"</span>] <span class="op">=</span> emb_enc.transform(df[<span class="st">"Embarked"</span>])</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>df[<span class="st">"Age"</span>] <span class="op">=</span> df[<span class="st">"Age"</span>].fillna(df[<span class="st">"Age"</span>].median())</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>df[<span class="st">"Fare"</span>] <span class="op">=</span> df[<span class="st">"Fare"</span>].fillna(df[<span class="st">"Fare"</span>].median())</span>
 <span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a></span>
-<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>X <span class="op">=</span> df[[<span class="st">"Pclass"</span>,<span class="st">"Sex"</span>,<span class="st">"Age"</span>,<span class="st">"SibSp"</span>,<span class="st">"Parch"</span>,<span class="st">"Fare"</span>,<span class="st">"Embarked"</span>]].values  <span class="co"># Select numeric feature columns as input</span></span>
-<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>y <span class="op">=</span> df[<span class="st">"Survived"</span>].values                                                <span class="co"># Target variable (1=survived, 0=did not survive)</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>X <span class="op">=</span> df[[<span class="st">"Pclass"</span>,<span class="st">"Sex"</span>,<span class="st">"Age"</span>,<span class="st">"SibSp"</span>,<span class="st">"Parch"</span>,<span class="st">"Fare"</span>,<span class="st">"Embarked"</span>]].values</span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>y <span class="op">=</span> df[<span class="st">"Survived"</span>].values</span>
 <span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()                                                <span class="co"># Initialize standard scaler for standardization (best practice for neural net training)</span></span>
-<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>X <span class="op">=</span> scaler.fit_transform(X)                                              <span class="co"># Scale features to mean=0, std=1 for stable training</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>X <span class="op">=</span> scaler.fit_transform(X)</span>
 <span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a></span>
-<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>X_train, X_val, y_train, y_val <span class="op">=</span> train_test_split(                       <span class="co"># Split dataset into training and validation sets</span></span>
-<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>    X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)                                <span class="co"># 80% training, 20% validation (fixed random seed)</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>X_train, X_val, y_train, y_val <span class="op">=</span> train_test_split(</span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>    X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
 <span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a></span>
-<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>np.savez(<span class="st">"/home/jupyter/train_data.npz"</span>, X_train<span class="op">=</span>X_train, y_train<span class="op">=</span>y_train)             <span class="co"># Save training arrays to compressed .npz file</span></span>
-<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>np.savez(<span class="st">"/home/jupyter/val_data.npz"</span>,   X_val<span class="op">=</span>X_val,   y_val<span class="op">=</span>y_val)                   <span class="co"># Save validation arrays to compressed .npz file</span></span></code></pre>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>np.savez(<span class="st">"/home/jupyter/train_data.npz"</span>, X_train<span class="op">=</span>X_train, y_train<span class="op">=</span>y_train)</span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>np.savez(<span class="st">"/home/jupyter/val_data.npz"</span>,   X_val<span class="op">=</span>X_val,   y_val<span class="op">=</span>y_val)</span></code></pre>
 </div>
 <p>We can then upload the files to our GCS bucket.</p>
 <div class="codewrapper sourceCode" id="cb4">
@@ -575,10 +563,46 @@ and model overfits nearly perfectly after training enough epochs)</li>
 params) when testing locally</li>
 </ul><p>Find this file in our repo:
 <code>Intro_GCP_for_ML/scripts/train_nn.py</code>. It does three things:
-1) loads <code>.npz</code> from local or GCS 2) trains a tiny multilayer
-perceptron (MLP) 3) writes all outputs side‑by‑side (model + metrics +
-eval history + training.log) to the same <code>--model_out</code>
-folder.</p>
+1) loads <code>.npz</code> from local or GCS paths (transparently
+handles both) 2) trains a small neural network (a 3-layer MLP) with
+early stopping 3) writes all outputs side‑by‑side (model + metrics +
+eval history + training.log) to the folder specified by the
+<code>AIP_MODEL_DIR</code> environment variable (set automatically by
+Vertex AI via <code>base_output_dir</code>), falling back to the current
+directory for local runs.</p>
+<div id="whats-inside-train_nn.py-quick-reference" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="whats-inside-train_nn.py-quick-reference" class="callout-inner">
+<h3 class="callout-title">What’s inside <code>train_nn.py</code>? (Quick
+reference)</h3>
+<div class="callout-content">
+<p>You don’t need to understand every line of the PyTorch code for this
+workshop — the focus is on how to package and run <em>any</em> training
+script on Vertex AI. That said, here’s a quick orientation:</p>
+<ul><li>
+<strong>GCS helpers</strong> (top of file):
+<code>read_npz_any()</code> and <code>save_*_any()</code> functions
+detect <code>gs://</code> paths and use the GCS Python client
+automatically. This is the key pattern that makes the same script work
+locally and in the cloud.</li>
+<li>
+<strong><code>AIP_MODEL_DIR</code></strong>: Vertex AI sets this
+environment variable to tell your script where to write artifacts. The
+script reads it at the top of <code>main()</code>.</li>
+<li>
+<strong>Model</strong>: A small feedforward network
+(<code>TitanicNet</code>) — the architecture details aren’t important
+for this lesson.</li>
+<li>
+<strong>Early stopping</strong>: Training halts when validation loss
+stops improving (controlled by <code>--patience</code>). This saves
+compute time and cost on cloud jobs.</li>
+</ul></div>
+</div>
+</div>
 <p>To test this code, we can run the following:</p>
 <div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -603,31 +627,26 @@ folder.</p>
 <span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a></span>
 <span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total local runtime: </span><span class="sc">{</span>t<span class="sc">.</span>time() <span class="op">-</span> start<span class="sc">:.2f}</span><span class="ss"> seconds"</span>)</span></code></pre>
 </div>
-<p>If applicable (numpy mismatch), run the below code after uncommenting
-it (select code and type <code>Ctrl+/</code> for multiline
-uncommenting)</p>
+<div id="numpy-version-mismatch" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="numpy-version-mismatch" class="callout-inner">
+<h3 class="callout-title">NumPy version mismatch?</h3>
+<div class="callout-content">
+<p>If the cell above fails with a NumPy error (e.g.,
+<code>module 'numpy' has no attribute ...</code>), run this fix and then
+re-run the training cell:</p>
 <div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># # Fix numpy mismatch</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="co"># !pip install --upgrade --force-reinstall "numpy&lt;2"</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co"># # Then, rerun:</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co"># import time as t</span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co"># start = t.time()</span></span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co"># # Example: run your custom training script with args</span></span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co"># !python /home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py \</span></span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#     --train /home/jupyter/train_data.npz \</span></span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#     --val /home/jupyter/val_data.npz \</span></span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#    --epochs $MAX_EPOCHS \</span></span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#    --learning_rate $LR \</span></span>
-<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#    --patience $PATIENCE</span></span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a></span>
-<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a></span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co"># print(f"Total local runtime: {t.time() - start:.2f} seconds")</span></span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">--</span>upgrade <span class="op">--</span>force<span class="op">-</span>reinstall <span class="st">"numpy&lt;2"</span></span></code></pre>
+</div>
+<p>The PyTorch kernel occasionally ships with NumPy 2.x, which has
+breaking API changes.</p>
+</div>
+</div>
 </div>
 <div class="section level3">
 <h3 id="reproducibility-test">Reproducibility test<a class="anchor" aria-label="anchor" href="#reproducibility-test"></a></h3>
@@ -680,7 +699,7 @@ accuracy before we move to cloud training.</p>
 <span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a></span>
 <span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co"># rebuild model and load weights</span></span>
 <span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>m <span class="op">=</span> TitanicNet()</span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>state <span class="op">=</span> torch.load(<span class="st">"/home/jupyter/model.pt"</span>, map_location<span class="op">=</span><span class="st">"cpu"</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>state <span class="op">=</span> torch.load(<span class="st">"/home/jupyter/model.pt"</span>, map_location<span class="op">=</span><span class="st">"cpu"</span>, weights_only<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>m.load_state_dict(state)</span>
 <span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>m.<span class="bu">eval</span>()</span>
 <span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a></span>
@@ -715,7 +734,7 @@ visiting: <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-co
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest'</span> <span class="co"># cpu-only version</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-4.py310:latest'</span> <span class="co"># cpu-only version</span></span>
 <span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span> <span class="co"># CPU fine for small datasets</span></span>
 <span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"RUN_ID = </span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">ARTIFACT_DIR = </span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ch">\n</span><span class="ss">MACHINE = </span><span class="sc">{</span>MACHINE<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
@@ -766,8 +785,8 @@ Jobs</strong>.<br></li>
 artifacts.<br></li>
 <li>Cancel jobs from the console if needed (be careful not to stop jobs
 you don’t own in shared projects).</li>
-</ol><p><strong>Quick link</strong>: <a href="https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626" class="external-link uri">https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&amp;project=doit-rci-mlm25-4626</a>
-<!-- replace project ID with your own if not using the shared workshop project --></p>
+</ol><p><strong>Quick link</strong> (replace <code>YOUR_PROJECT_ID</code>):
+<code>https://console.cloud.google.com/vertex-ai/training/training-pipelines?project=YOUR_PROJECT_ID</code></p>
 <p>Check our bucket contents to verify expected outputs are there.</p>
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -826,7 +845,7 @@ from GCS.</p>
 <span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a>model_pt <span class="op">=</span> io.BytesIO(model_bytes)</span>
 <span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a></span>
 <span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a><span class="co"># rebuild model and load weights</span></span>
-<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a>state <span class="op">=</span> torch.load(model_pt, map_location<span class="op">=</span><span class="st">"cpu"</span>)</span>
+<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a>state <span class="op">=</span> torch.load(model_pt, map_location<span class="op">=</span><span class="st">"cpu"</span>, weights_only<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a>m <span class="op">=</span> TitanicNet()</span>
 <span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a>m.load_state_dict(state)</span>
 <span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a>m.<span class="bu">eval</span>()<span class="op">;</span> <span class="co"># set model to eval mode</span></span>
@@ -839,7 +858,7 @@ from GCS.</p>
 <span id="cb14-29"><a href="#cb14-29" tabindex="-1"></a><span class="co"># !ls</span></span>
 <span id="cb14-30"><a href="#cb14-30" tabindex="-1"></a><span class="co"># # rebuild model and load weights</span></span>
 <span id="cb14-31"><a href="#cb14-31" tabindex="-1"></a><span class="co"># m = TitanicNet()</span></span>
-<span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a><span class="co"># state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")  </span></span>
+<span id="cb14-32"><a href="#cb14-32" tabindex="-1"></a><span class="co"># state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu", weights_only=True)  </span></span>
 <span id="cb14-33"><a href="#cb14-33" tabindex="-1"></a><span class="co"># m.load_state_dict(state)</span></span>
 <span id="cb14-34"><a href="#cb14-34" tabindex="-1"></a><span class="co"># m.eval()</span></span></code></pre>
 </div>
@@ -869,98 +888,109 @@ and avoid having a copy in our VM.</p>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="gpu-accelerated-training-on-vertex-ai">GPU-Accelerated Training on Vertex AI<a class="anchor" aria-label="anchor" href="#gpu-accelerated-training-on-vertex-ai"></a></h2>
-<hr class="half-width"><p>In the previous example, we ran our PyTorch training job on a
-CPU-only machine using the <code>pytorch-cpu</code> container. That
-setup works well for small models or quick tests since CPU instances are
-cheaper and start faster.</p>
-<p>In this section, we’ll attach a GPU to our Vertex AI training job to
-speed up heavier workloads. The workflow is nearly identical to the CPU
-version, except for a few changes:</p>
+<hr class="half-width"><p>Our CPU job above worked fine for this small dataset. In practice,
+you’d switch to a GPU when training takes too long on CPU — typically
+with larger models (millions of parameters) or larger datasets (hundreds
+of thousands of rows). For the Titanic dataset, the GPU will likely be
+<em>slower</em> end-to-end due to provisioning overhead, but we’ll run
+it here to learn the workflow.</p>
+<p>The changes from CPU to GPU are minimal — this is one of the
+advantages of Vertex AI’s container-based approach:</p>
 <ul><li>The container image switches to the GPU-enabled version
 (<code>pytorch-gpu.2-4.py310:latest</code>), which includes CUDA and
 cuDNN.</li>
 <li>The machine type (<code>n1-standard-8</code>) defines CPU and memory
-resources, while we now add a GPU accelerator
-(<code>NVIDIA_TESLA_T4</code>, <code>NVIDIA_L4</code>, etc.).
-<strong>For guidance on selecting a machine type and accelerator, visit
-the <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html" class="external-link">Compute
+resources, while we add a GPU accelerator (<code>NVIDIA_TESLA_T4</code>,
+<code>NVIDIA_L4</code>, etc.). <strong>For guidance on selecting a
+machine type and accelerator, visit the <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html" class="external-link">Compute
 for ML</a> resource.</strong>
 </li>
 <li>The training script, arguments, and artifact handling all stay the
 same.</li>
-</ul><p>This makes it easy to start with a CPU run for testing, then scale up
-to GPU training by changing only the image and adding accelerator
-parameters.</p>
+</ul><div id="gpu-quota-unavailable" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="gpu-quota-unavailable" class="callout-inner">
+<h3 class="callout-title">GPU quota unavailable?</h3>
+<div class="callout-content">
+<p>If your job fails with a quota error, don’t worry — re-run using the
+CPU configuration from the previous section. The results will be
+identical, just slower. GPU quota requests can take 1–3 business days to
+process.</p>
+</div>
+</div>
+</div>
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="im">from</span> google.cloud <span class="im">import</span> aiplatform</span>
 <span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">"DOE"</span>  <span class="co"># Your last name goes in the job display name so it's easy to find in the Console</span></span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
-<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a></span>
-<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="co"># GCS folder where ALL artifacts (model.pt, metrics.json, eval_history.csv, training.log) will be saved.</span></span>
-<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="co"># Your train_nn.py writes to AIP_MODEL_DIR, and base_output_dir (below) sets that variable for the job.</span></span>
-<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a></span>
-<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="co"># ---- Container image ----</span></span>
-<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a><span class="co"># Use a prebuilt TRAINING image that has PyTorch + CUDA. This enables GPU at runtime.</span></span>
-<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest"</span></span>
-<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a></span>
-<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a><span class="co"># ---- Machine vs Accelerator (important!) ----</span></span>
-<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a><span class="co"># machine_type = the VM's CPU/RAM shape. It is NOT a GPU by itself.</span></span>
-<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a><span class="co"># We often pick n1-standard-8 as a balanced baseline for single-GPU jobs.</span></span>
-<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-8"</span></span>
-<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a></span>
-<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a><span class="co"># To actually get a GPU, you *attach* one via accelerator_type + accelerator_count.</span></span>
-<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="co"># Common choices:</span></span>
-<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a><span class="co">#   "NVIDIA_TESLA_T4" (cost-effective, widely available)</span></span>
-<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a><span class="co">#   "NVIDIA_L4"       (newer, CUDA 12.x, good perf/$)</span></span>
-<span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a><span class="co">#   "NVIDIA_TESLA_V100" / "NVIDIA_A100_40GB" (high-end, pricey)</span></span>
-<span id="cb16-24"><a href="#cb16-24" tabindex="-1"></a>ACCELERATOR_TYPE <span class="op">=</span> <span class="st">"NVIDIA_TESLA_T4"</span></span>
-<span id="cb16-25"><a href="#cb16-25" tabindex="-1"></a>ACCELERATOR_COUNT <span class="op">=</span> <span class="dv">1</span>  <span class="co"># Increase (2,4) only if your code supports multi-GPU (e.g., DDP)</span></span>
-<span id="cb16-26"><a href="#cb16-26" tabindex="-1"></a></span>
-<span id="cb16-27"><a href="#cb16-27" tabindex="-1"></a><span class="co"># Alternative (GPU-bundled) machines:</span></span>
-<span id="cb16-28"><a href="#cb16-28" tabindex="-1"></a><span class="co"># If you pick an A2 type like "a2-highgpu-1g", it already includes 1 A100 GPU.</span></span>
-<span id="cb16-29"><a href="#cb16-29" tabindex="-1"></a><span class="co"># In that case, you can omit accelerator_type/accelerator_count entirely.</span></span>
-<span id="cb16-30"><a href="#cb16-30" tabindex="-1"></a><span class="co"># Example:</span></span>
-<span id="cb16-31"><a href="#cb16-31" tabindex="-1"></a><span class="co"># MACHINE = "a2-highgpu-1g"</span></span>
-<span id="cb16-32"><a href="#cb16-32" tabindex="-1"></a><span class="co"># (and then remove the accelerator_* kwargs in job.run)</span></span>
-<span id="cb16-33"><a href="#cb16-33" tabindex="-1"></a></span>
-<span id="cb16-34"><a href="#cb16-34" tabindex="-1"></a><span class="bu">print</span>(</span>
-<span id="cb16-35"><a href="#cb16-35" tabindex="-1"></a>    <span class="st">"RUN_ID ="</span>, RUN_ID,</span>
-<span id="cb16-36"><a href="#cb16-36" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">ARTIFACT_DIR ="</span>, ARTIFACT_DIR,</span>
-<span id="cb16-37"><a href="#cb16-37" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">IMAGE ="</span>, IMAGE,</span>
-<span id="cb16-38"><a href="#cb16-38" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">MACHINE ="</span>, MACHINE,</span>
-<span id="cb16-39"><a href="#cb16-39" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">ACCELERATOR_TYPE ="</span>, ACCELERATOR_TYPE,</span>
-<span id="cb16-40"><a href="#cb16-40" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">ACCELERATOR_COUNT ="</span>, ACCELERATOR_COUNT,</span>
-<span id="cb16-41"><a href="#cb16-41" tabindex="-1"></a>)</span>
-<span id="cb16-42"><a href="#cb16-42" tabindex="-1"></a></span>
-<span id="cb16-43"><a href="#cb16-43" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_nn_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb16-44"><a href="#cb16-44" tabindex="-1"></a></span>
-<span id="cb16-45"><a href="#cb16-45" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
-<span id="cb16-46"><a href="#cb16-46" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
-<span id="cb16-47"><a href="#cb16-47" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_nn.py"</span>,  <span class="co"># Your PyTorch trainer</span></span>
-<span id="cb16-48"><a href="#cb16-48" tabindex="-1"></a>    container_uri<span class="op">=</span>IMAGE,  <span class="co"># Must be a *training* image (not prediction)</span></span>
-<span id="cb16-49"><a href="#cb16-49" tabindex="-1"></a>)</span>
-<span id="cb16-50"><a href="#cb16-50" tabindex="-1"></a></span>
-<span id="cb16-51"><a href="#cb16-51" tabindex="-1"></a>job.run(</span>
-<span id="cb16-52"><a href="#cb16-52" tabindex="-1"></a>    args<span class="op">=</span>[</span>
-<span id="cb16-53"><a href="#cb16-53" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
-<span id="cb16-54"><a href="#cb16-54" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
-<span id="cb16-55"><a href="#cb16-55" tabindex="-1"></a>        <span class="ss">f"--epochs=</span><span class="sc">{</span>MAX_EPOCHS<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb16-56"><a href="#cb16-56" tabindex="-1"></a>        <span class="ss">f"--learning_rate=</span><span class="sc">{</span>LR<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb16-57"><a href="#cb16-57" tabindex="-1"></a>        <span class="ss">f"--patience=</span><span class="sc">{</span>PATIENCE<span class="sc">}</span><span class="ss">"</span>,</span>
-<span id="cb16-58"><a href="#cb16-58" tabindex="-1"></a>    ],</span>
-<span id="cb16-59"><a href="#cb16-59" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,                 <span class="co"># One worker (simple, cheaper)</span></span>
-<span id="cb16-60"><a href="#cb16-60" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,            <span class="co"># CPU/RAM shape of the VM (no GPU implied)</span></span>
-<span id="cb16-61"><a href="#cb16-61" tabindex="-1"></a>    accelerator_type<span class="op">=</span>ACCELERATOR_TYPE,   <span class="co"># Attaches the selected GPU model</span></span>
-<span id="cb16-62"><a href="#cb16-62" tabindex="-1"></a>    accelerator_count<span class="op">=</span>ACCELERATOR_COUNT, <span class="co"># Number of GPUs to attach</span></span>
-<span id="cb16-63"><a href="#cb16-63" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACT_DIR,    <span class="co"># Sets AIP_MODEL_DIR used by your script for all artifacts</span></span>
-<span id="cb16-64"><a href="#cb16-64" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,                       <span class="co"># Waits for job to finish so you can inspect outputs immediately</span></span>
-<span id="cb16-65"><a href="#cb16-65" tabindex="-1"></a>)</span>
-<span id="cb16-66"><a href="#cb16-66" tabindex="-1"></a></span>
-<span id="cb16-67"><a href="#cb16-67" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="co"># GCS folder where ALL artifacts (model.pt, metrics.json, eval_history.csv, training.log) will be saved.</span></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="co"># Your train_nn.py writes to AIP_MODEL_DIR, and base_output_dir (below) sets that variable for the job.</span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="co"># ---- Container image ----</span></span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="co"># Use a prebuilt TRAINING image that has PyTorch + CUDA. This enables GPU at runtime.</span></span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest"</span></span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="co"># ---- Machine vs Accelerator (important!) ----</span></span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a><span class="co"># machine_type = the VM's CPU/RAM shape. It is NOT a GPU by itself.</span></span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a><span class="co"># We often pick n1-standard-8 as a balanced baseline for single-GPU jobs.</span></span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-8"</span></span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a></span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a><span class="co"># To actually get a GPU, you *attach* one via accelerator_type + accelerator_count.</span></span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a><span class="co"># Common choices:</span></span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="co">#   "NVIDIA_TESLA_T4" (cost-effective, widely available)</span></span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a><span class="co">#   "NVIDIA_L4"       (newer, CUDA 12.x, good perf/$)</span></span>
+<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a><span class="co">#   "NVIDIA_TESLA_V100" / "NVIDIA_A100_40GB" (high-end, pricey)</span></span>
+<span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a>ACCELERATOR_TYPE <span class="op">=</span> <span class="st">"NVIDIA_TESLA_T4"</span></span>
+<span id="cb16-24"><a href="#cb16-24" tabindex="-1"></a>ACCELERATOR_COUNT <span class="op">=</span> <span class="dv">1</span>  <span class="co"># Increase (2,4) only if your code supports multi-GPU (e.g., DDP)</span></span>
+<span id="cb16-25"><a href="#cb16-25" tabindex="-1"></a></span>
+<span id="cb16-26"><a href="#cb16-26" tabindex="-1"></a><span class="co"># Alternative (GPU-bundled) machines:</span></span>
+<span id="cb16-27"><a href="#cb16-27" tabindex="-1"></a><span class="co"># If you pick an A2 type like "a2-highgpu-1g", it already includes 1 A100 GPU.</span></span>
+<span id="cb16-28"><a href="#cb16-28" tabindex="-1"></a><span class="co"># In that case, you can omit accelerator_type/accelerator_count entirely.</span></span>
+<span id="cb16-29"><a href="#cb16-29" tabindex="-1"></a><span class="co"># Example:</span></span>
+<span id="cb16-30"><a href="#cb16-30" tabindex="-1"></a><span class="co"># MACHINE = "a2-highgpu-1g"</span></span>
+<span id="cb16-31"><a href="#cb16-31" tabindex="-1"></a><span class="co"># (and then remove the accelerator_* kwargs in job.run)</span></span>
+<span id="cb16-32"><a href="#cb16-32" tabindex="-1"></a></span>
+<span id="cb16-33"><a href="#cb16-33" tabindex="-1"></a><span class="bu">print</span>(</span>
+<span id="cb16-34"><a href="#cb16-34" tabindex="-1"></a>    <span class="st">"RUN_ID ="</span>, RUN_ID,</span>
+<span id="cb16-35"><a href="#cb16-35" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">ARTIFACT_DIR ="</span>, ARTIFACT_DIR,</span>
+<span id="cb16-36"><a href="#cb16-36" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">IMAGE ="</span>, IMAGE,</span>
+<span id="cb16-37"><a href="#cb16-37" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">MACHINE ="</span>, MACHINE,</span>
+<span id="cb16-38"><a href="#cb16-38" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">ACCELERATOR_TYPE ="</span>, ACCELERATOR_TYPE,</span>
+<span id="cb16-39"><a href="#cb16-39" tabindex="-1"></a>    <span class="st">"</span><span class="ch">\n</span><span class="st">ACCELERATOR_COUNT ="</span>, ACCELERATOR_COUNT,</span>
+<span id="cb16-40"><a href="#cb16-40" tabindex="-1"></a>)</span>
+<span id="cb16-41"><a href="#cb16-41" tabindex="-1"></a></span>
+<span id="cb16-42"><a href="#cb16-42" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_nn_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb16-43"><a href="#cb16-43" tabindex="-1"></a></span>
+<span id="cb16-44"><a href="#cb16-44" tabindex="-1"></a>job <span class="op">=</span> aiplatform.CustomTrainingJob(</span>
+<span id="cb16-45"><a href="#cb16-45" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
+<span id="cb16-46"><a href="#cb16-46" tabindex="-1"></a>    script_path<span class="op">=</span><span class="st">"Intro_GCP_for_ML/scripts/train_nn.py"</span>,  <span class="co"># Your PyTorch trainer</span></span>
+<span id="cb16-47"><a href="#cb16-47" tabindex="-1"></a>    container_uri<span class="op">=</span>IMAGE,  <span class="co"># Must be a *training* image (not prediction)</span></span>
+<span id="cb16-48"><a href="#cb16-48" tabindex="-1"></a>)</span>
+<span id="cb16-49"><a href="#cb16-49" tabindex="-1"></a></span>
+<span id="cb16-50"><a href="#cb16-50" tabindex="-1"></a>job.run(</span>
+<span id="cb16-51"><a href="#cb16-51" tabindex="-1"></a>    args<span class="op">=</span>[</span>
+<span id="cb16-52"><a href="#cb16-52" tabindex="-1"></a>        <span class="ss">f"--train=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/train_data.npz"</span>,</span>
+<span id="cb16-53"><a href="#cb16-53" tabindex="-1"></a>        <span class="ss">f"--val=gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/data/val_data.npz"</span>,</span>
+<span id="cb16-54"><a href="#cb16-54" tabindex="-1"></a>        <span class="ss">f"--epochs=</span><span class="sc">{</span>MAX_EPOCHS<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb16-55"><a href="#cb16-55" tabindex="-1"></a>        <span class="ss">f"--learning_rate=</span><span class="sc">{</span>LR<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb16-56"><a href="#cb16-56" tabindex="-1"></a>        <span class="ss">f"--patience=</span><span class="sc">{</span>PATIENCE<span class="sc">}</span><span class="ss">"</span>,</span>
+<span id="cb16-57"><a href="#cb16-57" tabindex="-1"></a>    ],</span>
+<span id="cb16-58"><a href="#cb16-58" tabindex="-1"></a>    replica_count<span class="op">=</span><span class="dv">1</span>,                 <span class="co"># One worker (simple, cheaper)</span></span>
+<span id="cb16-59"><a href="#cb16-59" tabindex="-1"></a>    machine_type<span class="op">=</span>MACHINE,            <span class="co"># CPU/RAM shape of the VM (no GPU implied)</span></span>
+<span id="cb16-60"><a href="#cb16-60" tabindex="-1"></a>    accelerator_type<span class="op">=</span>ACCELERATOR_TYPE,   <span class="co"># Attaches the selected GPU model</span></span>
+<span id="cb16-61"><a href="#cb16-61" tabindex="-1"></a>    accelerator_count<span class="op">=</span>ACCELERATOR_COUNT, <span class="co"># Number of GPUs to attach</span></span>
+<span id="cb16-62"><a href="#cb16-62" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACT_DIR,    <span class="co"># Sets AIP_MODEL_DIR used by your script for all artifacts</span></span>
+<span id="cb16-63"><a href="#cb16-63" tabindex="-1"></a>    sync<span class="op">=</span><span class="va">True</span>,                       <span class="co"># Waits for job to finish so you can inspect outputs immediately</span></span>
+<span id="cb16-64"><a href="#cb16-64" tabindex="-1"></a>)</span>
+<span id="cb16-65"><a href="#cb16-65" tabindex="-1"></a></span>
+<span id="cb16-66"><a href="#cb16-66" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
 <p>Just as we did for the CPU job, let’s evaluate the GPU-trained model
 to confirm it produces the same accuracy. We load the model weights
@@ -986,7 +1016,7 @@ directly from GCS into memory.</p>
 <span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a>model_pt <span class="op">=</span> io.BytesIO(model_bytes)</span>
 <span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a></span>
 <span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a><span class="co"># rebuild model and load weights</span></span>
-<span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a>state <span class="op">=</span> torch.load(model_pt, map_location<span class="op">=</span><span class="st">"cpu"</span>)</span>
+<span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a>state <span class="op">=</span> torch.load(model_pt, map_location<span class="op">=</span><span class="st">"cpu"</span>, weights_only<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a>m <span class="op">=</span> TitanicNet()</span>
 <span id="cb17-21"><a href="#cb17-21" tabindex="-1"></a>m.load_state_dict(state)</span>
 <span id="cb17-22"><a href="#cb17-22" tabindex="-1"></a>m.<span class="bu">eval</span>()<span class="op">;</span> <span class="co"># set model to eval mode</span></span>
@@ -999,7 +1029,7 @@ directly from GCS into memory.</p>
 <span id="cb17-29"><a href="#cb17-29" tabindex="-1"></a><span class="co"># !ls</span></span>
 <span id="cb17-30"><a href="#cb17-30" tabindex="-1"></a><span class="co"># # rebuild model and load weights</span></span>
 <span id="cb17-31"><a href="#cb17-31" tabindex="-1"></a><span class="co"># m = TitanicNet()</span></span>
-<span id="cb17-32"><a href="#cb17-32" tabindex="-1"></a><span class="co"># state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")</span></span>
+<span id="cb17-32"><a href="#cb17-32" tabindex="-1"></a><span class="co"># state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu", weights_only=True)</span></span>
 <span id="cb17-33"><a href="#cb17-33" tabindex="-1"></a><span class="co"># m.load_state_dict(state)</span></span>
 <span id="cb17-34"><a href="#cb17-34" tabindex="-1"></a><span class="co"># m.eval()</span></span></code></pre>
 </div>
@@ -1018,21 +1048,82 @@ compute accuracy. Because we set random seeds in
 <span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a></span>
 <span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Vertex model val accuracy: </span><span class="sc">{</span>acc<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
-<p>Keep these GPU considerations in mind when deciding whether to use
-GPU acceleration:</p>
+<div id="cloud-workflow-review" class="callout discussion">
+<div class="callout-square">
+<i class="callout-icon" data-feather="message-circle"></i>
+</div>
+<span class="callout-header">Discussion</span>
+<div id="cloud-workflow-review" class="callout-inner">
+<h3 class="callout-title">Cloud workflow review</h3>
+<div class="callout-content">
+<p>Now that you’ve run both a CPU and GPU training job, answer the
+following:</p>
+<ol style="list-style-type: decimal"><li>
+<strong>Artifact location</strong>: Where did Vertex AI write your
+model artifacts? How does <code>base_output_dir</code> in
+<code>job.run()</code> relate to the <code>AIP_MODEL_DIR</code>
+environment variable inside the container?</li>
+<li>
+<strong>CPU vs. GPU job time</strong>: Compare the wall-clock times
+of your CPU and GPU jobs (visible in the Console under <strong>Vertex AI
+&gt; Training &gt; Custom Jobs</strong>). Which was faster? Why might
+the GPU job be <em>slower</em> for this dataset?</li>
+<li>
+<strong>Container choice</strong>: We used
+<code>pytorch-cpu.2-4.py310</code> for the CPU job and
+<code>pytorch-gpu.2-4.py310</code> for the GPU job. What would happen if
+you used the CPU container but still passed
+<code>accelerator_type</code> and <code>accelerator_count</code>?</li>
+<li>
+<strong>Cost awareness</strong>: You used <code>n1-standard-4</code>
+for CPU and <code>n1-standard-8</code> + T4 for GPU. Using the <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html" class="external-link">Compute
+for ML</a> resource, estimate the relative hourly cost difference
+between these configurations.</li>
+</ol></div>
+</div>
+</div>
+<div id="accordionSolution1" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
+  <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
+</button>
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div class="accordion-body">
+<ol style="list-style-type: decimal"><li>
+<code>base_output_dir</code> tells the Vertex AI SDK to set the
+<code>AIP_MODEL_DIR</code> environment variable inside the training
+container. Your script reads
+<code>os.environ.get("AIP_MODEL_DIR", ".")</code> and writes all
+artifacts there. The result is everything lands under
+<code>gs://&lt;bucket&gt;/artifacts/pytorch/&lt;RUN_ID&gt;/model/</code>.</li>
+<li>For the small Titanic dataset (~700 training rows), the CPU job is
+typically faster end-to-end. GPU jobs incur extra overhead: provisioning
+the accelerator, loading CUDA libraries, and transferring data to the
+GPU. GPU acceleration pays off when training itself is the bottleneck
+(larger models, larger batches).</li>
+<li>The job would either fail or ignore the GPU. The CPU container
+doesn’t include CUDA/cuDNN, so even if a GPU is attached to the VM,
+PyTorch can’t use it. Always match your container image to your hardware
+configuration.</li>
+<li>Approximate on-demand rates (us-central1):
+<code>n1-standard-4</code> is ~$0.19/hr; <code>n1-standard-8</code> + 1x
+T4 is ~$0.54/hr (VM) + ~$0.35/hr (T4) = ~$0.89/hr total. The GPU
+configuration is roughly 4–5x more expensive per hour — worth it only
+when training speedup exceeds that cost ratio.</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="section level3">
+<h3 id="gpu-and-scaling-considerations">GPU and scaling considerations<a class="anchor" aria-label="anchor" href="#gpu-and-scaling-considerations"></a></h3>
 <ul><li>On small problems, GPU startup/transfer overhead can erase speedups
 — benchmark before you scale.</li>
-<li>Stick to a single replica unless your batch sizes and dataset really
-warrant data parallelism.</li>
-</ul></section><section><h2 class="section-heading" id="distributed-training-when-to-consider">Distributed training (when to consider)<a class="anchor" aria-label="anchor" href="#distributed-training-when-to-consider"></a></h2>
-<hr class="half-width"><ul><li>
-<strong>Data parallelism</strong> (DDP) helps when a single GPU is
-saturated by batch size/throughput. For most workshop‑scale models, a
-single machine/GPU is simpler and cheaper.</li>
-<li>
-<strong>Model parallelism</strong> is for very large networks that
-don’t fit on one device—overkill for this lesson.</li>
-</ul></section><section><h2 class="section-heading" id="additional-resources">Additional resources<a class="anchor" aria-label="anchor" href="#additional-resources"></a></h2>
+<li>Stick to a single GPU unless your workload genuinely saturates it.
+Multi-GPU (data parallelism / DDP) and model parallelism exist for
+large-scale training but add significant complexity and cost — well
+beyond this workshop’s scope.</li>
+</ul></div>
+</section><section><h2 class="section-heading" id="additional-resources">Additional resources<a class="anchor" aria-label="anchor" href="#additional-resources"></a></h2>
 <hr class="half-width"><p>To learn more about PyTorch and Vertex AI integrations, visit the
 docs: <a href="https://docs.cloud.google.com/vertex-ai/docs/start/pytorch" class="external-link">docs.cloud.google.com/vertex-ai/docs/start/pytorch</a></p>
 <div id="keypoints1" class="callout keypoints">
@@ -1043,18 +1134,20 @@ docs: <a href="https://docs.cloud.google.com/vertex-ai/docs/start/pytorch" class
 <div class="callout-inner">
 <div class="callout-content">
 <ul><li>Use <strong>CustomTrainingJob</strong> with a prebuilt PyTorch
-container; let your script control outputs via
-<code>--model_out</code>.</li>
+container; your script reads <code>AIP_MODEL_DIR</code> (set
+automatically by <code>base_output_dir</code>) to know where to write
+artifacts.</li>
 <li>Keep artifacts <strong>together</strong> (model, metrics, history,
-log) in one folder for reproducibility.</li>
+log) in one GCS folder for reproducibility.</li>
 <li>
-<code>.npz</code> speeds up loading and plays nicely with
-PyTorch.</li>
-<li>Start on CPU for small datasets; use GPU only when profiling shows a
-clear win.</li>
-<li>Skip <code>base_output_dir</code> unless you specifically want
-Vertex’s default run directory; staging bucket is just for the SDK
-packaging tarball.</li>
+<code>.npz</code> is a compact, cloud-friendly format — one GCS read
+per file, preserves exact dtypes.</li>
+<li>Start on CPU for small datasets; add a GPU only when training time
+justifies the extra provisioning overhead and cost.</li>
+<li>
+<code>staging_bucket</code> is just for the SDK’s packaging tarball
+— <code>base_output_dir</code> is where your script’s actual artifacts
+go.</li>
 </ul></div>
 </div>
 </div>
