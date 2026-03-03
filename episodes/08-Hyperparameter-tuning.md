@@ -87,6 +87,15 @@ This step defines which parameters Vertex AI will vary across trials and their a
 
 Vertex AI uses **Bayesian optimization** by default (internally listed as `"ALGORITHM_UNSPECIFIED"` in the API).  That means if you don’t explicitly specify a search algorithm, Vertex AI automatically applies an adaptive Bayesian strategy to balance exploration (trying new areas of the parameter space) and exploitation (focusing near the best results so far).  Each completed trial helps the tuner model how your objective metric (for example, `validation_accuracy`) changes across parameter values. Subsequent trials then sample new parameter combinations that are statistically more likely to improve performance, which usually yields better results than random or grid search—especially when `max_trial_count` is limited.
 
+Vertex AI supports four parameter spec types. This episode uses the first two:
+
+| Spec type | Use case | Example |
+|---|---|---|
+| `DoubleParameterSpec` | Continuous floats | Learning rate 1e-4 to 1e-2 |
+| `IntegerParameterSpec` | Whole numbers | Patience 5 to 20 |
+| `DiscreteParameterSpec` | Specific numeric values | Batch size [32, 64, 128] |
+| `CategoricalParameterSpec` | Named options (strings) | Optimizer ["adam", "sgd"] |
+
 Include early-stopping parameters so the tuner can learn good stopping behavior for your dataset:
 
 ```python
@@ -165,7 +174,7 @@ metric_spec = {"validation_accuracy": "maximize"}
 
 custom_job = aiplatform.CustomJob.from_local_script(
     display_name=f"{LAST_NAME}_pytorch_hpt-trial_{RUN_ID}",
-    script_path="/home/jupyter/Intro_GCP_for_ML/scripts/train_nn.py",
+    script_path="Intro_GCP_for_ML/scripts/train_nn.py",
     container_uri=IMAGE,
     requirements=["python-json-logger>=2.0.7"],  # resolves a dependency conflict in the prebuilt container
     args=[
@@ -252,7 +261,39 @@ def list_metrics_from_gcs(ARTIFACT_DIR: str):
     return pd.DataFrame(records)
 
 df = list_metrics_from_gcs(ARTIFACT_DIR)
-print(df[["trial_id","final_val_accuracy","final_val_loss","best_val_loss","best_epoch","patience","min_delta","learning_rate"]].sort_values("final_val_accuracy", ascending=False))
+cols = ["trial_id","final_val_accuracy","final_val_loss","best_val_loss",
+        "best_epoch","patience","min_delta","learning_rate"]
+df_sorted = df[cols].sort_values("final_val_accuracy", ascending=False)
+print(df_sorted)
+```
+
+#### 11. Visualize trial comparison
+A quick chart makes it easier to see which trials performed best and how learning rate relates to accuracy:
+
+```python
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+
+# Bar chart: accuracy per trial
+axes[0].barh(df_sorted["trial_id"].astype(str), df_sorted["final_val_accuracy"])
+axes[0].set_xlabel("Validation Accuracy")
+axes[0].set_ylabel("Trial")
+axes[0].set_title("Accuracy by Trial")
+
+# Scatter: learning rate vs accuracy (color = patience)
+sc = axes[1].scatter(
+    df_sorted["learning_rate"], df_sorted["final_val_accuracy"],
+    c=df_sorted["patience"], cmap="viridis", edgecolors="k", s=80,
+)
+axes[1].set_xscale("log")
+axes[1].set_xlabel("Learning Rate (log scale)")
+axes[1].set_ylabel("Validation Accuracy")
+axes[1].set_title("LR vs. Accuracy (color = patience)")
+plt.colorbar(sc, ax=axes[1], label="patience")
+
+plt.tight_layout()
+plt.show()
 ```
 
 ::::::::::::::::::::::::::::::::::::: challenge
@@ -321,42 +362,28 @@ tuning_job = aiplatform.HyperparameterTuningJob(
 |---|---|---|
 | **Wall-clock time** | Shorter | Longer |
 | **Total cost** | ~Same (slightly more overhead) | ~Same |
-| **Adaptive search quality** | Worse (tuner explores "blind") | Better (tuner learns between batches) |
+| **Adaptive search quality** | Worse (tuner explores “blind”) | Better (tuner learns between batches) |
 | **Best for** | Cheap/short trials, deadlines | Expensive trials, small budgets |
 
-**Cost:**  
-- If you run the same total number of trials, total cost is *roughly unchanged*; you're paying for the same amount of compute, just compressed into a shorter wall-clock window.  
-- Parallelism can raise short-term spend rate (more machines running at once) and may increase idle/overhead if trials start/finish unevenly.
+**Why does parallelism hurt result quality?** Vertex AI's adaptive search learns from completed trials to choose better parameter combinations. With many trials in flight simultaneously, the tuner can't incorporate results quickly — it explores “blind” for longer, often yielding slightly worse results for a fixed `max_trial_count`. With modest parallelism (2–4), the tuner can update beliefs and exploit promising regions between batches.
 
-**Time:**  
-- Higher `parallel_trial_count` reduces wall-clock time almost linearly until you hit queue, quota, or data/IO bottlenecks.  
-- Startup overhead (image pull, environment setup) is paid for each concurrent trial; with many short trials, this overhead can become a larger fraction of runtime.
+**Guidelines:**
+- Keep `parallel_trial_count` to **≤ 25–33%** of `max_trial_count` when you care about adaptive quality.
+- Increase parallelism when trials are long and the search space is well-bounded.
 
-**Result quality (adaptive search):**  
-- Vertex AI's adaptive search benefits from learning from early trials.  
-- With many trials in flight simultaneously, the tuner can't incorporate results quickly, so it explores “blind” for longer. This often yields slightly *worse* final results for a fixed `max_trial_count`.  
-- With modest parallelism (e.g., 2–4), the tuner can still update beliefs and exploit promising regions sooner.
+::::::::::::::::::::::::::::::::::::::: callout
 
-**Guidelines:**  
-- Start small: `parallel_trial_count` in the range 2–4 is a good default.  
-- Keep parallelism to **≤ 25–33%** of `max_trial_count` when you care about adaptive quality.  
-- Increase parallelism when your trials are long and you're confident the search space is well-bounded (less need for rapid adaptation).
+### When to prioritize speed vs. adaptive quality
 
-**When to prioritize speed (higher parallelism):**  
-- Strict deadlines or demo timelines.  
-- Very cheap/short trials where startup time dominates.  
-- You're using a non-adaptive or nearly random search space.  
-- You have unused quota/credits and want faster iteration.
+**Favor higher parallelism** when you have strict deadlines, very cheap/short trials where startup time dominates, a non-adaptive search, or unused quota/credits.
 
-**When to prioritize adaptive quality (lower parallelism):**  
-- Trials are expensive, noisy, or have high variance; learning from early wins saves budget.  
-- Small `max_trial_count` (e.g., ≤ 10–20).  
-- Early stopping is enabled and you want the tuner to exploit promising regions quickly.  
-- You're adding new dimensions (e.g., LR + patience + min_delta) and want the search to refine intelligently.
+**Favor lower parallelism** when trials are expensive or noisy, `max_trial_count` is small (≤ 10–20), early stopping is enabled, or you're exploring many dimensions at once.
 
-**Practical recipe:**  
-- First run: `max_trial_count=1`, `parallel_trial_count=1` (pipeline sanity check).  
-- Main run: `max_trial_count=10–20`, `parallel_trial_count=2–4`.  
+:::::::::::::::::::::::::::::::::::::::::::::::
+
+**Practical recipe:**
+- First run: `max_trial_count=1`, `parallel_trial_count=1` (pipeline sanity check).
+- Main run: `max_trial_count=10–20`, `parallel_trial_count=2–4`.
 - Scale up parallelism only after the above completes cleanly and you confirm adaptive performance is acceptable.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
