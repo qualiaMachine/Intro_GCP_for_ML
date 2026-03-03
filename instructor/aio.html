@@ -2456,7 +2456,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -2651,7 +2651,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -2895,7 +2895,7 @@ improve, or does it start overfitting?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Increasing <code>NUM_ROUND</code> from 100 to 200 may marginally
 improve accuracy but roughly doubles runtime. Increasing
@@ -3217,7 +3217,7 @@ accuracy from the Vertex AI job. Are they the same? Why or why not?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p>The two accuracy values should be very close or identical. Both runs
 execute the same <code>train_xgboost.py</code> script with the same
@@ -3255,7 +3255,7 @@ Can you locate:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>Click your job name, then select the <strong>Logs</strong> tab (or
@@ -4522,7 +4522,7 @@ configuration and verify it looks correct.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4576,7 +4576,7 @@ search:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4723,8 +4723,7 @@ any links that you are not going to use.
 day‑to‑day?</li>
 <li>What <em>specifically</em> should I stop, delete, or schedule to
 avoid surprise charges?</li>
-<li>How can I automate cleanup and set alerting so leaks get caught
-quickly?</li>
+<li>How do I set budget alerts so cost leaks get caught quickly?</li>
 </ul>
 </div>
 </div>
@@ -4734,435 +4733,470 @@ quickly?</li>
 <div class="inner bordered">
 <h3 class="card-title">Objectives</h3>
 <ul>
-<li>Identify all major cost drivers across Vertex AI (training jobs,
-endpoints, Workbench notebooks, batch prediction) and GCS.</li>
-<li>Practice safe cleanup for <strong>Managed</strong> and
-<strong>User‑Managed</strong> Workbench notebooks, training/tuning jobs,
-batch predictions, models, endpoints, and artifacts.</li>
-<li>Configure budgets, labels, and basic lifecycle policies to keep
-costs predictable.</li>
-<li>Use <code>gcloud</code>/<code>gsutil</code> commands for auditing
-and rapid cleanup; understand when to prefer the Console.</li>
-<li>Draft simple automation patterns (Cloud Scheduler +
-<code>gcloud</code>) to enforce idle shutdown.</li>
+<li>Identify the major cost drivers across Vertex AI (training jobs,
+endpoints, Workbench notebooks) and GCS, with ballpark costs.</li>
+<li>Practice safe cleanup for Workbench Instances, training/tuning jobs,
+batch predictions, models, and endpoints.</li>
+<li>Set a budget alert and apply labels to keep costs visible and
+predictable.</li>
+<li>Use <code>gcloud</code> commands for auditing and rapid
+cleanup.</li>
 </ul>
 </div>
 </div>
 </div>
 </div>
 </div>
-<section><h2 class="section-heading" id="what-costs-you-money-on-gcp-quick-map">What costs you money on GCP (quick map)<a class="anchor" aria-label="anchor" href="#what-costs-you-money-on-gcp-quick-map"></a>
+<p>You’ve now run training jobs, tuning jobs, and possibly deployed
+models across the previous episodes. Before moving on, let’s make sure
+none of those resources are still billing you — and learn the habits
+that prevent surprise charges going forward.</p>
+<div id="continuing-to-episodes-1011" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="continuing-to-episodes-1011" class="callout-inner">
+<h3 class="callout-title">Continuing to Episodes 10–11?</h3>
+<div class="callout-content">
+<p>If you plan to work through <strong>Episode 10 (RAG)</strong> or
+<strong>Episode 11 (CLI Workflows)</strong> after this one, <strong>keep
+your Workbench Instance and GCS bucket</strong> — just make sure to
+<strong>stop the notebook runtime</strong> when you’re not actively
+using it. You can come back to the full teardown checklist at the very
+end of the workshop.</p>
+</div>
+</div>
+</div>
+<section><h2 class="section-heading" id="check-your-current-spend-first">Check your current spend first<a class="anchor" aria-label="anchor" href="#check-your-current-spend-first"></a>
 </h2>
 <hr class="half-width">
+<p>Before cleaning anything up, find out where you stand. Open the
+<strong>Cloud Console</strong> and navigate to:</p>
+<p><strong>Billing → Reports</strong></p>
 <ul>
-<li>
-<strong>Vertex AI training jobs</strong> (Custom Jobs,
-Hyperparameter Tuning Jobs) — billed per VM/GPU hour while running.</li>
-<li>
-<strong>Vertex AI endpoints (online prediction)</strong> — billed
-per node‑hour <em>24/7 while deployed</em>, even if idle.</li>
-<li>
-<strong>Vertex AI batch prediction jobs</strong> — billed for the
-job’s compute while running.</li>
-<li>
-<strong>Vertex AI Workbench notebooks</strong> — the backing VM and
-disk bill while running (and disks bill even when stopped).</li>
-<li>
-<strong>GCS buckets</strong> — storage class, object count/size,
-versioning, egress, and request ops.</li>
-<li>
-<strong>Artifact Registry</strong> (containers, models) — storage
-for images and large artifacts.</li>
-<li>
-<strong>Network egress</strong> — downloading data out of GCP (e.g.,
-to your laptop) incurs cost.</li>
-<li>
-<strong>Logging/Monitoring</strong> — high‑volume logs/metrics can
-add up (rare in small workshops, real in prod).</li>
+<li>Set the time range to <strong>This month</strong> (or
+<strong>Today</strong> for workshop use).</li>
+<li>Group by <strong>Service</strong> to see which GCP services are
+costing the most.</li>
+<li>Look for <strong>Compute Engine</strong> (backs Workbench VMs and
+training jobs), <strong>Vertex AI</strong>, and <strong>Cloud
+Storage</strong>.</li>
 </ul>
-<blockquote>
-<p>Rule of thumb: <strong>Endpoints left deployed</strong> and
-<strong>notebooks left running</strong> are the most common surprise
-bills in education/research settings.</p>
-</blockquote>
-</section><section><h2 class="section-heading" id="a-daily-shutdown-checklist-use-now-automate-later">A daily “shutdown checklist” (use now, automate later)<a class="anchor" aria-label="anchor" href="#a-daily-shutdown-checklist-use-now-automate-later"></a>
-</h2>
-<hr class="half-width">
-<p>Follow this checklist at the end of each working session to prevent
-surprise bills. These are the most common cost leaks in research and
-workshop environments.</p>
-<ol style="list-style-type: decimal">
-<li>
-<strong>Workbench notebooks</strong> — stop the runtime/instance
-when you’re done.</li>
-<li>
-<strong>Custom/HPT jobs</strong> — confirm no jobs stuck in
-<code>RUNNING</code>.<br>
-</li>
-<li>
-<strong>Endpoints</strong> — undeploy models and delete unused
-endpoints.<br>
-</li>
-<li>
-<strong>Batch predictions</strong> — ensure no jobs queued or
-running.<br>
-</li>
-<li>
-<strong>Artifacts</strong> — delete large intermediate artifacts you
-won’t reuse.<br>
-</li>
-<li>
-<strong>GCS</strong> — keep only one “source of truth”; avoid
-duplicate datasets in multiple buckets/regions.</li>
-</ol></section><section><h2 class="section-heading" id="shutting-down-vertex-ai-workbench-notebooks">Shutting down Vertex AI Workbench notebooks<a class="anchor" aria-label="anchor" href="#shutting-down-vertex-ai-workbench-notebooks"></a>
-</h2>
-<hr class="half-width">
-<p>Vertex AI has two notebook flavors; follow the matching steps:</p>
-<div class="section level3">
-<h3 id="managed-notebooks-recommended-for-workshops">Managed Notebooks (recommended for workshops)<a class="anchor" aria-label="anchor" href="#managed-notebooks-recommended-for-workshops"></a>
-</h3>
-<ul>
-<li><p><strong>Console</strong>: Vertex AI → <strong>Workbench</strong>
-→ <strong>Managed notebooks</strong> → select runtime →
-<strong>Stop</strong>.<br></p></li>
-<li><p><strong>Idle shutdown</strong>: Edit runtime → enable
-<strong>Idle shutdown</strong> (e.g., 60–120 min).<br></p></li>
-<li>
-<p><strong>CLI</strong>:</p>
+<p>This is the single most important dashboard to bookmark. If you only
+learn one thing from this episode, it’s where to find this page.</p>
+<p>You can also check from the CLI:</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># List managed runtimes (adjust region)</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="ex">gcloud</span> notebooks runtimes list <span class="at">--location</span><span class="op">=</span>us-central1</span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co"># Stop a runtime</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="ex">gcloud</span> notebooks runtimes stop RUNTIME_NAME <span class="at">--location</span><span class="op">=</span>us-central1</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Quick check: is my project accumulating Vertex AI resources right now?</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances list <span class="at">--location</span><span class="op">=</span>us-central1-a</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1 <span class="at">--filter</span><span class="op">=</span><span class="st">"state=JOB_STATE_RUNNING"</span></span></code></pre>
 </div>
-</li>
-</ul>
+</section><section><h2 class="section-heading" id="what-costs-you-money-on-gcp-and-how-much">What costs you money on GCP (and how much)<a class="anchor" aria-label="anchor" href="#what-costs-you-money-on-gcp-and-how-much"></a>
+</h2>
+<hr class="half-width">
+<p>Not all resources cost equally. Here are the main cost drivers you’ll
+encounter in this workshop, ordered from most to least dangerous:</p>
+<table class="table">
+<colgroup>
+<col width="19%">
+<col width="27%">
+<col width="29%">
+<col width="23%">
+</colgroup>
+<thead><tr class="header">
+<th>Resource</th>
+<th>Billing model</th>
+<th>Ballpark cost</th>
+<th>Risk level</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><strong>Vertex AI endpoints</strong></td>
+<td>Per node‑hour, <strong>24/7 while deployed</strong>
+</td>
+<td>~$4.50/day for one <code>n1-standard-4</code> node</td>
+<td>
+<strong>High</strong> — bills even with zero traffic</td>
+</tr>
+<tr class="even">
+<td>
+<strong>Workbench Instances</strong> (running)</td>
+<td>Per VM‑hour + GPU</td>
+<td>~$0.19/hr CPU‑only (<code>n1-standard-4</code>); add ~$0.35/hr per
+T4 GPU</td>
+<td>
+<strong>High</strong> — easy to forget overnight</td>
+</tr>
+<tr class="odd">
+<td><strong>Training / HPT jobs</strong></td>
+<td>Per VM/GPU‑hour while running</td>
+<td>Same VM rates; auto‑stops when done</td>
+<td>
+<strong>Medium</strong> — usually self‑limiting</td>
+</tr>
+<tr class="even">
+<td>
+<strong>Workbench disks</strong> (stopped VM)</td>
+<td>Per GB‑month for persistent disk</td>
+<td>~$0.04/GB/month (~$4/month for 100 GB)</td>
+<td>
+<strong>Low</strong> — small but adds up</td>
+</tr>
+<tr class="odd">
+<td><strong>GCS storage</strong></td>
+<td>Per GB‑month + operations + egress</td>
+<td>~$0.02/GB/month (Standard)</td>
+<td>
+<strong>Low</strong> — cheap until multi‑TB</td>
+</tr>
+<tr class="even">
+<td><strong>Network egress</strong></td>
+<td>Per GB downloaded out of GCP</td>
+<td>~$0.12/GB</td>
+<td>
+<strong>Low</strong> — avoid large downloads to local</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Rule of thumb:</strong> Endpoints left deployed and notebooks
+left running are the most common surprise bills in education and
+research settings.</p>
+</blockquote>
+</section><section><h2 class="section-heading" id="shutting-down-workbench-instances">Shutting down Workbench Instances<a class="anchor" aria-label="anchor" href="#shutting-down-workbench-instances"></a>
+</h2>
+<hr class="half-width">
+<p>In Episode 3 we created a <strong>Workbench Instance</strong> — the
+currently recommended notebook environment. Here’s how to stop or delete
+it:</p>
+<div class="section level3">
+<h3 id="stop-via-console">Stop via Console<a class="anchor" aria-label="anchor" href="#stop-via-console"></a>
+</h3>
+<p>Vertex AI → <strong>Workbench</strong> → <strong>Instances</strong>
+tab → select your instance → <strong>Stop</strong>.</p>
 </div>
 <div class="section level3">
-<h3 id="usermanaged-notebooks">User‑Managed Notebooks<a class="anchor" aria-label="anchor" href="#usermanaged-notebooks"></a>
+<h3 id="stop-via-cli">Stop via CLI<a class="anchor" aria-label="anchor" href="#stop-via-cli"></a>
 </h3>
-<ul>
-<li><p><strong>Console</strong>: Vertex AI → <strong>Workbench</strong>
-→ <strong>User‑managed notebooks</strong> → select instance →
-<strong>Stop</strong>.<br></p></li>
-<li>
-<p><strong>CLI</strong>:</p>
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># List user-managed instances (adjust zone)</span></span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="ex">gcloud</span> notebooks instances list <span class="at">--location</span><span class="op">=</span>us-central1-b</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co"># Stop an instance</span></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="ex">gcloud</span> notebooks instances stop INSTANCE_NAME <span class="at">--location</span><span class="op">=</span>us-central1-b</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># List all Workbench Instances in your zone</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances list <span class="at">--location</span><span class="op">=</span>us-central1-a</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co"># Stop an instance (stops VM billing; disk charges continue)</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances stop INSTANCE_NAME <span class="at">--location</span><span class="op">=</span>us-central1-a</span></code></pre>
 </div>
-</li>
+</div>
+<div class="section level3">
+<h3 id="delete-when-youre-done-for-good">Delete when you’re done for good<a class="anchor" aria-label="anchor" href="#delete-when-youre-done-for-good"></a>
+</h3>
+<div class="codewrapper sourceCode" id="cb3">
+<h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Permanently delete the instance and its disk</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances delete INSTANCE_NAME <span class="at">--location</span><span class="op">=</span>us-central1-a <span class="at">--quiet</span></span></code></pre>
+</div>
+</div>
+<div class="section level3">
+<h3 id="enable-idle-shutdown-recommended">Enable idle shutdown (recommended)<a class="anchor" aria-label="anchor" href="#enable-idle-shutdown-recommended"></a>
+</h3>
+<p>You can configure your instance to auto‑stop after a period of
+inactivity, so you never accidentally leave it running overnight:</p>
+<ul>
+<li>
+<strong>Console</strong>: Select your instance →
+<strong>Edit</strong> → set <strong>Idle shutdown</strong> to 60–120
+minutes.</li>
+<li>
+<strong>At creation time</strong>: Add
+<code>--idle-shutdown-timeout=60</code> to your
+<code>gcloud workbench instances create</code> command.</li>
 </ul>
 <blockquote>
-<p><strong>Disks still cost money while the VM is stopped.</strong>
-Delete old runtimes/instances <em>and</em> their disks if you’re done
-with them.</p>
+<p><strong>Disks still cost money while the VM is stopped</strong>
+(~$4/month for 100 GB). If you’re completely done with an instance,
+<strong>delete</strong> it rather than just stopping it.</p>
 </blockquote>
 </div>
 </section><section><h2 class="section-heading" id="cleaning-up-training-tuning-and-batch-jobs">Cleaning up training, tuning, and batch jobs<a class="anchor" aria-label="anchor" href="#cleaning-up-training-tuning-and-batch-jobs"></a>
 </h2>
 <hr class="half-width">
+<p>Training and HPT jobs automatically stop billing when they finish,
+but it’s good practice to audit for jobs stuck in <code>RUNNING</code>
+and to delete old jobs you no longer need.</p>
 <div class="section level3">
 <h3 id="audit-with-cli">Audit with CLI<a class="anchor" aria-label="anchor" href="#audit-with-cli"></a>
-</h3>
-<p>Use these commands to list all jobs in your region. Each command
-prints a table showing the job ID, display name, state (e.g.,
-<code>JOB_STATE_SUCCEEDED</code>, <code>JOB_STATE_RUNNING</code>,
-<code>JOB_STATE_FAILED</code>), and creation time. Look for any jobs
-stuck in <code>RUNNING</code> — those are still consuming resources and
-billing you.</p>
-<div class="codewrapper sourceCode" id="cb3">
-<h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Custom training jobs</span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co"># Hyperparameter tuning jobs</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co"># Batch prediction jobs</span></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="ex">gcloud</span> ai batch-prediction-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
-</div>
-</div>
-<div class="section level3">
-<h3 id="stopdelete-as-needed">Stop/delete as needed<a class="anchor" aria-label="anchor" href="#stopdelete-as-needed"></a>
 </h3>
 <div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Example: cancel a custom job</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs cancel JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># Delete a completed job you no longer need to retain</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs delete JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Custom training jobs</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co"># Hyperparameter tuning jobs</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co"># Batch prediction jobs</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="ex">gcloud</span> ai batch-prediction-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+</div>
+<p>Each command prints a table showing the job ID, display name, state
+(e.g., <code>JOB_STATE_SUCCEEDED</code>,
+<code>JOB_STATE_RUNNING</code>), and creation time. Look for any jobs
+stuck in <code>RUNNING</code> — those are still consuming resources.</p>
+</div>
+<div class="section level3">
+<h3 id="cancel-or-delete-as-needed">Cancel or delete as needed<a class="anchor" aria-label="anchor" href="#cancel-or-delete-as-needed"></a>
+</h3>
+<div class="codewrapper sourceCode" id="cb5">
+<h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Cancel a running job</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs cancel JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co"># Delete a completed job you no longer need</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs delete JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
 </div>
 <blockquote>
-<p>Tip: Keep one “golden” successful job per experiment, then remove the
-rest to reduce console clutter and artifact storage.</p>
+<p><strong>Tip:</strong> Keep one “golden” successful job per experiment
+for reference, then delete the rest to reduce console clutter.</p>
 </blockquote>
 </div>
 </section><section><h2 class="section-heading" id="undeploy-models-and-delete-endpoints-major-cost-pitfall">Undeploy models and delete endpoints (major cost pitfall)<a class="anchor" aria-label="anchor" href="#undeploy-models-and-delete-endpoints-major-cost-pitfall"></a>
 </h2>
 <hr class="half-width">
-<p>Deployed endpoints are billed per node-hour 24/7, even if no one is
-sending prediction requests. This makes forgotten endpoints one of the
-most expensive mistakes in GCP. Always undeploy models before deleting
-the endpoint itself.</p>
+<p>Deployed endpoints are billed per node‑hour <strong>24/7</strong>,
+even with zero prediction traffic. A single forgotten endpoint can cost
+~$135/month. Always undeploy models before deleting the endpoint.</p>
 <div class="section level3">
 <h3 id="find-endpoints-and-deployed-models">Find endpoints and deployed models<a class="anchor" aria-label="anchor" href="#find-endpoints-and-deployed-models"></a>
 </h3>
-<div class="codewrapper sourceCode" id="cb5">
+<div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints list <span class="at">--region</span><span class="op">=</span>us-central1</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints describe ENDPOINT_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints describe ENDPOINT_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
 </div>
 </div>
 <div class="section level3">
 <h3 id="undeploy-and-delete">Undeploy and delete<a class="anchor" aria-label="anchor" href="#undeploy-and-delete"></a>
 </h3>
-<div class="codewrapper sourceCode" id="cb6">
-<h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Undeploy the model from the endpoint (stops node-hour charges)</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints undeploy-model ENDPOINT_ID   <span class="at">--deployed-model-id</span><span class="op">=</span>DEPLOYED_MODEL_ID   <span class="at">--region</span><span class="op">=</span>us-central1   <span class="at">--quiet</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co"># Delete the endpoint if you no longer need it</span></span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints delete ENDPOINT_ID <span class="at">--region</span><span class="op">=</span>us-central1 <span class="at">--quiet</span></span></code></pre>
-</div>
-<blockquote>
-<p><strong>Model Registry</strong>: If you keep models registered but
-don’t serve them, you won’t pay endpoint node‑hours. Periodically prune
-stale model versions to reduce storage.</p>
-</blockquote>
-</div>
-</section><section><h2 class="section-heading" id="gcs-housekeeping-lifecycle-policies-versioning-egress">GCS housekeeping (lifecycle policies, versioning, egress)<a class="anchor" aria-label="anchor" href="#gcs-housekeeping-lifecycle-policies-versioning-egress"></a>
-</h2>
-<hr class="half-width">
-<div class="section level3">
-<h3 id="quick-size-contents">Quick size &amp; contents<a class="anchor" aria-label="anchor" href="#quick-size-contents"></a>
-</h3>
 <div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Human-readable bucket size</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="ex">gsutil</span> du <span class="at">-sh</span> gs://YOUR_BUCKET</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co"># List recursively</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="ex">gsutil</span> ls <span class="at">-r</span> gs://YOUR_BUCKET/<span class="pp">**</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 50</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Step 1: Undeploy the model (stops node-hour billing)</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints undeploy-model ENDPOINT_ID <span class="dt">\</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="at">--deployed-model-id</span><span class="op">=</span>DEPLOYED_MODEL_ID <span class="dt">\</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">--region</span><span class="op">=</span>us-central1 <span class="dt">\</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="at">--quiet</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co"># Step 2: Delete the endpoint itself</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints delete ENDPOINT_ID <span class="dt">\</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>  <span class="at">--region</span><span class="op">=</span>us-central1 <span class="dt">\</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>  <span class="at">--quiet</span></span></code></pre>
 </div>
+<blockquote>
+<p><strong>Model Registry note:</strong> Keeping a model
+<em>registered</em> (but not deployed to an endpoint) does not incur
+node‑hour charges. You only pay a small amount for the model artifact
+storage in GCS.</p>
+</blockquote>
 </div>
+</section><section><h2 class="section-heading" id="gcs-housekeeping">GCS housekeeping<a class="anchor" aria-label="anchor" href="#gcs-housekeeping"></a>
+</h2>
+<hr class="half-width">
 <div class="section level3">
-<h3 id="lifecycle-policy-example">Lifecycle policy example<a class="anchor" aria-label="anchor" href="#lifecycle-policy-example"></a>
+<h3 id="check-bucket-size">Check bucket size<a class="anchor" aria-label="anchor" href="#check-bucket-size"></a>
 </h3>
-<p>Keep workshop artifacts tidy by auto‑deleting temporary outputs and
-capping old versions. A lifecycle policy is a JSON configuration that
-tells GCS to automatically delete or transition objects based on rules
-you define. Below, we create two rules:</p>
-<ul>
-<li>
-<strong>Rule 1</strong>: Delete any object under the
-<code>tmp/</code> prefix that is older than 7 days.</li>
-<li>
-<strong>Rule 2</strong>: If object versioning is enabled, keep only
-the 3 most recent versions and delete older ones.</li>
-</ul>
-<ol style="list-style-type: decimal">
-<li>Save as <code>lifecycle.json</code>:</li>
-</ol>
 <div class="codewrapper sourceCode" id="cb8">
-<h3 class="code-label">JSON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode json" tabindex="0"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="dt">"rule"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>      <span class="dt">"action"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"Delete"</span><span class="fu">},</span></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>      <span class="dt">"condition"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"age"</span><span class="fu">:</span> <span class="dv">7</span><span class="fu">,</span> <span class="dt">"matchesPrefix"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"tmp/"</span><span class="ot">]</span><span class="fu">}</span></span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>      <span class="dt">"action"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"Delete"</span><span class="fu">},</span></span>
-<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>      <span class="dt">"condition"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"numNewerVersions"</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">}</span></span>
-<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>  <span class="ot">]</span></span>
-<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="fu">}</span></span></code></pre>
-</div>
-<ol start="2" style="list-style-type: decimal">
-<li>Apply to bucket:</li>
-</ol>
-<div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="ex">gsutil</span> lifecycle set lifecycle.json gs://YOUR_BUCKET</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="ex">gsutil</span> lifecycle get gs://YOUR_BUCKET</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Human-readable bucket size</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="ex">gcloud</span> storage du gs://YOUR_BUCKET <span class="at">--summarize</span> <span class="at">--readable-sizes</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co"># List top-level contents</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="ex">gcloud</span> storage ls gs://YOUR_BUCKET</span></code></pre>
+</div>
+<blockquote>
+<p><strong>Note:</strong> <code>gsutil</code> commands (e.g.,
+<code>gsutil du</code>, <code>gsutil ls</code>) still work but are being
+replaced by <code>gcloud storage</code>. We use the newer syntax
+here.</p>
+</blockquote>
+</div>
+<div class="section level3">
+<h3 id="lifecycle-policies">Lifecycle policies<a class="anchor" aria-label="anchor" href="#lifecycle-policies"></a>
+</h3>
+<p>A lifecycle policy tells GCS to automatically delete or transition
+objects based on rules you define. This is useful for cleaning up
+temporary training outputs.</p>
+<p>Save the following as <code>lifecycle.json</code>:</p>
+<div class="codewrapper sourceCode" id="cb9">
+<h3 class="code-label">JSON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode json" tabindex="0"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="dt">"lifecycle"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    <span class="dt">"rule"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>        <span class="dt">"action"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"Delete"</span><span class="fu">},</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>        <span class="dt">"condition"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"age"</span><span class="fu">:</span> <span class="dv">7</span><span class="fu">,</span> <span class="dt">"matchesPrefix"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"tmp/"</span><span class="ot">]</span><span class="fu">}</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>        <span class="dt">"action"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"Delete"</span><span class="fu">},</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>        <span class="dt">"condition"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"numNewerVersions"</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">}</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="fu">}</span></span></code></pre>
+</div>
+<ul>
+<li>
+<strong>Rule 1</strong>: Auto‑delete any object under
+<code>tmp/</code> that is older than 7 days.</li>
+<li>
+<strong>Rule 2</strong>: If versioning is enabled, keep only the 3
+most recent versions.</li>
+</ul>
+<p>Apply it:</p>
+<div class="codewrapper sourceCode" id="cb10">
+<h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets update gs://YOUR_BUCKET <span class="at">--lifecycle-file</span><span class="op">=</span>lifecycle.json</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co"># Verify</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets describe gs://YOUR_BUCKET <span class="at">--format</span><span class="op">=</span><span class="st">"yaml(lifecycle)"</span></span></code></pre>
 </div>
 </div>
 <div class="section level3">
 <h3 id="egress-reminder">Egress reminder<a class="anchor" aria-label="anchor" href="#egress-reminder"></a>
 </h3>
-<p>Downloading out of GCP (to local machines) incurs egress charges.
-Prefer <strong>in‑cloud</strong> training/evaluation and share results
-via GCS links.</p>
+<p>Downloading data out of GCP to your laptop costs ~$0.12/GB. Prefer
+<strong>in‑cloud</strong> training and evaluation, and share results via
+GCS links rather than local downloads.</p>
 </div>
-</section><section><h2 class="section-heading" id="labels-budgets-and-cost-visibility">Labels, budgets, and cost visibility<a class="anchor" aria-label="anchor" href="#labels-budgets-and-cost-visibility"></a>
+</section><section><h2 class="section-heading" id="labels-and-budgets">Labels and budgets<a class="anchor" aria-label="anchor" href="#labels-and-budgets"></a>
 </h2>
 <hr class="half-width">
 <div class="section level3">
-<h3 id="standardize-labels-on-all-resources">Standardize <strong>labels</strong> on all resources<a class="anchor" aria-label="anchor" href="#standardize-labels-on-all-resources"></a>
+<h3 id="standardize-labels-on-all-resources">Standardize labels on all resources<a class="anchor" aria-label="anchor" href="#standardize-labels-on-all-resources"></a>
 </h3>
-<p>Use the same labels everywhere (notebooks, jobs, buckets) so billing
-exports can attribute costs.</p>
+<p>Labels let you track costs per user, team, or experiment in billing
+reports. Apply them consistently:</p>
 <ul>
-<li><p>Examples: <code>owner=yourname</code>,
-<code>team=ml-workshop</code>, <code>purpose=titanic-demo</code>,
-<code>env=dev</code></p></li>
-<li>
-<p>CLI examples:</p>
-<div class="codewrapper sourceCode" id="cb10">
-<h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Add labels to a custom job on creation (Python SDK supports labels, too)</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co"># gcloud example when applicable:</span></span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs create <span class="at">--labels</span><span class="op">=</span>owner=yourname,purpose=titanic-demo ...</span></code></pre>
-</div>
+<li>Examples: <code>owner=yourname</code>,
+<code>team=ml-workshop</code>, <code>purpose=titanic-demo</code>
+</li>
+<li>The Vertex AI Python SDK supports labels on job creation;
+<code>gcloud</code> commands accept
+<code>--labels=key=value,...</code>
 </li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="set-budgets-alerts">Set <strong>budgets &amp; alerts</strong>
-<a class="anchor" aria-label="anchor" href="#set-budgets-alerts"></a>
+<h3 id="set-budget-alerts-do-this-now">Set budget alerts (do this now)<a class="anchor" aria-label="anchor" href="#set-budget-alerts-do-this-now"></a>
 </h3>
-<ul>
-<li>In <strong>Billing → Budgets &amp; alerts</strong>, create a budget
-for your project with thresholds (e.g., 50%, 80%, 100%).<br>
-</li>
-<li>Add <strong>forecast‑based</strong> alerts to catch trends early
-(e.g., projected to exceed budget).<br>
-</li>
-<li>Send email to multiple maintainers (not just you).</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="enable-billing-export-optional-but-powerful">Enable <strong>billing export</strong> (optional but powerful)<a class="anchor" aria-label="anchor" href="#enable-billing-export-optional-but-powerful"></a>
-</h3>
-<ul>
-<li>Export billing to <strong>BigQuery</strong> to slice by service,
-label, or SKU.<br>
-</li>
-<li>Build a simple Data Studio/Looker Studio dashboard for workshop
-visibility.</li>
-</ul>
-</div>
-</section><section><h2 class="section-heading" id="monitoring-and-alerts-catch-leaks-quickly">Monitoring and alerts (catch leaks quickly)<a class="anchor" aria-label="anchor" href="#monitoring-and-alerts-catch-leaks-quickly"></a>
-</h2>
-<hr class="half-width">
-<ul>
-<li>
-<strong>Cloud Monitoring dashboards</strong>: Track notebook VM
-uptime, endpoint deployment counts, and job error rates.<br>
-</li>
-<li>
-<strong>Alerting policies</strong>: Trigger notifications when:
-<ul>
-<li>A <strong>Workbench runtime</strong> has been <strong>running &gt; N
-hours</strong> outside workshop hours.</li>
-<li>An <strong>endpoint node count &gt; 0</strong> for &gt; 60 minutes
-after a workshop ends.</li>
-<li>
-<strong>Spend forecast</strong> exceeds budget threshold.</li>
-</ul>
-</li>
-</ul>
+<p>This is the single most protective action you can take:</p>
+<ol style="list-style-type: decimal">
+<li>Go to <strong>Billing → Budgets &amp; alerts</strong> in the Cloud
+Console.</li>
+<li>Click <strong>Create budget</strong>.</li>
+<li>Set a budget amount (e.g., $10 or $25 for a workshop).</li>
+<li>Set alert thresholds at <strong>50%</strong>, <strong>80%</strong>,
+and <strong>100%</strong>.</li>
+<li>Add <strong>forecast‑based alerts</strong> to catch trends before
+you hit the limit.</li>
+<li>Make sure email notifications go to <strong>all project
+maintainers</strong>, not just you.</li>
+</ol>
 <blockquote>
-<p>Keep alerts few and actionable. Route to email or Slack (via webhook)
-where your team will see them.</p>
+<p><strong>For production use:</strong> You can export detailed billing
+data to BigQuery for cost analysis by service, label, or SKU. See the <a href="https://cloud.google.com/billing/docs/how-to/export-data-bigquery" class="external-link">billing
+export documentation</a> for setup instructions.</p>
 </blockquote>
-</section><section><h2 class="section-heading" id="quotas-and-guardrails">Quotas and guardrails<a class="anchor" aria-label="anchor" href="#quotas-and-guardrails"></a>
-</h2>
-<hr class="half-width">
-<ul>
-<li>
-<strong>Quotas</strong> (IAM &amp; Admin → Quotas): cap GPU count,
-custom job limits, and endpoint nodes to protect budgets.<br>
-</li>
-<li>
-<strong>IAM</strong>: least privilege for service accounts used by
-notebooks and jobs; avoid wide <code>Editor</code> grants.<br>
-</li>
-<li>
-<strong>Org policies</strong> (if available): disallow costly
-regions/accelerators you don’t plan to use.</li>
-</ul></section><section><h2 class="section-heading" id="automating-the-boring-parts">Automating the boring parts<a class="anchor" aria-label="anchor" href="#automating-the-boring-parts"></a>
-</h2>
-<hr class="half-width">
-<div class="section level3">
-<h3 id="nightly-autostop-for-idle-notebooks">Nightly auto‑stop for idle notebooks<a class="anchor" aria-label="anchor" href="#nightly-autostop-for-idle-notebooks"></a>
-</h3>
-<p>Use <strong>Cloud Scheduler</strong> to run a daily command that
-stops notebooks after hours.</p>
-<div class="codewrapper sourceCode" id="cb11">
-<h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Cloud Scheduler job (runs daily 22:00) to stop a specific managed runtime</span></span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="ex">gcloud</span> scheduler jobs create http stop-runtime-job   <span class="at">--schedule</span><span class="op">=</span><span class="st">"0 22 * * *"</span>   <span class="at">--uri</span><span class="op">=</span><span class="st">"https://notebooks.googleapis.com/v1/projects/PROJECT_ID/locations/us-central1/runtimes/RUNTIME_NAME:stop"</span>   <span class="at">--http-method</span><span class="op">=</span>POST   <span class="at">--oidc-service-account-email</span><span class="op">=</span>SERVICE_ACCOUNT@PROJECT_ID.iam.gserviceaccount.com</span></code></pre>
-</div>
-<blockquote>
-<p>Alternative: call <code>gcloud notebooks runtimes list</code> in a
-small Cloud Run job, filter by <code>last_active_time</code>, and stop
-any runtime idle &gt; 2h.</p>
-</blockquote>
-</div>
-<div class="section level3">
-<h3 id="weekly-endpoint-sweep">Weekly endpoint sweep<a class="anchor" aria-label="anchor" href="#weekly-endpoint-sweep"></a>
-</h3>
-<ul>
-<li>List endpoints; undeploy any with zero recent traffic (check
-logs/metrics), then delete stale endpoints.<br>
-</li>
-<li>Scriptable with <code>gcloud ai endpoints list/describe</code> in
-Cloud Run or Cloud Functions on a schedule.</li>
-</ul>
 </div>
 </section><section><h2 class="section-heading" id="common-pitfalls-and-quick-fixes">Common pitfalls and quick fixes<a class="anchor" aria-label="anchor" href="#common-pitfalls-and-quick-fixes"></a>
 </h2>
 <hr class="half-width">
+<table class="table">
+<colgroup>
+<col width="64%">
+<col width="35%">
+</colgroup>
+<thead><tr class="header">
+<th>Pitfall</th>
+<th>Fix</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Forgotten endpoint billing 24/7</td>
+<td>Undeploy models → delete endpoint</td>
+</tr>
+<tr class="even">
+<td>Notebook left running over weekend</td>
+<td>Enable <strong>idle shutdown</strong> (60–120 min)</td>
+</tr>
+<tr class="odd">
+<td>Duplicate datasets across buckets</td>
+<td>Consolidate to one bucket; set lifecycle to purge
+<code>tmp/</code>
+</td>
+</tr>
+<tr class="even">
+<td>Too many parallel HPT trials</td>
+<td>Cap <code>parallel_trial_count</code> to 2–4</td>
+</tr>
+<tr class="odd">
+<td>Don’t know what’s costing money</td>
+<td>Check <strong>Billing → Reports</strong>; add labels to all
+resources</td>
+</tr>
+</tbody>
+</table>
+<div id="going-further-automating-cleanup" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="going-further-automating-cleanup" class="callout-inner">
+<h3 class="callout-title">Going further: automating cleanup</h3>
+<div class="callout-content">
+<p>Once you move from workshop use to regular research, consider
+automating resource cleanup:</p>
 <ul>
 <li>
-<strong>Forgotten endpoints</strong> → <strong>Undeploy</strong>
-models; <strong>delete</strong> endpoints you don’t need.<br>
-</li>
+<strong>Cloud Scheduler</strong> can run a nightly job to stop idle
+Workbench Instances via the Vertex AI API.</li>
 <li>
-<strong>Notebook left running all weekend</strong> → Enable
-<strong>Idle shutdown</strong>; schedule nightly stop.<br>
-</li>
+<strong>Cloud Functions</strong> or <strong>Cloud Run</strong> can
+periodically sweep for forgotten endpoints.</li>
 <li>
-<strong>Duplicate datasets</strong> across buckets/regions →
-consolidate; set <strong>lifecycle</strong> to purge
-<code>tmp/</code>.<br>
-</li>
-<li>
-<strong>Too many parallel HPT trials</strong> → cap
-<code>parallel_trial_count</code> (2–4) and increase
-<code>max_trial_count</code> gradually.<br>
-</li>
-<li>
-<strong>Orphaned artifacts</strong> in Artifact Registry/GCS → prune
-old images/artifacts after promoting a single “golden” run.</li>
+<strong>Budget alerts</strong> can trigger Pub/Sub messages that
+automatically shut down resources when spend exceeds a threshold.</li>
 </ul>
-<div id="challenge-1-find-and-stop-idle-notebooks" class="callout challenge">
+<p>These are beyond the scope of this workshop, but the <a href="https://cloud.google.com/scheduler/docs" class="external-link">Cloud Scheduler
+documentation</a> is a good starting point.</p>
+</div>
+</div>
+</div>
+<div id="challenge-1-check-your-spend-and-set-a-budget" class="callout challenge">
 <div class="callout-square">
 <i class="callout-icon" data-feather="zap"></i>
 </div>
 <span class="callout-header">Challenge</span>
-<div id="challenge-1-find-and-stop-idle-notebooks" class="callout-inner">
-<h3 class="callout-title">Challenge 1 — Find and stop idle
-notebooks</h3>
+<div id="challenge-1-check-your-spend-and-set-a-budget" class="callout-inner">
+<h3 class="callout-title">Challenge 1 — Check your spend and set a
+budget</h3>
 <div class="callout-content">
-<p>List your notebooks and identify any runtime/instance that has likely
-been idle for &gt;2 hours. Stop it via CLI.</p>
-<p><strong>Hints</strong>: <code>gcloud notebooks runtimes list</code>,
-<code>gcloud notebooks instances list</code>, <code>... stop</code></p>
+<ol style="list-style-type: decimal">
+<li>Navigate to <strong>Billing → Reports</strong> in the Cloud Console.
+Find your project’s current‑month spend grouped by service.</li>
+<li>Navigate to <strong>Billing → Budgets &amp; alerts</strong>. Create
+a <strong>$10 budget</strong> with alert thresholds at 50% and
+100%.</li>
+</ol>
 </div>
 </div>
 </div>
@@ -5173,28 +5207,50 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 </button>
 <div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
-<p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
-(Managed) or
-<code>gcloud notebooks instances list --location=ZONE</code>
-(User‑Managed) to find candidates, then stop them with the corresponding
-<code>... stop</code> command.</p>
+<ol style="list-style-type: decimal">
+<li><p>In the Cloud Console, click the <strong>Navigation menu
+(☰)</strong> → <strong>Billing</strong> → <strong>Reports</strong>. Set
+time range to “This month” and group by “Service.” You should see
+Compute Engine, Vertex AI, and Cloud Storage if you’ve been running
+workshop exercises.</p></li>
+<li>
+<p>Go to <strong>Billing</strong> → <strong>Budgets &amp;
+alerts</strong> → <strong>Create budget</strong>. Set:</p>
+<ul>
+<li>
+<strong>Name</strong>: <code>workshop-budget</code>
+</li>
+<li>
+<strong>Amount</strong>: <code>$10</code>
+</li>
+<li>
+<strong>Thresholds</strong>: 50% ($5) and 100% ($10)</li>
+<li>
+<strong>Alerts to</strong>: your email address</li>
+</ul>
+</li>
+</ol>
+<p>Click <strong>Finish</strong> to activate the budget.</p>
 </div>
 </div>
 </div>
 </div>
-<div id="challenge-2-write-a-lifecycle-policy" class="callout challenge">
+<div id="challenge-2-find-and-stop-idle-notebooks" class="callout challenge">
 <div class="callout-square">
 <i class="callout-icon" data-feather="zap"></i>
 </div>
 <span class="callout-header">Challenge</span>
-<div id="challenge-2-write-a-lifecycle-policy" class="callout-inner">
-<h3 class="callout-title">Challenge 2 — Write a lifecycle policy</h3>
+<div id="challenge-2-find-and-stop-idle-notebooks" class="callout-inner">
+<h3 class="callout-title">Challenge 2 — Find and stop idle
+notebooks</h3>
 <div class="callout-content">
-<p>Create and apply a lifecycle rule that (a) deletes objects under
-<code>tmp/</code> after 7 days, and (b) retains only 3 versions of any
-object.</p>
-<p><strong>Hint</strong>:
-<code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code></p>
+<p>List all running Workbench Instances in your zone and stop any you
+are not actively using.</p>
+<div class="codewrapper sourceCode" id="cb11">
+<h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances list <span class="at">--location</span><span class="op">=</span>us-central1-a</span></code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -5205,9 +5261,18 @@ object.</p>
 </button>
 <div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
-<p>Use the JSON policy shown above, then run
-<code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
-verify with <code>gsutil lifecycle get ...</code>.</p>
+<div class="codewrapper sourceCode" id="cb12">
+<h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># List instances — look for STATE=ACTIVE</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances list <span class="at">--location</span><span class="op">=</span>us-central1-a</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co"># Stop an instance you're not using</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances stop INSTANCE_NAME <span class="at">--location</span><span class="op">=</span>us-central1-a</span></code></pre>
+</div>
+<p>If the instance shows <code>STATE=ACTIVE</code> and you’re not
+currently working in it, stop it. You can restart it later with
+<code>gcloud workbench instances start</code>.</p>
 </div>
 </div>
 </div>
@@ -5220,11 +5285,8 @@ verify with <code>gsutil lifecycle get ...</code>.</p>
 <div id="challenge-3-endpoint-sweep" class="callout-inner">
 <h3 class="callout-title">Challenge 3 — Endpoint sweep</h3>
 <div class="callout-content">
-<p>List deployed endpoints in your region, undeploy any model you don’t
-need, and delete the endpoint if it’s no longer required.</p>
-<p><strong>Hints</strong>: <code>gcloud ai endpoints list</code>,
-<code>... describe</code>, <code>... undeploy-model</code>,
-<code>... delete</code></p>
+<p>List all deployed endpoints in your region, undeploy any model you
+don’t need, and delete the endpoint.</p>
 </div>
 </div>
 </div>
@@ -5235,15 +5297,160 @@ need, and delete the endpoint if it’s no longer required.</p>
 </button>
 <div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
-<p><code>gcloud ai endpoints list --region=REGION</code> → pick
-<code>ENDPOINT_ID</code> →
-<code>gcloud ai endpoints undeploy-model ENDPOINT_ID --deployed-model-id=DEPLOYED_MODEL_ID --region=REGION --quiet</code>
-→ if not needed,
-<code>gcloud ai endpoints delete ENDPOINT_ID --region=REGION --quiet</code>.</p>
+<div class="codewrapper sourceCode" id="cb13">
+<h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># List all endpoints</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co"># Pick an endpoint ID from the list, then inspect it</span></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints describe ENDPOINT_ID <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co"># Undeploy the model (find DEPLOYED_MODEL_ID in the describe output)</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints undeploy-model ENDPOINT_ID <span class="dt">\</span></span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>  <span class="at">--deployed-model-id</span><span class="op">=</span>DEPLOYED_MODEL_ID <span class="dt">\</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a>  <span class="at">--region</span><span class="op">=</span>us-central1 <span class="dt">\</span></span>
+<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a>  <span class="at">--quiet</span></span>
+<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co"># Delete the now-empty endpoint</span></span>
+<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints delete ENDPOINT_ID <span class="dt">\</span></span>
+<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a>  <span class="at">--region</span><span class="op">=</span>us-central1 <span class="dt">\</span></span>
+<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a>  <span class="at">--quiet</span></span></code></pre>
 </div>
 </div>
 </div>
 </div>
+</div>
+<div id="challenge-4-write-and-apply-a-lifecycle-policy" class="callout challenge">
+<div class="callout-square">
+<i class="callout-icon" data-feather="zap"></i>
+</div>
+<span class="callout-header">Challenge</span>
+<div id="challenge-4-write-and-apply-a-lifecycle-policy" class="callout-inner">
+<h3 class="callout-title">Challenge 4 — Write and apply a lifecycle
+policy</h3>
+<div class="callout-content">
+<p>Create a GCS lifecycle rule that deletes objects under
+<code>tmp/</code> after 7 days and keeps only 3 versions of versioned
+objects. Apply it to your bucket.</p>
+</div>
+</div>
+</div>
+<div id="accordionSolution4" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
+  <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
+</button>
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
+<div class="accordion-body">
+<p>Save the following as <code>lifecycle.json</code>:</p>
+<div class="codewrapper sourceCode" id="cb14">
+<h3 class="code-label">JSON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode json" tabindex="0"><code class="sourceCode json"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="dt">"lifecycle"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>    <span class="dt">"rule"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>        <span class="dt">"action"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"Delete"</span><span class="fu">},</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>        <span class="dt">"condition"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"age"</span><span class="fu">:</span> <span class="dv">7</span><span class="fu">,</span> <span class="dt">"matchesPrefix"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"tmp/"</span><span class="ot">]</span><span class="fu">}</span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>        <span class="dt">"action"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"type"</span><span class="fu">:</span> <span class="st">"Delete"</span><span class="fu">},</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>        <span class="dt">"condition"</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">"numNewerVersions"</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">}</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a><span class="fu">}</span></span></code></pre>
+</div>
+<p>Apply and verify:</p>
+<div class="codewrapper sourceCode" id="cb15">
+<h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets update gs://YOUR_BUCKET <span class="at">--lifecycle-file</span><span class="op">=</span>lifecycle.json</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets describe gs://YOUR_BUCKET <span class="at">--format</span><span class="op">=</span><span class="st">"yaml(lifecycle)"</span></span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="challenge-5-full-workshop-teardown" class="callout challenge">
+<div class="callout-square">
+<i class="callout-icon" data-feather="zap"></i>
+</div>
+<span class="callout-header">Challenge</span>
+<div id="challenge-5-full-workshop-teardown" class="callout-inner">
+<h3 class="callout-title">Challenge 5 — Full workshop teardown</h3>
+<div class="callout-content">
+<p>If you are done with all episodes, perform a complete cleanup:</p>
+<ol style="list-style-type: decimal">
+<li>Stop or delete your Workbench Instance.</li>
+<li>Verify no endpoints are deployed.</li>
+<li>Delete any completed training/tuning jobs you don’t need.</li>
+<li>Check your GCS bucket — remove any files you don’t want to keep, or
+delete the bucket entirely.</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="accordionSolution5" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution5" aria-expanded="false" aria-controls="collapseSolution5">
+  <h4 class="accordion-header" id="headingSolution5"> Show me the solution </h4>
+</button>
+<div id="collapseSolution5" class="accordion-collapse collapse" aria-labelledby="headingSolution5" data-bs-parent="#accordionSolution5">
+<div class="accordion-body">
+<div class="codewrapper sourceCode" id="cb16">
+<h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># 1. Delete your Workbench Instance</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances delete INSTANCE_NAME <span class="dt">\</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  <span class="at">--location</span><span class="op">=</span>us-central1-a <span class="at">--quiet</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="co"># 2. Confirm no endpoints remain</span></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="co"># (If any appear, undeploy models and delete them as shown above)</span></span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="co"># 3. Delete old training jobs</span></span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs delete JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs delete JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a><span class="co"># 4. Remove your GCS bucket (</span><span class="al">WARNING</span><span class="co">: this deletes all data in the bucket)</span></span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a><span class="ex">gcloud</span> storage rm <span class="at">-r</span> gs://YOUR_BUCKET</span></code></pre>
+</div>
+<p>After cleanup, check <strong>Billing → Reports</strong> one more time
+to confirm no services are still accumulating charges.</p>
+</div>
+</div>
+</div>
+</div>
+</section><section><h2 class="section-heading" id="endofsession-checklist">End‑of‑session checklist<a class="anchor" aria-label="anchor" href="#endofsession-checklist"></a>
+</h2>
+<hr class="half-width">
+<p>Before you close your laptop, run through this quick checklist:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Workbench Instances</strong> — stopped (or deleted if you’re
+done for good).</li>
+<li>
+<strong>Training / HPT jobs</strong> — no jobs stuck in
+<code>RUNNING</code>.</li>
+<li>
+<strong>Endpoints</strong> — all models undeployed; unused endpoints
+deleted.</li>
+<li>
+<strong>GCS</strong> — no large temporary files lingering; lifecycle
+policy in place.</li>
+<li>
+<strong>Budget alert</strong> — set and sending to your email.</li>
+</ol>
+<blockquote>
+<p>Bookmark <strong>Billing → Reports</strong> and check it at the start
+of each session. A 10‑second glance can save you from a surprise
+bill.</p>
+</blockquote>
 <div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
 <i class="callout-icon" data-feather="key"></i>
@@ -5252,16 +5459,21 @@ need, and delete the endpoint if it’s no longer required.</p>
 <div class="callout-inner">
 <div class="callout-content">
 <ul>
-<li>Endpoints and running notebooks are the most common cost leaks;
-undeploy/stop first.</li>
-<li>Prefer <strong>Managed Notebooks</strong> with <strong>Idle
-shutdown</strong>; schedule nightly auto‑stop.</li>
+<li>
+<strong>Check Billing → Reports</strong> regularly — know what
+you’re spending before it surprises you.</li>
+<li>
+<strong>Endpoints</strong> and <strong>running notebooks</strong>
+are the most common cost leaks; undeploy and stop first.</li>
+<li>
+<strong>Set a budget alert</strong> — it’s the single most
+protective action you can take.</li>
+<li>Configure <strong>idle shutdown</strong> on Workbench Instances so
+forgotten notebooks auto‑stop.</li>
 <li>Keep storage tidy with <strong>GCS lifecycle policies</strong> and
 avoid duplicate datasets.</li>
-<li>Standardize <strong>labels</strong>, set <strong>budgets</strong>,
-and enable <strong>billing export</strong> for visibility.</li>
-<li>Use <code>gcloud</code>/<code>gsutil</code> to audit and clean
-quickly; automate with Scheduler + Cloud Run/Functions.</li>
+<li>Use <strong>labels</strong> on all resources so you can trace costs
+in billing reports.</li>
 </ul>
 </div>
 </div>

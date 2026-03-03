@@ -565,16 +565,21 @@ across trials for detailed analysis.</li>
 </ul></section><section id="09-Resource-management-cleanup"><h2 class="section-heading"><a href="09-Resource-management-cleanup.html">Resource Management &amp; Monitoring on Vertex AI (GCP)</a></h2>
 <hr class="half-width">
 <ul>
-<li>Endpoints and running notebooks are the most common cost leaks;
-undeploy/stop first.</li>
-<li>Prefer <strong>Managed Notebooks</strong> with <strong>Idle
-shutdown</strong>; schedule nightly auto‑stop.</li>
+<li>
+<strong>Check Billing → Reports</strong> regularly — know what
+you’re spending before it surprises you.</li>
+<li>
+<strong>Endpoints</strong> and <strong>running notebooks</strong>
+are the most common cost leaks; undeploy and stop first.</li>
+<li>
+<strong>Set a budget alert</strong> — it’s the single most
+protective action you can take.</li>
+<li>Configure <strong>idle shutdown</strong> on Workbench Instances so
+forgotten notebooks auto‑stop.</li>
 <li>Keep storage tidy with <strong>GCS lifecycle policies</strong> and
 avoid duplicate datasets.</li>
-<li>Standardize <strong>labels</strong>, set <strong>budgets</strong>,
-and enable <strong>billing export</strong> for visibility.</li>
-<li>Use <code>gcloud</code>/<code>gsutil</code> to audit and clean
-quickly; automate with Scheduler + Cloud Run/Functions.</li>
+<li>Use <strong>labels</strong> on all resources so you can trace costs
+in billing reports.</li>
 </ul></section><section id="10-Retrieval-augmented-generation"><h2 class="section-heading"><a href="10-Retrieval-augmented-generation.html">Retrieval-Augmented Generation (RAG) with Vertex AI</a></h2>
 <hr class="half-width">
 <ul>
