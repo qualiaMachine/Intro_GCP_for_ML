@@ -119,11 +119,11 @@
   Intro to Google Cloud Platform (GCP) for Machine Learning
 </div>
 
-<aside class="col-md-12 lesson-progress"><div style="width: 20%" class="percentage">
-    20%
+<aside class="col-md-12 lesson-progress"><div style="width: 22%" class="percentage">
+    22%
   </div>
   <div class="progress incubator">
-    <div class="progress-bar incubator" role="progressbar" style="width: 20%" aria-valuenow="20" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar incubator" role="progressbar" style="width: 22%" aria-valuenow="22" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
     </div>
   </div>
 </aside><div class="container">
@@ -477,28 +477,10 @@ from GCS into memory</em>.</p>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="bu">print</span>(train_data.shape)</span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>train_data.head()</span></code></pre>
 </div>
-<p>If you get an error, return to the Google Cloud Console (where we
-created our bucket and VM) and search for “Cloud Shell Editor”. Open a
-shell editor and run the below commands, <em>replacing the bucket name
-with your bucket’s name</em>:</p>
-<div class="codewrapper sourceCode" id="cb4">
-<h3 class="code-label">SH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode sh" tabindex="0"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Grant read permissions on the bucket</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectViewer"</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># Grant write permissions on the bucket</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectCreator"</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co"># (Only if you also need overwrite/delete)</span></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectAdmin"</span></span></code></pre>
-</div>
+<p>If you get a permission error, revisit the <strong>Adjust bucket
+permissions</strong> section in <a href="02-Data-storage.html">Episode
+2: Data Storage</a> to grant the necessary IAM roles to your Compute
+Engine service account via Cloud Shell.</p>
 </div>
 <div class="section level3">
 <h3 id="b-downloading-a-local-copy">B) Downloading a local copy<a class="anchor" aria-label="anchor" href="#b-downloading-a-local-copy"></a></h3>
@@ -511,17 +493,17 @@ region, there are no transfer fees — only standard request costs
 (typically fractions of a cent).</p>
 <p>Let’s verify what our path looks like first.</p>
 <pre><code><span><span class="op">!</span><span class="va">pwd</span></span></code></pre>
-<div class="codewrapper sourceCode" id="cb6">
+<div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>blob_name <span class="op">=</span> <span class="st">"titanic_train.csv"</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>local_path <span class="op">=</span> <span class="st">"/home/jupyter/titanic_train.csv"</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(blob_name)</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>blob.download_to_filename(local_path)</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>lh <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span></span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>blob_name <span class="op">=</span> <span class="st">"titanic_train.csv"</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>local_path <span class="op">=</span> <span class="st">"/home/jupyter/titanic_train.csv"</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(blob_name)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>blob.download_to_filename(local_path)</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>lh <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span></span></code></pre>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="checking-storage-usage-of-a-bucket">Checking storage usage of a bucket<a class="anchor" aria-label="anchor" href="#checking-storage-usage-of-a-bucket"></a></h2>
@@ -529,67 +511,67 @@ region, there are no transfer fees — only standard request costs
 in a bucket. This helps you estimate costs before they show up on your
 bill. The code below iterates over every object in the bucket and sums
 up their sizes.</p>
-<div class="codewrapper sourceCode" id="cb7">
+<div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>total_size_bytes <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    total_size_bytes <span class="op">+=</span> blob.size</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>total_size_mb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)</span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>bucket_name<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>total_size_bytes <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    total_size_bytes <span class="op">+=</span> blob.size</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>total_size_mb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>bucket_name<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
 </div>
 </section><section><h2 class="section-heading" id="estimating-storage-costs">Estimating storage costs<a class="anchor" aria-label="anchor" href="#estimating-storage-costs"></a></h2>
 <hr class="half-width"><p>Using the total size from the previous step, we can estimate monthly
 and annual storage costs based on GCS Standard pricing. This gives you a
 quick sense of how much your bucket costs to maintain.</p>
-<div class="codewrapper sourceCode" id="cb8">
+<div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>storage_price_per_gb <span class="op">=</span> <span class="fl">0.02</span>  <span class="co"># $/GB/month for Standard storage</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>total_size_gb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">3</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>monthly_cost <span class="op">=</span> total_size_gb <span class="op">*</span> storage_price_per_gb</span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated monthly cost: $</span><span class="sc">{</span>monthly_cost<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated annual cost: $</span><span class="sc">{</span>monthly_cost<span class="op">*</span><span class="dv">12</span><span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>storage_price_per_gb <span class="op">=</span> <span class="fl">0.02</span>  <span class="co"># $/GB/month for Standard storage</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>total_size_gb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">3</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>monthly_cost <span class="op">=</span> total_size_gb <span class="op">*</span> storage_price_per_gb</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated monthly cost: $</span><span class="sc">{</span>monthly_cost<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated annual cost: $</span><span class="sc">{</span>monthly_cost<span class="op">*</span><span class="dv">12</span><span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
 <p>For updated prices, see <a href="https://cloud.google.com/storage/pricing" class="external-link">GCS Pricing</a>.</p>
 </section><section><h2 class="section-heading" id="writing-output-files-to-gcs">Writing output files to GCS<a class="anchor" aria-label="anchor" href="#writing-output-files-to-gcs"></a></h2>
 <hr class="half-width"><p>Create a sample file on the notebook VM’s storage.</p>
+<div class="codewrapper sourceCode" id="cb8">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Create a sample file locally on the notebook VM</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>file_path <span class="op">=</span> <span class="st">"/home/jupyter/Notes.txt"</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(file_path, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>    f.write(<span class="st">"This is a test note for GCS."</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="op">!</span>ls <span class="op">/</span>home<span class="op">/</span>jupyter</span></code></pre>
+</div>
+<p>Upload file.</p>
 <div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Create a sample file locally on the notebook VM</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>file_path <span class="op">=</span> <span class="st">"/home/jupyter/Notes.txt"</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(file_path, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    f.write(<span class="st">"This is a test note for GCS."</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="op">!</span>ls <span class="op">/</span>home<span class="op">/</span>jupyter</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Point to the right bucket</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co"># Create a *Blob* object, which represents a path inside the bucket</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co"># (here it will end up as gs://&lt;bucket_name&gt;/docs/Notes.txt)</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"docs/Notes.txt"</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co"># Upload the local file into that blob (object) in GCS</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>blob.upload_from_filename(file_path)</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"File uploaded successfully."</span>)</span></code></pre>
 </div>
-<p>Upload file.</p>
+<p>List bucket contents:</p>
 <div class="codewrapper sourceCode" id="cb10">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Point to the right bucket</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co"># Create a *Blob* object, which represents a path inside the bucket</span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co"># (here it will end up as gs://&lt;bucket_name&gt;/docs/Notes.txt)</span></span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"docs/Notes.txt"</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co"># Upload the local file into that blob (object) in GCS</span></span>
-<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>blob.upload_from_filename(file_path)</span>
-<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"File uploaded successfully."</span>)</span></code></pre>
-</div>
-<p>List bucket contents:</p>
-<div class="codewrapper sourceCode" id="cb11">
-<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>    <span class="bu">print</span>(blob.name)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>    <span class="bu">print</span>(blob.name)</span></code></pre>
 </div>
 <div id="challenge-estimating-gcs-costs" class="callout challenge">
 <div class="callout-square">

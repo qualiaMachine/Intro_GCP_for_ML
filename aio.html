@@ -818,6 +818,21 @@ unlimited number of files. Data in GCS can be accessed from Vertex AI
 training jobs, Workbench notebooks, and other GCP services using a
 <em>GCS URI</em> (e.g.,
 <code>gs://your-bucket-name/your-file.csv</code>).</p>
+<div id="gcs-uris-your-cloud-file-paths" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="gcs-uris-your-cloud-file-paths" class="callout-inner">
+<h3 class="callout-title">GCS URIs — your cloud file paths</h3>
+<div class="callout-content">
+<p>GCS URIs follow the format
+<code>gs://bucket-name/path/to/file.csv</code>. Think of them as cloud
+file paths. You’ll use these URIs throughout the workshop to reference
+data in training scripts, notebooks, and SDK calls.</p>
+</div>
+</div>
+</div>
 <div id="benefits-of-using-gcs-recommended-for-ml-workflows" class="callout">
 <div class="callout-square">
 <i class="callout-icon" data-feather="bell"></i>
@@ -830,27 +845,27 @@ workflows)</h3>
 <ul>
 <li>
 <strong>Separation of storage and compute</strong>: Data remains
-available even if VMs or notebooks are deleted.<br>
-</li>
+available even if VMs or notebooks are deleted.</li>
 <li>
 <strong>Easy sharing</strong>: Buckets can be accessed by
-collaborators with the right IAM roles.<br>
-</li>
+collaborators with the right IAM roles.</li>
 <li>
 <strong>Integration with Vertex AI and BigQuery</strong>: Read and
-write data directly using other GCP tools.<br>
-</li>
+write data directly using other GCP tools.</li>
 <li>
 <strong>Scalability</strong>: Handles datasets of any size without
-disk limits.<br>
-</li>
+disk limits.</li>
 <li>
 <strong>Cost efficiency</strong>: Lower cost than persistent disks
-(VM storage) for long-term storage.<br>
-</li>
+(VM storage) for long-term storage.</li>
 <li>
 <strong>Data persistence</strong>: Durable and highly available
 across regions.</li>
+<li>
+<strong>Filesystem mounting</strong>: GCS buckets can be mounted as
+local directories using <a href="https://cloud.google.com/storage/docs/cloud-storage-fuse/overview" class="external-link">Cloud
+Storage FUSE</a>, making them accessible like regular filesystems for
+tools that expect local file paths.</li>
 </ul>
 </div>
 </div>
@@ -874,10 +889,13 @@ steps:</p>
 <h3 id="sign-in-to-google-cloud-console">1. Sign in to Google Cloud Console<a class="anchor" aria-label="anchor" href="#sign-in-to-google-cloud-console"></a>
 </h3>
 <ul>
-<li>Go to <a href="https://console.cloud.google.com/welcome?project=doit-rci-mlm25-4626" class="external-link">console.cloud.google.com/welcome?project=doit-rci-mlm25-4626</a>
+<li>Go to <a href="https://console.cloud.google.com/" class="external-link">console.cloud.google.com</a>
 and log in with your credentials.
-<!-- replace project ID with your own if not using the shared workshop project -->
+<!-- shared workshop project URL: https://console.cloud.google.com/welcome?project=doit-rci-mlm25-4626 -->
 </li>
+<li>Select your project from the project dropdown at the top of the
+page. If you’re using the shared workshop project, the instructor will
+provide the project name.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -903,20 +921,22 @@ and log in with your credentials.
 <strong>Provide a bucket name</strong>: Enter a globally unique
 name. For this workshop, we can use the following naming convention to
 easily locate our buckets: <code>teamname-firstlastname-dataname</code>
-(e.g., sinkorswim-johndoe-titanic)</li>
+(e.g., sinkorswim-johndoe-titanic). If you see a “Bucket name already
+exists” error, the name is taken — try adding a number or extra initials
+to make it unique.</li>
 <li>
 <strong>Add labels (tags) to track costs</strong>: Add labels to
 track resource usage and billing. If you’re working in a shared account,
 this step is <em>mandatory</em>. If not, it’s still recommended to help
-you track your own costs!
+you track your own costs! In the Labels section, enter the key on the
+left and the value on the right:
 <ul>
-<li>
-<code>project = teamname</code> (your team’s name)</li>
-<li>
-<code>name = firstname-lastname</code> (your name)</li>
-<li>
-<code>purpose=bucket-dataname</code> (include bucket- prefix
-followed by name of dataset)</li>
+<li>key: <code>project</code>, value: <code>teamname</code> (your team’s
+name)</li>
+<li>key: <code>name</code>, value: <code>firstname-lastname</code> (your
+name)</li>
+<li>key: <code>purpose</code>, value: <code>bucket-dataname</code>
+(include bucket- prefix followed by name of dataset)</li>
 </ul>
 </li>
 </ul>
@@ -926,26 +946,19 @@ followed by name of dataset)</li>
 <div class="section level4">
 <h4 id="b--choose-where-to-store-your-data">3b. Choose where to store your data<a class="anchor" aria-label="anchor" href="#b--choose-where-to-store-your-data"></a>
 </h4>
-<p>When creating a storage bucket in Google Cloud, the best practice for
-most machine learning workflows is to use a regional bucket in the same
-region as your compute resources (for example, us-central1). This setup
-provides the lowest latency and avoids network egress charges when
-training jobs read from storage, while also keeping costs predictable. A
-multi-region bucket, on the other hand, can make sense if your primary
-goal is broad availability or if collaborators in different regions need
-reliable access to the same data; the trade-off is higher cost and the
-possibility of extra egress charges when pulling data into a specific
-compute region. For most research projects, a regional bucket with the
-Standard storage class, uniform access control, and public access
-prevention enabled offers a good balance of performance, security, and
-affordability.</p>
+<p>For ML workflows, use a <strong>regional</strong> bucket in the same
+region as your compute resources (e.g., <code>us-central1</code>). This
+minimizes latency and avoids egress charges when training jobs read from
+storage. Multi-region is only needed if collaborators across different
+regions need reliable access to the same data — the trade-off is higher
+cost.</p>
 <ul>
 <li>
 <strong>Region</strong> (cheapest, good default). For instance,
-us-central1 (Iowa) costs $0.020 per GB-month.</li>
+<code>us-central1</code> (Iowa) costs $0.020 per GB-month.</li>
 <li>
-<strong>Multi-region</strong> (higher redundancy, more
-expensive).</li>
+<strong>Multi-region</strong> (higher redundancy, more expensive).
+Useful when broad geographic availability matters more than cost.</li>
 </ul>
 <figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-location.jpg" alt="Choose where to store your data" class="figure mx-auto d-block"><div class="figcaption">Choose where to store your data</div>
 </figure>
@@ -967,6 +980,14 @@ backups or rarely accessed files. These cost less per GB to store, but
 you pay retrieval fees if you read them during training. Not recommended
 for most ML projects where data access is frequent.</li>
 </ul>
+<blockquote>
+<p>GCS also supports <strong>lifecycle rules</strong> that can
+automatically delete objects older than N days or transition them to
+cheaper storage classes. This is useful for cleaning up experiment
+artifacts (e.g., old checkpoints). You can configure lifecycle rules
+after bucket creation under the bucket’s <strong>Lifecycle</strong>
+tab.</p>
+</blockquote>
 <blockquote>
 <p>You may see an option to “Enable hierarchical namespace”. GCP now
 offers an option to enable a hierarchical namespace for buckets, but
@@ -1000,36 +1021,13 @@ hosting or mixed-access datasets.</li>
 <div class="section level4">
 <h4 id="e--choose-how-to-protect-object-data">3e. Choose how to protect object data<a class="anchor" aria-label="anchor" href="#e--choose-how-to-protect-object-data"></a>
 </h4>
-<p>GCP automatically protects all stored data, but you can enable
-additional layers of protection depending on your project’s needs. For
-most ML or research workflows, you’ll want to balance safety with
-cost.</p>
-<ul>
-<li>
-<strong>Soft delete policy (recommended for shared
-projects):</strong> Keeps deleted objects recoverable for a short period
-(default is 7 days). This is useful if team members might accidentally
-remove data. You can set a custom retention duration, but longer windows
-increase storage costs.</li>
-<li>
-<strong>Object versioning:</strong> Creates new versions of files
-when they’re modified or overwritten. This can be helpful for tracking
-model outputs or experiment logs but may quickly increase costs. Enable
-only if you expect frequent overwrites and need rollback
-capability.</li>
-<li>
-<strong>Retention policy (for compliance use only):</strong>
-Prevents deletion or modification of objects for a fixed time window.
-This is typically required for regulated data but should be avoided for
-active ML projects, since it can block normal cleanup and retraining
-workflows.</li>
-</ul>
-<blockquote>
-<p>In short: keep the <strong>default soft delete</strong> unless you
-have specific compliance requirements. Use <strong>object
-versioning</strong> sparingly, and avoid <strong>retention
-locks</strong> unless mandated by policy.</p>
-</blockquote>
+<p>Leave the default <strong>soft delete</strong> enabled — it keeps
+deleted objects recoverable for 7 days, which is useful if someone
+accidentally removes data. Skip <strong>object versioning</strong>
+(creates new versions on every overwrite, costs add up fast) and
+<strong>retention policies</strong> (blocks deletion, only needed for
+regulatory compliance) unless you have a specific reason to enable
+them.</p>
 </div>
 <div class="section level4">
 <h4 id="final-check">Final check<a class="anchor" aria-label="anchor" href="#final-check"></a>
@@ -1046,28 +1044,67 @@ your name).</p>
 </h3>
 <ul>
 <li>If you haven’t yet, download the data for this workshop (Right-click
-→ Save as):<br><a href="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/data/data.zip" class="external-link">data.zip</a>
+→ Save as): <a href="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/data/data.zip" class="external-link">data.zip</a>
 <ul>
 <li>Extract the zip folder contents (Right-click → Extract all on
 Windows; double-click on macOS).</li>
+<li>The zip contains the <strong>Titanic dataset</strong> — passenger
+information (age, class, fare, etc.) with a survival label. This is a
+classic binary classification task we’ll use for training in later
+episodes.</li>
 </ul>
 </li>
-<li>In the bucket dashboard, click <strong>Upload Files</strong>.<br>
-</li>
-<li>Select your Titanic CSVs and upload.</li>
+<li>In the bucket dashboard, click <strong>Upload Files</strong>.</li>
+<li>Select your Titanic CSVs (<code>titanic_train.csv</code> and
+<code>titanic_test.csv</code>) and upload.</li>
 </ul>
 <p><strong>Note the GCS URI for your data</strong> After uploading,
 click on a file and find its <strong>gs:// URI</strong> (e.g.,
 <code>gs://sinkorswim-johndoe-titanic/titanic_test.csv</code>). This URI
 will be used to access the data later.</p>
+<div id="challenge-verify-your-bucket-setup" class="callout challenge">
+<div class="callout-square">
+<i class="callout-icon" data-feather="zap"></i>
+</div>
+<span class="callout-header">Challenge</span>
+<div id="challenge-verify-your-bucket-setup" class="callout-inner">
+<h3 class="callout-title">Challenge: Verify Your Bucket Setup</h3>
+<div class="callout-content">
+<p>Before moving on, confirm everything is configured correctly:</p>
+<ol style="list-style-type: decimal">
+<li>Navigate to your bucket in <strong>Cloud Storage &gt;
+Buckets</strong>. Can you see your uploaded CSV files listed?</li>
+<li>Click on one of the files. What is its <code>gs://</code> URI? Write
+it down — you’ll need it in Episode 4.</li>
+<li>Go back to the bucket overview and check the <strong>Labels</strong>
+tab. Are your cost-tracking labels (project, name, purpose)
+applied?</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="accordionSolution1" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
+  <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
+</button>
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div class="accordion-body">
+<p>You should see both <code>titanic_train.csv</code> and
+<code>titanic_test.csv</code> in your bucket. The URI should look like
+<code>gs://your-bucket-name/titanic_train.csv</code>. Labels should
+appear under the bucket’s Configuration or Labels tab with the key-value
+pairs you entered in step 3a.</p>
+<p>If any labels are missing, click <strong>Edit labels</strong> on the
+bucket details page to add them.</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 </section><section><h2 class="section-heading" id="adjust-bucket-permissions">Adjust bucket permissions<a class="anchor" aria-label="anchor" href="#adjust-bucket-permissions"></a>
 </h2>
 <hr class="half-width">
-<p>Return to the Google Cloud Console (where we created our bucket and
-VM) and search for “Cloud Shell Editor”. Open a shell editor and run the
-below commands, <em>replacing the bucket name with your bucket’s
-name</em>.</p>
 <p>We need to grant the Compute Engine default service account three
 separate IAM roles so that our future Workbench notebooks and training
 jobs can interact with the bucket:</p>
@@ -1084,26 +1121,78 @@ objects. Required for writing model artifacts and logs.</li>
 deleting objects. Only needed if your workflow re-saves models or cleans
 up old artifacts.</li>
 </ul>
+<p>To run these commands, open <strong>Cloud Shell</strong> — a
+browser-based terminal built into the Google Cloud Console. Click the
+terminal icon (<strong>&gt;_</strong>) in the top-right toolbar of the
+Console to activate it. Cloud Shell comes with <code>gcloud</code>
+pre-installed and already authenticated to your project.</p>
+<div class="section level4">
+<h4 id="find-your-service-account">Find your service account<a class="anchor" aria-label="anchor" href="#find-your-service-account"></a>
+</h4>
+<p>Before running the commands below, you need your project’s
+<strong>Compute Engine default service account</strong>. Run this in
+Cloud Shell:</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">SH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode sh" tabindex="0"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Grant read permissions on the bucket</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectViewer"</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co"># Grant write permissions on the bucket</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectCreator"</span></span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co"># (Only if you also need overwrite/delete)</span></span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectAdmin"</span></span></code></pre>
+<pre class="sourceCode sh" tabindex="0"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="ex">gcloud</span> iam service-accounts list <span class="at">--filter</span><span class="op">=</span><span class="st">"displayName:Compute Engine default service account"</span> <span class="at">--format</span><span class="op">=</span><span class="st">"value(email)"</span></span></code></pre>
 </div>
-<p>This grants our future VMs permission to read objects from the
-bucket.</p>
+<p>This will return an email like
+<code>123456789-compute@developer.gserviceaccount.com</code>. Use that
+value in the commands below.</p>
+<!-- shared workshop service account: 549047673858-compute@developer.gserviceaccount.com -->
+</div>
+<div class="section level4">
+<h4 id="grant-permissions">Grant permissions<a class="anchor" aria-label="anchor" href="#grant-permissions"></a>
+</h4>
+<p>Replace <code>YOUR_BUCKET_NAME</code> with your bucket name and
+<code>YOUR_SERVICE_ACCOUNT</code> with the email from the step above,
+then run:</p>
+<div class="codewrapper sourceCode" id="cb2">
+<h3 class="code-label">SH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode sh" tabindex="0"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Grant read permissions on the bucket</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME <span class="dt">\</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:YOUR_SERVICE_ACCOUNT"</span> <span class="dt">\</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectViewer"</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co"># Grant write permissions on the bucket</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME <span class="dt">\</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:YOUR_SERVICE_ACCOUNT"</span> <span class="dt">\</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectCreator"</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co"># (Only if you also need overwrite/delete)</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME <span class="dt">\</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:YOUR_SERVICE_ACCOUNT"</span> <span class="dt">\</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectAdmin"</span></span></code></pre>
+</div>
+<!-- prefilled example:
+gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
+  --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
+  --role="roles/storage.objectViewer"
+-->
+<p>This grants our future VMs permission to read, write, and manage
+objects in the bucket.</p>
+<div id="gcloud-storage-vs.-gsutil" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="gcloud-storage-vs.-gsutil" class="callout-inner">
+<h3 class="callout-title">
+<code>gcloud storage</code>
+vs. <code>gsutil</code>
+</h3>
+<div class="callout-content">
+<p>Older tutorials often reference <code>gsutil</code> for Cloud Storage
+operations. Google now recommends <code>gcloud storage</code> as the
+primary CLI. Both work, but <code>gcloud storage</code> is actively
+maintained and consistent with the rest of the <code>gcloud</code>
+CLI.</p>
+</div>
+</div>
+</div>
+</div>
 </section><section><h2 class="section-heading" id="data-transfer-storage-costs-explained">Data transfer &amp; storage costs explained<a class="anchor" aria-label="anchor" href="#data-transfer-storage-costs-explained"></a>
 </h2>
 <hr class="half-width">
@@ -1188,69 +1277,51 @@ GB, and 1 TB (1024 GB).</strong></p>
 </div>
 </div>
 </div>
-<div id="accordionSolution1" class="accordion challenge-accordion accordion-flush">
+<div id="accordionSolution2" class="accordion challenge-accordion accordion-flush">
 <div class="accordion-item">
-<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
-  <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
+  <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
-<strong>1 GB</strong>:<br>
-</li>
-</ol>
+<strong>1 GB</strong>:
 <ul>
-<li>Storage: 1 GB × $0.02 = $0.02<br>
-</li>
-<li>Egress: 1 GB × $0.12 = $0.12<br>
-</li>
-<li>Requests: ~0 (100 reads well below pricing tier)<br>
-</li>
+<li>Storage: 1 GB × $0.02 = $0.02</li>
+<li>Egress: 1 GB × $0.12 = $0.12</li>
+<li>Requests: ~0 (100 reads well below pricing tier)</li>
 <li><strong>Total: $0.14</strong></li>
 </ul>
-<ol style="list-style-type: decimal">
+</li>
 <li>
-<strong>10 GB</strong>:<br>
-</li>
-</ol>
+<strong>10 GB</strong>:
 <ul>
-<li>Storage: 10 GB × $0.02 = $0.20<br>
-</li>
-<li>Egress: 10 GB × $0.12 = $1.20<br>
-</li>
-<li>Requests: ~0<br>
-</li>
+<li>Storage: 10 GB × $0.02 = $0.20</li>
+<li>Egress: 10 GB × $0.12 = $1.20</li>
+<li>Requests: ~0</li>
 <li><strong>Total: $1.40</strong></li>
 </ul>
-<ol style="list-style-type: decimal">
+</li>
 <li>
-<strong>100 GB</strong>:<br>
-</li>
-</ol>
+<strong>100 GB</strong>:
 <ul>
-<li>Storage: 100 GB × $0.02 = $2.00<br>
-</li>
-<li>Egress: 100 GB × $0.12 = $12.00<br>
-</li>
-<li>Requests: ~0<br>
-</li>
+<li>Storage: 100 GB × $0.02 = $2.00</li>
+<li>Egress: 100 GB × $0.12 = $12.00</li>
+<li>Requests: ~0</li>
 <li><strong>Total: $14.00</strong></li>
 </ul>
-<ol style="list-style-type: decimal">
+</li>
 <li>
-<strong>1 TB (1024 GB)</strong>:<br>
-</li>
-</ol>
+<strong>1 TB (1024 GB)</strong>:
 <ul>
-<li>Storage: 1024 GB × $0.02 = $20.48<br>
-</li>
-<li>Egress: 1024 GB × $0.12 = $122.88<br>
-</li>
-<li>Requests: ~0<br>
-</li>
+<li>Storage: 1024 GB × $0.02 = $20.48</li>
+<li>Egress: 1024 GB × $0.12 = $122.88</li>
+<li>Requests: ~0</li>
 <li><strong>Total: $143.36</strong></li>
 </ul>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -1262,13 +1333,19 @@ GB, and 1 TB (1024 GB).</strong></p>
 stop costs:</p>
 <ul>
 <li>
-<strong>Option 1: Delete files only</strong> – if you plan to reuse
-the bucket.<br>
-</li>
+<strong>Option 1: Delete files only</strong> – In your bucket,
+select the files you want to remove and click <strong>Delete</strong>.
+Use this if you plan to reuse the bucket for new data.</li>
 <li>
-<strong>Option 2: Delete the bucket entirely</strong> – if you no
-longer need it.</li>
-</ul></section><section><h2 class="section-heading" id="when-does-bigquery-come-into-play">When does BigQuery come into play?<a class="anchor" aria-label="anchor" href="#when-does-bigquery-come-into-play"></a>
+<strong>Option 2: Delete the bucket entirely</strong> – In
+<strong>Cloud Storage &gt; Buckets</strong>, select your bucket and
+click <strong>Delete</strong>. You’ll be asked to confirm by typing the
+bucket name.</li>
+</ul>
+<p>For a detailed walkthrough of cleaning up all workshop resources
+(buckets, VMs, endpoints, and more), see <a href="09-Resource-management-cleanup.html">Episode 9: Resource
+Management and Cleanup</a>.</p>
+</section><section><h2 class="section-heading" id="when-does-bigquery-come-into-play">When does BigQuery come into play?<a class="anchor" aria-label="anchor" href="#when-does-bigquery-come-into-play"></a>
 </h2>
 <hr class="half-width">
 <p>BigQuery is Google Cloud’s managed data warehouse for storing and
@@ -1892,28 +1969,10 @@ from GCS into memory</em>.</p>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="bu">print</span>(train_data.shape)</span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>train_data.head()</span></code></pre>
 </div>
-<p>If you get an error, return to the Google Cloud Console (where we
-created our bucket and VM) and search for “Cloud Shell Editor”. Open a
-shell editor and run the below commands, <em>replacing the bucket name
-with your bucket’s name</em>:</p>
-<div class="codewrapper sourceCode" id="cb4">
-<h3 class="code-label">SH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode sh" tabindex="0"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Grant read permissions on the bucket</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectViewer"</span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># Grant write permissions on the bucket</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectCreator"</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co"># (Only if you also need overwrite/delete)</span></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic <span class="dt">\</span></span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:549047673858-compute@developer.gserviceaccount.com"</span> <span class="dt">\</span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectAdmin"</span></span></code></pre>
-</div>
+<p>If you get a permission error, revisit the <strong>Adjust bucket
+permissions</strong> section in <a href="02-Data-storage.html">Episode
+2: Data Storage</a> to grant the necessary IAM roles to your Compute
+Engine service account via Cloud Shell.</p>
 </div>
 <div class="section level3">
 <h3 id="b-downloading-a-local-copy">B) Downloading a local copy<a class="anchor" aria-label="anchor" href="#b-downloading-a-local-copy"></a>
@@ -1927,17 +1986,17 @@ region, there are no transfer fees — only standard request costs
 (typically fractions of a cent).</p>
 <p>Let’s verify what our path looks like first.</p>
 <pre><code><span><span class="op">!</span><span class="va">pwd</span></span></code></pre>
-<div class="codewrapper sourceCode" id="cb6">
+<div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>blob_name <span class="op">=</span> <span class="st">"titanic_train.csv"</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>local_path <span class="op">=</span> <span class="st">"/home/jupyter/titanic_train.csv"</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(blob_name)</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>blob.download_to_filename(local_path)</span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>lh <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span></span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>blob_name <span class="op">=</span> <span class="st">"titanic_train.csv"</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>local_path <span class="op">=</span> <span class="st">"/home/jupyter/titanic_train.csv"</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(blob_name)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>blob.download_to_filename(local_path)</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="op">!</span>ls <span class="op">-</span>lh <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span></span></code></pre>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="checking-storage-usage-of-a-bucket">Checking storage usage of a bucket<a class="anchor" aria-label="anchor" href="#checking-storage-usage-of-a-bucket"></a>
@@ -1947,17 +2006,17 @@ region, there are no transfer fees — only standard request costs
 in a bucket. This helps you estimate costs before they show up on your
 bill. The code below iterates over every object in the bucket and sums
 up their sizes.</p>
-<div class="codewrapper sourceCode" id="cb7">
+<div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>total_size_bytes <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    total_size_bytes <span class="op">+=</span> blob.size</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>total_size_mb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)</span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>bucket_name<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>total_size_bytes <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>    total_size_bytes <span class="op">+=</span> blob.size</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>total_size_mb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>bucket_name<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
 </div>
 </section><section><h2 class="section-heading" id="estimating-storage-costs">Estimating storage costs<a class="anchor" aria-label="anchor" href="#estimating-storage-costs"></a>
 </h2>
@@ -1965,53 +2024,53 @@ up their sizes.</p>
 <p>Using the total size from the previous step, we can estimate monthly
 and annual storage costs based on GCS Standard pricing. This gives you a
 quick sense of how much your bucket costs to maintain.</p>
-<div class="codewrapper sourceCode" id="cb8">
+<div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>storage_price_per_gb <span class="op">=</span> <span class="fl">0.02</span>  <span class="co"># $/GB/month for Standard storage</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>total_size_gb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">3</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>monthly_cost <span class="op">=</span> total_size_gb <span class="op">*</span> storage_price_per_gb</span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated monthly cost: $</span><span class="sc">{</span>monthly_cost<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated annual cost: $</span><span class="sc">{</span>monthly_cost<span class="op">*</span><span class="dv">12</span><span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>storage_price_per_gb <span class="op">=</span> <span class="fl">0.02</span>  <span class="co"># $/GB/month for Standard storage</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>total_size_gb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">3</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>monthly_cost <span class="op">=</span> total_size_gb <span class="op">*</span> storage_price_per_gb</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated monthly cost: $</span><span class="sc">{</span>monthly_cost<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated annual cost: $</span><span class="sc">{</span>monthly_cost<span class="op">*</span><span class="dv">12</span><span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
 <p>For updated prices, see <a href="https://cloud.google.com/storage/pricing" class="external-link">GCS Pricing</a>.</p>
 </section><section><h2 class="section-heading" id="writing-output-files-to-gcs">Writing output files to GCS<a class="anchor" aria-label="anchor" href="#writing-output-files-to-gcs"></a>
 </h2>
 <hr class="half-width">
 <p>Create a sample file on the notebook VM’s storage.</p>
+<div class="codewrapper sourceCode" id="cb8">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co"># Create a sample file locally on the notebook VM</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>file_path <span class="op">=</span> <span class="st">"/home/jupyter/Notes.txt"</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(file_path, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>    f.write(<span class="st">"This is a test note for GCS."</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="op">!</span>ls <span class="op">/</span>home<span class="op">/</span>jupyter</span></code></pre>
+</div>
+<p>Upload file.</p>
 <div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Create a sample file locally on the notebook VM</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>file_path <span class="op">=</span> <span class="st">"/home/jupyter/Notes.txt"</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(file_path, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    f.write(<span class="st">"This is a test note for GCS."</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="op">!</span>ls <span class="op">/</span>home<span class="op">/</span>jupyter</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># Point to the right bucket</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co"># Create a *Blob* object, which represents a path inside the bucket</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co"># (here it will end up as gs://&lt;bucket_name&gt;/docs/Notes.txt)</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"docs/Notes.txt"</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co"># Upload the local file into that blob (object) in GCS</span></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a>blob.upload_from_filename(file_path)</span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"File uploaded successfully."</span>)</span></code></pre>
 </div>
-<p>Upload file.</p>
+<p>List bucket contents:</p>
 <div class="codewrapper sourceCode" id="cb10">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Point to the right bucket</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co"># Create a *Blob* object, which represents a path inside the bucket</span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co"># (here it will end up as gs://&lt;bucket_name&gt;/docs/Notes.txt)</span></span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"docs/Notes.txt"</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co"># Upload the local file into that blob (object) in GCS</span></span>
-<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>blob.upload_from_filename(file_path)</span>
-<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"File uploaded successfully."</span>)</span></code></pre>
-</div>
-<p>List bucket contents:</p>
-<div class="codewrapper sourceCode" id="cb11">
-<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>    <span class="bu">print</span>(blob.name)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>    <span class="bu">print</span>(blob.name)</span></code></pre>
 </div>
 <div id="challenge-estimating-gcs-costs" class="callout challenge">
 <div class="callout-square">
@@ -4231,7 +4290,7 @@ configuration and verify it looks correct.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4285,7 +4344,7 @@ search:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4879,7 +4938,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -4911,7 +4970,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -4941,7 +5000,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
