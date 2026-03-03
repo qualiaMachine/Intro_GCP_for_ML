@@ -79,7 +79,10 @@ episodes:
 - 11-CLI-workflows.md
 
 # Information for Learners
-learners: 
+learners:
+- glossary.md
+- instances-for-ML.md
+- uw-madison-cloud-resources.md
 
 # Information for Instructors
 instructors: 
