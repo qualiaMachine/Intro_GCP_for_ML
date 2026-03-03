@@ -232,7 +232,9 @@ MACHINE = 'n1-standard-4'
 
 ### Creating a custom training job with the SDK
 
-We'll first initialize the Vertex AI platform with our environment variables. We'll also set a `RUN_ID` and `ARTIFACT_DIR` to help store outputs. 
+> **Reminder:** We're using the Python SDK from a notebook here, but the same `aiplatform.CustomTrainingJob` calls work identically in a standalone `.py` script, a shell session, or a CI pipeline. You can also submit jobs entirely from the command line with `gcloud ai custom-jobs create`. See the callout in episode 03 for more details.
+
+We'll first initialize the Vertex AI platform with our environment variables. We'll also set a `RUN_ID` and `ARTIFACT_DIR` to help store outputs.
 
 ```python
 from google.cloud import aiplatform
