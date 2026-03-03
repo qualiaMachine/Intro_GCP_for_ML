@@ -20,20 +20,9 @@ exercises: 8
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-## Initial setup 
+## Initial setup
 
-#### Load pre-filled Jupyter notebooks 
-If you haven't opened your newly created VM from the last episode yet, click **Open JupyterLab** to open the instance in Jupyter Lab. From there, we can create as many Jupyter notebooks as we would like within the instance environment. 
-
-We will then select the standard python3 environment to start our first .ipynb notebook (Jupyter notebook). We can use this environment since we aren't doing any training/tuning just yet.
-
-Within the Jupyter notebook, run the following command to clone the lesson repo into our Jupyter environment:
-
-```sh
-!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
-```
-
-Then, navigate to `/Intro_GCP_for_ML/notebooks/04-Accessing-and-managing-data.ipynb` to begin the first notebook.
+If you haven't already cloned the repository and opened the notebook in the previous episode, do so now: open JupyterLab from your Workbench Instance, run `!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git`, and navigate to `/Intro_GCP_for_ML/notebooks/04-Accessing-and-managing-data.ipynb`.
 
 #### Set up GCP environment
 Before interacting with GCS, we need to authenticate and initialize the client libraries. The `storage.Client()` call below creates a connection to Google Cloud Storage using the credentials already attached to your Workbench VM (no manual login needed). Printing the project ID confirms the client initialized correctly and is pointed at the right GCP project.
