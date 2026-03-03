@@ -49,6 +49,23 @@ Google offers up to **$5,000 in cloud credits** for faculty, postdoctoral, and n
 - [Apply for Google Cloud Research Credits](https://edu.google.com/intl/ALL_us/programs/credits/research/)
 - Applications accepted on a rolling basis; decisions typically take 6–8 weeks.
 
+### AWS Cloud Credit for Research
+
+AWS offers promotional credits for academic researchers through its [Cloud Credit for Research](https://aws.amazon.com/government-education/research-and-technical-computing/cloud-credit-for-research/) program.
+
+- **Students**: up to **$5,000** in AWS credits.
+- **Faculty and staff**: award amounts vary by proposal (no fixed cap).
+- Applications are reviewed on a rolling basis; typical review cycles are 90–120 days.
+- Credits are valid for 1 year from issuance or until fully used.
+
+### Azure Research Credits
+
+Microsoft offers several credit programs for academic researchers:
+
+- **[Azure for Students](https://azure.microsoft.com/en-us/free/students/)**: **$100** in credits (12 months), no credit card required.
+- **[Azure Research Credits](https://www.microsoft.com/en-us/azure-academic-research/)**: Open to faculty and researchers for proof-of-concept, migration, or tool-building projects.
+- **[Internet2 Azure Accelerator Program](https://internet2.edu/)**: Up to **$5,000** in credits for research and education proposals (365-day expiration).
+
 ### Google Cloud Skills Boost
 
 UW-Madison has a limited number of seats for [Google Cloud Skills Boost](https://www.cloudskillsboost.google/). Contact the Public Cloud Team at [cloud-services@cio.wisc.edu](mailto:cloud-services@cio.wisc.edu) to request access.
