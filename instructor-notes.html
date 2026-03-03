@@ -427,10 +427,44 @@
 <ul>
 <li>Confirm whether you are using a <strong>shared GCP project</strong>
 or asking learners to use <strong>Free Tier</strong> accounts.</li>
-<li>If using a shared project, add all learner Google accounts to the
-project with appropriate IAM roles (at minimum:
+<li>If using a shared project (the standard approach at UW-Madison via
+RCI and ML+X), the recommended onboarding procedure is:
+<ol style="list-style-type: decimal">
+<li>
+<strong>Create or reuse a Google Group</strong> (e.g.,
+<code>mlm-workshop-2025@googlegroups.com</code>) that has the necessary
+IAM roles on the shared project (at minimum:
 <code>Vertex AI User</code>, <code>Storage Object Admin</code>,
 <code>Compute Viewer</code>).</li>
+<li>
+<strong>Add learner Google accounts to the group</strong> — either
+by collecting emails in advance via a registration form or by adding
+them during a pre-workshop session.</li>
+<li>
+<strong>Allow time for IAM propagation.</strong> After adding a
+member to a Google Group, it can take <strong>5–15 minutes</strong>
+(occasionally up to an hour) for GCP to recognize the new membership and
+grant access. Plan accordingly:
+<ul>
+<li>
+<strong>Ideal:</strong> Add all learners <strong>the day
+before</strong> the workshop so access is ready by start time.</li>
+<li>
+<strong>If adding day-of:</strong> Do it at least 15–30 minutes
+before the first hands-on episode (episode 02). Use the introduction
+episode to fill time while permissions propagate.</li>
+</ul>
+</li>
+<li>
+<strong>Verify access</strong> by having at least one test account
+confirm they can see the shared project in the Cloud Console before the
+workshop begins.</li>
+<li>
+<strong>After the workshop</strong>, you can remove learners from
+the group (or delete it) to revoke access cleanly without touching
+individual IAM bindings.</li>
+</ol>
+</li>
 <li>Verify GPU quota in the workshop region (<code>us-central1</code>).
 Request increases for <code>NVIDIA_TESLA_T4</code> if needed — quota
 requests can take 1–3 business days.</li>
@@ -535,6 +569,12 @@ hours</strong></td>
 <h3 id="common-issues">Common issues<a class="anchor" aria-label="anchor" href="#common-issues"></a>
 </h3>
 <ul>
+<li>
+<strong>“I can’t see the project”</strong>: If a learner was just
+added to the Google Group, IAM propagation may still be in progress.
+Have them wait 5–15 minutes, try an incognito/private browser window,
+and confirm they are logged into the correct Google account (not a
+personal Gmail if the group expects a university account).</li>
 <li>
 <strong>Bucket permission errors</strong>: The most common blocker.
 Have the <code>gcloud storage buckets add-iam-policy-binding</code>
