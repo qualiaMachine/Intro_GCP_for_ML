@@ -40,7 +40,7 @@ The [Cloud Computing Pilot](https://rsp.wisc.edu/proposalprep/cloudComputeInfo.c
 
 ### NIH STRIDES Initiative
 
-NIH-funded researchers get additional cloud discounts through the [STRIDES Initiative](https://kb.wisc.edu/109813). The UW cloud team can transition accounts in or out of STRIDES at any time with no data migration.
+NIH-funded researchers get negotiated pricing on GCP, AWS, and Azure services through the [STRIDES Initiative](https://kb.wisc.edu/109813). Discounts are provided via program resellers (Carahsoft for GCP, Four Points Technology for AWS) and vary by service — exact rates are shared through [STRIDES price tables](https://cloud.nih.gov/) rather than published publicly. The UW cloud team can transition accounts in or out of STRIDES at any time with no data migration. Contact [STRIDES@nih.gov](mailto:STRIDES@nih.gov) for pricing details.
 
 ### Google Cloud Research Credits
 
