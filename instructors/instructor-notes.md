@@ -6,7 +6,14 @@ title: 'Instructor Notes'
 
 ### Account setup (1–2 weeks prior)
 - Confirm whether you are using a **shared GCP project** or asking learners to use **Free Tier** accounts.
-- If using a shared project, add all learner Google accounts to the project with appropriate IAM roles (at minimum: `Vertex AI User`, `Storage Object Admin`, `Compute Viewer`).
+- If using a shared project (the standard approach at UW-Madison via RCI and ML+X), the recommended onboarding procedure is:
+  1. **Create or reuse a Google Group** (e.g., `mlm-workshop-2025@googlegroups.com`) that has the necessary IAM roles on the shared project (at minimum: `Vertex AI User`, `Storage Object Admin`, `Compute Viewer`).
+  2. **Add learner Google accounts to the group** — either by collecting emails in advance via a registration form or by adding them during a pre-workshop session.
+  3. **Allow time for IAM propagation.** After adding a member to a Google Group, it can take **5–15 minutes** (occasionally up to an hour) for GCP to recognize the new membership and grant access. Plan accordingly:
+     - **Ideal:** Add all learners **the day before** the workshop so access is ready by start time.
+     - **If adding day-of:** Do it at least 15–30 minutes before the first hands-on episode (episode 02). Use the introduction episode to fill time while permissions propagate.
+  4. **Verify access** by having at least one test account confirm they can see the shared project in the Cloud Console before the workshop begins.
+  5. **After the workshop**, you can remove learners from the group (or delete it) to revoke access cleanly without touching individual IAM bindings.
 - Verify GPU quota in the workshop region (`us-central1`). Request increases for `NVIDIA_TESLA_T4` if needed — quota requests can take 1–3 business days.
 - Send a pre-workshop email with setup instructions (GitHub account, GCP access, data download).
 
@@ -35,6 +42,7 @@ The lesson is designed for roughly **5 hours** of instruction (including short b
 | **Total** | **~290 min** | **~4 hr 50 min, leaving room for breaks to fill 5 hours** |
 
 ### Common issues
+- **"I can't see the project"**: If a learner was just added to the Google Group, IAM propagation may still be in progress. Have them wait 5–15 minutes, try an incognito/private browser window, and confirm they are logged into the correct Google account (not a personal Gmail if the group expects a university account).
 - **Bucket permission errors**: The most common blocker. Have the `gcloud storage buckets add-iam-policy-binding` commands ready to paste into Cloud Shell.
 - **VM creation stuck**: If a Workbench Instance gets stuck in "Provisioning" for >5 min, try a different zone in the same region.
 - **GPU quota exceeded**: If T4 quota is unavailable, fall back to CPU-only training for episodes 07–08. The lesson works without GPUs — it just takes longer.
