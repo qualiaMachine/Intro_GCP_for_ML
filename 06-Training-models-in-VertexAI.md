@@ -1,7 +1,7 @@
 ---
 title: "Training Models in Vertex AI: Intro"
 teaching: 25
-exercises: 5
+exercises: 15
 ---
 
 :::::::::::::::::::::::::::::::::::::: questions 
@@ -50,7 +50,7 @@ LAST_NAME = "DOE" # ADJUST to your last name or name
 print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 ```
 
-## Testing train.py locally in the notebook
+## Testing train_xgboost.py locally in the notebook
 
 Before submitting a managed training job to Vertex AI, let's first examine and test the training script on our notebook VM. This ensures the code runs without errors before we spend money on cloud compute.
 
@@ -77,7 +77,7 @@ After reviewing, discuss any questions or observations with your group.
 
 ### Solution
 
-1. **Data preprocessing**: The script fills missing values (`Age` with median, `Embarked` with mode), maps categorical fields to numeric (`Sex` → {male:1, female:0}, `Embarked` → {S:0, C:1, Q:2}), and drops non-predictive columns (`Name`, `Ticket`, `Cabin`).
+1. **Data preprocessing**: The script fills missing values (`Age` with median, `Embarked` with mode), maps categorical fields to numeric (`Sex` → {male:1, female:0}, `Embarked` → {S:0, C:1, Q:2}), and drops non-predictive columns (`PassengerId`, `Name`, `Ticket`, `Cabin`).
 2. **Training function**: `train_model()` constructs and fits an XGBoost model with the provided parameters and prints wall-clock training time. Timing helps compare runs and make sensible scaling choices.
 3. **Command-line arguments**: `argparse` lets you set hyperparameters and file paths without editing code (e.g., `--max_depth`, `--eta`, `--num_round`, `--train`). To change rounds:  `python train_xgboost.py --num_round 200`
 4. **Handling local vs. GCP runs**:  
@@ -89,39 +89,23 @@ After reviewing, discuss any questions or observations with your group.
 :::::::::::::::::::::::::::::::::::::::
 
 
-Before scaling training jobs onto managed resources, it's essential to test your training script locally. This prevents wasting GPU/TPU time on bugs or misconfigured code.  
+Before scaling training jobs onto managed resources, it's essential to test your training script locally. This prevents wasting GPU/TPU time on bugs or misconfigured code. Skipping these checks can lead to silent data bugs, runtime blowups at scale, inefficient experiments, or broken model artifacts.
 
-### Guidelines for testing ML pipelines before scaling
+### Sanity checks before scaling
 
-- **Run tests locally first** with small datasets.  
-- **Use a subset of your dataset** (1–5%) for fast checks.  
-- **Start with minimal compute** before moving to larger accelerators.  
-- **Log key metrics** such as loss curves and runtimes.  
-- **Verify correctness first** before scaling up.  
-
-
-### What tests should we do before scaling?  
-
-Before scaling to multiple or more powerful instances (e.g., GPUs or TPUs), it's important to run a few sanity checks. Skipping these can lead to: silent data bugs, runtime blowups at scale, inefficient experiments, or broken model artifacts.  
-
-Here is a non-exhaustive list of suggested tests to perform before scaling up your compute needs.
-
-- **Reproducibility** - do you get the same result each time you run your code? If not, set seeds controlling randomness.
-- **Data loads correctly** – dataset loads without errors, expected columns exist, missing values handled.  
-- **Overfitting check** – train on a tiny dataset (e.g., 100 rows). If it doesn't overfit, something is off.  
-- **Loss behavior** – verify training loss decreases and doesn't diverge.  
-- **Runtime estimate** – get a rough sense of training time on small data.  
-- **Memory estimate** – check approximate memory use.  
-- **Save & reload** – ensure model saves, reloads, and infers without errors.  
+- **Reproducibility** – Do you get the same result each time? If not, set seeds controlling randomness.
+- **Data loads correctly** – Dataset loads without errors, expected columns exist, missing values handled.
+- **Overfitting check** – Train on a tiny dataset (e.g., 100 rows). If it doesn't overfit, something is off.
+- **Loss behavior** – Verify training loss decreases and doesn't diverge.
+- **Runtime estimate** – Get a rough sense of training time on small data before committing to large compute.
+- **Memory estimate** – Check approximate memory use to choose the right machine type.
+- **Save & reload** – Ensure model saves, reloads, and infers without errors.
 
 
 ## Download data into notebook environment
 Sometimes it's helpful to keep a copy of data in your notebook VM for quick iteration, even though **GCS is the preferred storage location**. For example, downloading locally lets you test your training script without any GCS dependencies, making debugging faster. Once you've verified everything works, the actual Vertex AI job will read directly from GCS.
 
 ```python
-from google.cloud import storage
-
-client = storage.Client()
 bucket = client.bucket(BUCKET_NAME)
 
 blob = bucket.blob("titanic_train.csv")
@@ -130,7 +114,7 @@ blob.download_to_filename("/home/jupyter/titanic_train.csv")
 print("Downloaded titanic_train.csv")
 ```
 
-## Local test run of train.py
+## Local test run of train_xgboost.py
 
 **Outside of this workshop, you should run these kinds of tests on your local laptop or lab PC when possible.** We're using the Workbench VM here only for convenience in this workshop setting, but this does incur a small fee for our running VM. 
 
@@ -166,9 +150,9 @@ print(f"Total local runtime: {t.time() - start:.2f} seconds")
 
 ```
 
-Training on this small dataset should take <1 minute. Log runtime as a baseline.  You should see the following output file:
+Training on this small dataset should take <1 minute. Log runtime as a baseline. You should see the following output file:
 
-- `xgboost-model`  # Python-serialized XGBoost model (Booster) via joblib; load with joblib.load for reuse.
+- `xgboost-model` — Serialized XGBoost model (Booster) via joblib; load with `joblib.load()` for reuse.
 
 ## Evaluate the trained model on validation data
 
@@ -192,6 +176,10 @@ print("Downloaded titanic_test.csv")
 ```
 
 Then, we apply the same preprocessing function used by our training script before applying the model to our data.
+
+> **Note:** The `import` below treats the repo as a Python package. This works because we cloned the repo into `/home/jupyter/` and the directory contains an `__init__.py`. If you get an `ImportError`, make sure your working directory is `/home/jupyter/` (run `%cd /home/jupyter/` first).
+
+> **Note on test data:** The training script internally splits its input data 80/20 for training and validation. The `titanic_test.csv` file we use here is a **separate, held-out test set** that was never seen during training — not even by the internal validation split. This gives us an unbiased measure of model performance.
 
 ```python
 import pandas as pd
@@ -219,7 +207,24 @@ acc = accuracy_score(y_test, y_pred_binary)
 print(f"Test accuracy: {acc:.3f}")
 ```
 
-   
+You should see test accuracy in the range of **0.78–0.82**. If accuracy is significantly lower, double-check that the test data downloaded correctly and that the preprocessing matches the training script.
+
+::::::::::::::::::::::::::::::::::::::: challenge
+
+### Experiment with hyperparameters
+
+Try changing `NUM_ROUND` to `200` and re-running the local training and evaluation cells above. Does accuracy improve? How does the runtime change? Then try `MAX_DEPTH = 6`. What happens to accuracy — does the model improve, or does it start overfitting?
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::: solution
+
+### Solution
+
+Increasing `NUM_ROUND` from 100 to 200 may marginally improve accuracy but roughly doubles runtime. Increasing `MAX_DEPTH` from 3 to 6 lets trees capture more complex patterns but can lead to overfitting on a small dataset like Titanic — you may see training accuracy increase while test accuracy stays flat or drops. This is why testing hyperparameters locally before scaling is important.
+
+:::::::::::::::::::::::::::::::::::::::
+
 ## Training via Vertex AI custom training job
 Unlike "local" training using our notebook's VM, this next approach launches a **managed training job** that runs on scalable compute. Vertex AI handles provisioning, scaling, logging, and saving outputs to GCS.  
 
@@ -247,7 +252,9 @@ print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}\nartif
 aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}/.vertex_staging")
 ```
 
-This next section defines a custom training job in Vertex AI, specifying how and where the training code will run.  It points to your training script (`train_xgboost.py`), uses Google's prebuilt XGBoost training container image, and installs any extra dependencies your script needs (in this case, `google-cloud-storage` for accessing GCS).  The `display_name` sets a readable name for tracking the job in the Vertex AI console.
+This next section defines a custom training job in Vertex AI, specifying how and where the training code will run. It points to your training script (`train_xgboost.py`), uses Google's prebuilt XGBoost training container image (which already includes common dependencies like `google-cloud-storage`), and sets a `display_name` for tracking the job in the Vertex AI console.
+
+> **Tip:** If your script needs packages not included in the prebuilt container, you can pass a `requirements` list to `CustomTrainingJob` (e.g., `requirements=["scikit-learn>=1.3"]`).
 
 #### Prebuilt containers for training
 Vertex AI provides prebuilt Docker container images for model training. These containers are organized by machine learning frameworks and framework versions and include common dependencies that you might want to use in your training code. To learn more about prebuilt training containers, see [Prebuilt containers for custom training](https://docs.cloud.google.com/vertex-ai/docs/training/pre-built-containers).
@@ -261,7 +268,7 @@ job = aiplatform.CustomTrainingJob(
 )
 ```
 
-Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier. **We won't be charged for our selected `MACHINE` until we run the below code using `job.run()`.** This marks the point when our script actually begins executing remotely on the Vertex training infrastructure. Once `job.run()` is called, Vertex handles packaging your training script, transferring it to the managed training environment, provisioning the requested compute instance, and monitoring the run. The job's status and logs can be viewed directly in the Vertex AI Console under Training → Custom jobs.
+Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier. **We won't be charged for our selected `MACHINE` until we run the below code using `job.run()`.** For an `n1-standard-4` running 2–5 minutes, expect a cost of roughly **$0.01–$0.02** — negligible, but good to be aware of as you scale to larger machines. This marks the point when our script actually begins executing remotely on the Vertex training infrastructure. Once `job.run()` is called, Vertex handles packaging your training script, transferring it to the managed training environment, provisioning the requested compute instance, and monitoring the run. The job's status and logs can be viewed directly in the Vertex AI Console under Training → Custom jobs.
 
 If you need to cancel or modify a job mid-run, you can do so from the console or via the SDK by calling job.cancel(). When the job completes, Vertex automatically tears down the compute resources so you only pay for the active training time.
 
@@ -307,9 +314,21 @@ In our setup, we're intentionally using the simpler **CustomTrainingJob** path. 
 3. Click on your job name to see status, logs, and output model artifacts.  
 4. Cancel jobs from the console if needed (be careful not to stop jobs you don't own in shared projects).
 
-#### Visit "training pipelines" to verify it's running.
+#### Visit the console to verify it's running.
 
-https://console.cloud.google.com/vertex-ai/training/training-pipelines?hl=en&project=doit-rci-mlm25-4626 <!-- replace project ID with your own if not using the shared workshop project -->
+Navigate to **Vertex AI > Training > Custom Jobs** in the [Google Cloud Console](https://console.cloud.google.com/vertex-ai/training/custom-jobs) to view your running or completed jobs.
+
+### If your job fails
+
+Job failures are common when first getting started. Here's how to debug:
+
+1. **Check the logs first.** In the Console, click your job name → **Logs** tab. The error message is usually near the bottom.
+2. **Common failure modes:**
+   - **Quota exceeded** — Your project may not have enough quota for the requested machine type. Check **IAM & Admin > Quotas**.
+   - **Script error** — A bug in your training script. The traceback will appear in the logs. Fix the bug and re-run locally before resubmitting.
+   - **Wrong container** — Mismatched framework version or CPU/GPU container. Verify your `container_uri`.
+   - **Permission denied on GCS** — The training service account can't access your bucket. Check bucket permissions.
+3. **Re-test locally** with the same arguments before resubmitting to avoid burning compute time on the same error.
 
 ## Training artifacts
 
@@ -317,7 +336,6 @@ After the training run completes, we can manually view our bucket using the Goog
 
 ```python
 total_size_bytes = 0
-# bucket = client.bucket(BUCKET_NAME)
 
 for blob in client.list_blobs(BUCKET_NAME):
     total_size_bytes += blob.size
@@ -343,26 +361,22 @@ Now let's verify that the model produced by our Vertex AI job performs identical
 
 ```python
 import io
-# Load test data directly into memory
+
+# Load test data directly from GCS into memory
 bucket = client.bucket(BUCKET_NAME)
 blob = bucket.blob("titanic_test.csv")
 test_df = pd.read_csv(io.BytesIO(blob.download_as_bytes()))
 
-
 # Apply same preprocessing logic used during training
 X_test, y_test = preprocess_data(test_df)
 
-# -------------------------
-# 4. Load the model artifact we just pulled from GCS
-# -------------------------
+# Load the model artifact from GCS
 MODEL_BLOB_PATH = f"artifacts/xgb/{RUN_ID}/model/xgboost-model"
 model_blob = bucket.blob(MODEL_BLOB_PATH)
 model_bytes = model_blob.download_as_bytes()
 model = joblib.load(io.BytesIO(model_bytes))
 
-# -------------------------
-# 5. Run predictions and compute accuracy
-# -------------------------
+# Run predictions and compute accuracy
 dtest = xgb.DMatrix(X_test)
 y_pred_prob = model.predict(dtest)
 y_pred = (y_pred_prob >= 0.5).astype(int)
@@ -371,26 +385,55 @@ acc = accuracy_score(y_test, y_pred)
 print(f"Test accuracy (model from Vertex job): {acc:.3f}")
 ```
 
-### When training takes too long  
+::::::::::::::::::::::::::::::::::::::: challenge
 
-Two main options in Vertex AI:  
+### Compare local vs. Vertex AI accuracy
 
-**Option 1: Upgrade to more powerful machine types**  
-- The simplest way to reduce training time is to use a larger machine or add GPUs (e.g., T4, V100, A100).  
-- This works best for small or medium datasets (<10 GB) and avoids the coordination overhead of distributed training.  
-- GPUs and TPUs can accelerate deep learning workloads significantly.  
+Compare the test accuracy from your local training run with the accuracy from the Vertex AI job. Are they the same? Why or why not?
 
-**Option 2: Use distributed training with multiple replicas**  
-- Vertex AI supports distributed training for many frameworks.  
-- The dataset is split across replicas, each training a portion of the data with synchronized gradient updates.  
-- This approach is most useful for large datasets and long-running jobs.  
+:::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-**When distributed training makes sense**  
-- Dataset size exceeds 10–50 GB.  
-- Training on a single machine takes more than 10 hours.  
-- The model is a deep learning workload that scales naturally across GPUs or TPUs.  
+::::::::::::::::::::::::::::::::::::::: solution
 
-We will explore both options more in depth in the next episode when we train a neural network.
+### Solution
+
+The two accuracy values should be very close or identical. Both runs execute the same `train_xgboost.py` script with the same hyperparameters and the same data. XGBoost's `binary:logistic` objective is deterministic given the same input, so the models should produce matching predictions. If they differ, check that you used the same hyperparameter values in both runs and that the data in GCS matches the local copy.
+
+:::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::: challenge
+
+### Explore job logs in the Console
+
+Navigate to **Vertex AI > Training > Custom Jobs** in the Google Cloud Console. Find your most recent job and click on it. Can you locate:
+
+1. The **Logs** tab showing your script's `print()` output?
+2. The training time printed by `train_model()`?
+3. The output artifact path?
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::: solution
+
+### Solution
+
+1. Click your job name, then select the **Logs** tab (or **View logs** link). Your script's `print()` statements — including train/val sizes, training time, and model save path — appear in the log stream.
+2. Look for the line `Training time: X.XX seconds` in the logs. This comes from the `train_model()` function in `train_xgboost.py`.
+3. The artifact path is shown in the log line `Model saved to gs://...` and also appears in the job details panel under output configuration.
+
+:::::::::::::::::::::::::::::::::::::::
+
+### Looking ahead: when training takes too long
+
+The Titanic dataset is tiny, so our job finishes in minutes. In your real work, you'll encounter datasets and models where a single training run takes hours or days. When that happens, Vertex AI gives you two main levers:
+
+**Option 1: Upgrade to more powerful machine types**
+- Use a larger machine or add GPUs (e.g., T4, V100, A100). This is the simplest approach and works well for datasets under ~10 GB.
+
+**Option 2: Use distributed training with multiple replicas**
+- Split the dataset across replicas with synchronized gradient updates. This becomes worthwhile when datasets exceed 10–50 GB or single-machine training takes more than 10 hours.
+
+We'll explore both options hands-on in the next episode when we train a PyTorch neural network with GPU acceleration.
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
