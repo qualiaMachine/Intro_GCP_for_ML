@@ -39,3 +39,14 @@ This glossary covers the GCP and ML terms used in this workshop. You don't need 
 * **Hyperparameter Tuning Job**: A Vertex AI service that searches for the best model configuration by running multiple trials with different hyperparameter sets.
 * **Model Registry**: Stores trained models for versioning, deployment, and comparison across experiments.
 * **Endpoint**: A deployed model that serves predictions through Vertex AI Prediction.
+
+
+### Retrieval-Augmented Generation (RAG)
+
+* **Retrieval-Augmented Generation (RAG)**: A pattern where an LLM answers questions by first retrieving relevant passages from a corpus, then generating a response grounded in those passages. This reduces hallucination and allows citation of sources.
+* **Chunking**: The process of breaking a large document into smaller, overlapping text segments so that each segment can be independently embedded and retrieved. Common strategies include fixed-character, sentence-level, and paragraph-level chunking.
+* **Embedding**: A dense numerical vector (array of floats) that represents the semantic meaning of a piece of text. Texts with similar meanings produce vectors that are close together in the embedding space, enabling search by meaning rather than exact keywords.
+* **Vector Similarity / Cosine Similarity**: A measure of how similar two embedding vectors are. Cosine similarity ranges from -1 (opposite) to 1 (identical direction). In RAG, it's used to rank which corpus chunks are most relevant to a user's query.
+* **Nearest Neighbors**: An algorithm that finds the data points (embeddings) closest to a given query point in vector space. Used in RAG to retrieve the top-k most relevant chunks for a user's question.
+* **Grounding**: The practice of constraining an LLM's response to information present in the retrieved context, rather than allowing it to generate answers from its general training data. Grounding reduces hallucination and improves factual accuracy.
+* **Task Type (Embedding)**: A parameter passed to embedding models like `gemini-embedding-001` that tells the model to optimize its output for a specific use case. Common values: `RETRIEVAL_DOCUMENT` (for corpus text being indexed) and `RETRIEVAL_QUERY` (for user questions being searched).
