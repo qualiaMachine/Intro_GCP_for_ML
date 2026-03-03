@@ -119,11 +119,11 @@
   Intro to Google Cloud Platform (GCP) for Machine Learning
 </div>
 
-<aside class="col-md-12 lesson-progress"><div style="width: 27%" class="percentage">
-    27%
+<aside class="col-md-12 lesson-progress"><div style="width: 31%" class="percentage">
+    31%
   </div>
   <div class="progress incubator">
-    <div class="progress-bar incubator" role="progressbar" style="width: 27%" aria-valuenow="27" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar incubator" role="progressbar" style="width: 31%" aria-valuenow="31" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
     </div>
   </div>
 </aside><div class="container">
@@ -372,7 +372,7 @@ a Vertex AI notebook</a></li>
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Using a GitHub Personal Access Token (PAT) to Push/Pull from a Vertex AI Notebook</h1>
-        <p>Last updated on 2025-10-24 |
+        <p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/05-Interacting-with-code-repo.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -412,6 +412,23 @@ Personal Access Token (PAT) for HTTPS-based authentication.<br></li>
 better version control practices in collaborative projects.</li>
 </ul></div>
 </div>
+</div>
+</div>
+</div>
+<div id="this-episode-is-optional-in-live-workshops" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="this-episode-is-optional-in-live-workshops" class="callout-inner">
+<h3 class="callout-title">This episode is optional in live
+workshops</h3>
+<div class="callout-content">
+<p>If you’re short on time, this episode can be skipped during a live
+session. It is most useful for learners who are newer to Git or haven’t
+used a Personal Access Token before. In a live workshop, the instructor
+may choose to skip ahead to the next episode and point learners here as
+a self-guided reference.</p>
 </div>
 </div>
 </div>
@@ -471,6 +488,11 @@ it or expose it in your code. Use a password manager to store it.</p>
 </div>
 <div class="section level4">
 <h4 id="use-getpass-to-prompt-for-username-and-pat">Use <code>getpass</code> to prompt for username and PAT<a class="anchor" aria-label="anchor" href="#use-getpass-to-prompt-for-username-and-pat"></a></h4>
+<p>We use Python’s <code>getpass</code> module to securely prompt for
+the PAT. Unlike <code>input()</code>, which displays what you type on
+screen, <code>getpass.getpass()</code> hides the typed characters — so
+your token won’t be visible in the notebook output or to anyone watching
+your screen.</p>
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -483,7 +505,10 @@ it or expose it in your code. Use a password manager to store it.</p>
 <p>This way credentials aren’t hard-coded into your notebook.</p>
 </div>
 </section><section><h2 class="section-heading" id="step-2-configure-git-settings">Step 2: Configure Git settings<a class="anchor" aria-label="anchor" href="#step-2-configure-git-settings"></a></h2>
-<hr class="half-width"><div class="codewrapper sourceCode" id="cb3">
+<hr class="half-width"><p>Before making commits, tell Git who you are. These settings are
+stored globally on the VM and will persist until the instance is
+deleted.</p>
+<div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="op">!</span>git config <span class="op">--</span><span class="kw">global</span> user.name <span class="st">"Your Name"</span> </span>
@@ -501,7 +526,11 @@ are linked to your profile.</li>
 with cleaner version control. Notebooks store outputs and metadata,
 which makes diffs noisy. <code>.py</code> files are lighter and easier
 to review.</p>
-<ol style="list-style-type: decimal"><li>Install Jupytext.<br></li>
+<p>Jupytext is a tool that converts between notebook formats
+(<code>.ipynb</code>) and plain-text formats (<code>.py</code>,
+<code>.md</code>). It preserves cell structure while stripping out the
+binary output data that clutters Git diffs.</p>
+<ol style="list-style-type: decimal"><li>Install Jupytext.</li>
 </ol><div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -525,7 +554,10 @@ to review.</p>
 <span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Converted </span><span class="sc">{</span>nb<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>pyfile<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
 </div>
 </section><section><h2 class="section-heading" id="step-4-add-and-commit--py-files">Step 4: Add and commit <code>.py</code> files<a class="anchor" aria-label="anchor" href="#step-4-add-and-commit--py-files"></a></h2>
-<hr class="half-width"><div class="codewrapper sourceCode" id="cb7">
+<hr class="half-width"><p>Now stage and commit the converted <code>.py</code> files. Make sure
+you’re in the root of your cloned repository before running these
+commands.</p>
+<div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="op">%</span>cd <span class="op">/</span>home<span class="op">/</span>jupyter<span class="op">/</span>your<span class="op">-</span>repo</span>
@@ -601,7 +633,7 @@ Vertex AI Workbench?<br></li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul><li>PATs with HTTPS are easier to set up in temporary environments where
 SSH configs don’t persist.<br></li>
@@ -694,8 +726,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/05-Interacting-with-code-repo.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/05-Interacting-with-code-repo.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2025-10-24",
-  "datePublished": "2026-03-02"
+  "dateModified": "2026-03-03",
+  "datePublished": "2026-03-03"
 }
 
   </script><script>

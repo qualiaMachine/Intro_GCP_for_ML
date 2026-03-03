@@ -119,11 +119,11 @@
   Intro to Google Cloud Platform (GCP) for Machine Learning
 </div>
 
-<aside class="col-md-12 lesson-progress"><div style="width: 37%" class="percentage">
-    37%
+<aside class="col-md-12 lesson-progress"><div style="width: 38%" class="percentage">
+    38%
   </div>
   <div class="progress incubator">
-    <div class="progress-bar incubator" role="progressbar" style="width: 37%" aria-valuenow="37" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar incubator" role="progressbar" style="width: 38%" aria-valuenow="38" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
     </div>
   </div>
 </aside><div class="container">
@@ -371,7 +371,7 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Training Models in Vertex AI: Intro</h1>
-        <p>Last updated on 2026-03-02 |
+        <p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/06-Training-models-in-VertexAI.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -457,7 +457,10 @@ region close to your data).</li>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="testing-train-py-locally-in-the-notebook">Testing train.py locally in the notebook<a class="anchor" aria-label="anchor" href="#testing-train-py-locally-in-the-notebook"></a></h2>
-<hr class="half-width"><div id="understanding-the-xgboost-training-script-gcp-version" class="callout discussion">
+<hr class="half-width"><p>Before submitting a managed training job to Vertex AI, let’s first
+examine and test the training script on our notebook VM. This ensures
+the code runs without errors before we spend money on cloud compute.</p>
+<div id="understanding-the-xgboost-training-script-gcp-version" class="callout discussion">
 <div class="callout-square">
 <i class="callout-icon" data-feather="message-circle"></i>
 </div>
@@ -503,7 +506,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>Data preprocessing</strong>: The script fills missing values
@@ -604,7 +607,10 @@ and infers without errors.</li>
 </section><section><h2 class="section-heading" id="download-data-into-notebook-environment">Download data into notebook environment<a class="anchor" aria-label="anchor" href="#download-data-into-notebook-environment"></a></h2>
 <hr class="half-width"><p>Sometimes it’s helpful to keep a copy of data in your notebook VM for
 quick iteration, even though <strong>GCS is the preferred storage
-location</strong>.</p>
+location</strong>. For example, downloading locally lets you test your
+training script without any GCS dependencies, making debugging faster.
+Once you’ve verified everything works, the actual Vertex AI job will
+read directly from GCS.</p>
 <div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -889,7 +895,12 @@ will appear under <code>.vertex_staging/</code> and can be safely
 ignored or auto-deleted via lifecycle rules.</p>
 </div>
 </section><section><h2 class="section-heading" id="evaluate-the-trained-model-stored-on-gcs">Evaluate the trained model stored on GCS<a class="anchor" aria-label="anchor" href="#evaluate-the-trained-model-stored-on-gcs"></a></h2>
-<hr class="half-width"><div class="codewrapper sourceCode" id="cb13">
+<hr class="half-width"><p>Now let’s verify that the model produced by our Vertex AI job
+performs identically to the one we trained locally. This time, instead
+of loading from the local disk, we’ll load both the test data and model
+artifact directly from GCS into memory — the recommended approach for
+production workflows.</p>
+<div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="im">import</span> io</span>
@@ -1036,8 +1047,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/06-Training-models-in-VertexAI.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/06-Training-models-in-VertexAI.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-03-02",
-  "datePublished": "2026-03-02"
+  "dateModified": "2026-03-03",
+  "datePublished": "2026-03-03"
 }
 
   </script><script>

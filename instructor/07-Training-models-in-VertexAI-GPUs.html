@@ -119,11 +119,11 @@
   Intro to Google Cloud Platform (GCP) for Machine Learning
 </div>
 
-<aside class="col-md-12 lesson-progress"><div style="width: 46%" class="percentage">
-    46%
+<aside class="col-md-12 lesson-progress"><div style="width: 48%" class="percentage">
+    48%
   </div>
   <div class="progress incubator">
-    <div class="progress-bar incubator" role="progressbar" style="width: 46%" aria-valuenow="46" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar incubator" role="progressbar" style="width: 48%" aria-valuenow="48" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
     </div>
   </div>
 </aside><div class="container">
@@ -370,7 +370,7 @@ test</a></li>
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Training Models in Vertex AI: PyTorch Example</h1>
-        <p>Last updated on 2026-03-02 |
+        <p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/07-Training-models-in-VertexAI-GPUs.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -424,7 +424,7 @@ training is (not) worth it.</li>
 <hr class="half-width"><div class="section level4">
 <h4 id="open-pre-filled-notebook">1. Open pre-filled notebook<a class="anchor" aria-label="anchor" href="#open-pre-filled-notebook"></a></h4>
 <p>Navigate to
-<code>/Intro_GCP_for_ML/notebooks/06-Training-models-in-VertexAI-GPUs.ipynb</code>
+<code>/Intro_GCP_for_ML/notebooks/07-Training-models-in-VertexAI-GPUs.ipynb</code>
 to begin this notebook. Select the <em>PyTorch</em> environment (kernel)
 Local PyTorch is only needed for local tests. Your <em>Vertex AI
 job</em> uses the container specified by <code>container_uri</code>
@@ -651,6 +651,9 @@ reproducible!</strong></p>
 </div>
 <div class="section level3">
 <h3 id="evaluate-the-locally-trained-model-on-the-validation-data">Evaluate the locally trained model on the validation data<a class="anchor" aria-label="anchor" href="#evaluate-the-locally-trained-model-on-the-validation-data"></a></h3>
+<p>Let’s load the model we just trained and run it against the
+validation set. This confirms the saved weights produce the expected
+accuracy before we move to cloud training.</p>
 <div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -769,8 +772,9 @@ you don’t own in shared projects).</li>
 <span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>total_size_mb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)</span>
 <span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
 </div>
-<p><strong>What you’ll see in
-<code>gs://…/artifacts/pytorch/&lt;RUN_ID&gt;/</code>:</strong></p>
+<p>After the job completes, your training script writes several output
+files to the GCS artifact directory. Here’s what you’ll find in
+<code>gs://…/artifacts/pytorch/&lt;RUN_ID&gt;/</code>:</p>
 <ul><li>
 <code>model.pt</code> — PyTorch weights
 (<code>state_dict</code>).</li>
@@ -947,6 +951,9 @@ parameters.</p>
 <span id="cb16-66"><a href="#cb16-66" tabindex="-1"></a></span>
 <span id="cb16-67"><a href="#cb16-67" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
+<p>Just as we did for the CPU job, let’s evaluate the GPU-trained model
+to confirm it produces the same accuracy. We load the model weights
+directly from GCS into memory.</p>
 <div class="codewrapper sourceCode" id="cb17">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -981,10 +988,13 @@ parameters.</p>
 <span id="cb17-29"><a href="#cb17-29" tabindex="-1"></a><span class="co"># !ls</span></span>
 <span id="cb17-30"><a href="#cb17-30" tabindex="-1"></a><span class="co"># # rebuild model and load weights</span></span>
 <span id="cb17-31"><a href="#cb17-31" tabindex="-1"></a><span class="co"># m = TitanicNet()</span></span>
-<span id="cb17-32"><a href="#cb17-32" tabindex="-1"></a><span class="co"># state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")  </span></span>
+<span id="cb17-32"><a href="#cb17-32" tabindex="-1"></a><span class="co"># state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")</span></span>
 <span id="cb17-33"><a href="#cb17-33" tabindex="-1"></a><span class="co"># m.load_state_dict(state)</span></span>
 <span id="cb17-34"><a href="#cb17-34" tabindex="-1"></a><span class="co"># m.eval()</span></span></code></pre>
 </div>
+<p>With the model loaded, we run predictions on the validation set and
+compute accuracy. Because we set random seeds in
+<code>train_nn.py</code>, this should match the CPU job’s accuracy.</p>
 <div class="codewrapper sourceCode" id="cb18">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -997,10 +1007,13 @@ parameters.</p>
 <span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a></span>
 <span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Vertex model val accuracy: </span><span class="sc">{</span>acc<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
-<p>GPU tips: - On small problems, GPU startup/transfer overhead can
-erase speedups—benchmark before you scale. - Stick to a single replica
-unless your batch sizes and dataset really warrant data parallelism.</p>
-</section><section><h2 class="section-heading" id="distributed-training-when-to-consider">Distributed training (when to consider)<a class="anchor" aria-label="anchor" href="#distributed-training-when-to-consider"></a></h2>
+<p>Keep these GPU considerations in mind when deciding whether to use
+GPU acceleration:</p>
+<ul><li>On small problems, GPU startup/transfer overhead can erase speedups
+— benchmark before you scale.</li>
+<li>Stick to a single replica unless your batch sizes and dataset really
+warrant data parallelism.</li>
+</ul></section><section><h2 class="section-heading" id="distributed-training-when-to-consider">Distributed training (when to consider)<a class="anchor" aria-label="anchor" href="#distributed-training-when-to-consider"></a></h2>
 <hr class="half-width"><ul><li>
 <strong>Data parallelism</strong> (DDP) helps when a single GPU is
 saturated by batch size/throughput. For most workshop‑scale models, a
@@ -1098,8 +1111,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/07-Training-models-in-VertexAI-GPUs.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/07-Training-models-in-VertexAI-GPUs.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-03-02",
-  "datePublished": "2026-03-02"
+  "dateModified": "2026-03-03",
+  "datePublished": "2026-03-03"
 }
 
   </script><script>

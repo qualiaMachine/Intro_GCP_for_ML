@@ -119,11 +119,11 @@
   Intro to Google Cloud Platform (GCP) for Machine Learning
 </div>
 
-<aside class="col-md-12 lesson-progress"><div style="width: 72%" class="percentage">
-    72%
+<aside class="col-md-12 lesson-progress"><div style="width: 76%" class="percentage">
+    76%
   </div>
   <div class="progress incubator">
-    <div class="progress-bar incubator" role="progressbar" style="width: 72%" aria-valuenow="72" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar incubator" role="progressbar" style="width: 76%" aria-valuenow="76" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
     </div>
   </div>
 </aside><div class="container">
@@ -373,13 +373,13 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Resource Management &amp; Monitoring on Vertex AI (GCP)</h1>
-        <p>Last updated on 2025-10-24 |
+        <p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/09-Resource-management-cleanup.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
 
 
-        <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 65 minutes</p>
+        <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 40 minutes</p>
 
         <div class="text-end">
           <button role="button" aria-pressed="false" tabindex="0" id="expand-code" class="pull-right" data-expand="Expand All Solutions " data-collapse="Collapse All Solutions "> Expand All Solutions <i aria-hidden="true" data-feather="plus"></i></button>
@@ -454,9 +454,12 @@ add up (rare in small workshops, real in prod).</li>
 bills in education/research settings.</p>
 </blockquote>
 </section><section><h2 class="section-heading" id="a-daily-shutdown-checklist-use-now-automate-later">A daily “shutdown checklist” (use now, automate later)<a class="anchor" aria-label="anchor" href="#a-daily-shutdown-checklist-use-now-automate-later"></a></h2>
-<hr class="half-width"><ol style="list-style-type: decimal"><li>
+<hr class="half-width"><p>Follow this checklist at the end of each working session to prevent
+surprise bills. These are the most common cost leaks in research and
+workshop environments.</p>
+<ol style="list-style-type: decimal"><li>
 <strong>Workbench notebooks</strong> — stop the runtime/instance
-when you’re done.<br></li>
+when you’re done.</li>
 <li>
 <strong>Custom/HPT jobs</strong> — confirm no jobs stuck in
 <code>RUNNING</code>.<br></li>
@@ -518,6 +521,12 @@ with them.</p>
 </section><section><h2 class="section-heading" id="cleaning-up-training-tuning-and-batch-jobs">Cleaning up training, tuning, and batch jobs<a class="anchor" aria-label="anchor" href="#cleaning-up-training-tuning-and-batch-jobs"></a></h2>
 <hr class="half-width"><div class="section level3">
 <h3 id="audit-with-cli">Audit with CLI<a class="anchor" aria-label="anchor" href="#audit-with-cli"></a></h3>
+<p>Use these commands to list all jobs in your region. Each command
+prints a table showing the job ID, display name, state (e.g.,
+<code>JOB_STATE_SUCCEEDED</code>, <code>JOB_STATE_RUNNING</code>,
+<code>JOB_STATE_FAILED</code>), and creation time. Look for any jobs
+stuck in <code>RUNNING</code> — those are still consuming resources and
+billing you.</p>
 <div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -545,7 +554,11 @@ rest to reduce console clutter and artifact storage.</p>
 </blockquote>
 </div>
 </section><section><h2 class="section-heading" id="undeploy-models-and-delete-endpoints-major-cost-pitfall">Undeploy models and delete endpoints (major cost pitfall)<a class="anchor" aria-label="anchor" href="#undeploy-models-and-delete-endpoints-major-cost-pitfall"></a></h2>
-<hr class="half-width"><div class="section level3">
+<hr class="half-width"><p>Deployed endpoints are billed per node-hour 24/7, even if no one is
+sending prediction requests. This makes forgotten endpoints one of the
+most expensive mistakes in GCP. Always undeploy models before deleting
+the endpoint itself.</p>
+<div class="section level3">
 <h3 id="find-endpoints-and-deployed-models">Find endpoints and deployed models<a class="anchor" aria-label="anchor" href="#find-endpoints-and-deployed-models"></a></h3>
 <div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -586,8 +599,16 @@ stale model versions to reduce storage.</p>
 <div class="section level3">
 <h3 id="lifecycle-policy-example">Lifecycle policy example<a class="anchor" aria-label="anchor" href="#lifecycle-policy-example"></a></h3>
 <p>Keep workshop artifacts tidy by auto‑deleting temporary outputs and
-capping old versions.</p>
-<ol style="list-style-type: decimal"><li>Save as <code>lifecycle.json</code>:</li>
+capping old versions. A lifecycle policy is a JSON configuration that
+tells GCS to automatically delete or transition objects based on rules
+you define. Below, we create two rules:</p>
+<ul><li>
+<strong>Rule 1</strong>: Delete any object under the
+<code>tmp/</code> prefix that is older than 7 days.</li>
+<li>
+<strong>Rule 2</strong>: If object versioning is enabled, keep only
+the 3 most recent versions and delete older ones.</li>
+</ul><ol style="list-style-type: decimal"><li>Save as <code>lifecycle.json</code>:</li>
 </ol><div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">JSON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -743,7 +764,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -775,7 +796,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -805,7 +826,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
@@ -900,8 +921,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/09-Resource-management-cleanup.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/09-Resource-management-cleanup.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2025-10-24",
-  "datePublished": "2026-03-02"
+  "dateModified": "2026-03-03",
+  "datePublished": "2026-03-03"
 }
 
   </script><script>

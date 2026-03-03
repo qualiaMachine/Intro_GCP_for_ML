@@ -119,11 +119,11 @@
   Intro to Google Cloud Platform (GCP) for Machine Learning
 </div>
 
-<aside class="col-md-12 lesson-progress"><div style="width: 91%" class="percentage">
-    91%
+<aside class="col-md-12 lesson-progress"><div style="width: 90%" class="percentage">
+    90%
   </div>
   <div class="progress incubator">
-    <div class="progress-bar incubator" role="progressbar" style="width: 91%" aria-valuenow="91" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar incubator" role="progressbar" style="width: 90%" aria-valuenow="90" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
     </div>
   </div>
 </aside><div class="container">
@@ -306,6 +306,7 @@
 <li><a href="#step-5-cost-summary">Step 5: Cost summary</a></li>
 <li><a href="#optional-hugging-face-local-substitution">(Optional) Hugging Face local substitution</a></li>
 <li><a href="#key-takeaways">Key takeaways</a></li>
+<li><a href="#whats-next">What’s next?</a></li>
         </ul></div><!--/div.accordion-body-->
     </div><!--/div.accordion-collapse-->
 
@@ -370,7 +371,7 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Retrieval-Augmented Generation (RAG) with Vertex AI</h1>
-        <p>Last updated on 2026-03-02 |
+        <p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/10-Retrieval-augmented-generation.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -452,7 +453,10 @@ Workbench, you can launch custom jobs that perform the embedding and
 generation steps. Start with a PyTorch image and add HuggingFace as a
 requirement.</p>
 </section><section><h2 class="section-heading" id="step-1-setup-environment">Step 1: Setup environment<a class="anchor" aria-label="anchor" href="#step-1-setup-environment"></a></h2>
-<hr class="half-width"><div class="codewrapper sourceCode" id="cb1">
+<hr class="half-width"><p>We need the <code>pypdf</code> library to extract text from PDF
+files. The <code>--quiet</code> flag suppresses verbose install output,
+and <code>--upgrade</code> ensures we have the latest version.</p>
+<div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">--</span>quiet <span class="op">--</span>upgrade pypdf</span></code></pre>
@@ -461,6 +465,12 @@ requirement.</p>
 billed for VM runtime.</p>
 <div class="section level3">
 <h3 id="initialize-project">Initialize project<a class="anchor" aria-label="anchor" href="#initialize-project"></a></h3>
+<p>We initialize two client libraries here because they serve different
+purposes. The <code>aiplatform</code> SDK (used in earlier episodes for
+training jobs) handles resource management, while the
+<code>vertexai</code> SDK provides access to Google’s foundation models
+(embeddings and Gemini). Both need to know your project ID and
+region.</p>
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -477,7 +487,13 @@ billed for VM runtime.</p>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="step-2-extract-and-chunk-pdfs">Step 2: Extract and chunk PDFs<a class="anchor" aria-label="anchor" href="#step-2-extract-and-chunk-pdfs"></a></h2>
-<hr class="half-width"><div class="codewrapper sourceCode" id="cb3">
+<hr class="half-width"><p>Before we can search our documents, we need to break them into
+smaller pieces (“chunks”). LLMs have limited context windows and
+embedding models work best on passages rather than entire papers. The
+code below extracts text from each PDF and splits it into overlapping
+chunks of ~1,200 characters. The overlap ensures that sentences at chunk
+boundaries aren’t lost.</p>
+<div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="im">import</span> zipfile, pathlib, re, pandas <span class="im">as</span> pd</span>
@@ -537,6 +553,10 @@ image + text embeddings for richer use cases.<br>
 - <strong>Third-party embeddings (via Model Garden)</strong> – e.g.,
 <code>bge-large-en</code>, <code>cohere-embed-v3</code>,
 <code>all-MiniLM</code>.</p>
+<p>The following code sets up the Gen AI client and chooses our
+embedding and generation models. We use <code>vertexai=True</code> to
+route API calls through your GCP project (for billing and governance)
+rather than the public endpoint.</p>
 <div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -576,6 +596,11 @@ image + text embeddings for richer use cases.<br>
 <span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>EMBED_DIM <span class="op">=</span> <span class="dv">1536</span>  <span class="co"># valid typical choices: 768, 1536, 3072</span></span>
 <span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a></span></code></pre>
 </div>
+<p>Next, we define a helper function that converts text strings into
+numerical vectors (embeddings). It processes texts in batches to avoid
+hitting API request-size limits. The <code>RETRIEVAL_DOCUMENT</code>
+task type tells the model to optimize embeddings for search/retrieval
+use cases.</p>
 <div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -610,6 +635,11 @@ image + text embeddings for richer use cases.<br>
 <span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a>    <span class="cf">return</span> np.array(vectors, dtype<span class="op">=</span><span class="st">"float32"</span>)</span>
 <span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a></span></code></pre>
 </div>
+<p>Now we embed all the corpus chunks and build a nearest-neighbors
+index for fast retrieval. The <code>NearestNeighbors</code> model from
+scikit-learn uses cosine similarity to find the chunks most relevant to
+a query. We also define a <code>retrieve()</code> function that embeds a
+user question and returns the top-k matching chunks.</p>
 <div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -657,6 +687,12 @@ image + text embeddings for richer use cases.<br>
 <span id="cb6-42"><a href="#cb6-42" tabindex="-1"></a></span>
 <span id="cb6-43"><a href="#cb6-43" tabindex="-1"></a>    <span class="cf">return</span> result_df</span></code></pre>
 </div>
+<p>Finally, the <code>ask()</code> function ties the full RAG pipeline
+together: it retrieves relevant chunks, constructs a prompt that
+includes only those chunks as context, and sends the prompt to Gemini
+for a grounded answer. The <code>temperature</code> parameter controls
+how creative the model’s response is — lower values produce more
+factual, deterministic answers.</p>
 <div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -705,7 +741,11 @@ image + text embeddings for richer use cases.<br>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="step-4-generate-answers-using-gemini">Step 4: Generate answers using Gemini<a class="anchor" aria-label="anchor" href="#step-4-generate-answers-using-gemini"></a></h2>
-<hr class="half-width"><div class="codewrapper sourceCode" id="cb8">
+<hr class="half-width"><p>With all the pieces in place, let’s test the full pipeline
+end-to-end. The <code>ask()</code> function retrieves relevant chunks
+from our corpus, passes them as context to Gemini, and returns a
+grounded answer with citations.</p>
+<div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a></span>
@@ -722,7 +762,11 @@ image + text embeddings for richer use cases.<br>
 <span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co"># Expected answer: "ML.ENERGY Benchmark"</span></span></code></pre>
 </div>
 </section><section><h2 class="section-heading" id="step-5-cost-summary">Step 5: Cost summary<a class="anchor" aria-label="anchor" href="#step-5-cost-summary"></a></h2>
-<hr class="half-width"><table class="table"><colgroup><col width="9%"><col width="16%"><col width="28%"><col width="21%"><col width="24%"></colgroup><thead><tr class="header"><th>Step</th>
+<hr class="half-width"><p>Understanding the cost of each pipeline component helps you decide
+where to optimize. The table below breaks down what you pay for at each
+stage. For a small workshop with a handful of PDFs, total costs are
+typically well under $1.</p>
+<table class="table"><colgroup><col width="9%"><col width="16%"><col width="28%"><col width="21%"><col width="24%"></colgroup><thead><tr class="header"><th>Step</th>
 <th>Resource</th>
 <th>Example Component</th>
 <th>Cost Driver</th>
@@ -767,6 +811,30 @@ cost, more control).</li>
 sustainability papers.</li>
 <li>GCP’s managed tools lower barrier for experimentation while keeping
 enterprise security and IAM intact.</li>
+</ul></section><section><h2 class="section-heading" id="whats-next">What’s next?<a class="anchor" aria-label="anchor" href="#whats-next"></a></h2>
+<hr class="half-width"><p>This workshop covered the core GCP + Vertex AI workflow: data
+storage, notebook-driven job submission, training, hyperparameter
+tuning, and RAG. Here are natural next steps depending on your
+goals:</p>
+<ul><li>
+<strong>Vertex AI Pipelines</strong> — Automate multi-step ML
+workflows (preprocessing → training → evaluation → deployment) as
+reproducible DAGs using Kubeflow Pipelines or TFX on Vertex AI.</li>
+<li>
+<strong>Model Registry &amp; Endpoints</strong> — Register your
+trained models in Vertex AI’s Model Registry and deploy them as online
+prediction endpoints for serving.</li>
+<li>
+<strong>Vertex AI Experiments</strong> — Track and compare runs
+systematically, beyond what <code>metrics.json</code> files in GCS
+provide.</li>
+<li>
+<strong>BigQuery ML</strong> — If your data lives in BigQuery, you
+can train and predict directly in SQL without moving data to GCS.</li>
+<li>
+<strong>Cost optimization</strong> — Explore <a href="https://cloud.google.com/compute/docs/instances/committed-use-discounts-overview" class="external-link">committed
+use discounts</a> and <a href="https://cloud.google.com/compute/docs/instances/spot" class="external-link">preemptible/spot
+VMs</a> for significant savings on long-running training workloads.</li>
 </ul><div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
 <i class="callout-icon" data-feather="key"></i>
@@ -774,9 +842,9 @@ enterprise security and IAM intact.</li>
 <span class="callout-header">Key Points</span>
 <div class="callout-inner">
 <div class="callout-content">
-<ul><li>Vertex AI’s RAG stack = low-op, cost-predictable.<br></li>
-<li>Hugging Face = high control, high GPU cost.<br></li>
-<li>Keep data local or in GCS to manage egress and compliance.<br></li>
+<ul><li>Vertex AI’s RAG stack = low-op, cost-predictable.</li>
+<li>Hugging Face = high control, high GPU cost.</li>
+<li>Keep data local or in GCS to manage egress and compliance.</li>
 <li>Always cite retrieved chunks for reproducibility and
 transparency.</li>
 </ul></div>
@@ -846,8 +914,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/10-Retrieval-augmented-generation.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/10-Retrieval-augmented-generation.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-03-02",
-  "datePublished": "2026-03-02"
+  "dateModified": "2026-03-03",
+  "datePublished": "2026-03-03"
 }
 
   </script><script>

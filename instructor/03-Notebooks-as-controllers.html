@@ -119,11 +119,11 @@
   Intro to Google Cloud Platform (GCP) for Machine Learning
 </div>
 
-<aside class="col-md-12 lesson-progress"><div style="width: 9%" class="percentage">
-    9%
+<aside class="col-md-12 lesson-progress"><div style="width: 11%" class="percentage">
+    11%
   </div>
   <div class="progress incubator">
-    <div class="progress-bar incubator" role="progressbar" style="width: 9%" aria-valuenow="9" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar incubator" role="progressbar" style="width: 11%" aria-valuenow="11" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
     </div>
   </div>
 </aside><div class="container">
@@ -364,7 +364,7 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Notebooks as Controllers</h1>
-        <p>Last updated on 2026-03-02 |
+        <p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/03-Notebooks-as-controllers.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -537,9 +537,11 @@ doing anything in your notebook, lower the default idle shutdown time to
 <h4 id="advanced-settings-disks">Advanced Settings: Disks<a class="anchor" aria-label="anchor" href="#advanced-settings-disks"></a></h4>
 <p>Each Vertex AI Workbench instance uses <strong>Persistent Disks
 (PDs)</strong> to store your system files and data. You’ll configure two
-disks when creating a notebook: a <strong>boot disk</strong> and a
-<strong>data disk</strong>. We’ll leave these at their default settings,
-but it’s useful to understand the settings for future work.</p>
+disks when creating a notebook: a <strong>boot disk</strong> (for the
+operating system and installed software) and a <strong>data
+disk</strong> (for your datasets, checkpoints, and outputs). We’ll leave
+these at their default settings, but it’s useful to understand the
+settings for future work.</p>
 <div class="section level5">
 <h5 id="boot-disk">Boot Disk<a class="anchor" aria-label="anchor" href="#boot-disk"></a></h5>
 <p>Keep this fixed at <strong>100 GB (Balanced PD)</strong> — the
@@ -587,7 +589,7 @@ files that remain in the trash.</p>
 Typical rates:<br>
 - <strong>Balanced PD:</strong> ~$0.10–$0.12 / GB / month<br>
 - <strong>SSD PD:</strong> ~$0.17–$0.20 / GB / month<br>
-- <strong>Cloud Storage (Standard):</strong> ~$0.026 / GB / month</p>
+- <strong>Cloud Storage (Standard):</strong> ~$0.02 / GB / month</p>
 <blockquote>
 <p><strong>Rule of thumb:</strong> use PDs only for active work; store
 everything else in Cloud Storage.<br>
@@ -672,7 +674,9 @@ instance environment.</p>
 first .ipynb notebook (Jupyter notebook). We can use this environment
 since we aren’t doing any training/tuning just yet.</p>
 <p>Within the Jupyter notebook, run the following command to clone the
-lesson repo into our Jupyter environment:</p>
+lesson repository into our Jupyter environment. This repository contains
+pre-filled notebooks for each episode and the training scripts we’ll use
+later, so you won’t need to write boilerplate code from scratch.</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">SH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -770,8 +774,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/03-Notebooks-as-controllers.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/03-Notebooks-as-controllers.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-03-02",
-  "datePublished": "2026-03-02"
+  "dateModified": "2026-03-03",
+  "datePublished": "2026-03-03"
 }
 
   </script><script>

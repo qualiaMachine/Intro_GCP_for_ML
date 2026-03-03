@@ -119,11 +119,11 @@
   Intro to Google Cloud Platform (GCP) for Machine Learning
 </div>
 
-<aside class="col-md-12 lesson-progress"><div style="width: 18%" class="percentage">
-    18%
+<aside class="col-md-12 lesson-progress"><div style="width: 21%" class="percentage">
+    21%
   </div>
   <div class="progress incubator">
-    <div class="progress-bar incubator" role="progressbar" style="width: 18%" aria-valuenow="18" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar incubator" role="progressbar" style="width: 21%" aria-valuenow="21" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
     </div>
   </div>
 </aside><div class="container">
@@ -367,13 +367,13 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Accessing and Managing Data in GCS with Vertex AI Notebooks</h1>
-        <p>Last updated on 2026-03-02 |
+        <p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/04-Accessing-and-managing-data.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
 
 
-        <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 30 minutes</p>
+        <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 28 minutes</p>
 
         <div class="text-end">
           <button role="button" aria-pressed="false" tabindex="0" id="expand-code" class="pull-right" data-expand="Expand All Solutions " data-collapse="Collapse All Solutions "> Expand All Solutions <i aria-hidden="true" data-feather="plus"></i></button>
@@ -435,8 +435,11 @@ to begin the first notebook.</p>
 <div class="section level4">
 <h4 id="set-up-gcp-environment">Set up GCP environment<a class="anchor" aria-label="anchor" href="#set-up-gcp-environment"></a></h4>
 <p>Before interacting with GCS, we need to authenticate and initialize
-the client libraries. This ensures our notebook can talk to GCP
-securely.</p>
+the client libraries. The <code>storage.Client()</code> call below
+creates a connection to Google Cloud Storage using the credentials
+already attached to your Workbench VM (no manual login needed). Printing
+the project ID confirms the client initialized correctly and is pointed
+at the right GCP project.</p>
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -515,7 +518,11 @@ region, there are no transfer fees — only standard request costs
 </div>
 </div>
 </section><section><h2 class="section-heading" id="checking-storage-usage-of-a-bucket">Checking storage usage of a bucket<a class="anchor" aria-label="anchor" href="#checking-storage-usage-of-a-bucket"></a></h2>
-<hr class="half-width"><div class="codewrapper sourceCode" id="cb7">
+<hr class="half-width"><p>It’s good practice to periodically check how much data you’ve stored
+in a bucket. This helps you estimate costs before they show up on your
+bill. The code below iterates over every object in the bucket and sums
+up their sizes.</p>
+<div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>total_size_bytes <span class="op">=</span> <span class="dv">0</span></span>
@@ -528,7 +535,10 @@ region, there are no transfer fees — only standard request costs
 <span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>bucket_name<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
 </div>
 </section><section><h2 class="section-heading" id="estimating-storage-costs">Estimating storage costs<a class="anchor" aria-label="anchor" href="#estimating-storage-costs"></a></h2>
-<hr class="half-width"><div class="codewrapper sourceCode" id="cb8">
+<hr class="half-width"><p>Using the total size from the previous step, we can estimate monthly
+and annual storage costs based on GCS Standard pricing. This gives you a
+quick sense of how much your bucket costs to maintain.</p>
+<div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>storage_price_per_gb <span class="op">=</span> <span class="fl">0.02</span>  <span class="co"># $/GB/month for Standard storage</span></span>
@@ -598,7 +608,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul><li>Storage cost: 50 GB × $0.02 = $1.00<br></li>
 <li>Egress cost: 50 GB × $0.12 = $6.00<br></li>
@@ -688,8 +698,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/04-Accessing-and-managing-data.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/04-Accessing-and-managing-data.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-03-02",
-  "datePublished": "2026-03-02"
+  "dateModified": "2026-03-03",
+  "datePublished": "2026-03-03"
 }
 
   </script><script>

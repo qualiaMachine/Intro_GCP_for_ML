@@ -119,11 +119,11 @@
   Intro to Google Cloud Platform (GCP) for Machine Learning
 </div>
 
-<aside class="col-md-12 lesson-progress"><div style="width: 55%" class="percentage">
-    55%
+<aside class="col-md-12 lesson-progress"><div style="width: 59%" class="percentage">
+    59%
   </div>
   <div class="progress incubator">
-    <div class="progress-bar incubator" role="progressbar" style="width: 55%" aria-valuenow="55" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar incubator" role="progressbar" style="width: 59%" aria-valuenow="59" aria-label="Lesson Progress" aria-valuemin="0" aria-valuemax="100">
     </div>
   </div>
 </aside><div class="container">
@@ -356,7 +356,7 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Hyperparameter Tuning in Vertex AI: Neural Network Example</h1>
-        <p>Last updated on 2026-03-02 |
+        <p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/08-Hyperparameter-tuning.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -432,8 +432,14 @@ it brings its own framework at run time.</p>
 <h4 id="prepare-training-script-with-metric-logging">1. Prepare training script with metric logging<a class="anchor" aria-label="anchor" href="#prepare-training-script-with-metric-logging"></a></h4>
 <p>Your training script (<code>train_nn.py</code>) should report
 validation metrics in a way Vertex AI can track during hyperparameter
-tuning.<br>
-Add the following right after computing <code>val_loss</code> and
+tuning.</p>
+<p>The code below uses the <code>cloudml-hypertune</code> library, which
+is pre-installed on Vertex AI training workers. It reports metrics to
+Vertex AI so the tuner can compare trials. The <code>try/except</code>
+block lets the same script run locally (where the library isn’t
+installed) without crashing — it simply skips metric reporting in that
+case.</p>
+<p>Add the following right after computing <code>val_loss</code> and
 <code>val_acc</code> inside your epoch loop:</p>
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -510,8 +516,25 @@ locations in GCS.</p>
 <div class="section level4">
 <h4 id="define-runtime-configuration">4. Define runtime configuration<a class="anchor" aria-label="anchor" href="#define-runtime-configuration"></a></h4>
 <p>Create a unique run ID and set the container, machine type, and base
-output directory for artifacts.</p>
-<div class="codewrapper sourceCode" id="cb5">
+output directory for artifacts. Each variable controls a different
+aspect of the training environment:</p>
+<ul><li>
+<strong><code>RUN_ID</code></strong> — a timestamp that uniquely
+identifies this tuning session, used to organize artifacts in GCS.</li>
+<li>
+<strong><code>ARTIFACT_DIR</code></strong> — the GCS folder where
+all trial outputs (models, metrics, logs) will be written.</li>
+<li>
+<strong><code>IMAGE</code></strong> — the prebuilt Docker container
+that includes PyTorch and its dependencies.</li>
+<li>
+<strong><code>MACHINE</code></strong> — the VM shape (CPU/RAM) for
+each trial. Start small for testing.</li>
+<li>
+<strong><code>ACCELERATOR_TYPE</code> /
+<code>ACCELERATOR_COUNT</code></strong> — set to unspecified/0 for
+CPU-only runs. Change these to attach a GPU when needed.</li>
+</ul><div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
@@ -646,6 +669,108 @@ below aggregates those into a dataframe for side-by-side comparison.</p>
 <span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a></span>
 <span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>df <span class="op">=</span> list_metrics_from_gcs(ARTIFACT_DIR)</span>
 <span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="bu">print</span>(df[[<span class="st">"trial_id"</span>,<span class="st">"final_val_accuracy"</span>,<span class="st">"final_val_loss"</span>,<span class="st">"best_val_loss"</span>,<span class="st">"best_epoch"</span>,<span class="st">"patience"</span>,<span class="st">"min_delta"</span>,<span class="st">"learning_rate"</span>]].sort_values(<span class="st">"final_val_accuracy"</span>, ascending<span class="op">=</span><span class="va">False</span>))</span></code></pre>
+</div>
+<div id="exercise-1-expand-the-search-space" class="callout challenge">
+<div class="callout-square">
+<i class="callout-icon" data-feather="zap"></i>
+</div>
+<span class="callout-header">Challenge</span>
+<div id="exercise-1-expand-the-search-space" class="callout-inner">
+<h3 class="callout-title">Exercise 1: Expand the search space</h3>
+<div class="callout-content">
+<p>Add <code>dropout_rate</code> as a new hyperparameter to the tuning
+job. Use a continuous range between 0.1 and 0.5.</p>
+<ol style="list-style-type: decimal"><li>Add a <code>dropout_rate</code> entry to <code>parameter_spec</code>
+using
+<code>hpt.DoubleParameterSpec(min=0.1, max=0.5, scale="linear")</code>.</li>
+<li>Add <code>"--dropout_rate=0.3"</code> to the <code>args</code> list
+in the <code>CustomJob</code> definition (so HPT can override it).</li>
+<li>
+<strong>Do not run the job yet</strong> — just update the
+configuration and verify it looks correct.</li>
+</ol></div>
+</div>
+</div>
+<div id="accordionSolution1" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
+  <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
+</button>
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div class="accordion-body">
+<div class="codewrapper sourceCode" id="cb9">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>parameter_spec <span class="op">=</span> {</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>    <span class="st">"learning_rate"</span>: hpt.DoubleParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="fl">1e-4</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">1e-2</span>, scale<span class="op">=</span><span class="st">"log"</span>),</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    <span class="st">"patience"</span>: hpt.IntegerParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="dv">5</span>, <span class="bu">max</span><span class="op">=</span><span class="dv">20</span>, scale<span class="op">=</span><span class="st">"linear"</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    <span class="st">"min_delta"</span>: hpt.DoubleParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="fl">1e-6</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">1e-3</span>, scale<span class="op">=</span><span class="st">"log"</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    <span class="st">"dropout_rate"</span>: hpt.DoubleParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="fl">0.1</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">0.5</span>, scale<span class="op">=</span><span class="st">"linear"</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>}</span></code></pre>
+</div>
+<p>And in the <code>args</code> list of
+<code>CustomJob.from_local_script</code>, add:</p>
+<div class="codewrapper sourceCode" id="cb10">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co">"--dropout_rate=0.3"</span>,    <span class="co"># HPT will override when sampling</span></span></code></pre>
+</div>
+<p>Note: For this to actually work end-to-end, <code>train_nn.py</code>
+would also need to accept <code>--dropout_rate</code> as an argparse
+argument and use it in the model architecture. This exercise focuses on
+the Vertex AI configuration side.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="exercise-2-scale-up-trials" class="callout challenge">
+<div class="callout-square">
+<i class="callout-icon" data-feather="zap"></i>
+</div>
+<span class="callout-header">Challenge</span>
+<div id="exercise-2-scale-up-trials" class="callout-inner">
+<h3 class="callout-title">Exercise 2: Scale up trials</h3>
+<div class="callout-content">
+<p>After verifying your single-trial sanity check completed
+successfully, modify the tuning job configuration to run a proper
+search:</p>
+<ol style="list-style-type: decimal"><li>Set <code>max_trial_count=6</code> and
+<code>parallel_trial_count=2</code>.</li>
+<li>Before running, estimate the approximate cost: if each trial takes
+~5 minutes on an <code>n1-standard-4</code> (~$0.19/hr), how much would
+6 trials cost?</li>
+<li>Run the updated job and monitor it in the Vertex AI Console.</li>
+</ol></div>
+</div>
+</div>
+<div id="accordionSolution2" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
+  <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
+</button>
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div class="accordion-body">
+<div class="codewrapper sourceCode" id="cb11">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>tuning_job <span class="op">=</span> aiplatform.HyperparameterTuningJob(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    metric_spec<span class="op">=</span>metric_spec,</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>    parameter_spec<span class="op">=</span>parameter_spec,</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>    max_trial_count<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>    parallel_trial_count<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>)</span></code></pre>
+</div>
+<p><strong>Cost estimate:</strong> 6 trials x 5 min each = 30 minutes of
+compute. At ~$0.19/hr for <code>n1-standard-4</code>, that’s roughly
+$0.10 total. With <code>parallel_trial_count=2</code>, wall-clock time
+would be approximately 15 minutes (3 batches of 2 trials). The adaptive
+search can still learn between batches since parallelism is kept low
+relative to total trials.</p>
+</div>
+</div>
+</div>
 </div>
 <div id="what-is-the-effect-of-parallelism-in-tuning" class="callout discussion">
 <div class="callout-square">
@@ -804,8 +929,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/08-Hyperparameter-tuning.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/08-Hyperparameter-tuning.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-03-02",
-  "datePublished": "2026-03-02"
+  "dateModified": "2026-03-03",
+  "datePublished": "2026-03-03"
 }
 
   </script><script>

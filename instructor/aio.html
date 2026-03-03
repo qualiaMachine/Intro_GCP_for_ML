@@ -421,10 +421,10 @@
         
 <section id="aio-01-Introduction"><p>Content from <a href="01-Introduction.html">Overview of Google Cloud for Machine Learning</a></p>
 <hr>
-<p>Last updated on 2025-10-24 |
+<p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/01-Introduction.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
-<p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 11 minutes</p>
+<p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 12 minutes</p>
 <div class="text-end">
           <button role="button" aria-pressed="false" tabindex="0" id="expand-code" class="pull-right" data-expand="Expand All Solutions " data-collapse="Collapse All Solutions "> Expand All Solutions <i aria-hidden="true" data-feather="plus"></i></button>
         </div>
@@ -603,7 +603,7 @@ any links that you are not going to use.
  -->
 </div></section><section id="aio-02-Data-storage"><p>Content from <a href="02-Data-storage.html">Data Storage: Setting up GCS</a></p>
 <hr>
-<p>Last updated on 2026-03-02 |
+<p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/02-Data-storage.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 20 minutes</p>
@@ -962,8 +962,24 @@ will be used to access the data later.</p>
 <hr class="half-width">
 <p>Return to the Google Cloud Console (where we created our bucket and
 VM) and search for “Cloud Shell Editor”. Open a shell editor and run the
-below command, <em>replacing the bucket name with your bucket’s
-name</em>:</p>
+below commands, <em>replacing the bucket name with your bucket’s
+name</em>.</p>
+<p>We need to grant the Compute Engine default service account three
+separate IAM roles so that our future Workbench notebooks and training
+jobs can interact with the bucket:</p>
+<ul>
+<li>
+<strong><code>objectViewer</code></strong> — allows reading
+(downloading) objects from the bucket. Required for loading training
+data.</li>
+<li>
+<strong><code>objectCreator</code></strong> — allows uploading new
+objects. Required for writing model artifacts and logs.</li>
+<li>
+<strong><code>objectAdmin</code></strong> — allows overwriting and
+deleting objects. Only needed if your workflow re-saves models or cleans
+up old artifacts.</li>
+</ul>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">SH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -1073,7 +1089,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1201,7 +1217,7 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-03-Notebooks-as-controllers"><p>Content from <a href="03-Notebooks-as-controllers.html">Notebooks as Controllers</a></p>
 <hr>
-<p>Last updated on 2026-03-02 |
+<p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/03-Notebooks-as-controllers.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 30 minutes</p>
@@ -1416,9 +1432,11 @@ doing anything in your notebook, lower the default idle shutdown time to
 </h4>
 <p>Each Vertex AI Workbench instance uses <strong>Persistent Disks
 (PDs)</strong> to store your system files and data. You’ll configure two
-disks when creating a notebook: a <strong>boot disk</strong> and a
-<strong>data disk</strong>. We’ll leave these at their default settings,
-but it’s useful to understand the settings for future work.</p>
+disks when creating a notebook: a <strong>boot disk</strong> (for the
+operating system and installed software) and a <strong>data
+disk</strong> (for your datasets, checkpoints, and outputs). We’ll leave
+these at their default settings, but it’s useful to understand the
+settings for future work.</p>
 <div class="section level5">
 <h5 id="boot-disk">Boot Disk<a class="anchor" aria-label="anchor" href="#boot-disk"></a>
 </h5>
@@ -1470,7 +1488,7 @@ files that remain in the trash.</p>
 Typical rates:<br>
 - <strong>Balanced PD:</strong> ~$0.10–$0.12 / GB / month<br>
 - <strong>SSD PD:</strong> ~$0.17–$0.20 / GB / month<br>
-- <strong>Cloud Storage (Standard):</strong> ~$0.026 / GB / month</p>
+- <strong>Cloud Storage (Standard):</strong> ~$0.02 / GB / month</p>
 <blockquote>
 <p><strong>Rule of thumb:</strong> use PDs only for active work; store
 everything else in Cloud Storage.<br>
@@ -1569,7 +1587,9 @@ instance environment.</p>
 first .ipynb notebook (Jupyter notebook). We can use this environment
 since we aren’t doing any training/tuning just yet.</p>
 <p>Within the Jupyter notebook, run the following command to clone the
-lesson repo into our Jupyter environment:</p>
+lesson repository into our Jupyter environment. This repository contains
+pre-filled notebooks for each episode and the training scripts we’ll use
+later, so you won’t need to write boilerplate code from scratch.</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">SH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -1617,10 +1637,10 @@ any links that you are not going to use.
 </div>
 </section></section><section id="aio-04-Accessing-and-managing-data"><p>Content from <a href="04-Accessing-and-managing-data.html">Accessing and Managing Data in GCS with Vertex AI Notebooks</a></p>
 <hr>
-<p>Last updated on 2026-03-02 |
+<p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/04-Accessing-and-managing-data.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
-<p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 30 minutes</p>
+<p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 28 minutes</p>
 <div class="text-end">
           <button role="button" aria-pressed="false" tabindex="0" id="expand-code" class="pull-right" data-expand="Expand All Solutions " data-collapse="Collapse All Solutions "> Expand All Solutions <i aria-hidden="true" data-feather="plus"></i></button>
         </div>
@@ -1690,8 +1710,11 @@ to begin the first notebook.</p>
 <h4 id="set-up-gcp-environment">Set up GCP environment<a class="anchor" aria-label="anchor" href="#set-up-gcp-environment"></a>
 </h4>
 <p>Before interacting with GCS, we need to authenticate and initialize
-the client libraries. This ensures our notebook can talk to GCP
-securely.</p>
+the client libraries. The <code>storage.Client()</code> call below
+creates a connection to Google Cloud Storage using the credentials
+already attached to your Workbench VM (no manual login needed). Printing
+the project ID confirms the client initialized correctly and is pointed
+at the right GCP project.</p>
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -1776,6 +1799,10 @@ region, there are no transfer fees — only standard request costs
 </section><section><h2 class="section-heading" id="checking-storage-usage-of-a-bucket">Checking storage usage of a bucket<a class="anchor" aria-label="anchor" href="#checking-storage-usage-of-a-bucket"></a>
 </h2>
 <hr class="half-width">
+<p>It’s good practice to periodically check how much data you’ve stored
+in a bucket. This helps you estimate costs before they show up on your
+bill. The code below iterates over every object in the bucket and sums
+up their sizes.</p>
 <div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -1791,6 +1818,9 @@ region, there are no transfer fees — only standard request costs
 </section><section><h2 class="section-heading" id="estimating-storage-costs">Estimating storage costs<a class="anchor" aria-label="anchor" href="#estimating-storage-costs"></a>
 </h2>
 <hr class="half-width">
+<p>Using the total size from the previous step, we can estimate monthly
+and annual storage costs based on GCS Standard pricing. This gives you a
+quick sense of how much your bucket costs to maintain.</p>
 <div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -1863,7 +1893,7 @@ once at the end of the month.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>Storage cost: 50 GB × $0.02 = $1.00<br>
@@ -1903,10 +1933,10 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-05-Interacting-with-code-repo"><p>Content from <a href="05-Interacting-with-code-repo.html">Using a GitHub Personal Access Token (PAT) to Push/Pull from a Vertex AI Notebook</a></p>
 <hr>
-<p>Last updated on 2025-10-24 |
+<p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/05-Interacting-with-code-repo.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
-<p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 35 minutes</p>
+<p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 20 minutes</p>
 <div class="text-end">
           <button role="button" aria-pressed="false" tabindex="0" id="expand-code" class="pull-right" data-expand="Expand All Solutions " data-collapse="Collapse All Solutions "> Expand All Solutions <i aria-hidden="true" data-feather="plus"></i></button>
         </div>
@@ -1946,6 +1976,23 @@ better version control practices in collaborative projects.</li>
 </ul>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div id="this-episode-is-optional-in-live-workshops" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="this-episode-is-optional-in-live-workshops" class="callout-inner">
+<h3 class="callout-title">This episode is optional in live
+workshops</h3>
+<div class="callout-content">
+<p>If you’re short on time, this episode can be skipped during a live
+session. It is most useful for learners who are newer to Git or haven’t
+used a Personal Access Token before. In a live workshop, the instructor
+may choose to skip ahead to the next episode and point learners here as
+a self-guided reference.</p>
 </div>
 </div>
 </div>
@@ -2024,6 +2071,11 @@ it or expose it in your code. Use a password manager to store it.</p>
 <div class="section level4">
 <h4 id="use-getpass-to-prompt-for-username-and-pat">Use <code>getpass</code> to prompt for username and PAT<a class="anchor" aria-label="anchor" href="#use-getpass-to-prompt-for-username-and-pat"></a>
 </h4>
+<p>We use Python’s <code>getpass</code> module to securely prompt for
+the PAT. Unlike <code>input()</code>, which displays what you type on
+screen, <code>getpass.getpass()</code> hides the typed characters — so
+your token won’t be visible in the notebook output or to anyone watching
+your screen.</p>
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -2038,6 +2090,9 @@ it or expose it in your code. Use a password manager to store it.</p>
 </section><section><h2 class="section-heading" id="step-2-configure-git-settings">Step 2: Configure Git settings<a class="anchor" aria-label="anchor" href="#step-2-configure-git-settings"></a>
 </h2>
 <hr class="half-width">
+<p>Before making commits, tell Git who you are. These settings are
+stored globally on the VM and will persist until the instance is
+deleted.</p>
 <div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -2060,9 +2115,12 @@ are linked to your profile.</li>
 with cleaner version control. Notebooks store outputs and metadata,
 which makes diffs noisy. <code>.py</code> files are lighter and easier
 to review.</p>
+<p>Jupytext is a tool that converts between notebook formats
+(<code>.ipynb</code>) and plain-text formats (<code>.py</code>,
+<code>.md</code>). It preserves cell structure while stripping out the
+binary output data that clutters Git diffs.</p>
 <ol style="list-style-type: decimal">
-<li>Install Jupytext.<br>
-</li>
+<li>Install Jupytext.</li>
 </ol>
 <div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -2095,6 +2153,9 @@ to review.</p>
 </section><section><h2 class="section-heading" id="step-4-add-and-commit--py-files">Step 4: Add and commit <code>.py</code> files<a class="anchor" aria-label="anchor" href="#step-4-add-and-commit--py-files"></a>
 </h2>
 <hr class="half-width">
+<p>Now stage and commit the converted <code>.py</code> files. Make sure
+you’re in the root of your cloned repository before running these
+commands.</p>
 <div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -2180,7 +2241,7 @@ Vertex AI Workbench?<br>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ul>
 <li>PATs with HTTPS are easier to set up in temporary environments where
@@ -2223,10 +2284,10 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-06-Training-models-in-VertexAI"><p>Content from <a href="06-Training-models-in-VertexAI.html">Training Models in Vertex AI: Intro</a></p>
 <hr>
-<p>Last updated on 2026-03-02 |
+<p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/06-Training-models-in-VertexAI.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
-<p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 32 minutes</p>
+<p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 30 minutes</p>
 <div class="text-end">
           <button role="button" aria-pressed="false" tabindex="0" id="expand-code" class="pull-right" data-expand="Expand All Solutions " data-collapse="Collapse All Solutions "> Expand All Solutions <i aria-hidden="true" data-feather="plus"></i></button>
         </div>
@@ -2324,6 +2385,9 @@ region close to your data).</li>
 </section><section><h2 class="section-heading" id="testing-train-py-locally-in-the-notebook">Testing train.py locally in the notebook<a class="anchor" aria-label="anchor" href="#testing-train-py-locally-in-the-notebook"></a>
 </h2>
 <hr class="half-width">
+<p>Before submitting a managed training job to Vertex AI, let’s first
+examine and test the training script on our notebook VM. This ensures
+the code runs without errors before we spend money on cloud compute.</p>
 <div id="understanding-the-xgboost-training-script-gcp-version" class="callout discussion">
 <div class="callout-square">
 <i class="callout-icon" data-feather="message-circle"></i>
@@ -2372,7 +2436,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -2495,7 +2559,10 @@ and infers without errors.</li>
 <hr class="half-width">
 <p>Sometimes it’s helpful to keep a copy of data in your notebook VM for
 quick iteration, even though <strong>GCS is the preferred storage
-location</strong>.</p>
+location</strong>. For example, downloading locally lets you test your
+training script without any GCS dependencies, making debugging faster.
+Once you’ve verified everything works, the actual Vertex AI job will
+read directly from GCS.</p>
 <div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -2814,6 +2881,11 @@ ignored or auto-deleted via lifecycle rules.</p>
 </section><section><h2 class="section-heading" id="evaluate-the-trained-model-stored-on-gcs">Evaluate the trained model stored on GCS<a class="anchor" aria-label="anchor" href="#evaluate-the-trained-model-stored-on-gcs"></a>
 </h2>
 <hr class="half-width">
+<p>Now let’s verify that the model produced by our Vertex AI job
+performs identically to the one we trained locally. This time, instead
+of loading from the local disk, we’ll load both the test data and model
+artifact directly from GCS into memory — the recommended approach for
+production workflows.</p>
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -2910,7 +2982,7 @@ any links that you are not going to use.
 </div>
 </section></section><section id="aio-07-Training-models-in-VertexAI-GPUs"><p>Content from <a href="07-Training-models-in-VertexAI-GPUs.html">Training Models in Vertex AI: PyTorch Example</a></p>
 <hr>
-<p>Last updated on 2026-03-02 |
+<p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/07-Training-models-in-VertexAI-GPUs.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 30 minutes</p>
@@ -2964,7 +3036,7 @@ training is (not) worth it.</li>
 <h4 id="open-pre-filled-notebook">1. Open pre-filled notebook<a class="anchor" aria-label="anchor" href="#open-pre-filled-notebook"></a>
 </h4>
 <p>Navigate to
-<code>/Intro_GCP_for_ML/notebooks/06-Training-models-in-VertexAI-GPUs.ipynb</code>
+<code>/Intro_GCP_for_ML/notebooks/07-Training-models-in-VertexAI-GPUs.ipynb</code>
 to begin this notebook. Select the <em>PyTorch</em> environment (kernel)
 Local PyTorch is only needed for local tests. Your <em>Vertex AI
 job</em> uses the container specified by <code>container_uri</code>
@@ -3210,6 +3282,9 @@ reproducible!</strong></p>
 <div class="section level3">
 <h3 id="evaluate-the-locally-trained-model-on-the-validation-data">Evaluate the locally trained model on the validation data<a class="anchor" aria-label="anchor" href="#evaluate-the-locally-trained-model-on-the-validation-data"></a>
 </h3>
+<p>Let’s load the model we just trained and run it against the
+validation set. This confirms the saved weights produce the expected
+accuracy before we move to cloud training.</p>
 <div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -3339,8 +3414,9 @@ you don’t own in shared projects).</li>
 <span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>total_size_mb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)</span>
 <span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
 </div>
-<p><strong>What you’ll see in
-<code>gs://…/artifacts/pytorch/&lt;RUN_ID&gt;/</code>:</strong></p>
+<p>After the job completes, your training script writes several output
+files to the GCS artifact directory. Here’s what you’ll find in
+<code>gs://…/artifacts/pytorch/&lt;RUN_ID&gt;/</code>:</p>
 <ul>
 <li>
 <code>model.pt</code> — PyTorch weights
@@ -3524,6 +3600,9 @@ parameters.</p>
 <span id="cb16-66"><a href="#cb16-66" tabindex="-1"></a></span>
 <span id="cb16-67"><a href="#cb16-67" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Artifacts folder:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
+<p>Just as we did for the CPU job, let’s evaluate the GPU-trained model
+to confirm it produces the same accuracy. We load the model weights
+directly from GCS into memory.</p>
 <div class="codewrapper sourceCode" id="cb17">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -3558,10 +3637,13 @@ parameters.</p>
 <span id="cb17-29"><a href="#cb17-29" tabindex="-1"></a><span class="co"># !ls</span></span>
 <span id="cb17-30"><a href="#cb17-30" tabindex="-1"></a><span class="co"># # rebuild model and load weights</span></span>
 <span id="cb17-31"><a href="#cb17-31" tabindex="-1"></a><span class="co"># m = TitanicNet()</span></span>
-<span id="cb17-32"><a href="#cb17-32" tabindex="-1"></a><span class="co"># state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")  </span></span>
+<span id="cb17-32"><a href="#cb17-32" tabindex="-1"></a><span class="co"># state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu")</span></span>
 <span id="cb17-33"><a href="#cb17-33" tabindex="-1"></a><span class="co"># m.load_state_dict(state)</span></span>
 <span id="cb17-34"><a href="#cb17-34" tabindex="-1"></a><span class="co"># m.eval()</span></span></code></pre>
 </div>
+<p>With the model loaded, we run predictions on the validation set and
+compute accuracy. Because we set random seeds in
+<code>train_nn.py</code>, this should match the CPU job’s accuracy.</p>
 <div class="codewrapper sourceCode" id="cb18">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -3574,10 +3656,14 @@ parameters.</p>
 <span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a></span>
 <span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Vertex model val accuracy: </span><span class="sc">{</span>acc<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
-<p>GPU tips: - On small problems, GPU startup/transfer overhead can
-erase speedups—benchmark before you scale. - Stick to a single replica
-unless your batch sizes and dataset really warrant data parallelism.</p>
-</section><section><h2 class="section-heading" id="distributed-training-when-to-consider">Distributed training (when to consider)<a class="anchor" aria-label="anchor" href="#distributed-training-when-to-consider"></a>
+<p>Keep these GPU considerations in mind when deciding whether to use
+GPU acceleration:</p>
+<ul>
+<li>On small problems, GPU startup/transfer overhead can erase speedups
+— benchmark before you scale.</li>
+<li>Stick to a single replica unless your batch sizes and dataset really
+warrant data parallelism.</li>
+</ul></section><section><h2 class="section-heading" id="distributed-training-when-to-consider">Distributed training (when to consider)<a class="anchor" aria-label="anchor" href="#distributed-training-when-to-consider"></a>
 </h2>
 <hr class="half-width">
 <ul>
@@ -3624,10 +3710,10 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-08-Hyperparameter-tuning"><p>Content from <a href="08-Hyperparameter-tuning.html">Hyperparameter Tuning in Vertex AI: Neural Network Example</a></p>
 <hr>
-<p>Last updated on 2026-03-02 |
+<p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/08-Hyperparameter-tuning.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
-<p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 60 minutes</p>
+<p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 50 minutes</p>
 <div class="text-end">
           <button role="button" aria-pressed="false" tabindex="0" id="expand-code" class="pull-right" data-expand="Expand All Solutions " data-collapse="Collapse All Solutions "> Expand All Solutions <i aria-hidden="true" data-feather="plus"></i></button>
         </div>
@@ -3713,8 +3799,14 @@ it brings its own framework at run time.</p>
 </h4>
 <p>Your training script (<code>train_nn.py</code>) should report
 validation metrics in a way Vertex AI can track during hyperparameter
-tuning.<br>
-Add the following right after computing <code>val_loss</code> and
+tuning.</p>
+<p>The code below uses the <code>cloudml-hypertune</code> library, which
+is pre-installed on Vertex AI training workers. It reports metrics to
+Vertex AI so the tuner can compare trials. The <code>try/except</code>
+block lets the same script run locally (where the library isn’t
+installed) without crashing — it simply skips metric reporting in that
+case.</p>
+<p>Add the following right after computing <code>val_loss</code> and
 <code>val_acc</code> inside your epoch loop:</p>
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -3794,7 +3886,26 @@ locations in GCS.</p>
 <h4 id="define-runtime-configuration">4. Define runtime configuration<a class="anchor" aria-label="anchor" href="#define-runtime-configuration"></a>
 </h4>
 <p>Create a unique run ID and set the container, machine type, and base
-output directory for artifacts.</p>
+output directory for artifacts. Each variable controls a different
+aspect of the training environment:</p>
+<ul>
+<li>
+<strong><code>RUN_ID</code></strong> — a timestamp that uniquely
+identifies this tuning session, used to organize artifacts in GCS.</li>
+<li>
+<strong><code>ARTIFACT_DIR</code></strong> — the GCS folder where
+all trial outputs (models, metrics, logs) will be written.</li>
+<li>
+<strong><code>IMAGE</code></strong> — the prebuilt Docker container
+that includes PyTorch and its dependencies.</li>
+<li>
+<strong><code>MACHINE</code></strong> — the VM shape (CPU/RAM) for
+each trial. Start small for testing.</li>
+<li>
+<strong><code>ACCELERATOR_TYPE</code> /
+<code>ACCELERATOR_COUNT</code></strong> — set to unspecified/0 for
+CPU-only runs. Change these to attach a GPU when needed.</li>
+</ul>
 <div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -3940,6 +4051,112 @@ below aggregates those into a dataframe for side-by-side comparison.</p>
 <span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a>df <span class="op">=</span> list_metrics_from_gcs(ARTIFACT_DIR)</span>
 <span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="bu">print</span>(df[[<span class="st">"trial_id"</span>,<span class="st">"final_val_accuracy"</span>,<span class="st">"final_val_loss"</span>,<span class="st">"best_val_loss"</span>,<span class="st">"best_epoch"</span>,<span class="st">"patience"</span>,<span class="st">"min_delta"</span>,<span class="st">"learning_rate"</span>]].sort_values(<span class="st">"final_val_accuracy"</span>, ascending<span class="op">=</span><span class="va">False</span>))</span></code></pre>
 </div>
+<div id="exercise-1-expand-the-search-space" class="callout challenge">
+<div class="callout-square">
+<i class="callout-icon" data-feather="zap"></i>
+</div>
+<span class="callout-header">Challenge</span>
+<div id="exercise-1-expand-the-search-space" class="callout-inner">
+<h3 class="callout-title">Exercise 1: Expand the search space</h3>
+<div class="callout-content">
+<p>Add <code>dropout_rate</code> as a new hyperparameter to the tuning
+job. Use a continuous range between 0.1 and 0.5.</p>
+<ol style="list-style-type: decimal">
+<li>Add a <code>dropout_rate</code> entry to <code>parameter_spec</code>
+using
+<code>hpt.DoubleParameterSpec(min=0.1, max=0.5, scale="linear")</code>.</li>
+<li>Add <code>"--dropout_rate=0.3"</code> to the <code>args</code> list
+in the <code>CustomJob</code> definition (so HPT can override it).</li>
+<li>
+<strong>Do not run the job yet</strong> — just update the
+configuration and verify it looks correct.</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="accordionSolution1" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
+  <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
+</button>
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div class="accordion-body">
+<div class="codewrapper sourceCode" id="cb9">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>parameter_spec <span class="op">=</span> {</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>    <span class="st">"learning_rate"</span>: hpt.DoubleParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="fl">1e-4</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">1e-2</span>, scale<span class="op">=</span><span class="st">"log"</span>),</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    <span class="st">"patience"</span>: hpt.IntegerParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="dv">5</span>, <span class="bu">max</span><span class="op">=</span><span class="dv">20</span>, scale<span class="op">=</span><span class="st">"linear"</span>),</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    <span class="st">"min_delta"</span>: hpt.DoubleParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="fl">1e-6</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">1e-3</span>, scale<span class="op">=</span><span class="st">"log"</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    <span class="st">"dropout_rate"</span>: hpt.DoubleParameterSpec(<span class="bu">min</span><span class="op">=</span><span class="fl">0.1</span>, <span class="bu">max</span><span class="op">=</span><span class="fl">0.5</span>, scale<span class="op">=</span><span class="st">"linear"</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>}</span></code></pre>
+</div>
+<p>And in the <code>args</code> list of
+<code>CustomJob.from_local_script</code>, add:</p>
+<div class="codewrapper sourceCode" id="cb10">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co">"--dropout_rate=0.3"</span>,    <span class="co"># HPT will override when sampling</span></span></code></pre>
+</div>
+<p>Note: For this to actually work end-to-end, <code>train_nn.py</code>
+would also need to accept <code>--dropout_rate</code> as an argparse
+argument and use it in the model architecture. This exercise focuses on
+the Vertex AI configuration side.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="exercise-2-scale-up-trials" class="callout challenge">
+<div class="callout-square">
+<i class="callout-icon" data-feather="zap"></i>
+</div>
+<span class="callout-header">Challenge</span>
+<div id="exercise-2-scale-up-trials" class="callout-inner">
+<h3 class="callout-title">Exercise 2: Scale up trials</h3>
+<div class="callout-content">
+<p>After verifying your single-trial sanity check completed
+successfully, modify the tuning job configuration to run a proper
+search:</p>
+<ol style="list-style-type: decimal">
+<li>Set <code>max_trial_count=6</code> and
+<code>parallel_trial_count=2</code>.</li>
+<li>Before running, estimate the approximate cost: if each trial takes
+~5 minutes on an <code>n1-standard-4</code> (~$0.19/hr), how much would
+6 trials cost?</li>
+<li>Run the updated job and monitor it in the Vertex AI Console.</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="accordionSolution2" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
+  <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
+</button>
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div class="accordion-body">
+<div class="codewrapper sourceCode" id="cb11">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>tuning_job <span class="op">=</span> aiplatform.HyperparameterTuningJob(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    metric_spec<span class="op">=</span>metric_spec,</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>    parameter_spec<span class="op">=</span>parameter_spec,</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>    max_trial_count<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>    parallel_trial_count<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>)</span></code></pre>
+</div>
+<p><strong>Cost estimate:</strong> 6 trials x 5 min each = 30 minutes of
+compute. At ~$0.19/hr for <code>n1-standard-4</code>, that’s roughly
+$0.10 total. With <code>parallel_trial_count=2</code>, wall-clock time
+would be approximately 15 minutes (3 batches of 2 trials). The adaptive
+search can still learn between batches since parallelism is kept low
+relative to total trials.</p>
+</div>
+</div>
+</div>
+</div>
 <div id="what-is-the-effect-of-parallelism-in-tuning" class="callout discussion">
 <div class="callout-square">
 <i class="callout-icon" data-feather="message-circle"></i>
@@ -4044,10 +4261,10 @@ any links that you are not going to use.
 </div>
 </div></section><section id="aio-09-Resource-management-cleanup"><p>Content from <a href="09-Resource-management-cleanup.html">Resource Management &amp; Monitoring on Vertex AI (GCP)</a></p>
 <hr>
-<p>Last updated on 2025-10-24 |
+<p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/09-Resource-management-cleanup.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
-<p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 65 minutes</p>
+<p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 40 minutes</p>
 <div class="text-end">
           <button role="button" aria-pressed="false" tabindex="0" id="expand-code" class="pull-right" data-expand="Expand All Solutions " data-collapse="Collapse All Solutions "> Expand All Solutions <i aria-hidden="true" data-feather="plus"></i></button>
         </div>
@@ -4128,11 +4345,13 @@ bills in education/research settings.</p>
 </section><section><h2 class="section-heading" id="a-daily-shutdown-checklist-use-now-automate-later">A daily “shutdown checklist” (use now, automate later)<a class="anchor" aria-label="anchor" href="#a-daily-shutdown-checklist-use-now-automate-later"></a>
 </h2>
 <hr class="half-width">
+<p>Follow this checklist at the end of each working session to prevent
+surprise bills. These are the most common cost leaks in research and
+workshop environments.</p>
 <ol style="list-style-type: decimal">
 <li>
 <strong>Workbench notebooks</strong> — stop the runtime/instance
-when you’re done.<br>
-</li>
+when you’re done.</li>
 <li>
 <strong>Custom/HPT jobs</strong> — confirm no jobs stuck in
 <code>RUNNING</code>.<br>
@@ -4209,6 +4428,12 @@ with them.</p>
 <div class="section level3">
 <h3 id="audit-with-cli">Audit with CLI<a class="anchor" aria-label="anchor" href="#audit-with-cli"></a>
 </h3>
+<p>Use these commands to list all jobs in your region. Each command
+prints a table showing the job ID, display name, state (e.g.,
+<code>JOB_STATE_SUCCEEDED</code>, <code>JOB_STATE_RUNNING</code>,
+<code>JOB_STATE_FAILED</code>), and creation time. Look for any jobs
+stuck in <code>RUNNING</code> — those are still consuming resources and
+billing you.</p>
 <div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -4239,6 +4464,10 @@ rest to reduce console clutter and artifact storage.</p>
 </section><section><h2 class="section-heading" id="undeploy-models-and-delete-endpoints-major-cost-pitfall">Undeploy models and delete endpoints (major cost pitfall)<a class="anchor" aria-label="anchor" href="#undeploy-models-and-delete-endpoints-major-cost-pitfall"></a>
 </h2>
 <hr class="half-width">
+<p>Deployed endpoints are billed per node-hour 24/7, even if no one is
+sending prediction requests. This makes forgotten endpoints one of the
+most expensive mistakes in GCP. Always undeploy models before deleting
+the endpoint itself.</p>
 <div class="section level3">
 <h3 id="find-endpoints-and-deployed-models">Find endpoints and deployed models<a class="anchor" aria-label="anchor" href="#find-endpoints-and-deployed-models"></a>
 </h3>
@@ -4286,7 +4515,17 @@ stale model versions to reduce storage.</p>
 <h3 id="lifecycle-policy-example">Lifecycle policy example<a class="anchor" aria-label="anchor" href="#lifecycle-policy-example"></a>
 </h3>
 <p>Keep workshop artifacts tidy by auto‑deleting temporary outputs and
-capping old versions.</p>
+capping old versions. A lifecycle policy is a JSON configuration that
+tells GCS to automatically delete or transition objects based on rules
+you define. Below, we create two rules:</p>
+<ul>
+<li>
+<strong>Rule 1</strong>: Delete any object under the
+<code>tmp/</code> prefix that is older than 7 days.</li>
+<li>
+<strong>Rule 2</strong>: If object versioning is enabled, keep only
+the 3 most recent versions and delete older ones.</li>
+</ul>
 <ol style="list-style-type: decimal">
 <li>Save as <code>lifecycle.json</code>:</li>
 </ol>
@@ -4489,7 +4728,7 @@ been idle for &gt;2 hours. Stop it via CLI.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Use <code>gcloud notebooks runtimes list --location=REGION</code>
 (Managed) or
@@ -4521,7 +4760,7 @@ object.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Use the JSON policy shown above, then run
 <code>gsutil lifecycle set lifecycle.json gs://YOUR_BUCKET</code> and
@@ -4551,7 +4790,7 @@ need, and delete the endpoint if it’s no longer required.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p><code>gcloud ai endpoints list --region=REGION</code> → pick
 <code>ENDPOINT_ID</code> →
@@ -4590,7 +4829,7 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-10-Retrieval-augmented-generation"><p>Content from <a href="10-Retrieval-augmented-generation.html">Retrieval-Augmented Generation (RAG) with Vertex AI</a></p>
 <hr>
-<p>Last updated on 2026-03-02 |
+<p>Last updated on 2026-03-03 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/episodes/10-Retrieval-augmented-generation.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 30 minutes</p>
@@ -4679,6 +4918,9 @@ requirement.</p>
 </section><section><h2 class="section-heading" id="step-1-setup-environment">Step 1: Setup environment<a class="anchor" aria-label="anchor" href="#step-1-setup-environment"></a>
 </h2>
 <hr class="half-width">
+<p>We need the <code>pypdf</code> library to extract text from PDF
+files. The <code>--quiet</code> flag suppresses verbose install output,
+and <code>--upgrade</code> ensures we have the latest version.</p>
 <div class="codewrapper sourceCode" id="cb1">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -4689,6 +4931,12 @@ billed for VM runtime.</p>
 <div class="section level3">
 <h3 id="initialize-project">Initialize project<a class="anchor" aria-label="anchor" href="#initialize-project"></a>
 </h3>
+<p>We initialize two client libraries here because they serve different
+purposes. The <code>aiplatform</code> SDK (used in earlier episodes for
+training jobs) handles resource management, while the
+<code>vertexai</code> SDK provides access to Google’s foundation models
+(embeddings and Gemini). Both need to know your project ID and
+region.</p>
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -4707,6 +4955,12 @@ billed for VM runtime.</p>
 </section><section><h2 class="section-heading" id="step-2-extract-and-chunk-pdfs">Step 2: Extract and chunk PDFs<a class="anchor" aria-label="anchor" href="#step-2-extract-and-chunk-pdfs"></a>
 </h2>
 <hr class="half-width">
+<p>Before we can search our documents, we need to break them into
+smaller pieces (“chunks”). LLMs have limited context windows and
+embedding models work best on passages rather than entire papers. The
+code below extracts text from each PDF and splits it into overlapping
+chunks of ~1,200 characters. The overlap ensures that sentences at chunk
+boundaries aren’t lost.</p>
 <div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -4770,6 +5024,10 @@ image + text embeddings for richer use cases.<br>
 - <strong>Third-party embeddings (via Model Garden)</strong> – e.g.,
 <code>bge-large-en</code>, <code>cohere-embed-v3</code>,
 <code>all-MiniLM</code>.</p>
+<p>The following code sets up the Gen AI client and chooses our
+embedding and generation models. We use <code>vertexai=True</code> to
+route API calls through your GCP project (for billing and governance)
+rather than the public endpoint.</p>
 <div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -4809,6 +5067,11 @@ image + text embeddings for richer use cases.<br>
 <span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>EMBED_DIM <span class="op">=</span> <span class="dv">1536</span>  <span class="co"># valid typical choices: 768, 1536, 3072</span></span>
 <span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a></span></code></pre>
 </div>
+<p>Next, we define a helper function that converts text strings into
+numerical vectors (embeddings). It processes texts in batches to avoid
+hitting API request-size limits. The <code>RETRIEVAL_DOCUMENT</code>
+task type tells the model to optimize embeddings for search/retrieval
+use cases.</p>
 <div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -4843,6 +5106,11 @@ image + text embeddings for richer use cases.<br>
 <span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a>    <span class="cf">return</span> np.array(vectors, dtype<span class="op">=</span><span class="st">"float32"</span>)</span>
 <span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a></span></code></pre>
 </div>
+<p>Now we embed all the corpus chunks and build a nearest-neighbors
+index for fast retrieval. The <code>NearestNeighbors</code> model from
+scikit-learn uses cosine similarity to find the chunks most relevant to
+a query. We also define a <code>retrieve()</code> function that embeds a
+user question and returns the top-k matching chunks.</p>
 <div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -4890,6 +5158,12 @@ image + text embeddings for richer use cases.<br>
 <span id="cb6-42"><a href="#cb6-42" tabindex="-1"></a></span>
 <span id="cb6-43"><a href="#cb6-43" tabindex="-1"></a>    <span class="cf">return</span> result_df</span></code></pre>
 </div>
+<p>Finally, the <code>ask()</code> function ties the full RAG pipeline
+together: it retrieves relevant chunks, constructs a prompt that
+includes only those chunks as context, and sends the prompt to Gemini
+for a grounded answer. The <code>temperature</code> parameter controls
+how creative the model’s response is — lower values produce more
+factual, deterministic answers.</p>
 <div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -4940,6 +5214,10 @@ image + text embeddings for richer use cases.<br>
 </section><section><h2 class="section-heading" id="step-4-generate-answers-using-gemini">Step 4: Generate answers using Gemini<a class="anchor" aria-label="anchor" href="#step-4-generate-answers-using-gemini"></a>
 </h2>
 <hr class="half-width">
+<p>With all the pieces in place, let’s test the full pipeline
+end-to-end. The <code>ask()</code> function retrieves relevant chunks
+from our corpus, passes them as context to Gemini, and returns a
+grounded answer with citations.</p>
 <div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -4959,6 +5237,10 @@ image + text embeddings for richer use cases.<br>
 </section><section><h2 class="section-heading" id="step-5-cost-summary">Step 5: Cost summary<a class="anchor" aria-label="anchor" href="#step-5-cost-summary"></a>
 </h2>
 <hr class="half-width">
+<p>Understanding the cost of each pipeline component helps you decide
+where to optimize. The table below breaks down what you pay for at each
+stage. For a small workshop with a handful of PDFs, total costs are
+typically well under $1.</p>
 <table class="table">
 <colgroup>
 <col width="9%">
@@ -5031,6 +5313,33 @@ cost, more control).</li>
 sustainability papers.</li>
 <li>GCP’s managed tools lower barrier for experimentation while keeping
 enterprise security and IAM intact.</li>
+</ul></section><section><h2 class="section-heading" id="whats-next">What’s next?<a class="anchor" aria-label="anchor" href="#whats-next"></a>
+</h2>
+<hr class="half-width">
+<p>This workshop covered the core GCP + Vertex AI workflow: data
+storage, notebook-driven job submission, training, hyperparameter
+tuning, and RAG. Here are natural next steps depending on your
+goals:</p>
+<ul>
+<li>
+<strong>Vertex AI Pipelines</strong> — Automate multi-step ML
+workflows (preprocessing → training → evaluation → deployment) as
+reproducible DAGs using Kubeflow Pipelines or TFX on Vertex AI.</li>
+<li>
+<strong>Model Registry &amp; Endpoints</strong> — Register your
+trained models in Vertex AI’s Model Registry and deploy them as online
+prediction endpoints for serving.</li>
+<li>
+<strong>Vertex AI Experiments</strong> — Track and compare runs
+systematically, beyond what <code>metrics.json</code> files in GCS
+provide.</li>
+<li>
+<strong>BigQuery ML</strong> — If your data lives in BigQuery, you
+can train and predict directly in SQL without moving data to GCS.</li>
+<li>
+<strong>Cost optimization</strong> — Explore <a href="https://cloud.google.com/compute/docs/instances/committed-use-discounts-overview" class="external-link">committed
+use discounts</a> and <a href="https://cloud.google.com/compute/docs/instances/spot" class="external-link">preemptible/spot
+VMs</a> for significant savings on long-running training workloads.</li>
 </ul>
 <div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
@@ -5040,12 +5349,9 @@ enterprise security and IAM intact.</li>
 <div class="callout-inner">
 <div class="callout-content">
 <ul>
-<li>Vertex AI’s RAG stack = low-op, cost-predictable.<br>
-</li>
-<li>Hugging Face = high control, high GPU cost.<br>
-</li>
-<li>Keep data local or in GCS to manage egress and compliance.<br>
-</li>
+<li>Vertex AI’s RAG stack = low-op, cost-predictable.</li>
+<li>Hugging Face = high control, high GPU cost.</li>
+<li>Keep data local or in GCS to manage egress and compliance.</li>
 <li>Always cite retrieved chunks for reproducibility and
 transparency.</li>
 </ul>
@@ -5106,8 +5412,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/aio.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/aio.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-03-02",
-  "datePublished": "2026-03-02"
+  "dateModified": "2026-03-03",
+  "datePublished": "2026-03-03"
 }
 
   </script><script>
