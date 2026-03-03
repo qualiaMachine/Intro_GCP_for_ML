@@ -125,6 +125,7 @@
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 <li><a class="dropdown-item" href="glossary.html">Glossary</a></li>
 <li><a class="dropdown-item" href="instances-for-ML.html">Compute for ML</a></li>
+<li><a class="dropdown-item" href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a></li>
           </ul>
 </li>
       </ul>
@@ -362,6 +363,18 @@
 </div>
 <!--/div.accordion-flush-->
 
+<div class="accordion accordion-flush" id="accordionFlush12">
+  <div class="accordion-item">
+    <div class="accordion-header" id="flush-heading12">
+        <a href="11-CLI-workflows.html">11. Bonus: CLI Workflows Without Notebooks (Draft)</a>
+    </div>
+<!--/div.accordion-header-->
+
+  </div>
+<!--/div.accordion-item-->
+</div>
+<!--/div.accordion-flush-->
+
                 </div>
               </div>
             </div>
@@ -388,6 +401,7 @@
                       </li>
                       <li><a href="glossary.html">Glossary</a></li>
 <li><a href="instances-for-ML.html">Compute for ML</a></li>
+<li><a href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a></li>
                     </ul>
 </div>
                 </div>
@@ -574,6 +588,23 @@ quickly; automate with Scheduler + Cloud Run/Functions.</li>
 <li>Keep data local or in GCS to manage egress and compliance.</li>
 <li>Always cite retrieved chunks for reproducibility and
 transparency.</li>
+</ul></section><section id="11-CLI-workflows"><h2 class="section-heading"><a href="11-CLI-workflows.html">Bonus: CLI Workflows Without Notebooks (Draft)</a></h2>
+<hr class="half-width">
+<ul>
+<li>Every Vertex AI operation available in the Python SDK has an
+equivalent <code>gcloud</code> CLI command.</li>
+<li>
+<code>gcloud ai custom-jobs create</code> submits training jobs from
+any terminal — no notebook required.</li>
+<li>Use <code>gcloud auth login</code> and
+<code>gcloud auth application-default login</code> to authenticate
+outside of Workbench VMs.</li>
+<li>Cloud Shell provides free, pre-authenticated CLI access directly in
+the browser.</li>
+<li>Shell scripts checked into version control are more reproducible
+than notebooks with hidden state.</li>
+<li>Notebooks and CLI workflows are complementary — use each where it
+fits best.</li>
 </ul></section>
 </div>
     </main>

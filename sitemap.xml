@@ -34,6 +34,9 @@
     <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/10-Retrieval-augmented-generation.html</loc>
   </url>
   <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/11-CLI-workflows.html</loc>
+  </url>
+  <url>
     <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/404.html</loc>
   </url>
   <url>
@@ -124,6 +127,9 @@
     <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/10-Retrieval-augmented-generation.html</loc>
   </url>
   <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/11-CLI-workflows.html</loc>
+  </url>
+  <url>
     <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/404.html</loc>
   </url>
   <url>
@@ -196,6 +202,9 @@
     <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/reference.html</loc>
   </url>
   <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/uw-madison-cloud-resources.html</loc>
+  </url>
+  <url>
     <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor-notes.html</loc>
   </url>
   <url>
@@ -209,5 +218,8 @@
   </url>
   <url>
     <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/reference.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/uw-madison-cloud-resources.html</loc>
   </url>
 </urlset>
