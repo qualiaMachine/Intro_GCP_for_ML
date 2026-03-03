@@ -62,7 +62,7 @@ The key is to be intentional: choose the right machine size, stop resources when
 If you're at UW-Madison, the university offers several resources that can significantly reduce your cloud costs:
 
 - **Reduced overhead on grants** — The [Cloud Computing Pilot](https://rsp.wisc.edu/proposalprep/cloudComputeInfo.cfm) drops F&A overhead from 55.5% to **26%** on cloud expenses when using a UW-provisioned account, saving ~$2,950 per $10,000 spent.
-- **NIH STRIDES discounts** — Additional pricing reductions for NIH-funded researchers, layered on top of UW rates.
+- **NIH STRIDES discounts** — Negotiated pricing on GCP, AWS, and Azure services for NIH-funded researchers, layered on top of UW rates. Exact discounts vary by service and are shared through program resellers. See [STRIDES at UW-Madison](https://kb.wisc.edu/109813) or contact [STRIDES@nih.gov](mailto:STRIDES@nih.gov).
 - **Google Cloud Research Credits** — Up to **$5,000** in free credits for faculty and postdocs ($1,000 for PhD students). [Apply here](https://edu.google.com/intl/ALL_us/programs/credits/research/).
 - **Free on-campus GPUs** — [CHTC](https://chtc.cs.wisc.edu/) provides access to hundreds of GPUs (including A100s) at no cost. Great for workloads that don't need cloud-specific services.
 - **Support** — The [Public Cloud Team](mailto:cloud-services@cio.wisc.edu) offers weekly office hours and architecture consultations. The [ML+X community](https://hub.datascience.wisc.edu/communities/mlx/) holds monthly meetings on ML/AI topics.
