@@ -41,6 +41,8 @@ We use Jupyter notebooks in this workshop because they're convenient for teachin
 
 If you're more comfortable working from a terminal, SSH session, or shell script, the same Vertex AI SDK calls work identically outside of a notebook. The notebook is just a convenient wrapper — the real work happens in the training scripts and SDK calls.
 
+**That said, Workbench notebooks do make one thing much easier: authentication.** A Workbench VM automatically inherits the permissions of its attached service account, so calls to Cloud Storage, Vertex AI, and the Gemini API "just work" with no extra setup. If you run the same code from your laptop or an HPC cluster, you'll need to configure [Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials) (e.g., `gcloud auth application-default login`) or provide a service account key. It's straightforward, but it is an extra step — and in a shared workshop environment, the notebook's built-in auth avoids a lot of troubleshooting.
+
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 We will follow these steps to create our first Workbench Instance:
