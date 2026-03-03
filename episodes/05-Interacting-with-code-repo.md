@@ -98,7 +98,7 @@ Jupytext is a tool that converts between notebook formats (`.ipynb`) and plain-t
 
 2. Convert a notebook to `.py`.  
 ```python
-!jupytext --to py Interacting-with-GCS.ipynb
+!jupytext --to py Interacting-with-git.ipynb
 ```
 
 3. Convert all notebooks in the current directory.  
