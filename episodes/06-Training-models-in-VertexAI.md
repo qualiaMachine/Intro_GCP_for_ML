@@ -1,7 +1,7 @@
 ---
 title: "Training Models in Vertex AI: Intro"
-teaching: 30
-exercises: 2
+teaching: 25
+exercises: 5
 ---
 
 :::::::::::::::::::::::::::::::::::::: questions 
@@ -51,6 +51,8 @@ print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 ```
 
 ## Testing train.py locally in the notebook
+
+Before submitting a managed training job to Vertex AI, let's first examine and test the training script on our notebook VM. This ensures the code runs without errors before we spend money on cloud compute.
 
 ::::::::::::::::::::::::::::::::::::::: challenge
 
@@ -114,7 +116,7 @@ Here is a non-exhaustive list of suggested tests to perform before scaling up yo
 
 
 ## Download data into notebook environment
-Sometimes it's helpful to keep a copy of data in your notebook VM for quick iteration, even though **GCS is the preferred storage location**.  
+Sometimes it's helpful to keep a copy of data in your notebook VM for quick iteration, even though **GCS is the preferred storage location**. For example, downloading locally lets you test your training script without any GCS dependencies, making debugging faster. Once you've verified everything works, the actual Vertex AI job will read directly from GCS.
 
 ```python
 from google.cloud import storage
@@ -334,6 +336,8 @@ It contains everything your training script explicitly writes. In our case, this
 Additional system-generated files (e.g., Vertex's `.tar.gz` code package or `executor_output.json`) will appear under `.vertex_staging/` and can be safely ignored or auto-deleted via lifecycle rules.
 
 ## Evaluate the trained model stored on GCS
+
+Now let's verify that the model produced by our Vertex AI job performs identically to the one we trained locally. This time, instead of loading from the local disk, we'll load both the test data and model artifact directly from GCS into memory — the recommended approach for production workflows.
 
 ```python
 import io

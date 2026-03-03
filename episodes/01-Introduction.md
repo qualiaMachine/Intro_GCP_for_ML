@@ -1,7 +1,7 @@
 ---
 title: "Overview of Google Cloud for Machine Learning"
 teaching: 10
-exercises: 1
+exercises: 2
 ---
 
 ::::::::::::::::::::::::::::::::::::: questions
