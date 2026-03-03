@@ -150,7 +150,7 @@ gcloud ai custom-jobs create \
     --config=xgb_job.yaml
 ```
 
-Vertex AI provisions a VM, runs your training container, and writes outputs to the `baseOutputDirectory`. You can close your terminal and the job keeps running — there is no need to keep a notebook open.
+Vertex AI provisions a VM, runs your training container, and writes outputs to the `baseOutputDirectory`. The job runs on GCP's infrastructure, not on your machine — you can close your terminal and it keeps going.
 
 ### GPU example (PyTorch)
 
@@ -188,7 +188,7 @@ gcloud ai custom-jobs create \
 ```
 
 
-## Step 4: Monitor and manage jobs
+## Step 4: Monitor jobs
 
 ### List jobs
 
@@ -206,34 +206,65 @@ gcloud ai custom-jobs stream-logs JOB_ID --region=us-central1
 
 This is the CLI equivalent of watching the log panel in a notebook — output streams to your terminal in real time.
 
-### Cancel a running job
-
-```bash
-gcloud ai custom-jobs cancel JOB_ID --region=us-central1
-```
-
-### Delete a completed job
-
-```bash
-gcloud ai custom-jobs delete JOB_ID --region=us-central1
-```
-
 ### Hyperparameter tuning jobs
 
-The `gcloud ai hp-tuning-jobs` family works the same way. You provide a YAML config with the parameter search space:
+The `gcloud ai hp-tuning-jobs` family works the same way:
 
 ```bash
-# List HP tuning jobs
 gcloud ai hp-tuning-jobs list --region=us-central1
-
-# Cancel
-gcloud ai hp-tuning-jobs cancel JOB_ID --region=us-central1
+gcloud ai hp-tuning-jobs stream-logs JOB_ID --region=us-central1
 ```
 
-Creating HP tuning jobs via YAML is more verbose — for complex tuning configs, the Python SDK (episode 08) is often more readable. Use whichever fits your workflow.
+Creating HP tuning jobs via YAML is more verbose — for complex tuning configs, the Python SDK ([Episode 8](08-Hyperparameter-tuning.md)) is often more readable.
 
 
-## Step 5: Download results
+## Step 5: Check for running resources (don't skip this)
+
+The biggest risk with CLI workflows is submitting a job — or leaving a notebook VM running — and forgetting about it. Unlike a Workbench notebook where you can see tabs and running kernels, the CLI gives you no visual reminder that something is still billing you. Jobs and VMs keep running whether or not your terminal is open.
+
+**Get in the habit of checking before you walk away:**
+
+```bash
+# Training jobs still running
+gcloud ai custom-jobs list --region=us-central1 --filter="state=JOB_STATE_RUNNING"
+
+# HP tuning jobs still running
+gcloud ai hp-tuning-jobs list --region=us-central1 --filter="state=JOB_STATE_RUNNING"
+
+# Endpoints still deployed (these bill 24/7, even when idle)
+gcloud ai endpoints list --region=us-central1
+
+# Workbench notebook VMs still running
+gcloud workbench instances list --location=us-central1-a
+```
+
+If anything shows up that you don't need, shut it down:
+
+```bash
+# Cancel a running training job
+gcloud ai custom-jobs cancel JOB_ID --region=us-central1
+
+# Undeploy a model from an endpoint (stops the per-hour charge)
+gcloud ai endpoints undeploy-model ENDPOINT_ID \
+    --region=us-central1 \
+    --deployed-model-id=DEPLOYED_MODEL_ID
+
+# Stop a Workbench notebook VM
+gcloud workbench instances stop INSTANCE_NAME --location=us-central1-a
+```
+
+::::::::::::::::::::::::::::::::::::: callout
+
+### Cost leaks are silent
+
+A forgotten endpoint bills ~$1.50–$3/hour depending on machine type — that's **$36–$72/day** doing nothing. A GPU training job you accidentally submitted twice burns money until you cancel it. There's no pop-up warning; you'll only find out on your billing dashboard or when you hit a quota.
+
+Build the habit: **every time you finish a CLI session, run the check commands above.** For a more thorough cleanup checklist, see [Episode 9](09-Resource-management-cleanup.md).
+
+::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+## Step 6: Download results
 
 After a job succeeds, download artifacts from GCS:
 
@@ -364,6 +395,7 @@ Most real-world ML projects use both: notebooks for early experimentation and CL
 - Use `gcloud auth login` and `gcloud auth application-default login` to authenticate outside of Workbench VMs.
 - Cloud Shell provides free, pre-authenticated CLI access directly in the browser.
 - Shell scripts checked into version control are more reproducible than notebooks with hidden state.
+- CLI workflows give no visual reminder of running resources — always check for active jobs, endpoints, and VMs before walking away.
 - Notebooks and CLI workflows are complementary — use each where it fits best.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
