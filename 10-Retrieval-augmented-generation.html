@@ -536,32 +536,29 @@ affects future embedding cost.</p>
 </section><section><h2 class="section-heading" id="step-3-embed-text-using-vertex-ai">Step 3: Embed text using Vertex AI<a class="anchor" aria-label="anchor" href="#step-3-embed-text-using-vertex-ai"></a></h2>
 <hr class="half-width"><div class="section level3">
 <h3 id="choosing-an-embedding-and-generator-model">Choosing an embedding and generator model<a class="anchor" aria-label="anchor" href="#choosing-an-embedding-and-generator-model"></a></h3>
-<p>Vertex AI currently offers multiple managed embedding models under
-the <strong>Text Embeddings API</strong> family.<br>
-For this exercise, we’re using
-<strong><code>text-embedding-004</code></strong>, which is Google’s
-latest general-purpose model optimized for <strong>semantic
+<p>Vertex AI offers several managed embedding models through the
+<strong>Gemini API</strong> and the older <strong>Text Embeddings
+API</strong>. For this exercise, we’re using
+<strong><code>gemini-embedding-001</code></strong>, Google’s latest
+general-purpose embedding model optimized for <strong>semantic
 similarity</strong>, <strong>retrieval</strong>, and
 <strong>clustering</strong> tasks.</p>
-<p><strong>Why this model?</strong> - Produces 768-dimensional dense
-vectors suitable for cosine or dot-product similarity.<br>
-- Handles long passages (up to ~8,000 tokens) and multilingual
-content.<br>
-- Tuned for retrieval tasks like RAG, document search, and
-clustering.<br>
-- Cost-efficient for classroom-scale workloads (fractions of a cent per
-document).</p>
+<p><strong>Why this model?</strong> - Supports configurable output
+dimensions (768, 1536, or 3072) — we use 1536 for a good balance of
+quality and speed. - Handles long passages (up to ~8,000 tokens) and
+multilingual content. - Tuned for retrieval tasks like RAG, document
+search, and clustering. - Cost-efficient for classroom-scale workloads
+(fractions of a cent per document).</p>
 <p>If you’d like to explore other options: - Open the <a href="https://console.cloud.google.com/vertex-ai/model-garden?project=doit-rci-mlm25-4626&amp;pageState=(%22galleryStateKey%22:(%22f%22:(%22g%22:%5B%22goals%22%5D,%22o%22:%5B%22Text%20embeddings%22%5D),%22s%22:%22%22))" class="external-link"><strong>Vertex
 AI Model Garden → Text Embeddings</strong></a> in your GCP console.
-<!-- replace project ID with your own if not using the shared workshop project --><br>
-- You’ll find specialized alternatives such as: -
-<strong><code>text-embedding-005</code> (experimental)</strong> – larger
-model, higher precision on longer documents.<br>
-- <strong><code>multimodal-embedding-001</code></strong> – supports
-image + text embeddings for richer use cases.<br>
-- <strong>Third-party embeddings (via Model Garden)</strong> – e.g.,
-<code>bge-large-en</code>, <code>cohere-embed-v3</code>,
-<code>all-MiniLM</code>.</p>
+<!-- replace project ID with your own if not using the shared workshop project -->
+- You’ll find alternatives such as: -
+<strong><code>text-embedding-005</code></strong> – older model, still
+widely used; 768-dimensional output. -
+<strong><code>multimodal-embedding-001</code></strong> – supports image
++ text embeddings for richer use cases. - <strong>Third-party embeddings
+(via Model Garden)</strong> – e.g., <code>bge-large-en</code>,
+<code>cohere-embed-v3</code>, <code>all-MiniLM</code>.</p>
 <p>The following code sets up the Gen AI client and chooses our
 embedding and generation models. We use <code>vertexai=True</code> to
 route API calls through your GCP project (for billing and governance)
@@ -617,32 +614,34 @@ use cases.</p>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co"># 3. Helper: get embeddings for a list of texts</span></span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co">#############################################</span></span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="kw">def</span> embed_texts(text_list, batch_size<span class="op">=</span><span class="dv">32</span>, dims<span class="op">=</span>EMBED_DIM):</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="kw">def</span> embed_texts(text_list, batch_size<span class="op">=</span><span class="dv">32</span>, dims<span class="op">=</span>EMBED_DIM, task_type<span class="op">=</span><span class="st">"RETRIEVAL_DOCUMENT"</span>):</span>
 <span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>    <span class="co">"""</span></span>
 <span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co">    Convert a list of text strings into embedding vectors using gemini-embedding-001.</span></span>
 <span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co">    Returns a NumPy array of shape (len(text_list), dims).</span></span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>    vectors <span class="op">=</span> []</span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>    <span class="co"># batch to avoid huge single requests</span></span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>    <span class="cf">for</span> start <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(text_list), batch_size):</span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>        batch <span class="op">=</span> text_list[start:start<span class="op">+</span>batch_size]</span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a></span>
-<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>        resp <span class="op">=</span> client.models.embed_content(</span>
-<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>            model<span class="op">=</span>EMBED_MODEL_ID,</span>
-<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>            contents<span class="op">=</span>batch,</span>
-<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>            config<span class="op">=</span>EmbedContentConfig(</span>
-<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>                task_type<span class="op">=</span><span class="st">"RETRIEVAL_DOCUMENT"</span>,   <span class="co"># optimize embeddings for retrieval/use as chunks</span></span>
-<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a>                output_dimensionality<span class="op">=</span>dims,       <span class="co"># must match EMBED_DIM everywhere</span></span>
-<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a>            ),</span>
-<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a>        )</span>
-<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a></span>
-<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a>        <span class="co"># resp.embeddings is aligned with 'batch'</span></span>
-<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a>        <span class="cf">for</span> emb <span class="kw">in</span> resp.embeddings:</span>
-<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a>            vectors.append(emb.values)</span>
-<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a></span>
-<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a>    <span class="cf">return</span> np.array(vectors, dtype<span class="op">=</span><span class="st">"float32"</span>)</span>
-<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a></span></code></pre>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="co">    task_type: "RETRIEVAL_DOCUMENT" for corpus chunks, "RETRIEVAL_QUERY" for user queries.</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>    vectors <span class="op">=</span> []</span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>    <span class="co"># batch to avoid huge single requests</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>    <span class="cf">for</span> start <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(text_list), batch_size):</span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>        batch <span class="op">=</span> text_list[start:start<span class="op">+</span>batch_size]</span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>        resp <span class="op">=</span> client.models.embed_content(</span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>            model<span class="op">=</span>EMBED_MODEL_ID,</span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>            contents<span class="op">=</span>batch,</span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a>            config<span class="op">=</span>EmbedContentConfig(</span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a>                task_type<span class="op">=</span>task_type,              <span class="co"># RETRIEVAL_DOCUMENT for chunks, RETRIEVAL_QUERY for queries</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a>                output_dimensionality<span class="op">=</span>dims,       <span class="co"># must match EMBED_DIM everywhere</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a>            ),</span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a>        )</span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a>        <span class="co"># resp.embeddings is aligned with 'batch'</span></span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a>        <span class="cf">for</span> emb <span class="kw">in</span> resp.embeddings:</span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a>            vectors.append(emb.values)</span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a>    <span class="cf">return</span> np.array(vectors, dtype<span class="op">=</span><span class="st">"float32"</span>)</span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a></span></code></pre>
 </div>
 <p>Now we embed all the corpus chunks and build a nearest-neighbors
 index for fast retrieval. The <code>NearestNeighbors</code> model from
@@ -680,7 +679,7 @@ user question and returns the top-k matching chunks.</p>
 <span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a><span class="co">    """</span></span>
 <span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a></span>
 <span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a>    <span class="co"># Embed the query to the same dimension space as emb_matrix</span></span>
-<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a>    query_vec <span class="op">=</span> embed_texts([query], dims<span class="op">=</span>EMBED_DIM)[<span class="dv">0</span>]   <span class="co"># shape (EMBED_DIM,)</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a>    query_vec <span class="op">=</span> embed_texts([query], dims<span class="op">=</span>EMBED_DIM, task_type<span class="op">=</span><span class="st">"RETRIEVAL_QUERY"</span>)[<span class="dv">0</span>]  <span class="co"># shape (EMBED_DIM,)</span></span>
 <span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a></span>
 <span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a>    <span class="co"># Find nearest neighbors using cosine distance</span></span>
 <span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a>    distances, indices <span class="op">=</span> nn.kneighbors([query_vec], n_neighbors<span class="op">=</span>k, return_distance<span class="op">=</span><span class="va">True</span>)</span>
@@ -786,7 +785,7 @@ typically well under $1.</p>
 <td>Uptime (hourly)</td>
 <td>~$0.20/hr</td>
 </tr><tr class="even"><td>Embeddings</td>
-<td>text-embedding-004</td>
+<td>gemini-embedding-001</td>
 <td>Managed API</td>
 <td>Tokens embedded</td>
 <td>~$0.10 / 1M tokens</td>
