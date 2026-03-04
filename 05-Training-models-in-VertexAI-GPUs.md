@@ -23,7 +23,7 @@ exercises: 10
 ## Initial setup
 
 #### 1. Open pre-filled notebook
-Navigate to `/Intro_GCP_for_ML/notebooks/05-Training-models-in-VertexAI-GPUs.ipynb` to begin this notebook. **Select the *PyTorch* environment (kernel).** Local PyTorch is only needed for local tests. Your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-cpu.2-6` or `pytorch-gpu.2-6` — without a `.py310` suffix), so it brings its own framework at run time.
+Navigate to `/Intro_GCP_for_ML/notebooks/05-Training-models-in-VertexAI-GPUs.ipynb` to begin this notebook. **Select the *PyTorch* environment (kernel).** Local PyTorch is only needed for local tests. Your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-xla.2-4.py310` for CPU or `pytorch-gpu.2-4.py310` for GPU), so it brings its own framework at run time.
 
 #### 2. CD to instance home directory
 To ensure we're all in the same starting spot, change directory to your Jupyter home directory.
@@ -234,16 +234,16 @@ In the previous episode, we trained an XGBoost model using Vertex AI's CustomTra
 
 ::::::::::::::::::::::::::::::::::::: callout
 ### Check supported container versions
-**Container URI format matters.** Because we use `CustomTrainingJob` (which auto-packages your script as a Python package), the container must be registered for *python package training*. Use the **short form** without a Python-version suffix — e.g., `pytorch-cpu.2-6:latest`, **not** `pytorch-cpu.2-6.py310:latest`. The `.py310` variants work with `CustomJob.from_local_script` (used in Episode 6) but are rejected by `CustomTrainingJob`.
+**Container URI format matters.** The container must be registered for *python package training* (used by `CustomTrainingJob`). Use the `pytorch-xla` variant with a Python-version suffix — e.g., `pytorch-xla.2-4.py310:latest`. The `pytorch-cpu` and `pytorch-gpu` variants may not be registered for python package training.
 
-Google also periodically retires older versions. If you see an `INVALID_ARGUMENT` error about an unsupported image, check the current list at [Prebuilt containers for training](https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch) and update the version number (e.g., `2-6` → `2-7`).
+Google periodically retires older versions. If you see an `INVALID_ARGUMENT` error about an unsupported image, check the current list at [Prebuilt containers for training](https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch) and update the version number.
 :::::::::::::::::::::::::::::::::::::
 
 ```python
 import datetime as dt
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
 ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch/{RUN_ID}"
-IMAGE = 'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-6:latest' # cpu-only; no .py310 suffix for CustomTrainingJob
+IMAGE = 'us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest'
 MACHINE = "n1-standard-4" # CPU fine for small datasets
 
 print(f"RUN_ID = {RUN_ID}\nARTIFACT_DIR = {ARTIFACT_DIR}\nMACHINE = {MACHINE}")
@@ -355,7 +355,7 @@ Our CPU job above worked fine for this small dataset. In practice, you'd switch 
 
 The changes from CPU to GPU are minimal — this is one of the advantages of Vertex AI's container-based approach:
 
-- The container image switches to the GPU-enabled version (`pytorch-gpu.2-6:latest`), which includes CUDA and cuDNN.
+- The container image switches to the GPU-enabled version (`pytorch-gpu.2-4.py310:latest`), which includes CUDA and cuDNN.
 - The machine type (`n1-standard-8`) defines CPU and memory resources, while we add a GPU accelerator (`NVIDIA_TESLA_T4`, `NVIDIA_L4`, etc.). **For guidance on selecting a machine type and accelerator, visit the [Compute for ML](https://qualiamachine.github.io/Intro_GCP_for_ML/compute-for-ML.html) resource.**
 - The training script, arguments, and artifact handling all stay the same.
 
@@ -375,7 +375,7 @@ ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch/{RUN_ID}"
 
 # ---- Container image ----
 # Use a prebuilt TRAINING image that has PyTorch + CUDA. This enables GPU at runtime.
-IMAGE = "us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-6:latest"
+IMAGE = "us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest"
 
 # ---- Machine vs Accelerator (important!) ----
 # machine_type = the VM's CPU/RAM shape. It is NOT a GPU by itself.
@@ -480,7 +480,7 @@ Now that you've run both a CPU and GPU training job, answer the following:
 
 1. **Artifact location**: Where did Vertex AI write your model artifacts? How does `base_output_dir` in `job.run()` relate to the `AIP_MODEL_DIR` environment variable inside the container?
 2. **CPU vs. GPU job time**: Compare the wall-clock times of your CPU and GPU jobs (visible in the Console under **Vertex AI > Training > Custom Jobs**). Which was faster? Why might the GPU job be *slower* for this dataset?
-3. **Container choice**: We used `pytorch-cpu.2-6` for the CPU job and `pytorch-gpu.2-6` for the GPU job. What would happen if you used the CPU container but still passed `accelerator_type` and `accelerator_count`?
+3. **Container choice**: We used `pytorch-xla.2-4.py310` for the CPU job and `pytorch-gpu.2-4.py310` for the GPU job. What would happen if you used the CPU container but still passed `accelerator_type` and `accelerator_count`?
 4. **Cost awareness**: You used `n1-standard-4` for CPU and `n1-standard-8` + T4 for GPU. Using the [Compute for ML](https://qualiamachine.github.io/Intro_GCP_for_ML/compute-for-ML.html) resource, estimate the relative hourly cost difference between these configurations.
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::
