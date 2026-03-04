@@ -282,6 +282,18 @@ print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}\nartif
 aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}/.vertex_staging")
 ```
 
+> ### What does `aiplatform.init()` do?
+>
+> `aiplatform.init()` sets **session-wide defaults** for the Vertex AI Python SDK. Every SDK call you make afterward (creating jobs, uploading models, querying metadata, etc.) will inherit these values so you don't have to repeat them each time. The three arguments we pass here are:
+>
+> | Argument | Purpose |
+> |---|---|
+> | `project` | The Google Cloud project that owns (and is billed for) all Vertex AI resources you create. |
+> | `location` | The region where jobs run and artifacts are stored (e.g., `us-central1`). Must match the region of any buckets or endpoints you reference. |
+> | `staging_bucket` | A Cloud Storage path where the SDK **automatically packages and uploads your training code** as a tarball (e.g., `aiplatform-2025-01-15-…-.tar.gz`). The training VM downloads this tarball at startup to run your script. We point it to a `.vertex_staging` subfolder to keep these temporary archives separate from your real data and model artifacts. |
+>
+> You only need to call `aiplatform.init()` once per notebook or script session. If you ever need to override a default for a single call (e.g., run a job in a different region), you can pass the argument directly to that method and it will take precedence.
+
 This next section defines a custom training job in Vertex AI, specifying how and where the training code will run. It points to your training script (`train_xgboost.py`), uses Google's prebuilt XGBoost training container image (which already includes common dependencies like `google-cloud-storage`), and sets a `display_name` for tracking the job in the Vertex AI console.
 
 > **Tip:** If your script needs packages not included in the prebuilt container, you can pass a `requirements` list to `CustomTrainingJob` (e.g., `requirements=["scikit-learn>=1.3"]`).
