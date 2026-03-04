@@ -452,12 +452,10 @@ page</li>
 use a single instance for training, tuning, RAG, and more, so
 <code>workshop</code> is a good general-purpose label.</li>
 <li>
-<strong>Region</strong>: Choose the same region as your storage
-bucket (e.g., <code>us-central1</code>). This avoids cross-region
-transfer charges and keeps data access latency low.
-<ul><li>If you are unsure, check your bucket’s location in the Cloud Storage
-console (click the bucket name → look under “Location”).</li>
-</ul></li>
+<strong>Region</strong>: Select <code>us-central1</code>. When we
+create a storage bucket in <a href="03-Data-storage-and-access.html">Episode 3</a>, we’ll use the same
+region — keeping compute and storage co-located avoids cross-region
+transfer charges and keeps data access fast.</li>
 <li>
 <strong>Zone:</strong> <code>us-central1-a</code> (or another zone
 in <code>us-central1</code>, like <code>-b</code> or <code>-c</code>)
@@ -599,7 +597,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane. - Like an HPC
 login node, it is not meant for heavy computation. - Suitable for small
@@ -632,7 +630,7 @@ with idle shutdown enabled.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <ul><li>
 <strong>With idle shutdown:</strong> 8 hrs × 5 days × 4 weeks = 160
