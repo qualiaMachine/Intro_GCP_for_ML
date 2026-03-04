@@ -95,8 +95,6 @@ GCS URIs follow the format `gs://bucket-name/path/to/file.csv`. Think of them as
 - **Access control**: **Uniform** (simpler IAM-based permissions).
 - **Protection**: Leave default **soft delete** enabled; skip versioning and retention policies.
 
-![Final GCS Bucket Settings](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/bucket-fullyconfigured.jpg){alt="Recommended GCS bucket settings."}
-
 Click **Create** if everything looks good.
 
 ### 4. Upload files to the bucket
