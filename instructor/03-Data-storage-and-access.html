@@ -929,9 +929,9 @@ is using. The code below sums up all object sizes.</p>
 <h3 class="callout-title">Challenge 2: Read and explore the test
 dataset</h3>
 <div class="callout-content">
-<p>Read <code>titanic_test.csv</code> from your GCS bucket, display its
-shape, and compare the columns to <code>train_data</code>. What column
-is missing from the test set, and why?</p>
+<p>Read <code>titanic_test.csv</code> from your GCS bucket and display
+its shape. How does the test set compare to the training set in size and
+columns?</p>
 </div>
 </div>
 </div>
@@ -948,13 +948,14 @@ is missing from the test set, and why?</p>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>blob <span class="op">=</span> client.bucket(bucket_name).blob(<span class="st">"titanic_test.csv"</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>test_data <span class="op">=</span> pd.read_csv(io.BytesIO(blob.download_as_bytes()))</span>
 <span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Test shape:"</span>, test_data.shape)</span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Train columns:"</span>, <span class="bu">list</span>(train_data.columns))</span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Test columns:"</span>, <span class="bu">list</span>(test_data.columns))</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Train shape:"</span>, train_data.shape)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Same columns?"</span>, <span class="bu">list</span>(test_data.columns) <span class="op">==</span> <span class="bu">list</span>(train_data.columns))</span>
 <span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>test_data.head()</span></code></pre>
 </div>
-<p>The <code>Survived</code> column is missing from the test set — that
-is the label we are trying to predict, so it is intentionally withheld
-for evaluation.</p>
+<p>Both datasets share the same 12 columns (including
+<code>Survived</code>). The test set is a smaller held-out subset (179
+rows vs 712 in training) — roughly an 80/20 split used for final
+evaluation after the model is trained.</p>
 </div>
 </div>
 </div>

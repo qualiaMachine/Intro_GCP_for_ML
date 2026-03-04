@@ -1109,7 +1109,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.</p>
 <ul>
@@ -1148,7 +1148,7 @@ with idle shutdown enabled.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <ul>
 <li>
@@ -1921,9 +1921,9 @@ is using. The code below sums up all object sizes.</p>
 <h3 class="callout-title">Challenge 2: Read and explore the test
 dataset</h3>
 <div class="callout-content">
-<p>Read <code>titanic_test.csv</code> from your GCS bucket, display its
-shape, and compare the columns to <code>train_data</code>. What column
-is missing from the test set, and why?</p>
+<p>Read <code>titanic_test.csv</code> from your GCS bucket and display
+its shape. How does the test set compare to the training set in size and
+columns?</p>
 </div>
 </div>
 </div>
@@ -1940,13 +1940,14 @@ is missing from the test set, and why?</p>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>blob <span class="op">=</span> client.bucket(bucket_name).blob(<span class="st">"titanic_test.csv"</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>test_data <span class="op">=</span> pd.read_csv(io.BytesIO(blob.download_as_bytes()))</span>
 <span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Test shape:"</span>, test_data.shape)</span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Train columns:"</span>, <span class="bu">list</span>(train_data.columns))</span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Test columns:"</span>, <span class="bu">list</span>(test_data.columns))</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Train shape:"</span>, train_data.shape)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Same columns?"</span>, <span class="bu">list</span>(test_data.columns) <span class="op">==</span> <span class="bu">list</span>(train_data.columns))</span>
 <span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>test_data.head()</span></code></pre>
 </div>
-<p>The <code>Survived</code> column is missing from the test set — that
-is the label we are trying to predict, so it is intentionally withheld
-for evaluation.</p>
+<p>Both datasets share the same 12 columns (including
+<code>Survived</code>). The test set is a smaller held-out subset (179
+rows vs 712 in training) — roughly an 80/20 split used for final
+evaluation after the model is trained.</p>
 </div>
 </div>
 </div>
@@ -4175,7 +4176,7 @@ configuration.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4223,7 +4224,7 @@ how much would 6 trials cost?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6326,7 +6327,7 @@ and 100%.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li><p>In the Cloud Console, click the <strong>Navigation menu
@@ -6381,7 +6382,7 @@ are not actively using.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6417,7 +6418,7 @@ don’t need, and delete the endpoint.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6463,7 +6464,7 @@ objects. Apply it to your bucket.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
 <div class="accordion-body">
 <p>Save the following as <code>lifecycle.json</code>:</p>
 <div class="codewrapper sourceCode" id="cb14">
@@ -6519,7 +6520,7 @@ delete the bucket entirely.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution5" aria-expanded="false" aria-controls="collapseSolution5">
   <h4 class="accordion-header" id="headingSolution5"> Show me the solution </h4>
 </button>
-<div id="collapseSolution5" class="accordion-collapse collapse" data-bs-parent="#accordionSolution5" aria-labelledby="headingSolution5">
+<div id="collapseSolution5" class="accordion-collapse collapse" aria-labelledby="headingSolution5" data-bs-parent="#accordionSolution5">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
