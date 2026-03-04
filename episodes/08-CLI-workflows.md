@@ -91,15 +91,15 @@ In Episode 3 we uploaded data through the Cloud Console. From the CLI the equiva
 
 ```bash
 # Create a bucket (if it doesn't already exist)
-gcloud storage buckets create gs://johndoe-titanic \
+gcloud storage buckets create gs://doe-titanic \
     --location=us-central1
 
 # Upload the Titanic CSV files
-gcloud storage cp ~/Downloads/data/titanic_train.csv gs://johndoe-titanic/
-gcloud storage cp ~/Downloads/data/titanic_test.csv  gs://johndoe-titanic/
+gcloud storage cp ~/Downloads/data/titanic_train.csv gs://doe-titanic/
+gcloud storage cp ~/Downloads/data/titanic_test.csv  gs://doe-titanic/
 
 # Verify
-gcloud storage ls gs://johndoe-titanic/
+gcloud storage ls gs://doe-titanic/
 ```
 
 ::::::::::::::::::::::::::::::::::::: callout
@@ -130,14 +130,14 @@ jobSpec:
       containerSpec:
         imageUri: us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest
         args:
-          - "--train=gs://johndoe-titanic/titanic_train.csv"
+          - "--train=gs://doe-titanic/titanic_train.csv"
           - "--max_depth=6"
           - "--eta=0.3"
           - "--subsample=0.8"
           - "--colsample_bytree=0.8"
           - "--num_round=100"
   baseOutputDirectory:
-    outputUriPrefix: gs://johndoe-titanic/artifacts/xgb/cli-run/
+    outputUriPrefix: gs://doe-titanic/artifacts/xgb/cli-run/
 ```
 
 Replace the bucket name and hyperparameters to match your setup.
@@ -169,13 +169,13 @@ jobSpec:
       containerSpec:
         imageUri: us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest
         args:
-          - "--train=gs://johndoe-titanic/data/train_data.npz"
-          - "--val=gs://johndoe-titanic/data/val_data.npz"
+          - "--train=gs://doe-titanic/data/train_data.npz"
+          - "--val=gs://doe-titanic/data/val_data.npz"
           - "--epochs=500"
           - "--learning_rate=0.001"
           - "--patience=50"
   baseOutputDirectory:
-    outputUriPrefix: gs://johndoe-titanic/artifacts/pytorch/cli-gpu-run/
+    outputUriPrefix: gs://doe-titanic/artifacts/pytorch/cli-gpu-run/
 ```
 
 Submit the same way:
@@ -269,10 +269,10 @@ After a job succeeds, download artifacts from GCS:
 
 ```bash
 # List what the job wrote
-gcloud storage ls gs://johndoe-titanic/artifacts/xgb/cli-run/
+gcloud storage ls gs://doe-titanic/artifacts/xgb/cli-run/
 
 # Download everything locally
-gcloud storage cp -r gs://johndoe-titanic/artifacts/xgb/cli-run/ ./local_results/
+gcloud storage cp -r gs://doe-titanic/artifacts/xgb/cli-run/ ./local_results/
 ```
 
 You can then load the model and metrics in a local Python session for evaluation — no Workbench VM required.
@@ -288,7 +288,7 @@ set -euo pipefail
 
 PROJECT_ID="your-project-id"
 REGION="us-central1"
-BUCKET="johndoe-titanic"
+BUCKET="doe-titanic"
 RUN_ID=$(date +%Y%m%d-%H%M%S)
 
 # Upload latest training data
