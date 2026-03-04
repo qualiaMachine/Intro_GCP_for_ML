@@ -20,17 +20,6 @@ exercises: 2
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-## Prerequisites
-
-This workshop assumes you have a **fundamental ML/AI background**. Specifically, you should be comfortable with:
-
-- **Python** — writing scripts, using packages like pandas and NumPy.
-- **Core ML concepts** — train/test splits, overfitting, loss functions, hyperparameters.
-- **Training a model** — you've trained at least one model in any framework (scikit-learn, PyTorch, TensorFlow, XGBoost, etc.).
-- **Command line basics** — navigating directories, running commands in a terminal.
-
-No prior GCP or cloud experience is required — that's what this workshop teaches.
-
 ## Why run ML in the cloud?
 
 You have ML code that works on your laptop. But at some point you need more — a bigger GPU (or multiple GPUs), a dataset that won't fit on disk, or the ability to run dozens of training experiments overnight. You could invest in local hardware or compete for time on a shared HPC cluster, but cloud platforms let you rent exactly the hardware you need, for exactly as long as you need it, and then shut it down.
