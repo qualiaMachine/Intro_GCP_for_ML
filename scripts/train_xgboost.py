@@ -107,6 +107,7 @@ if __name__ == "__main__":
         "subsample": args.subsample,
         "colsample_bytree": args.colsample_bytree,
         "eval_metric": "logloss",
+        "seed": 42,
     }
 
     # Train & save
