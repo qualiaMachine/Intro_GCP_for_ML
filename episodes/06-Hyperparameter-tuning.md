@@ -117,7 +117,7 @@ client = storage.Client()
 PROJECT_ID = client.project
 REGION = "us-central1"
 LAST_NAME = "DOE"  # change to your name or unique ID
-BUCKET_NAME = "sinkorswim-johndoe-titanic"  # replace with your bucket name
+BUCKET_NAME = "johndoe-titanic"  # replace with your bucket name
 
 aiplatform.init(
     project=PROJECT_ID,
