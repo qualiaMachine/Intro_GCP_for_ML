@@ -73,7 +73,7 @@ Leave environment settings at their defaults for this workshop. Workbench uses J
 
 - **Machine type**: Select a small machine (e.g., `n2-standard-2`, ~$0.07/hr) to act as the controller.
   - This keeps costs low while you delegate heavy lifting to training jobs.
-  - For guidance on common machine types and their costs, see [Instances for ML on GCP](../instances-for-ML.html).
+  - For guidance on common machine types and their costs, see [Compute for ML](../compute-for-ML.html). For help deciding when you need cloud hardware at all, see [When does model size justify cloud compute?](01-Introduction.md#when-does-model-size-justify-cloud-compute) in Episode 1.
 
 - **Set idle shutdown**: To save on costs when you aren't doing anything in your notebook, lower the default idle shutdown time to **60 (minutes)**.
 

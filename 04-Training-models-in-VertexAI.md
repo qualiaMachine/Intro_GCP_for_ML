@@ -26,7 +26,7 @@ exercises: 15
 
 ### Cost awareness: training jobs
 
-Training jobs bill per VM-hour while the job is running. An `n1-standard-4` (CPU) costs ~$0.19/hr; adding a T4 GPU brings the total to ~$0.54/hr. Jobs automatically stop (and stop billing) when the script finishes. For a complete cost reference, see the [Instances for ML](../instances-for-ML.html) page and the cost table in [Episode 9](09-Resource-management-cleanup.md).
+Training jobs bill per VM-hour while the job is running. An `n1-standard-4` (CPU) costs ~$0.19/hr; adding a T4 GPU brings the total to ~$0.54/hr. Jobs automatically stop (and stop billing) when the script finishes. For a complete cost reference, see the [Compute for ML](../compute-for-ML.html) page and the cost table in [Episode 9](09-Resource-management-cleanup.md).
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -237,7 +237,7 @@ Increasing `NUM_ROUND` from 100 to 200 may marginally improve accuracy but rough
 Unlike "local" training using our notebook's VM, this next approach launches a **managed training job** that runs on scalable compute. Vertex AI handles provisioning, scaling, logging, and saving outputs to GCS.  
 
 ### Which machine type to start with?
-Start with a small CPU machine like `n1-standard-4`. Only scale up to GPUs/TPUs once you've verified your script. See [Instances for ML on GCP](https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html) for guidance.  
+Start with a small CPU machine like `n1-standard-4`. Only scale up to GPUs/TPUs once you've verified your script. See [Compute for ML](https://qualiamachine.github.io/Intro_GCP_for_ML/compute-for-ML.html) for guidance.  
 
 ```python
 MACHINE = 'n1-standard-4'

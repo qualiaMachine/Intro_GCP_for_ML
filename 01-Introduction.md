@@ -86,7 +86,7 @@ GCP gives you three things that matter for applied ML/AI research:
 **Flexible compute.** You pick the hardware that fits your workload:
 
 - **CPUs** for lightweight models, preprocessing, or feature engineering.
-- **GPUs** (NVIDIA T4, L4, V100, A100, H100) for training deep learning models. For help choosing, see [Instances for ML on GCP](../instances-for-ML.html).
+- **GPUs** (NVIDIA T4, L4, V100, A100, H100) for training deep learning models. For help choosing, see [Compute for ML](../compute-for-ML.html).
 - **TPUs** (Tensor Processing Units) — Google's custom hardware for matrix-heavy workloads. TPUs work best with TensorFlow and JAX; PyTorch support is improving but still less mature.
 
 **Scalable storage.** Google Cloud Storage (GCS) buckets give you a place to store datasets, scripts, and model artifacts that any job or notebook can access. Think of it as a shared filesystem for your project.
