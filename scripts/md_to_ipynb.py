@@ -25,6 +25,17 @@ def escape_dollars(text):
     """Escape bare $ signs before digits so Jupyter doesn't treat them as LaTeX."""
     return re.sub(r'(?<!\\)\$(?=\d)', r'\\$', text)
 
+def strip_solutions(md_content):
+    """Remove Carpentries solution blocks so learners don't see answers in notebooks."""
+    return re.sub(
+        r'^:{16,}\s*solution\s*\n.*?\n:{16,}\s*$',
+        '', md_content, flags=re.MULTILINE | re.DOTALL
+    )
+
+def strip_fenced_divs(text):
+    """Remove Carpentries fenced-div markers (:::+ lines) from markdown."""
+    return re.sub(r'^:{3,}.*$', '', text, flags=re.MULTILINE)
+
 def split_markdown(md_content):
     """Splits Markdown content into separate Markdown and Code cells."""
     cells = []
@@ -60,7 +71,9 @@ for filename in os.listdir(episodes_dir):
         with open(md_path, "r", encoding="utf-8") as f:
             md_content = f.read()
 
-        # Split into Markdown and Code cells
+        # Clean up Carpentries formatting before converting
+        md_content = strip_solutions(md_content)
+        md_content = strip_fenced_divs(md_content)
         notebook_cells = split_markdown(md_content)
 
         # Create Jupyter notebook
