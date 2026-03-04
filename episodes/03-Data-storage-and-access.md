@@ -115,7 +115,7 @@ Click **Create** if everything looks good.
 
 ## Adjust bucket permissions
 
-We need to grant the Compute Engine default service account IAM roles so that our Workbench notebooks and training jobs can interact with the bucket.
+Your bucket exists, but your notebooks and training jobs don't automatically have permission to use it. GCP follows the **principle of least privilege** — services only get the access you explicitly grant. In this section we'll find the service account that Vertex AI uses and give it the right roles on your bucket.
 
 ::::::::::::::::::::::::::::::::::::: callout
 
@@ -137,30 +137,37 @@ Replace `YOUR_PROJECT_ID` with your project ID (shown in the Console dashboard t
 
 #### Find your service account
 
+When you create a GCP project, Google automatically provisions a **Compute Engine default service account**. This is the identity that Vertex AI Workbench notebooks and training jobs use when they call other GCP services (like Cloud Storage). By default this account may not have access to your bucket, so we need to grant it the right IAM roles explicitly.
+
+First, look up the service account email:
+
 ```sh
 gcloud iam service-accounts list --filter="displayName:Compute Engine default service account" --format="value(email)"
 ```
 
-This will return an email like `123456789-compute@developer.gserviceaccount.com`. Use that value in the commands below.
+This will return an email like `123456789-compute@developer.gserviceaccount.com`. Copy it — you'll paste it into the commands below.
 
 <!-- shared workshop service account: 549047673858-compute@developer.gserviceaccount.com -->
 
 #### Grant permissions
 
+Now we give that service account the ability to read from and write to your bucket. Without these roles, your notebooks would get "Access Denied" errors when trying to load training data or save model artifacts.
+
 Replace `YOUR_BUCKET_NAME` and `YOUR_SERVICE_ACCOUNT`, then run:
 
 ```sh
-# Grant read permissions on the bucket
+# objectViewer — lets notebooks READ data (e.g., load CSVs for training)
 gcloud storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME \
   --member="serviceAccount:YOUR_SERVICE_ACCOUNT" \
   --role="roles/storage.objectViewer"
 
-# Grant write permissions on the bucket
+# objectCreator — lets training jobs WRITE outputs (e.g., saved models, logs)
 gcloud storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME \
   --member="serviceAccount:YOUR_SERVICE_ACCOUNT" \
   --role="roles/storage.objectCreator"
 
-# (Only if you also need overwrite/delete)
+# objectAdmin — adds OVERWRITE and DELETE (only needed if you want to
+# re-run jobs that replace existing files or clean up old artifacts)
 gcloud storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME \
   --member="serviceAccount:YOUR_SERVICE_ACCOUNT" \
   --role="roles/storage.objectAdmin"
