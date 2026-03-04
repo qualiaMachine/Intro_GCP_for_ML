@@ -43,7 +43,7 @@ We will follow these steps to create our first Workbench Instance:
 #### Initial settings
 
 - Click **Create New** near the top of the Workbench page
-- **Name**: Use the convention `lastname-purpose` (e.g., `doe-workshop`). We'll use a single instance for training, tuning, RAG, and more, so `workshop` is a good general-purpose label.
+- **Name**: Use the convention `lastname-purpose` (e.g., `doe-workshop`). GCP resource names only allow lowercase letters, numbers, and hyphens. We'll use a single instance for training, tuning, RAG, and more, so `workshop` is a good general-purpose label.
 - **Region**: Select `us-central1`. When we create a storage bucket in [Episode 3](03-Data-storage-and-access.md), we'll use the same region — keeping compute and storage co-located avoids cross-region transfer charges and keeps data access fast.
 - **Zone:** `us-central1-a` (or another zone in `us-central1`, like `-b` or `-c`)  
   - If capacity or GPU availability is limited in one zone, switch to another zone in the same region.
@@ -59,7 +59,7 @@ We will follow these steps to create our first Workbench Instance:
 
 - **IMPORTANT:** Open the "Advanced options" menu next.
   -  **Labels (required for cost tracking):**  Under the Details menu, add the following tags (all lowercase) so that you can track the total cost of your activity on GCP later:
-      - `name = lastname` (your last name)
+      - `name = firstname-lastname`
       - `purpose = workshop`
         
 ![Required tags for notebook.](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-tags.jpg){alt="Screenshot showing required tags for notebook"}
