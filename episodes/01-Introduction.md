@@ -55,9 +55,9 @@ Not every model needs cloud hardware. Here's a rough guide:
 | Very large | 10B–70B | LLaMA-70B, Mixtral | HPC with H100/H200 (80–141 GB) or cloud multi-GPU nodes |
 | Frontier | 70B+ | GPT-4-scale, multi-expert models | Cloud — requires multi-node clusters beyond what most HPC queues offer |
 
-**CHTC's [GPU Lab](https://chtc.cs.wisc.edu/uw-research-computing/gpu-lab) covers more than you might think.** The GPU Lab includes A100s (40 and 80 GB), H100s (80 GB), and H200s (141 GB) — enough VRAM to fine-tune models up to ~70B parameters on a single GPU with quantization, or across a few GPUs at full precision. For most UW researchers, this hardware handles "large model" workloads without needing cloud. Jobs have time limits (12 hrs for short, 24 hrs for medium, 7 days for long jobs), so plan your training runs accordingly.
+**CHTC's [GPU Lab](https://chtc.cs.wisc.edu/uw-research-computing/gpu-lab) covers more than you might think.** The GPU Lab includes A100s (40 and 80 GB), H100s (80 GB), and H200s (141 GB) — enough VRAM to fine-tune models up to ~70B parameters on a single GPU with quantization. For most UW researchers, this hardware handles "large model" workloads without needing cloud. Jobs have time limits (12 hrs for short, 24 hrs for medium, 7 days for long jobs), so plan your training runs accordingly.
 
-Cloud becomes the clear choice when you need hardware beyond what the GPU Lab queue offers — for example, multi-node training for frontier-scale models, or when queue wait times are blocking a deadline.
+Cloud becomes the clear choice when you need interconnected multi-GPU nodes (NVLink) for large distributed training, hardware beyond what the GPU Lab queue offers, or when queue wait times are blocking a deadline.
 
 ### A note on cloud costs
 
