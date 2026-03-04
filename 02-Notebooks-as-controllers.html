@@ -668,7 +668,9 @@ to submit compute-heavy tasks on more powerful machines. Examples
 include:</p>
 <ul><li>Training a model on a GPU-backed instance.</li>
 <li>Running hyperparameter tuning jobs managed by Vertex AI.</li>
-</ul><p>This pattern keeps costs low by running your notebook on a modest VM
+</ul><p>Here’s how the notebook, jobs, and storage connect:</p>
+<figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram1_training_and_tuning.jpg" alt="Architecture diagram showing how a lightweight Workbench notebook uses the Vertex AI SDK to launch training jobs and HP tuning jobs on powerful GPUs, with all artifacts stored in GCS." class="figure mx-auto d-block"><div class="figcaption">Training and tuning workflow</div>
+</figure><p>This pattern keeps costs low by running your notebook on a modest VM
 while only incurring charges for larger resources when they are actively
 in use.</p>
 <div id="you-dont-need-a-notebook-to-use-vertex-ai" class="callout">

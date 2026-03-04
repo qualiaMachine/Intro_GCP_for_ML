@@ -576,6 +576,11 @@ work reproducible (each job is a clean, logged run on dedicated
 hardware).</p>
 <p>Here’s how the pieces connect:</p>
 <figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram1_training_and_tuning.jpg" alt="Notebook as a controller diagram" class="figure mx-auto d-block"><div class="figcaption">Notebook as a controller</div>
+</figure><p>The same notebook can also orchestrate <strong>Retrieval-Augmented
+Generation (RAG)</strong> pipelines — chunking documents, building
+embeddings via the Gemini API, and generating grounded answers, all with
+data stored in GCS:</p>
+<figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram2_rag_gemini.jpg" alt="Architecture diagram showing the RAG pipeline: a Workbench notebook orchestrates document chunking, embedding via the Gemini API, and retrieval-augmented generation, with documents and embeddings stored in a GCS bucket." class="figure mx-auto d-block"><div class="figcaption">RAG pipeline with Gemini API</div>
 </figure><div id="console-notebooks-or-cli-your-choice" class="callout">
 <div class="callout-square">
 <i class="callout-icon" data-feather="bell"></i>
