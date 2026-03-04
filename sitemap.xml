@@ -1,225 +1,273 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/01-Introduction.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/01-Introduction.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/01-introduction.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/01-introduction.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/02-Data-storage.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/02-Data-storage.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/03-Notebooks-as-controllers.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/02-Notebooks-as-controllers.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/04-Accessing-and-managing-data.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/03-Data-storage-and-access.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/05-Interacting-with-code-repo.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/03-Notebooks-as-controllers.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/06-Training-models-in-VertexAI.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/04-Accessing-and-managing-data.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/07-Training-models-in-VertexAI-GPUs.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/04-Training-models-in-VertexAI.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/08-Hyperparameter-tuning.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/05-Interacting-with-code-repo.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/09-Resource-management-cleanup.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/05-Training-models-in-VertexAI-GPUs.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/10-Retrieval-augmented-generation.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/06-Hyperparameter-tuning.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/11-CLI-workflows.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/06-Training-models-in-VertexAI.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/404.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/07-Retrieval-augmented-generation.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/Accessing-and-managing-data.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/07-Training-models-in-VertexAI-GPUs.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/CODE_OF_CONDUCT.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/08-CLI-workflows.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/Data-storage.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/08-Hyperparameter-tuning.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/Hyperparameter-tuning.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/09-Resource-management-cleanup.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/Interacting-with-code-repo.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/10-Retrieval-augmented-generation.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/Introduction.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/11-CLI-workflows.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/LICENSE.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/404.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/Notebooks-as-controllers.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/Accessing-and-managing-data.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/Resource-management-cleanup.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/CODE_OF_CONDUCT.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/Training-models-in-VertexAI-GPUs.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/Data-storage.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/Training-models-in-VertexAI.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/Hyperparameter-tuning.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/aio.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/Interacting-with-code-repo.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/citation.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/Introduction.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/compute-for-ML.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/glossary.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/Notebooks-as-controllers.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/images.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/Resource-management-cleanup.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/index.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/Training-models-in-VertexAI-GPUs.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instances-for-ML.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/Training-models-in-VertexAI.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/01-Introduction.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/aio.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/01-introduction.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/citation.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/02-Data-storage.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/compute-for-ML.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/03-Notebooks-as-controllers.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/github-pat.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/04-Accessing-and-managing-data.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/glossary.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/05-Interacting-with-code-repo.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/images.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/06-Training-models-in-VertexAI.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/index.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/07-Training-models-in-VertexAI-GPUs.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instances-for-ML.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/08-Hyperparameter-tuning.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/01-Introduction.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/09-Resource-management-cleanup.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/01-introduction.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/10-Retrieval-augmented-generation.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/02-Data-storage.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/11-CLI-workflows.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/02-Notebooks-as-controllers.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/404.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/03-Data-storage-and-access.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/Accessing-and-managing-data.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/03-Notebooks-as-controllers.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/CODE_OF_CONDUCT.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/04-Accessing-and-managing-data.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/Data-storage.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/04-Training-models-in-VertexAI.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/Hyperparameter-tuning.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/05-Interacting-with-code-repo.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/Interacting-with-code-repo.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/05-Training-models-in-VertexAI-GPUs.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/Introduction.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/06-Hyperparameter-tuning.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/LICENSE.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/06-Training-models-in-VertexAI.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/Notebooks-as-controllers.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/07-Retrieval-augmented-generation.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/Resource-management-cleanup.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/07-Training-models-in-VertexAI-GPUs.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/Training-models-in-VertexAI-GPUs.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/08-CLI-workflows.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/Training-models-in-VertexAI.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/08-Hyperparameter-tuning.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/aio.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/09-Resource-management-cleanup.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/citation.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/10-Retrieval-augmented-generation.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/compute-for-ML.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/11-CLI-workflows.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/glossary.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/404.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/images.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/Accessing-and-managing-data.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/index.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/CODE_OF_CONDUCT.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/instances-for-ML.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/Data-storage.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/instructor-notes.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/Hyperparameter-tuning.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/introduction.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/Interacting-with-code-repo.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/key-points.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/Introduction.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/profiles.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/reference.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/Notebooks-as-controllers.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/uw-madison-cloud-resources.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/Resource-management-cleanup.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor-notes.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/Training-models-in-VertexAI-GPUs.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/introduction.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/Training-models-in-VertexAI.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/key-points.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/aio.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/profiles.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/citation.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/reference.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/compute-for-ML.html</loc>
   </url>
   <url>
-    <loc>https://qualiaMachine.github.io/Intro_GCP_VertexAI/uw-madison-cloud-resources.html</loc>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/github-pat.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/glossary.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/images.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/index.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/instances-for-ML.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/instructor-notes.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/introduction.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/key-points.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/profiles.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/reference.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/uw-madison-cloud-resources.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor-notes.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/introduction.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/key-points.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/profiles.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/reference.html</loc>
+  </url>
+  <url>
+    <loc>https://qualiaMachine.github.io/Intro_GCP_for_ML/uw-madison-cloud-resources.html</loc>
   </url>
 </urlset>

@@ -126,6 +126,7 @@
 <li><a class="dropdown-item" href="glossary.html">Glossary</a></li>
 <li><a class="dropdown-item" href="instances-for-ML.html">Compute for ML</a></li>
 <li><a class="dropdown-item" href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a></li>
+<li><a class="dropdown-item" href="github-pat.html">Using a GitHub Personal Access Token (PAT) in Vertex AI</a></li>
           </ul>
 </li>
       </ul>
@@ -258,7 +259,7 @@
 <div class="accordion accordion-flush" id="accordionFlush3">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading3">
-        <a href="02-Data-storage.html">2. Data Storage: Setting up GCS</a>
+        <a href="02-Notebooks-as-controllers.html">2. Notebooks as Controllers</a>
     </div>
 <!--/div.accordion-header-->
 
@@ -270,7 +271,7 @@
 <div class="accordion accordion-flush" id="accordionFlush4">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading4">
-        <a href="03-Notebooks-as-controllers.html">3. Notebooks as Controllers</a>
+        <a href="03-Data-storage-and-access.html">3. Data Storage and Access</a>
     </div>
 <!--/div.accordion-header-->
 
@@ -282,7 +283,7 @@
 <div class="accordion accordion-flush" id="accordionFlush5">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading5">
-        <a href="04-Accessing-and-managing-data.html">4. Accessing and Managing Data in GCS with Vertex AI Notebooks</a>
+        <a href="04-Training-models-in-VertexAI.html">4. Training Models in Vertex AI: Intro</a>
     </div>
 <!--/div.accordion-header-->
 
@@ -294,7 +295,7 @@
 <div class="accordion accordion-flush" id="accordionFlush6">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading6">
-        <a href="05-Interacting-with-code-repo.html">5. Using a GitHub Personal Access Token (PAT) to Push/Pull from a Vertex AI Notebook</a>
+        <a href="05-Training-models-in-VertexAI-GPUs.html">5. Training Models in Vertex AI: PyTorch Example</a>
     </div>
 <!--/div.accordion-header-->
 
@@ -306,7 +307,7 @@
 <div class="accordion accordion-flush" id="accordionFlush7">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading7">
-        <a href="06-Training-models-in-VertexAI.html">6. Training Models in Vertex AI: Intro</a>
+        <a href="06-Hyperparameter-tuning.html">6. Hyperparameter Tuning in Vertex AI: Neural Network Example</a>
     </div>
 <!--/div.accordion-header-->
 
@@ -318,7 +319,7 @@
 <div class="accordion accordion-flush" id="accordionFlush8">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading8">
-        <a href="07-Training-models-in-VertexAI-GPUs.html">7. Training Models in Vertex AI: PyTorch Example</a>
+        <a href="07-Retrieval-augmented-generation.html">7. Retrieval-Augmented Generation (RAG) with Vertex AI</a>
     </div>
 <!--/div.accordion-header-->
 
@@ -330,7 +331,7 @@
 <div class="accordion accordion-flush" id="accordionFlush9">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading9">
-        <a href="08-Hyperparameter-tuning.html">8. Hyperparameter Tuning in Vertex AI: Neural Network Example</a>
+        <a href="08-CLI-workflows.html">8. Bonus: CLI Workflows Without Notebooks</a>
     </div>
 <!--/div.accordion-header-->
 
@@ -343,30 +344,6 @@
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading10">
         <a href="09-Resource-management-cleanup.html">9. Resource Management &amp; Monitoring on Vertex AI (GCP)</a>
-    </div>
-<!--/div.accordion-header-->
-
-  </div>
-<!--/div.accordion-item-->
-</div>
-<!--/div.accordion-flush-->
-
-<div class="accordion accordion-flush" id="accordionFlush11">
-  <div class="accordion-item">
-    <div class="accordion-header" id="flush-heading11">
-        <a href="10-Retrieval-augmented-generation.html">10. Retrieval-Augmented Generation (RAG) with Vertex AI</a>
-    </div>
-<!--/div.accordion-header-->
-
-  </div>
-<!--/div.accordion-item-->
-</div>
-<!--/div.accordion-flush-->
-
-<div class="accordion accordion-flush" id="accordionFlush12">
-  <div class="accordion-item">
-    <div class="accordion-header" id="flush-heading12">
-        <a href="11-CLI-workflows.html">11. Bonus: CLI Workflows Without Notebooks (Draft)</a>
     </div>
 <!--/div.accordion-header-->
 
@@ -402,6 +379,7 @@
                       <li><a href="glossary.html">Glossary</a></li>
 <li><a href="instances-for-ML.html">Compute for ML</a></li>
 <li><a href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a></li>
+<li><a href="github-pat.html">Using a GitHub Personal Access Token (PAT) in Vertex AI</a></li>
                     </ul>
 </div>
                 </div>
@@ -441,66 +419,34 @@ jobs, tuning, and model hosting.</li>
 <li>The notebook-as-controller pattern keeps your notebook cheap while
 offloading heavy training to dedicated Vertex AI jobs.</li>
 <li>Everything in this workshop can also be done from the
-<code>gcloud</code> CLI (<a href="11-CLI-workflows.html">Episode
-11</a>).</li>
-</ul></section><section id="02-Data-storage"><h2 class="section-heading"><a href="02-Data-storage.html">Data Storage: Setting up GCS</a></h2>
+<code>gcloud</code> CLI (<a href="08-CLI-workflows.html">Episode
+8</a>).</li>
+</ul></section><section id="02-Notebooks-as-controllers"><h2 class="section-heading"><a href="02-Notebooks-as-controllers.html">Notebooks as Controllers</a></h2>
+<hr class="half-width">
+<ul>
+<li>Use a small Workbench Instance as a controller — delegate heavy
+training to Vertex AI jobs.</li>
+<li>Workbench VMs inherit service account permissions automatically,
+simplifying authentication.</li>
+<li>Choose the same region for your Workbench Instance and storage
+bucket to avoid extra transfer costs.</li>
+<li>Apply labels to all resources for cost tracking, and enable idle
+auto-stop to avoid surprise charges.</li>
+</ul></section><section id="03-Data-storage-and-access"><h2 class="section-heading"><a href="03-Data-storage-and-access.html">Data Storage and Access</a></h2>
 <hr class="half-width">
 <ul>
 <li>Use GCS for scalable, cost-effective, and persistent storage in
-GCP.<br>
-</li>
+GCP.</li>
 <li>Persistent disks are suitable only for small, temporary
-datasets.<br>
-</li>
-<li>Track your storage, transfer, and request costs to manage
-expenses.<br>
-</li>
-<li>Regularly delete unused data or buckets to avoid ongoing costs.</li>
-</ul></section><section id="03-Notebooks-as-controllers"><h2 class="section-heading"><a href="03-Notebooks-as-controllers.html">Notebooks as Controllers</a></h2>
-<hr class="half-width">
-<ul>
-<li>Use a small Workbench Instance notebook as a controller to manage
-larger, resource-intensive tasks.</li>
-<li>Workbench VMs automatically inherit service account permissions,
-simplifying authentication for Cloud Storage, Vertex AI, and Gemini API
-calls.</li>
-<li>Always navigate to the “Instances” tab in Workbench, since older
-notebook types are deprecated.</li>
-<li>Choose the same region for your Workbench Instance and storage
-bucket to avoid extra transfer costs.</li>
-<li>Submit training and tuning jobs to scalable instances using the
-Vertex AI SDK.</li>
-<li>Labels help track costs effectively, especially in shared or
-multi-project environments.</li>
-<li>Workbench Instances come with JupyterLab 3 and GPU frameworks
-preinstalled, making them an easy entry point for ML workflows.</li>
-<li>Enable idle auto-stop and manually stop instances when not in use to
-avoid unexpected charges.</li>
-</ul></section><section id="04-Accessing-and-managing-data"><h2 class="section-heading"><a href="04-Accessing-and-managing-data.html">Accessing and Managing Data in GCS with Vertex AI Notebooks</a></h2>
-<hr class="half-width">
-<ul>
+datasets.</li>
 <li>Load data from GCS into memory with <code>storage.Client</code> or
-directly via <code>pd.read_csv("gs://...")</code> to avoid managing
-local copies.</li>
-<li>Periodically check storage usage and estimate both storage and
-egress costs to manage your GCS budget.</li>
-<li>Use Vertex AI Workbench notebooks to upload processed results back
-to GCS for sharing and downstream use.</li>
-</ul></section><section id="05-Interacting-with-code-repo"><h2 class="section-heading"><a href="05-Interacting-with-code-repo.html">Using a GitHub Personal Access Token (PAT) to Push/Pull from a Vertex AI Notebook</a></h2>
-<hr class="half-width">
-<ul>
-<li>Use a GitHub PAT for HTTPS-based authentication in Vertex AI
-Workbench notebooks.<br>
-</li>
-<li>Securely enter sensitive information in notebooks using
-<code>getpass</code>.<br>
-</li>
-<li>Converting <code>.ipynb</code> files to <code>.py</code> files helps
-with cleaner version control.<br>
-</li>
-<li>Adding <code>.ipynb</code> files to <code>.gitignore</code> keeps
-your repository organized.</li>
-</ul></section><section id="06-Training-models-in-VertexAI"><h2 class="section-heading"><a href="06-Training-models-in-VertexAI.html">Training Models in Vertex AI: Intro</a></h2>
+directly via <code>pd.read_csv("gs://...")</code>.</li>
+<li>Periodically check storage usage and estimate costs to manage your
+GCS budget.</li>
+<li>Track your storage, transfer, and request costs to manage
+expenses.</li>
+<li>Regularly delete unused data or buckets to avoid ongoing costs.</li>
+</ul></section><section id="04-Training-models-in-VertexAI"><h2 class="section-heading"><a href="04-Training-models-in-VertexAI.html">Training Models in Vertex AI: Intro</a></h2>
 <hr class="half-width">
 <ul>
 <li>
@@ -523,7 +469,7 @@ distributed jobs as dataset/model size grows.<br>
 <li>
 <strong>Monitoring</strong>: Track job logs and artifacts in the
 Vertex AI Console.</li>
-</ul></section><section id="07-Training-models-in-VertexAI-GPUs"><h2 class="section-heading"><a href="07-Training-models-in-VertexAI-GPUs.html">Training Models in Vertex AI: PyTorch Example</a></h2>
+</ul></section><section id="05-Training-models-in-VertexAI-GPUs"><h2 class="section-heading"><a href="05-Training-models-in-VertexAI-GPUs.html">Training Models in Vertex AI: PyTorch Example</a></h2>
 <hr class="half-width">
 <ul>
 <li>Use <strong>CustomTrainingJob</strong> with a prebuilt PyTorch
@@ -541,44 +487,22 @@ justifies the extra provisioning overhead and cost.</li>
 <code>staging_bucket</code> is just for the SDK’s packaging tarball
 — <code>base_output_dir</code> is where your script’s actual artifacts
 go.</li>
-</ul></section><section id="08-Hyperparameter-tuning"><h2 class="section-heading"><a href="08-Hyperparameter-tuning.html">Hyperparameter Tuning in Vertex AI: Neural Network Example</a></h2>
+</ul></section><section id="06-Hyperparameter-tuning"><h2 class="section-heading"><a href="06-Hyperparameter-tuning.html">Hyperparameter Tuning in Vertex AI: Neural Network Example</a></h2>
 <hr class="half-width">
 <ul>
 <li>Vertex AI Hyperparameter Tuning Jobs efficiently explore parameter
-spaces using adaptive strategies.<br>
-</li>
+spaces using adaptive strategies.</li>
 <li>Define parameter ranges in <code>parameter_spec</code>; the number
 of settings tried is controlled later by
-<code>max_trial_count</code>.<br>
-</li>
+<code>max_trial_count</code>.</li>
 <li>The <code>hyperparameter_metric_tag</code> reported by
 <code>cloudml-hypertune</code> must exactly match the key in
-<code>metric_spec</code>.<br>
-</li>
+<code>metric_spec</code>.</li>
 <li>Limit <code>parallel_trial_count</code> (2–4) to help adaptive
-search.<br>
-</li>
+search.</li>
 <li>Use GCS for input/output and aggregate <code>metrics.json</code>
 across trials for detailed analysis.</li>
-</ul></section><section id="09-Resource-management-cleanup"><h2 class="section-heading"><a href="09-Resource-management-cleanup.html">Resource Management &amp; Monitoring on Vertex AI (GCP)</a></h2>
-<hr class="half-width">
-<ul>
-<li>
-<strong>Check Billing → Reports</strong> regularly — know what
-you’re spending before it surprises you.</li>
-<li>
-<strong>Endpoints</strong> and <strong>running notebooks</strong>
-are the most common cost leaks; undeploy and stop first.</li>
-<li>
-<strong>Set a budget alert</strong> — it’s the single most
-protective action you can take.</li>
-<li>Configure <strong>idle shutdown</strong> on Workbench Instances so
-forgotten notebooks auto‑stop.</li>
-<li>Keep storage tidy with <strong>GCS lifecycle policies</strong> and
-avoid duplicate datasets.</li>
-<li>Use <strong>labels</strong> on all resources so you can trace costs
-in billing reports.</li>
-</ul></section><section id="10-Retrieval-augmented-generation"><h2 class="section-heading"><a href="10-Retrieval-augmented-generation.html">Retrieval-Augmented Generation (RAG) with Vertex AI</a></h2>
+</ul></section><section id="07-Retrieval-augmented-generation"><h2 class="section-heading"><a href="07-Retrieval-augmented-generation.html">Retrieval-Augmented Generation (RAG) with Vertex AI</a></h2>
 <hr class="half-width">
 <ul>
 <li>RAG grounds LLM answers in your own data — retrieve first, then
@@ -591,7 +515,7 @@ are the primary tuning levers.</li>
 transparency.</li>
 <li>Embeddings are computed once and reused; generation cost scales with
 query volume.</li>
-</ul></section><section id="11-CLI-workflows"><h2 class="section-heading"><a href="11-CLI-workflows.html">Bonus: CLI Workflows Without Notebooks (Draft)</a></h2>
+</ul></section><section id="08-CLI-workflows"><h2 class="section-heading"><a href="08-CLI-workflows.html">Bonus: CLI Workflows Without Notebooks</a></h2>
 <hr class="half-width">
 <ul>
 <li>Every Vertex AI operation available in the Python SDK has an
@@ -610,6 +534,24 @@ than notebooks with hidden state.</li>
 check for active jobs, endpoints, and VMs before walking away.</li>
 <li>Notebooks and CLI workflows are complementary — use each where it
 fits best.</li>
+</ul></section><section id="09-Resource-management-cleanup"><h2 class="section-heading"><a href="09-Resource-management-cleanup.html">Resource Management &amp; Monitoring on Vertex AI (GCP)</a></h2>
+<hr class="half-width">
+<ul>
+<li>
+<strong>Check Billing → Reports</strong> regularly — know what
+you’re spending before it surprises you.</li>
+<li>
+<strong>Endpoints</strong> and <strong>running notebooks</strong>
+are the most common cost leaks; undeploy and stop first.</li>
+<li>
+<strong>Set a budget alert</strong> — it’s the single most
+protective action you can take.</li>
+<li>Configure <strong>idle shutdown</strong> on Workbench Instances so
+forgotten notebooks auto‑stop.</li>
+<li>Keep storage tidy with <strong>GCS lifecycle policies</strong> and
+avoid duplicate datasets.</li>
+<li>Use <strong>labels</strong> on all resources so you can trace costs
+in billing reports.</li>
 </ul></section>
 </div>
     </main>
@@ -623,11 +565,11 @@ fits best.</li>
         <p>This lesson is subject to the <a href="CODE_OF_CONDUCT.html">Code of Conduct</a></p>
         <p>
 
-        <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/README.md" class="external-link">Edit on GitHub</a>
+        <a href="https://github.com/qualiaMachine/Intro_GCP_for_ML/edit/main/README.md" class="external-link">Edit on GitHub</a>
 
 	
-        | <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/blob/main/CONTRIBUTING.md" class="external-link">Contributing</a>
-        | <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/" class="external-link">Source</a></p>
+        | <a href="https://github.com/qualiaMachine/Intro_GCP_for_ML/blob/main/CONTRIBUTING.md" class="external-link">Contributing</a>
+        | <a href="https://github.com/qualiaMachine/Intro_GCP_for_ML/" class="external-link">Source</a></p>
         <p>
         <a href="citation.html">Cite</a>
         | <a href="mailto:endemann@wisc.edu">Contact</a> | <a href="https://carpentries.org/about/" class="external-link">About</a></p>
@@ -650,18 +592,18 @@ fits best.</li>
     {
   "@context": "https://schema.org",
   "@type": "LearningResource",
-  "@id": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/key-points.html",
+  "@id": "https://qualiaMachine.github.io/Intro_GCP_for_ML/key-points.html",
   "inLanguage": "en",
   "dct:conformsTo": "https://bioschemas.org/profiles/LearningResource/1.0-RELEASE",
   "description": "A Carpentries Lesson teaching foundational data and coding skills to researchers worldwide",
   "keywords": "cloud, GCP, lesson, The Carpentries, ML, AI, GPU",
   "name": "Key Points",
   "creativeWorkStatus": "active",
-  "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/key-points.html",
-  "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/key-points.html",
+  "url": "https://qualiaMachine.github.io/Intro_GCP_for_ML/key-points.html",
+  "identifier": "https://qualiaMachine.github.io/Intro_GCP_for_ML/key-points.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-03-03",
-  "datePublished": "2026-03-03"
+  "dateModified": "2026-03-04",
+  "datePublished": "2026-03-04"
 }
 
   </script><script>
