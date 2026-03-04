@@ -50,7 +50,7 @@ Cloud platforms give you access to compute that's hard to replicate locally:
 - **Elastic scaling.** Need to run 100 hyperparameter tuning trials? Cloud can provision hundreds of VMs simultaneously. On a shared cluster, that might mean days or weeks of queue time.
 - **Power and cooling are someone else's problem.** A single A100 GPU draws ~400W under load. A rack of 8 draws ~3.2kW just for the GPUs. Cloud providers handle the power infrastructure, cooling, and hardware failures.
 
-We won't use multi-GPU training in this workshop (our dataset is small), but understanding what's available helps you plan for larger projects.
+We won't use multi-GPU training in this workshop — our datasets are small and the models we train fit comfortably on a single GPU — but understanding what's available helps you plan for larger projects.
 
 ### When does model size justify cloud compute?
 
