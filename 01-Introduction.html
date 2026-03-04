@@ -461,9 +461,9 @@ shared cluster, that might mean days or weeks of queue time.</li>
 single A100 GPU draws ~400W under load. A rack of 8 draws ~3.2kW just
 for the GPUs. Cloud providers handle the power infrastructure, cooling,
 and hardware failures.</li>
-</ul><p>We won’t use multi-GPU training in this workshop (our dataset is
-small), but understanding what’s available helps you plan for larger
-projects.</p>
+</ul><p>We won’t use multi-GPU training in this workshop — our datasets are
+small and the models we train fit comfortably on a single GPU — but
+understanding what’s available helps you plan for larger projects.</p>
 </div>
 <div class="section level3">
 <h3 id="when-does-model-size-justify-cloud-compute">When does model size justify cloud compute?<a class="anchor" aria-label="anchor" href="#when-does-model-size-justify-cloud-compute"></a></h3>
@@ -542,9 +542,12 @@ hosting. Everything below lives under this umbrella.</td>
 </tr><tr class="odd"><td><strong>Workbench</strong></td>
 <td>Managed Jupyter notebooks that run on a Compute Engine VM. Your
 interactive environment.</td>
-</tr><tr class="even"><td><strong>Custom Jobs</strong></td>
-<td>Managed training runs on dedicated hardware. You submit code; Vertex
-AI provisions a machine, runs it, and shuts it down.</td>
+</tr><tr class="even"><td><strong>Training &amp; tuning jobs</strong></td>
+<td>How you run code on Vertex AI hardware. You submit a script and a
+machine spec; Vertex AI provisions the VM, runs it, and shuts it down.
+The SDK offers several flavors — <code>CustomTrainingJob</code> (Ep
+4–5), <code>HyperparameterTuningJob</code> (Ep 6) — and the CLI
+equivalent is <code>gcloud ai custom-jobs</code> (Ep 8).</td>
 </tr><tr class="odd"><td><strong>Cloud Storage (GCS)</strong></td>
 <td>Object storage for files. Similar to AWS S3.</td>
 </tr><tr class="even"><td><strong>Compute Engine</strong></td>
