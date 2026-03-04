@@ -10,7 +10,7 @@ Already know how to train an ML model in Python but haven't used the cloud? This
 - **Data in the cloud** — Upload datasets to Cloud Storage and connect them to your training code.
 - **Scalable model training** — Launch custom training jobs on cloud GPUs/CPUs with your own PyTorch (or other framework) code.
 - **Hyperparameter tuning** — Run parallel tuning jobs in Vertex AI to efficiently search for optimal model settings.
-- **RAG pipelines** — Build a retrieval-augmented generation pipeline using Google's Gemini models and Vertex AI vector search.
+- **RAG pipelines** — Build a retrieval-augmented generation pipeline using Google's Gemini models with grounding via Google Search.
 - **Cost management** — Monitor spending, set budget alerts, and clean up resources to avoid surprise bills.
 
 #### Prerequisites

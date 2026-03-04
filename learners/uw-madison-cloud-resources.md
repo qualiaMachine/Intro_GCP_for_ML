@@ -140,7 +140,7 @@ For more details, see the [CHTC page on Nexus](https://uw-madison-datascience.gi
 
 ## Related resources
 
-- [Intro to GCP for ML & AI](https://uw-madison-datascience.github.io/ML-X-Nexus/Learn/Workshops/Intro-GCP.html) — Hands-on workshop covering Vertex AI, model training/tuning, and RAG pipelines on GCP.
+- [Intro to GCP for ML & AI](https://uw-madison-datascience.github.io/ML-X-Nexus/Learn/Workshops/Intro-GCP.html) — Hands-on workshop covering Vertex AI, model training/tuning, and RAG with Gemini on GCP.
 - [Intro to AWS SageMaker for Predictive ML/AI](https://uw-madison-datascience.github.io/ML-X-Nexus/Learn/Workshops/Intro-Amazon_SageMaker.html) — Workshop covering ML workflows in AWS SageMaker.
 - [Google Colab](https://uw-madison-datascience.github.io/ML-X-Nexus/Toolbox/Compute/GoogleColab.html) — Free cloud-based Jupyter notebooks with GPU access.
 - [Center for High Throughput Computing (CHTC)](https://uw-madison-datascience.github.io/ML-X-Nexus/Toolbox/Compute/CHTC.html) — Free on-campus HPC/HTC resources for UW researchers.
