@@ -487,7 +487,7 @@ Now that you've run both a CPU and GPU training job, answer the following:
 1. `base_output_dir` tells the Vertex AI SDK to set the `AIP_MODEL_DIR` environment variable inside the training container. Your script reads `os.environ.get("AIP_MODEL_DIR", ".")` and writes all artifacts there. The result is everything lands under `gs://<bucket>/artifacts/pytorch/<RUN_ID>/model/`.
 2. For the small Titanic dataset (~700 training rows), the CPU job is typically faster end-to-end. GPU jobs incur extra overhead: provisioning the accelerator, loading CUDA libraries, and transferring data to the GPU. GPU acceleration pays off when training itself is the bottleneck (larger models, larger batches).
 3. The job would either fail or ignore the GPU. The CPU container doesn't include CUDA/cuDNN, so even if a GPU is attached to the VM, PyTorch can't use it. Always match your container image to your hardware configuration.
-4. Approximate on-demand rates (us-central1): `n1-standard-4` is ~`$0.19`/hr; `n1-standard-8` + 1x T4 is ~`$0.54`/hr (VM) + ~`$0.35`/hr (T4) = ~`$0.89`/hr total. The GPU configuration is roughly 4–5x more expensive per hour — worth it only when training speedup exceeds that cost ratio.
+4. Approximate on-demand rates (us-central1): `n1-standard-4` is ~$0.19/hr; `n1-standard-8` + 1x T4 is ~$0.54/hr (VM) + ~$0.35/hr (T4) = ~$0.89/hr total. The GPU configuration is roughly 4–5x more expensive per hour — worth it only when training speedup exceeds that cost ratio.
 
 :::::::::::::::::::::::::::::::::::::::
 

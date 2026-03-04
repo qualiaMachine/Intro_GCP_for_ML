@@ -374,15 +374,15 @@ Lower `top_k` gives Gemini a tighter, more focused context — good when the ans
 
 ## Step 5: Cost summary
 
-Understanding the cost of each pipeline component helps you decide where to optimize. For a small workshop with a handful of PDFs, total costs are typically well under `$1`.
+Understanding the cost of each pipeline component helps you decide where to optimize. For a small workshop with a handful of PDFs, total costs are typically well under $1.
 
 | Step | Resource | Cost Driver | Typical Range |
 |------|-----------|-------------|---------------|
-| VM runtime | Vertex AI Workbench (`n1-standard-4`) | Uptime (hourly) | ~`$0.20`/hr |
-| Embeddings | `gemini-embedding-001` | Tokens embedded (one-time) | ~`$0.10` / 1M tokens |
+| VM runtime | Vertex AI Workbench (`n1-standard-4`) | Uptime (hourly) | ~$0.20/hr |
+| Embeddings | `gemini-embedding-001` | Tokens embedded (one-time) | ~$0.10 / 1M tokens |
 | Retrieval | Local `NearestNeighbors` | CPU only | Free |
-| Generation | `gemini-2.5-pro` | Input + output tokens per query | ~`$1.25`–`$10` / 1M tokens |
-| Generation (alt) | `gemini-2.5-flash` | Input + output tokens per query | ~`$0.15`–`$0.60` / 1M tokens |
+| Generation | `gemini-2.5-pro` | Input + output tokens per query | ~$1.25–$10 / 1M tokens |
+| Generation (alt) | `gemini-2.5-flash` | Input + output tokens per query | ~$0.15–$0.60 / 1M tokens |
 
 **Tip:** Embeddings are the best investment — compute them once, reuse them for every query. Generation is the ongoing cost; choosing Flash over Pro and keeping prompts concise are the two biggest levers.
 
