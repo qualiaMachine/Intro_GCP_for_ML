@@ -203,7 +203,7 @@ Downloading data out of GCP to your laptop costs ~`$0.12`/GB. Prefer **in‑clou
 ### Standardize labels on all resources
 Labels let you track costs per user, team, or experiment in billing reports. Apply them consistently:
 
-- Examples: `name=lastname`, `purpose=workshop`, `dataset=titanic`
+- Examples: `name=firstname-lastname`, `purpose=workshop`, `dataset=titanic`
 - The Vertex AI Python SDK supports labels on job creation; `gcloud` commands accept `--labels=key=value,...`
 
 ### Set budget alerts (do this now)
