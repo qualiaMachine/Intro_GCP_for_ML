@@ -50,7 +50,7 @@ Cloud platforms give you access to compute that's hard to replicate locally:
 - **Elastic scaling.** Need to run 100 hyperparameter tuning trials? Cloud can provision hundreds of VMs simultaneously. On a shared cluster, that might mean days or weeks of queue time.
 - **Power and cooling are someone else's problem.** A single A100 GPU draws ~400W under load. A rack of 8 draws ~3.2kW just for the GPUs. Cloud providers handle the power infrastructure, cooling, and hardware failures.
 
-We won't use multi-GPU training in this workshop (our dataset is small), but understanding what's available helps you plan for larger projects.
+We won't use multi-GPU training in this workshop — our datasets are small and the models we train fit comfortably on a single GPU — but understanding what's available helps you plan for larger projects.
 
 ### When does model size justify cloud compute?
 
@@ -92,7 +92,7 @@ Google Cloud has many products and brand names. Here are the ones you'll use in 
 | **GCP** | Google Cloud Platform — the overall cloud: compute, storage, networking. |
 | **Vertex AI** | Google's ML platform — notebooks, training jobs, tuning, model hosting. Everything below lives under this umbrella. |
 | **Workbench** | Managed Jupyter notebooks that run on a Compute Engine VM. Your interactive environment. |
-| **Custom Jobs** | Managed training runs on dedicated hardware. You submit code; Vertex AI provisions a machine, runs it, and shuts it down. |
+| **Training & tuning jobs** | How you run code on Vertex AI hardware. You submit a script and a machine spec; Vertex AI provisions the VM, runs it, and shuts it down. The SDK offers several flavors — `CustomTrainingJob` (Ep 4–5), `HyperparameterTuningJob` (Ep 6) — and the CLI equivalent is `gcloud ai custom-jobs` (Ep 8). |
 | **Cloud Storage (GCS)** | Object storage for files. Similar to AWS S3. |
 | **Compute Engine** | Virtual machines you configure with CPUs, GPUs, or TPUs. Workbench and training jobs run on Compute Engine under the hood. |
 | **Gemini** | Google's family of large language models, accessed through the Vertex AI API. |
