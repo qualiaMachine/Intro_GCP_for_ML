@@ -34,6 +34,7 @@ One practical advantage of Workbench notebooks: **authentication is automatic.**
 We will follow these steps to create our first Workbench Instance:
 
 ### 1. Navigate to Workbench
+
 - Open the **Google Cloud Console** ([console.cloud.google.com](https://console.cloud.google.com/)) — this is the web dashboard where you manage all GCP resources. Search for "Workbench."
 - Click the "Instances" tab (this is the supported path going forward).
 - Pin Workbench to your navigation bar for quick access.  
@@ -41,6 +42,7 @@ We will follow these steps to create our first Workbench Instance:
 ### 2. Create a new Workbench Instance
 
 #### Initial settings
+
 - Click **Create New** near the top of the Workbench page
 - **Name**: Use the convention `lastname-purpose` (e.g., `doe-workshop`). We'll use a single instance for training, tuning, RAG, and more, so `workshop` is a good general-purpose label.
 - **Region**: Select `us-central1`. When we create a storage bucket in [Episode 3](03-Data-storage-and-access.md), we'll use the same region — keeping compute and storage co-located avoids cross-region transfer charges and keeps data access fast.
@@ -100,6 +102,7 @@ Leave disk settings at their defaults for this workshop. Each Workbench Instance
 - **Assign External IP address**: Leave this option checked — you need an external IP.  
 
 ### Create notebook
+
 - Click **Create** to create the instance. Provisioning typically takes 3–5 minutes. You'll see the status change from "Provisioning" to "Running" with a green checkmark. While waiting, work through the challenges below.
 
 :::::::::::::::::::::::::::::::::::::::: challenge
@@ -114,6 +117,7 @@ Your university provides different compute options: laptops, on-prem HPC, and GC
 :::::::::::::::: solution
 
 The notebook serves as a lightweight control plane.
+
 - Like an HPC login node, it is not meant for heavy computation.
 - Suitable for small preprocessing, visualization, and orchestrating jobs.
 - Resource-intensive tasks (training, tuning, batch jobs) should be submitted to scalable cloud resources (GPU/large VM instances) via the Vertex AI SDK.
@@ -126,7 +130,7 @@ The notebook serves as a lightweight control plane.
 
 ### Challenge 2: Controller Cost Estimate
 
-Your controller notebook uses an `n2-standard-2` instance (~$0.07/hr).
+Your controller notebook uses an `n2-standard-2` instance (~$0.07/hr — see [Compute for ML](../compute-for-ML.html) for other common machine types and costs).
 
 - Estimate the monthly cost if you use it 8 hours/day, 5 days/week, with idle shutdown enabled.
 - Compare that to leaving it running 24/7 for the same month.
