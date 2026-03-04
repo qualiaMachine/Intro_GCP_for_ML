@@ -25,7 +25,7 @@ You've now run training jobs, tuning jobs, built a RAG pipeline, and possibly ex
 
 ## Check your current spend first
 
-Before cleaning anything up, find out where you stand. Open the **Cloud Console** and navigate to:
+Before cleaning anything up, find out where you stand. Open the [**Cloud Console**](https://console.cloud.google.com/billing/reports) and navigate to:
 
 **Billing → Reports**
 
@@ -209,7 +209,7 @@ Labels let you track costs per user, team, or experiment in billing reports. App
 ### Set budget alerts (do this now)
 This is the single most protective action you can take:
 
-1. Go to **Billing → Budgets & alerts** in the Cloud Console.
+1. Go to **Billing → Budgets & alerts** in the [Cloud Console](https://console.cloud.google.com/billing/budgets).
 2. Click **Create budget**.
 3. Set a budget amount (e.g., `$10` or `$25` for a workshop).
 4. Set alert thresholds at **50%**, **80%**, and **100%**.
@@ -248,12 +248,12 @@ These are beyond the scope of this workshop, but the [Cloud Scheduler documentat
 
 ### Challenge 1 — Check your spend and set a budget
 
-1. Navigate to **Billing → Reports** in the Cloud Console. Find your project's current‑month spend grouped by service.
+1. Navigate to **Billing → Reports** in the [Cloud Console](https://console.cloud.google.com/billing/reports). Find your project's current‑month spend grouped by service.
 2. Navigate to **Billing → Budgets & alerts**. Create a **`$10` budget** with alert thresholds at 50% and 100%.
 
 :::::::::::::::: solution
 
-1. In the Cloud Console, click the **Navigation menu (☰)** → **Billing** → **Reports**. Set time range to "This month" and group by "Service." You should see Compute Engine, Vertex AI, and Cloud Storage if you've been running workshop exercises.
+1. In the [Cloud Console](https://console.cloud.google.com/billing/reports), click the **Navigation menu (☰)** → **Billing** → **Reports**. Set time range to "This month" and group by "Service." You should see Compute Engine, Vertex AI, and Cloud Storage if you've been running workshop exercises.
 
 2. Go to **Billing** → **Budgets & alerts** → **Create budget**. Set:
    - **Name**: `workshop-budget`

@@ -340,9 +340,9 @@ In our setup, we're intentionally using the simpler **CustomTrainingJob** path. 
 
 
 ## Monitoring training jobs in the Console
-1. Go to the Google Cloud Console.  
-2. Navigate to **Vertex AI > Training > Custom Jobs**.  
-3. Click on your job name to see status, logs, and output model artifacts.  
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/vertex-ai/training/custom-jobs).
+2. Navigate to **Vertex AI > Training > Custom Jobs**.
+3. Click on your job name to see status, logs, and output model artifacts.
 4. Cancel jobs from the console if needed (be careful not to stop jobs you don't own in shared projects).
 
 #### Visit the console to verify it's running.
@@ -363,7 +363,7 @@ Job failures are common when first getting started. Here's how to debug:
 
 ## Training artifacts
 
-After the training run completes, we can manually view our bucket using the Google Cloud Console or run the below code.
+After the training run completes, we can manually view our bucket using the [Google Cloud Console](https://console.cloud.google.com/storage/browser) or run the below code.
 
 ```python
 total_size_bytes = 0
@@ -436,7 +436,7 @@ The two accuracy values should be very close or identical. Both runs execute the
 
 ### Explore job logs in the Console
 
-Navigate to **Vertex AI > Training > Custom Jobs** in the Google Cloud Console. Find your most recent job and click on it. Can you locate:
+Navigate to **Vertex AI > Training > Custom Jobs** in the [Google Cloud Console](https://console.cloud.google.com/vertex-ai/training/custom-jobs). Find your most recent job and click on it. Can you locate:
 
 1. The **Logs** tab showing your script's `print()` output?
 2. The training time printed by `train_model()`?
