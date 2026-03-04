@@ -385,7 +385,7 @@ python3 -c "import json; print(json.load(open('./results/model/metrics.json')))"
 | **State management** | Hidden state can cause issues | Stateless scripts are easier to debug |
 | **Interactivity** | Rich (plots, widgets, markdown) | Terminal only (or pipe to other tools) |
 
-Most real-world ML projects use both: notebooks for early experimentation and CLI/scripts for production runs.
+Most real-world ML/AI projects use both: notebooks for early experimentation and CLI/scripts for production runs.
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 

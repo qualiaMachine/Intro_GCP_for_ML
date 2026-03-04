@@ -52,7 +52,7 @@ Costs below are approximate per-hour rates for instances with 8 vCPUs in the `us
 
 **Cost notes:**  
 - Prices vary by region and storage/network configuration.  
-- `N2` instances are a typical choice for cost-effective ML workloads.  
+- `N2` instances are a typical choice for cost-effective ML/AI workloads.  
 - `A2–A4` families include GPUs by default; all others require attaching GPUs manually.
 
 ### Attaching GPUs vs. Using GPU Families
