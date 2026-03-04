@@ -537,10 +537,10 @@ provide the project name.</li>
 <ul><li><p>Click <strong>Create bucket</strong> and configure the following
 settings:</p></li>
 <li><p><strong>Bucket name</strong>: Enter a globally unique name using
-the convention <code>teamname-firstlastname-dataname</code> (e.g.,
-<code>sinkorswim-johndoe-titanic</code>).</p></li>
+the convention <code>firstlastname-dataname</code> (e.g.,
+<code>johndoe-titanic</code>).</p></li>
 <li><p><strong>Labels</strong>: Add cost-tracking labels —
-<code>project=teamname</code>, <code>name=firstname-lastname</code>,
+<code>name=firstname-lastname</code>,
 <code>purpose=bucket-dataname</code>. In shared accounts this is
 <em>mandatory</em>.</p></li>
 <li><p><strong>Location</strong>: Choose <strong>Region</strong> →
@@ -571,8 +571,8 @@ episodes.</li>
 <code>titanic_test.csv</code>) and upload.</li>
 </ul><p><strong>Note the GCS URI for your data</strong> After uploading,
 click on a file and find its <strong>gs:// URI</strong> (e.g.,
-<code>gs://sinkorswim-johndoe-titanic/titanic_test.csv</code>). This URI
-will be used to access the data in your notebook.</p>
+<code>gs://johndoe-titanic/titanic_test.csv</code>). This URI will be
+used to access the data in your notebook.</p>
 </div>
 </section><section><h2 class="section-heading" id="adjust-bucket-permissions">Adjust bucket permissions<a class="anchor" aria-label="anchor" href="#adjust-bucket-permissions"></a></h2>
 <hr class="half-width"><p>We need to grant the Compute Engine default service account IAM roles
@@ -615,7 +615,7 @@ value in the commands below.</p>
 <span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectAdmin"</span></span></code></pre>
 </div>
 <!-- prefilled example:
-gcloud storage buckets add-iam-policy-binding gs://sinkorswim-johndoe-titanic \
+gcloud storage buckets add-iam-policy-binding gs://johndoe-titanic \
   --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
   --role="roles/storage.objectViewer"
 -->
@@ -686,7 +686,7 @@ requests negligible at this scale.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>1 GB</strong>: Storage $0.02 + Egress $0.12 =
@@ -736,7 +736,7 @@ credentials already attached to your Workbench VM.</p>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="im">import</span> io</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>bucket_name <span class="op">=</span> <span class="st">"sinkorswim-johndoe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>bucket_name <span class="op">=</span> <span class="st">"johndoe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_train.csv"</span>)</span>
@@ -869,7 +869,7 @@ is missing from the test set, and why?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -907,7 +907,7 @@ class (<code>Pclass</code>) and upload the result as
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
