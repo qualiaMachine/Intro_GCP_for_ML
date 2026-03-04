@@ -281,9 +281,9 @@ job.run(
 print("Artifacts folder:", ARTIFACT_DIR)
 ```
 #### Monitoring training jobs in the Console
-1. Go to the Google Cloud Console.  
-2. Navigate to **Vertex AI > Training > Custom Jobs**.  
-3. Click on your job name to see status, logs, and output model artifacts.  
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/vertex-ai/training/custom-jobs).
+2. Navigate to **Vertex AI > Training > Custom Jobs**.
+3. Click on your job name to see status, logs, and output model artifacts.
 4. Cancel jobs from the console if needed (be careful not to stop jobs you don't own in shared projects).
 
 **Quick link** (replace `YOUR_PROJECT_ID`): `https://console.cloud.google.com/vertex-ai/training/training-pipelines?project=YOUR_PROJECT_ID`

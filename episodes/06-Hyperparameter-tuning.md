@@ -213,7 +213,7 @@ print("HPT artifacts base:", ARTIFACT_DIR)
 ## Run and analyze results
 
 #### 8. Monitor tuning job
-Open **Vertex AI → Training → Hyperparameter tuning jobs** in the Cloud Console to track trials, parameters, and metrics. You can also stop jobs from the console if needed.
+Open **Vertex AI → Training → Hyperparameter tuning jobs** in the [Cloud Console](https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs) to track trials, parameters, and metrics. You can also stop jobs from the console if needed.
 
 > **Note:** Replace the project ID in the URL below with your own if you are not using the shared workshop project.
 

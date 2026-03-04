@@ -87,7 +87,7 @@ This stores a credential file locally that Google client libraries pick up autom
 
 ## Step 2: Upload data to GCS
 
-In Episode 3 we uploaded data through the Cloud Console. From the CLI the equivalent is:
+In Episode 3 we uploaded data through the [Cloud Console](https://console.cloud.google.com/storage/browser). From the CLI the equivalent is:
 
 ```bash
 # Create a bucket (if it doesn't already exist)
@@ -310,7 +310,7 @@ echo "  gcloud ai custom-jobs list --region=${REGION}"
 
 ### Cloud Shell — free CLI access
 
-If you do not want to install the `gcloud` CLI locally, you can use **Cloud Shell** directly in the Google Cloud Console. It gives you a free, temporary Linux VM with `gcloud` pre-installed and authenticated. Click the terminal icon (">_") in the top-right corner of the Cloud Console to open it.
+If you do not want to install the `gcloud` CLI locally, you can use **Cloud Shell** directly in the [Google Cloud Console](https://console.cloud.google.com/). It gives you a free, temporary Linux VM with `gcloud` pre-installed and authenticated. Click the terminal icon (">_") in the top-right corner of the Cloud Console to open it.
 
 Cloud Shell is a good option for one-off job submissions or quick resource checks without spinning up a Workbench instance.
 
