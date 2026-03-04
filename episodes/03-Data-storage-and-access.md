@@ -49,14 +49,7 @@ A VM disk is the storage volume attached to a Compute Engine VM or a Vertex AI W
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ### What is a GCS bucket?
-For most ML/AI workflows in GCP, **Google Cloud Storage (GCS) buckets** are recommended. A GCS bucket is a container in Google's object storage service where you can store an essentially unlimited number of files. Data in GCS can be accessed from Vertex AI training jobs, Workbench notebooks, and other GCP services using a *GCS URI* (e.g., `gs://your-bucket-name/your-file.csv`).
-
-::::::::::::::::::::::::::::::::::::: callout
-
-#### GCS URIs — your cloud file paths
-GCS URIs follow the format `gs://bucket-name/path/to/file.csv`. Think of them as cloud file paths. You'll use these URIs throughout the workshop to reference data in training scripts, notebooks, and SDK calls.
-
-::::::::::::::::::::::::::::::::::::::::::::::::
+For most ML/AI workflows in GCP, **Google Cloud Storage (GCS) buckets** are recommended. A GCS bucket is a container in Google's object storage service where you can store an essentially unlimited number of files. Data in GCS can be accessed from Vertex AI training jobs, Workbench notebooks, and other GCP services using a *GCS URI* (e.g., `gs://your-bucket-name/your-file.csv`). Think of GCS URIs as cloud file paths — you'll use them throughout the workshop to reference data in training scripts, notebooks, and SDK calls.
 
 ::::::::::::::::::::::::::::::::::::: callout
 
