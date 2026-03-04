@@ -387,8 +387,8 @@ learning tasks?<br></li>
 <div class="card-body">
 <div class="inner bordered">
 <h3 class="card-title">Objectives</h3>
-<ul><li>Describe how Vertex AI Workbench notebooks fit into ML workflows on
-GCP.</li>
+<ul><li>Describe how Vertex AI Workbench notebooks fit into ML/AI workflows
+on GCP.</li>
 <li>Set up a Jupyter-based Workbench Instance as a lightweight
 controller to manage compute tasks.</li>
 <li>Configure a Workbench Instance with appropriate machine type,
@@ -400,9 +400,9 @@ labels, and idle shutdown for cost-efficient orchestration.</li>
 </div>
 <section><h2 class="section-heading" id="setting-up-our-notebook-environment">Setting up our notebook environment<a class="anchor" aria-label="anchor" href="#setting-up-our-notebook-environment"></a></h2>
 <hr class="half-width"><p>Google Cloud Workbench provides JupyterLab-based environments that
-can be used to orchestrate machine learning workflows. In this workshop,
-we will use a <strong>Workbench Instance</strong>—the recommended option
-going forward, as other Workbench environments are being deprecated.</p>
+can be used to orchestrate ML/AI workflows. In this workshop, we will
+use a <strong>Workbench Instance</strong>—the recommended option going
+forward, as other Workbench environments are being deprecated.</p>
 <blockquote>
 <p>Workbench Instances come with JupyterLab 3 pre-installed and are
 configured with GPU-enabled ML frameworks (TensorFlow, PyTorch, etc.),
@@ -602,7 +602,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane. - Like an HPC
 login node, it is not meant for heavy computation. - Suitable for small
@@ -635,7 +635,7 @@ with idle shutdown enabled.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <ul><li>
 <strong>With idle shutdown:</strong> 8 hrs × 5 days × 4 weeks = 160

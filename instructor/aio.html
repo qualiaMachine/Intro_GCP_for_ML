@@ -428,10 +428,9 @@
 <div class="inner">
 <h3 class="card-title">Questions</h3>
 <ul>
-<li>Why would I run ML experiments in the cloud instead of on my laptop
-or an HPC cluster?</li>
-<li>What does GCP offer for machine learning, and how is it
-organized?</li>
+<li>Why would I run ML/AI experiments in the cloud instead of on my
+laptop or an HPC cluster?</li>
+<li>What does GCP offer for ML/AI, and how is it organized?</li>
 <li>What is the “notebook as controller” pattern?</li>
 </ul>
 </div>
@@ -442,8 +441,8 @@ organized?</li>
 <div class="inner bordered">
 <h3 class="card-title">Objectives</h3>
 <ul>
-<li>Identify when cloud compute makes sense for ML work.</li>
-<li>Describe what GCP and Vertex AI provide for ML researchers.</li>
+<li>Identify when cloud compute makes sense for ML/AI work.</li>
+<li>Describe what GCP and Vertex AI provide for ML/AI researchers.</li>
 <li>Explain the notebook-as-controller pattern used throughout this
 workshop.</li>
 </ul>
@@ -452,44 +451,170 @@ workshop.</li>
 </div>
 </div>
 </div>
-<section><h2 class="section-heading" id="prerequisites">Prerequisites<a class="anchor" aria-label="anchor" href="#prerequisites"></a>
+<section><h2 class="section-heading" id="why-run-mlai-in-the-cloud">Why run ML/AI in the cloud?<a class="anchor" aria-label="anchor" href="#why-run-mlai-in-the-cloud"></a>
 </h2>
 <hr class="half-width">
-<p>This workshop assumes you have a <strong>fundamental ML/AI
-background</strong>. Specifically, you should be comfortable with:</p>
-<ul>
-<li>
-<strong>Python</strong> — writing scripts, using packages like
-pandas and NumPy.</li>
-<li>
-<strong>Core ML concepts</strong> — train/test splits, overfitting,
-loss functions, hyperparameters.</li>
-<li>
-<strong>Training a model</strong> — you’ve trained at least one
-model in any framework (scikit-learn, PyTorch, TensorFlow, XGBoost,
-etc.).</li>
-<li>
-<strong>Command line basics</strong> — navigating directories,
-running commands in a terminal.</li>
-</ul>
-<p>No prior GCP or cloud experience is required — that’s what this
-workshop teaches.</p>
-</section><section><h2 class="section-heading" id="why-run-ml-in-the-cloud">Why run ML in the cloud?<a class="anchor" aria-label="anchor" href="#why-run-ml-in-the-cloud"></a>
-</h2>
-<hr class="half-width">
-<p>You have ML code that works on your laptop. But at some point you
+<p>You have ML/AI code that works on your laptop. But at some point you
 need more — a bigger GPU (or multiple GPUs), a dataset that won’t fit on
 disk, or the ability to run dozens of training experiments overnight.
 You could invest in local hardware or compete for time on a shared HPC
 cluster, but cloud platforms let you rent exactly the hardware you need,
 for exactly as long as you need it, and then shut it down.</p>
+<div class="section level3">
+<h3 id="cloud-vs--university-hpc-clusters">Cloud vs. university HPC clusters<a class="anchor" aria-label="anchor" href="#cloud-vs--university-hpc-clusters"></a>
+</h3>
+<p>Most universities offer shared HPC clusters with GPUs. These are
+excellent resources — but they have tradeoffs worth understanding:</p>
+<table class="table">
+<colgroup>
+<col width="22%">
+<col width="41%">
+<col width="36%">
+</colgroup>
+<thead><tr class="header">
+<th>Factor</th>
+<th>University HPC</th>
+<th>Cloud (GCP)</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><strong>Cost</strong></td>
+<td>Free or subsidized</td>
+<td>Pay per hour</td>
+</tr>
+<tr class="even">
+<td><strong>GPU availability</strong></td>
+<td>Shared queue; wait times during peak periods</td>
+<td>On-demand (subject to quota)</td>
+</tr>
+<tr class="odd">
+<td><strong>Hardware variety</strong></td>
+<td>Fixed hardware refresh cycle (3–5 years)</td>
+<td>Latest GPUs available immediately (A100, H100, L4)</td>
+</tr>
+<tr class="even">
+<td><strong>Scaling</strong></td>
+<td>Limited by cluster size</td>
+<td>Spin up hundreds of jobs in parallel</td>
+</tr>
+<tr class="odd">
+<td><strong>Multi-GPU / NVLink</strong></td>
+<td>Sometimes available, depends on cluster</td>
+<td>Available on demand (e.g., A2/A3 instances with NVLink-connected
+multi-GPU nodes)</td>
+</tr>
+<tr class="even">
+<td><strong>Software environment</strong></td>
+<td>Module system; may need IT support for new packages</td>
+<td>Full root access in containers; install anything</td>
+</tr>
+<tr class="odd">
+<td><strong>Data governance</strong></td>
+<td>On-campus, known compliance posture</td>
+<td>Requires configuring IAM, encryption, region controls</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The short version:</strong> use your university cluster when
+it has the hardware you need and the queue isn’t blocking you. Use the
+cloud when you need hardware your cluster doesn’t have, need to scale
+beyond what the queue allows, or need a specific software environment
+you can’t easily get on-campus.</p>
+<p>Many researchers use both — develop and test on HPC, then scale to
+cloud for large experiments or specialized hardware. This workshop
+teaches the cloud side of that workflow.</p>
+</div>
+<div class="section level3">
+<h3 id="scalability-beyond-a-single-gpu">Scalability beyond a single GPU<a class="anchor" aria-label="anchor" href="#scalability-beyond-a-single-gpu"></a>
+</h3>
+<p>Cloud platforms give you access to compute that’s hard to replicate
+locally:</p>
+<ul>
+<li>
+<strong>Multi-GPU nodes.</strong> GCP’s A2 and A3 machine families
+provide 1–16 GPUs per node connected via <strong>NVLink</strong>
+(high-bandwidth GPU-to-GPU interconnects). This matters for distributed
+training, where GPUs need to exchange gradients quickly — NVLink
+provides 600+ GB/s bandwidth compared to ~32 GB/s over PCIe.</li>
+<li>
+<strong>Elastic scaling.</strong> Need to run 100 hyperparameter
+tuning trials? Cloud can provision hundreds of VMs simultaneously. On a
+shared cluster, that might mean days or weeks of queue time.</li>
+<li>
+<strong>Power and cooling are someone else’s problem.</strong> A
+single A100 GPU draws ~400W under load. A rack of 8 draws ~3.2kW just
+for the GPUs. Cloud providers handle the power infrastructure, cooling,
+and hardware failures.</li>
+</ul>
+<p>We won’t use multi-GPU training in this workshop (our dataset is
+small), but understanding what’s available helps you plan for larger
+projects.</p>
+</div>
+<div class="section level3">
+<h3 id="when-does-model-size-justify-cloud-compute">When does model size justify cloud compute?<a class="anchor" aria-label="anchor" href="#when-does-model-size-justify-cloud-compute"></a>
+</h3>
+<p>Not every model needs cloud hardware. Here’s a rough guide:</p>
+<table class="table">
+<colgroup>
+<col width="24%">
+<col width="20%">
+<col width="29%">
+<col width="25%">
+</colgroup>
+<thead><tr class="header">
+<th>Model scale</th>
+<th>Parameters</th>
+<th>Example models</th>
+<th>Where to run</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Small</td>
+<td>&lt; 10M</td>
+<td>Logistic regression, small CNNs, XGBoost</td>
+<td>Laptop or HPC — cloud adds overhead without much benefit</td>
+</tr>
+<tr class="even">
+<td>Medium</td>
+<td>10M–500M</td>
+<td>ResNets, BERT-base, mid-sized transformers</td>
+<td>HPC or cloud with a single GPU (T4 or L4)</td>
+</tr>
+<tr class="odd">
+<td>Large</td>
+<td>500M–10B</td>
+<td>GPT-2, LLaMA-7B, fine-tuning large transformers</td>
+<td>Cloud — requires A100-class GPUs with 40–80 GB VRAM</td>
+</tr>
+<tr class="even">
+<td>Very large</td>
+<td>10B+</td>
+<td>LLaMA-70B, Gemini, GPT-4-scale models</td>
+<td>Cloud — requires multi-GPU nodes (A3/H100 or larger)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Large language models (LLMs) are a strong use case for
+cloud.</strong> Fine-tuning a 7B-parameter model requires ~28 GB of GPU
+memory just for the model weights (in mixed precision), plus memory for
+gradients and optimizer states — easily exceeding what a single consumer
+GPU provides. Inference with these models has similar requirements.
+Cloud platforms give you on-demand access to A100 (40/80 GB), H100 (80
+GB), and B200 GPUs without purchasing hardware that costs tens of
+thousands of dollars.</p>
+<p>For smaller models (under ~500M parameters), a university HPC cluster
+with T4 or V100 GPUs is often sufficient. Cloud becomes the clear choice
+when your model or dataset outgrows local hardware, or when you need
+rapid iteration across many experiments.</p>
 <p>Google Cloud Platform (GCP) is one of several clouds that supports
-this. The rest of this episode explains what GCP offers for ML and how
-the pieces fit together.</p>
-</section><section><h2 class="section-heading" id="what-gcp-provides-for-ml">What GCP provides for ML<a class="anchor" aria-label="anchor" href="#what-gcp-provides-for-ml"></a>
+this. The rest of this episode explains what GCP offers for ML/AI and
+how the pieces fit together.</p>
+</div>
+</section><section><h2 class="section-heading" id="what-gcp-provides-for-mlai">What GCP provides for ML/AI<a class="anchor" aria-label="anchor" href="#what-gcp-provides-for-mlai"></a>
 </h2>
 <hr class="half-width">
-<p>GCP gives you three things that matter for applied ML research:</p>
+<p>GCP gives you three things that matter for applied ML/AI
+research:</p>
 <p><strong>Flexible compute.</strong> You pick the hardware that fits
 your workload:</p>
 <ul>
@@ -497,8 +622,8 @@ your workload:</p>
 <strong>CPUs</strong> for lightweight models, preprocessing, or
 feature engineering.</li>
 <li>
-<strong>GPUs</strong> (NVIDIA T4, V100, A100, etc.) for training
-deep learning models.</li>
+<strong>GPUs</strong> (NVIDIA T4, L4, V100, A100, H100) for training
+deep learning models. For help choosing, see <a href="instances-for-ML.html">Instances for ML on GCP</a>.</li>
 <li>
 <strong>TPUs</strong> (Tensor Processing Units) — Google’s custom
 hardware for matrix-heavy workloads. TPUs work best with TensorFlow and
@@ -508,9 +633,9 @@ JAX; PyTorch support is improving but still less mature.</li>
 give you a place to store datasets, scripts, and model artifacts that
 any job or notebook can access. Think of it as a shared filesystem for
 your project.</p>
-<p><strong>Managed ML services.</strong> Vertex AI is Google’s ML
+<p><strong>Managed ML/AI services.</strong> Vertex AI is Google’s ML/AI
 platform. It wraps compute, storage, and tooling into a set of services
-designed for ML workflows — managed notebooks, training jobs,
+designed for ML/AI workflows — managed notebooks, training jobs,
 hyperparameter tuning, model hosting, and access to foundation models
 like Gemini.</p>
 </section><section><h2 class="section-heading" id="how-the-pieces-fit-together-vertex-ai">How the pieces fit together: Vertex AI<a class="anchor" aria-label="anchor" href="#how-the-pieces-fit-together-vertex-ai"></a>
@@ -564,7 +689,7 @@ Vertex AI API.</td>
 </tr>
 </tbody>
 </table>
-<p>For a full list of terms, see the <a href="glossary.html">Glossary</a>.</p>
+<p>For a full list of terms, see the <a href="reference.html">Glossary</a>.</p>
 </section><section><h2 class="section-heading" id="the-notebook-as-controller-pattern">The notebook-as-controller pattern<a class="anchor" aria-label="anchor" href="#the-notebook-as-controller-pattern"></a>
 </h2>
 <hr class="half-width">
@@ -581,25 +706,8 @@ pull them back into your notebook.</p>
 reproducible (each job is a clean, logged run on dedicated
 hardware).</p>
 <p>Here’s how the pieces connect:</p>
-<pre><code>┌─────────────────────────────────────────────────────────────────────┐
-│                        Google Cloud Platform                        │
-│                                                                     │
-│  ┌──────────────────┐         ┌──────────────────────────────────┐  │
-│  │  Workbench        │  submit │  Vertex AI Training Job          │  │
-│  │  Notebook (small) │────────▶│  (powerful: GPUs, more RAM)      │  │
-│  │                   │  via    │                                  │  │
-│  │  - explore data   │  SDK    │  - runs your training script     │  │
-│  │  - launch jobs    │         │  - auto-provisions hardware      │  │
-│  │  - inspect results│         │  - shuts down when done          │  │
-│  └────────┬──────────┘         └───────────────┬──────────────────┘  │
-│           │  read/write                         │  write artifacts   │
-│           ▼                                     ▼                    │
-│  ┌──────────────────────────────────────────────────────────────┐    │
-│  │          Google Cloud Storage (GCS) Bucket                   │    │
-│  │  datasets, model artifacts, logs, metrics                    │    │
-│  └──────────────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────────────┘</code></pre>
-<div id="console-notebooks-or-cli-your-choice" class="callout">
+<figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram1_training_and_tuning.jpg" alt="Notebook as a controller diagram" class="figure mx-auto d-block"><div class="figcaption">Notebook as a controller</div>
+</figure><div id="console-notebooks-or-cli-your-choice" class="callout">
 <div class="callout-square">
 <i class="callout-icon" data-feather="bell"></i>
 </div>
@@ -609,11 +717,12 @@ hardware).</p>
 <div class="callout-content">
 <p>This workshop uses the <strong>GCP web console</strong> and
 <strong>Workbench notebooks</strong> for most tasks because they’re
-visual and easy to follow. But nearly everything we do can also be done
-from the <strong><code>gcloud</code> command-line tool</strong> —
-submitting training jobs, managing buckets, checking quotas. <a href="08-CLI-workflows.html">Episode 8</a> covers the CLI equivalents.
-If you prefer terminal-based workflows or need to automate jobs in
-scripts and CI/CD pipelines, that episode shows you how.</p>
+visual and easy to follow for beginners. But nearly everything we do can
+also be done from the <strong><code>gcloud</code> command-line
+tool</strong> — submitting training jobs, managing buckets, checking
+quotas. <a href="08-CLI-workflows.html">Episode 8</a> covers the CLI
+equivalents. If you prefer terminal-based workflows or need to automate
+jobs in scripts and CI/CD pipelines, that episode shows you how.</p>
 <p><strong>One important caveat:</strong> whether you use the console,
 notebooks, or CLI, resources you create (VMs, training jobs, endpoints)
 keep running and billing until you explicitly stop them. There’s no
@@ -690,8 +799,8 @@ chat.</p>
 <ul>
 <li>Cloud platforms let you rent hardware on demand instead of buying or
 waiting for shared resources.</li>
-<li>GCP organizes its ML services under Vertex AI — notebooks, training
-jobs, tuning, and model hosting.</li>
+<li>GCP organizes its ML/AI services under Vertex AI — notebooks,
+training jobs, tuning, and model hosting.</li>
 <li>The notebook-as-controller pattern keeps your notebook cheap while
 offloading heavy training to dedicated Vertex AI jobs.</li>
 <li>Everything in this workshop can also be done from the
@@ -736,8 +845,8 @@ learning tasks?<br>
 <div class="inner bordered">
 <h3 class="card-title">Objectives</h3>
 <ul>
-<li>Describe how Vertex AI Workbench notebooks fit into ML workflows on
-GCP.</li>
+<li>Describe how Vertex AI Workbench notebooks fit into ML/AI workflows
+on GCP.</li>
 <li>Set up a Jupyter-based Workbench Instance as a lightweight
 controller to manage compute tasks.</li>
 <li>Configure a Workbench Instance with appropriate machine type,
@@ -752,9 +861,9 @@ labels, and idle shutdown for cost-efficient orchestration.</li>
 </h2>
 <hr class="half-width">
 <p>Google Cloud Workbench provides JupyterLab-based environments that
-can be used to orchestrate machine learning workflows. In this workshop,
-we will use a <strong>Workbench Instance</strong>—the recommended option
-going forward, as other Workbench environments are being deprecated.</p>
+can be used to orchestrate ML/AI workflows. In this workshop, we will
+use a <strong>Workbench Instance</strong>—the recommended option going
+forward, as other Workbench environments are being deprecated.</p>
 <blockquote>
 <p>Workbench Instances come with JupyterLab 3 pre-installed and are
 configured with GPU-enabled ML frameworks (TensorFlow, PyTorch, etc.),
@@ -998,7 +1107,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane. - Like an HPC
 login node, it is not meant for heavy computation. - Suitable for small
@@ -1033,7 +1142,7 @@ with idle shutdown enabled.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <ul>
 <li>
@@ -1227,10 +1336,10 @@ bucket.</li>
 </div>
 </div>
 </div>
-<p>Machine learning and AI projects rely on data, making efficient
-storage and management essential. Google Cloud offers several storage
-options, but the most common for ML workflows are <strong>Virtual
-Machine (VM) disks</strong> and <strong>Google Cloud Storage (GCS)
+<p>ML/AI projects rely on data, making efficient storage and management
+essential. Google Cloud offers several storage options, but the most
+common for ML/AI workflows are <strong>Virtual Machine (VM)
+disks</strong> and <strong>Google Cloud Storage (GCS)
 buckets</strong>.</p>
 <blockquote>
 <h4 id="consult-your-institutions-it-before-handling-sensitive-data-in-gcp">Consult
@@ -1286,7 +1395,7 @@ long-term storage.</li>
 <div class="section level3">
 <h3 id="what-is-a-gcs-bucket">What is a GCS bucket?<a class="anchor" aria-label="anchor" href="#what-is-a-gcs-bucket"></a>
 </h3>
-<p>For most ML workflows in GCP, <strong>Google Cloud Storage (GCS)
+<p>For most ML/AI workflows in GCP, <strong>Google Cloud Storage (GCS)
 buckets</strong> are recommended. A GCS bucket is a container in
 Google’s object storage service where you can store an essentially
 unlimited number of files. Data in GCS can be accessed from Vertex AI
@@ -1308,13 +1417,13 @@ data in training scripts, notebooks, and SDK calls.</p>
 </div>
 </div>
 </div>
-<div id="benefits-of-using-gcs-recommended-for-ml-workflows" class="callout">
+<div id="benefits-of-using-gcs-recommended-for-mlai-workflows" class="callout">
 <div class="callout-square">
 <i class="callout-icon" data-feather="bell"></i>
 </div>
 <span class="callout-header">Callout</span>
-<div id="benefits-of-using-gcs-recommended-for-ml-workflows" class="callout-inner">
-<h3 class="callout-title">Benefits of using GCS (recommended for ML
+<div id="benefits-of-using-gcs-recommended-for-mlai-workflows" class="callout-inner">
+<h3 class="callout-title">Benefits of using GCS (recommended for ML/AI
 workflows)</h3>
 <div class="callout-content">
 <ul>
@@ -1387,7 +1496,7 @@ the convention <code>teamname-firstlastname-dataname</code> (e.g.,
 <code>us-central1</code> (same region as your compute to avoid egress
 charges).</p></li>
 <li><p><strong>Storage class</strong>: <strong>Standard</strong> (best
-for active ML workflows).</p></li>
+for active ML/AI workflows).</p></li>
 <li><p><strong>Access control</strong>: <strong>Uniform</strong>
 (simpler IAM-based permissions).</p></li>
 <li><p><strong>Protection</strong>: Leave default <strong>soft
@@ -5529,7 +5638,7 @@ the accuracy value.</p>
 </tr>
 </tbody>
 </table>
-<p>Most real-world ML projects use both: notebooks for early
+<p>Most real-world ML/AI projects use both: notebooks for early
 experimentation and CLI/scripts for production runs.</p>
 <div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
@@ -6050,7 +6159,7 @@ a <strong>$10 budget</strong> with alert thresholds at 50% and
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li><p>In the Cloud Console, click the <strong>Navigation menu
@@ -6104,7 +6213,7 @@ are not actively using.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6140,7 +6249,7 @@ don’t need, and delete the endpoint.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6186,7 +6295,7 @@ objects. Apply it to your bucket.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
 <div class="accordion-body">
 <p>Save the following as <code>lifecycle.json</code>:</p>
 <div class="codewrapper sourceCode" id="cb14">
@@ -6242,7 +6351,7 @@ delete the bucket entirely.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution5" aria-expanded="false" aria-controls="collapseSolution5">
   <h4 class="accordion-header" id="headingSolution5"> Show me the solution </h4>
 </button>
-<div id="collapseSolution5" class="accordion-collapse collapse" aria-labelledby="headingSolution5" data-bs-parent="#accordionSolution5">
+<div id="collapseSolution5" class="accordion-collapse collapse" data-bs-parent="#accordionSolution5" aria-labelledby="headingSolution5">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>

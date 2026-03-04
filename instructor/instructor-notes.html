@@ -412,7 +412,42 @@
         <h1>Instructor Notes</h1>
         
 
-<section><h2 class="section-heading" id="before-the-workshop">Before the Workshop<a class="anchor" aria-label="anchor" href="#before-the-workshop"></a>
+<section><h2 class="section-heading" id="target-learner-profiles">Target Learner Profiles<a class="anchor" aria-label="anchor" href="#target-learner-profiles"></a>
+</h2>
+<hr class="half-width">
+<div class="section level3">
+<h3 id="alex-graduate-researcher-in-biology">Alex — Graduate Researcher in Biology<a class="anchor" aria-label="anchor" href="#alex-graduate-researcher-in-biology"></a>
+</h3>
+<p>Alex is a second-year PhD student who trains random forest and
+XGBoost models on tabular genomics data using scikit-learn on their
+laptop. Their datasets are growing beyond what fits in RAM, and their
+advisor has suggested moving to cloud compute. Alex has basic Python
+skills and has heard of GCP but has never used it. They want to learn
+how to store data in the cloud, run training jobs without babysitting a
+notebook, and keep costs under control.</p>
+</div>
+<div class="section level3">
+<h3 id="jordan-data-scientist-at-a-research-lab">Jordan — Data Scientist at a Research Lab<a class="anchor" aria-label="anchor" href="#jordan-data-scientist-at-a-research-lab"></a>
+</h3>
+<p>Jordan has 3 years of experience training deep learning models with
+PyTorch on a local GPU workstation. They are comfortable with the
+command line and Git. Their lab has GCP credits and wants to scale up
+hyperparameter tuning for a new project. Jordan needs to learn how to
+submit managed training jobs, attach GPUs, and compare tuning trial
+results without managing infrastructure manually.</p>
+</div>
+<div class="section level3">
+<h3 id="sam-postdoc-exploring-llms-for-literature-review">Sam — Postdoc Exploring LLMs for Literature Review<a class="anchor" aria-label="anchor" href="#sam-postdoc-exploring-llms-for-literature-review"></a>
+</h3>
+<p>Sam is a postdoc in environmental science who wants to use
+retrieval-augmented generation (RAG) to extract information from
+research papers. They have intermediate Python skills and have used
+Jupyter notebooks extensively, but have no cloud experience. Sam is
+primarily interested in the RAG episode but needs the foundational GCP
+knowledge from earlier episodes to set up their environment and manage
+costs responsibly.</p>
+</div>
+</section><section><h2 class="section-heading" id="before-the-workshop">Before the Workshop<a class="anchor" aria-label="anchor" href="#before-the-workshop"></a>
 </h2>
 <hr class="half-width">
 <div class="section level3">
@@ -473,8 +508,8 @@ GCP access, data download).</li>
 <li>Walk through all episodes end-to-end on the shared project at least
 once. GCP UI changes frequently — confirm that screenshots and console
 paths still match.</li>
-<li>Verify that the Vertex AI prebuilt container URIs in episodes 06,
-07, and 08 are still available (container tags get deprecated).</li>
+<li>Verify that the Vertex AI prebuilt container URIs in Episodes 04,
+05, and 06 are still available (container tags get deprecated).</li>
 <li>Confirm that <code>data.zip</code> and <code>pdfs_bundle.zip</code>
 download correctly from the GitHub repository.</li>
 </ul>
@@ -505,40 +540,41 @@ instruction (including short breaks). Suggested time allocation:</p>
 <td>Keep brief; learners are eager to get hands-on</td>
 </tr>
 <tr class="even">
-<td>02 Data Storage</td>
+<td>02 Notebooks as Controllers</td>
 <td>30 min</td>
-<td>First console interaction — go slowly</td>
+<td>First console interaction; VM creation takes 3–5 min — fill with
+discussion</td>
 </tr>
 <tr class="odd">
-<td>03 Notebooks as Controllers</td>
-<td>30 min</td>
-<td>Expect VM creation to take 3–5 min; fill with discussion</td>
+<td>03 Data Storage &amp; Access</td>
+<td>50 min</td>
+<td>Merged bucket creation + notebook data access; first notebook
+coding</td>
 </tr>
 <tr class="even">
-<td>04 Accessing Data</td>
-<td>28 min</td>
-<td>First notebook coding — check everyone can read from GCS</td>
-</tr>
-<tr class="odd">
-<td>05 GitHub PAT (optional)</td>
-<td>20 min</td>
-<td>Skip in live workshops if short on time; point learners here as
-self-study</td>
-</tr>
-<tr class="even">
-<td>06 Training (XGBoost)</td>
-<td>30 min</td>
+<td>04 Training (XGBoost)</td>
+<td>40 min</td>
 <td>Vertex AI job takes 2–5 min; use wait time for Q&amp;A</td>
 </tr>
 <tr class="odd">
-<td>07 Training (PyTorch + GPU)</td>
+<td>05 Training (PyTorch + GPU)</td>
 <td>30 min</td>
 <td>GPU jobs may take longer; discuss CPU vs GPU during wait</td>
 </tr>
 <tr class="even">
-<td>08 Hyperparameter Tuning</td>
+<td>06 Hyperparameter Tuning</td>
 <td>50 min</td>
 <td>Start with 1 trial; exercises have learners scale up</td>
+</tr>
+<tr class="odd">
+<td>07 RAG</td>
+<td>30 min</td>
+<td>Can be shortened to a demo if running behind</td>
+</tr>
+<tr class="even">
+<td>08 CLI Workflows (bonus)</td>
+<td>15 min</td>
+<td>Optional; skip if short on time</td>
 </tr>
 <tr class="odd">
 <td>09 Resource Cleanup</td>
@@ -546,15 +582,9 @@ self-study</td>
 <td>Critical — do not skip. Learners must clean up resources</td>
 </tr>
 <tr class="even">
-<td>10 RAG</td>
-<td>30 min</td>
-<td>Can be shortened to a demo if running behind</td>
-</tr>
-<tr class="odd">
 <td><strong>Total</strong></td>
-<td><strong>~290 min</strong></td>
-<td><strong>~4 hr 50 min, leaving room for breaks to fill 5
-hours</strong></td>
+<td><strong>~297 min</strong></td>
+<td><strong>~5 hours including breaks</strong></td>
 </tr>
 </tbody>
 </table>
@@ -579,13 +609,13 @@ stuck in “Provisioning” for &gt;5 min, try a different zone in the same
 region.</li>
 <li>
 <strong>GPU quota exceeded</strong>: If T4 quota is unavailable,
-fall back to CPU-only training for episodes 07–08. The lesson works
+fall back to CPU-only training for Episodes 05–06. The lesson works
 without GPUs — it just takes longer.</li>
 <li>
 <strong>Numpy version mismatch</strong>: The PyTorch kernel
 sometimes has a numpy 2.x conflict. The fix
 (<code>pip install --upgrade --force-reinstall "numpy&lt;2"</code>) is
-included in episode 07.</li>
+included in Episode 05.</li>
 <li>
 <strong>Idle shutdown confusion</strong>: Some learners may find
 their VM stopped mid-workshop. Remind them to increase idle timeout or
@@ -602,11 +632,10 @@ cost tracking in shared accounts.</li>
 <li>Remind learners that <strong>Vertex AI training jobs take 2–5
 minutes just for provisioning</strong> before training begins. This is
 normal, not an error.</li>
-<li>When walking through episode 09 (cleanup), verify as a group that no
-endpoints are left deployed and no VMs are still running. Remind
-learners who plan to continue to episodes 10–11 to <strong>stop</strong>
-(not delete) their Workbench Instance and keep their GCS bucket.</li>
-<li>Episode 09 now includes a “Check your spend” section — use this as a
+<li>When walking through Episode 09 (cleanup), verify as a group that no
+endpoints are left deployed and no VMs are still running. This is now
+the final episode, so a full teardown is appropriate.</li>
+<li>Episode 09 includes a “Check your spend” section — use this as a
 live demo so learners can see the Billing Reports dashboard. Walk
 through the budget alert setup (Challenge 1) together as a class if time
 permits.</li>

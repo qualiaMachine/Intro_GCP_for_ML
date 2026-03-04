@@ -343,7 +343,7 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Compute for ML</h1>
-        <p>Last updated on 2025-10-29 |
+        <p>Last updated on 2026-03-04 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_for_ML/edit/main/learners/instances-for-ML.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -427,16 +427,24 @@ attach a GPU by adding <code>accelerator_type</code> and
 <code>NVIDIA_TESLA_T4</code>). Only specialized machine families like
 <code>A2</code> include GPUs automatically.<br></li>
 <li>
-<strong>Full names and syntax</strong>: Machine types follow the
-pattern <code>&lt;family&gt;-&lt;series&gt;-&lt;vCPU count&gt;</code>.
-For example:
+<strong>Full names and syntax</strong>: Most machine types follow
+the pattern
+<code>&lt;family&gt;-&lt;series&gt;-&lt;vCPU count&gt;</code>. For
+example:
 <ul><li>
-<code>n2-standard-8</code>: 8 vCPUs, 32 GB RAM<br></li>
+<code>n2-standard-8</code>: N2 family, standard series, 8 vCPUs, 32
+GB RAM</li>
 <li>
-<code>c2-standard-8</code>: 8 vCPUs, 32 GB RAM (CPU-optimized)<br></li>
+<code>c2-standard-8</code>: C2 family, standard series, 8 vCPUs, 32
+GB RAM (CPU-optimized)</li>
 <li>
-<code>a2-highgpu-1g</code>: 12 vCPUs, 85 GB RAM, and 1 attached A100
-GPU<br></li>
+<strong>Exception — GPU families (A2, A3, A4):</strong> These use
+<code>&lt;family&gt;-&lt;series&gt;-&lt;GPU count&gt;g</code> instead.
+The trailing number is the <strong>GPU count</strong>, not the vCPU
+count. For example, <code>a2-highgpu-1g</code> means 1× A100 GPU (with
+12 vCPUs and 85 GB RAM bundled automatically). Similarly,
+<code>a3-highgpu-8g</code> means 8× H100 GPUs. CPU and memory are fixed
+per configuration — you don’t choose them independently.</li>
 </ul></li>
 <li>
 <strong>RAM requirements</strong>: Minimum RAM should be at least
@@ -516,8 +524,8 @@ the <code>us-central1</code> region.</p>
 <td>No GPU support</td>
 </tr></tbody></table><p><strong>Cost notes:</strong><br>
 - Prices vary by region and storage/network configuration.<br>
-- <code>N2</code> instances are a typical choice for cost-effective ML
-workloads.<br>
+- <code>N2</code> instances are a typical choice for cost-effective
+ML/AI workloads.<br>
 - <code>A2–A4</code> families include GPUs by default; all others
 require attaching GPUs manually.</p>
 </div>
@@ -814,7 +822,7 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/instances-for-ML.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/instances-for-ML.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2025-10-29",
+  "dateModified": "2026-03-04",
   "datePublished": "2026-03-04"
 }
 
