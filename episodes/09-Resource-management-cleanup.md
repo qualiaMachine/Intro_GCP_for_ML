@@ -51,12 +51,12 @@ Not all resources cost equally. Here are the main cost drivers you'll encounter 
 
 | Resource | Billing model | Ballpark cost | Risk level |
 |----------|--------------|---------------|------------|
-| **Vertex AI endpoints** | Per node‑hour, **24/7 while deployed** | ~`$4.50`/day for one `n1-standard-4` node | **High** — bills even with zero traffic |
-| **Workbench Instances** (running) | Per VM‑hour + GPU | ~`$0.19`/hr CPU‑only (`n1-standard-4`); add ~`$0.35`/hr per T4 GPU | **High** — easy to forget overnight |
+| **Vertex AI endpoints** | Per node‑hour, **24/7 while deployed** | ~ `$4.50`/day for one `n1-standard-4` node | **High** — bills even with zero traffic |
+| **Workbench Instances** (running) | Per VM‑hour + GPU | ~ `$0.19`/hr CPU‑only (`n1-standard-4`); add ~ `$0.35`/hr per T4 GPU | **High** — easy to forget overnight |
 | **Training / HPT jobs** | Per VM/GPU‑hour while running | Same VM rates; auto‑stops when done | **Medium** — usually self‑limiting |
-| **Workbench disks** (stopped VM) | Per GB‑month for persistent disk | ~`$0.04`/GB/month (~`$4`/month for 100 GB) | **Low** — small but adds up |
-| **GCS storage** | Per GB‑month + operations + egress | ~`$0.02`/GB/month (Standard) | **Low** — cheap until multi‑TB |
-| **Network egress** | Per GB downloaded out of GCP | ~`$0.12`/GB | **Low** — avoid large downloads to local |
+| **Workbench disks** (stopped VM) | Per GB‑month for persistent disk | ~ `$0.04`/GB/month (~ `$4`/month for 100 GB) | **Low** — small but adds up |
+| **GCS storage** | Per GB‑month + operations + egress | ~ `$0.02`/GB/month (Standard) | **Low** — cheap until multi‑TB |
+| **Network egress** | Per GB downloaded out of GCP | ~ `$0.12`/GB | **Low** — avoid large downloads to local |
 
 > **Rule of thumb:** Endpoints left deployed and notebooks left running are the most common surprise bills in education and research settings.
 
@@ -89,7 +89,7 @@ You can configure your instance to auto‑stop after a period of inactivity, so 
 - **Console**: Select your instance → **Edit** → set **Idle shutdown** to 60–120 minutes.
 - **At creation time**: Add `--idle-shutdown-timeout=60` to your `gcloud workbench instances create` command.
 
-> **Disks still cost money while the VM is stopped** (~`$4`/month for 100 GB). If you're completely done with an instance, **delete** it rather than just stopping it.
+> **Disks still cost money while the VM is stopped** (~ `$4`/month for 100 GB). If you're completely done with an instance, **delete** it rather than just stopping it.
 
 
 ## Cleaning up training, tuning, and batch jobs
@@ -124,7 +124,7 @@ gcloud ai custom-jobs delete JOB_ID --region=us-central1
 
 ## Undeploy models and delete endpoints (major cost pitfall)
 
-Deployed endpoints are billed per node‑hour **24/7**, even with zero prediction traffic. A single forgotten endpoint can cost ~`$135`/month. Always undeploy models before deleting the endpoint.
+Deployed endpoints are billed per node‑hour **24/7**, even with zero prediction traffic. A single forgotten endpoint can cost ~ `$135`/month. Always undeploy models before deleting the endpoint.
 
 ### Find endpoints and deployed models
 ```bash
@@ -195,7 +195,7 @@ gcloud storage buckets describe gs://YOUR_BUCKET --format="yaml(lifecycle)"
 ```
 
 ### Egress reminder
-Downloading data out of GCP to your laptop costs ~`$0.12`/GB. Prefer **in‑cloud** training and evaluation, and share results via GCS links rather than local downloads.
+Downloading data out of GCP to your laptop costs ~ `$0.12`/GB. Prefer **in‑cloud** training and evaluation, and share results via GCS links rather than local downloads.
 
 
 ## Labels and budgets
