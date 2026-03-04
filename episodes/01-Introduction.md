@@ -111,22 +111,16 @@ For a full list of terms, see the [Glossary](../learners/reference.md).
 
 ## The notebook-as-controller pattern
 
-Throughout this workshop, we will primarily work in a lightweight **Vertex AI Workbench** notebook — a small, cheap VM where you explore data, visualize results, and iterate. When it's time to do heavy lifting, you use the **Vertex AI Python SDK** to launch jobs on separate, powerful machines:
+The central idea of this workshop is simple: you work in a lightweight **Vertex AI Workbench** notebook — a small, cheap VM — and use the **Vertex AI Python SDK** to dispatch work to managed services. The notebook itself does not run heavy compute. Instead, it orchestrates:
 
-- **Training jobs** run your training script on auto-provisioned GPU hardware, then shut down when complete.
-- **Hyperparameter tuning jobs** search a parameter space across parallel trials and return the best configuration and metrics.
+- **Training jobs** (Eps 4–5) — run your script on auto-provisioned GPU hardware, then shut down when complete.
+- **Hyperparameter tuning jobs** (Ep 6) — search a parameter space across parallel trials and return the best configuration.
+- **Cloud Storage** (Ep 3) — shared persistent storage for datasets, model artifacts, logs, and results.
+- **Gemini API** (Ep 7) — embeddings and generation for Retrieval-Augmented Generation (RAG) pipelines.
 
-Both job types write their outputs — model artifacts, checkpoints, logs, metrics, and trial results — to **Google Cloud Storage (GCS)**, which acts as shared persistent storage. You then pull results back into your notebook to inspect and iterate.
+All of these are accessed via SDK calls from the notebook. This keeps costs low (the notebook VM stays small) and keeps your work reproducible (each job is a clean, logged run on dedicated hardware).
 
-This keeps costs low (the notebook VM stays small) and keeps your work reproducible (each job is a clean, logged run on dedicated hardware).
-
-Here's how the pieces connect:
-
-![Notebook as a controller](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram1_training_and_tuning.svg){alt="Notebook as a controller diagram"}
-
-The same notebook can also orchestrate **Retrieval-Augmented Generation (RAG)** pipelines — chunking documents, building embeddings via the Gemini API, and generating grounded answers, all with data stored in GCS:
-
-![RAG pipeline with Gemini API](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram2_rag_gemini.svg){alt="Architecture diagram showing the RAG pipeline: a Workbench notebook orchestrates document chunking, embedding via the Gemini API, and retrieval-augmented generation, with documents and embeddings stored in a GCS bucket."}
+![Notebook as controller — overview of workshop architecture](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram4_notebook_as_controller.svg){alt="Architecture diagram showing a Workbench notebook at the center orchestrating four managed services via SDK calls: Training Jobs (Eps 4-5), HP Tuning Jobs (Ep 6), Cloud Storage (Ep 3), and Gemini API (Ep 7)."}
 
 ::::::::::::::::::::::::::::::::::::: callout
 

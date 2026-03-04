@@ -41,7 +41,7 @@ We will follow these steps to create our first Workbench Instance:
 
 #### Initial settings
 - Click **Create New** near the top of the Workbench page
-- **Name**: For this workshop, we can use the following naming convention to easily locate our notebooks: `teamname-yourname-purpose` (e.g., sinkorswim-johndoe-train)
+- **Name**: Use the convention `lastname-purpose` (e.g., `doe-workshop`). We'll use a single instance for training, tuning, RAG, and more, so `workshop` is a good general-purpose label.
 - **Region**: Choose the same region as your storage bucket (e.g., `us-central1`). This avoids cross-region transfer charges and keeps data access latency low.
     - If you are unsure, check your bucket's location in the Cloud Storage console (click the bucket name → look under "Location").
 - **Zone:** `us-central1-a` (or another zone in `us-central1`, like `-b` or `-c`)  
@@ -58,9 +58,8 @@ We will follow these steps to create our first Workbench Instance:
 
 - **IMPORTANT:** Open the "Advanced options" menu next.
   -  **Labels (required for cost tracking):**  Under the Details menu, add the following tags (all lowercase) so that you can track the total cost of your activity on GCP later:
-      - `project = teamname` (your team's name)
-      - `name = name` (firstname-lastname)
-      - `purpose = train` (i.e., the notebook's overall purpose — train, tune, RAG, etc.)
+      - `name = lastname` (your last name)
+      - `purpose = workshop`
         
 ![Required tags for notebook.](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-tags.jpg){alt="Screenshot showing required tags for notebook"}
 
