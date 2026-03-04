@@ -60,10 +60,10 @@ Quotas and Limits
 Billing Alerts
 : GCP's Budgets & Alerts feature tracks project spending and sends notifications when costs exceed thresholds.
 
-### Vertex AI Workbench and ML Workflows
+### Vertex AI Workbench and ML/AI Workflows
 
 Vertex AI Workbench
-: A managed Jupyter notebook environment on Compute Engine. Used to run experiments and coordinate ML workflows interactively.
+: A managed Jupyter notebook environment on Compute Engine. Used to run experiments and coordinate ML/AI workflows interactively.
 
 Controller
 : In this workshop, the notebook acts as the controller — it configures and submits training, tuning, and evaluation jobs via the Vertex AI SDK rather than running heavy computation locally.

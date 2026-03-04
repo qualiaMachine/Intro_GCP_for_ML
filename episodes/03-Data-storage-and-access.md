@@ -22,7 +22,7 @@ exercises: 15
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-Machine learning and AI projects rely on data, making efficient storage and management essential. Google Cloud offers several storage options, but the most common for ML workflows are **Virtual Machine (VM) disks** and **Google Cloud Storage (GCS) buckets**.
+ML/AI projects rely on data, making efficient storage and management essential. Google Cloud offers several storage options, but the most common for ML/AI workflows are **Virtual Machine (VM) disks** and **Google Cloud Storage (GCS) buckets**.
 
 > #### Consult your institution's IT before handling sensitive data in GCP
 > As with AWS, **do not upload restricted or sensitive data to GCP services unless explicitly approved by your institution's IT or cloud security team**. For regulated datasets (HIPAA, FERPA, proprietary), work with your institution to ensure encryption, restricted access, and compliance with policies.
@@ -47,7 +47,7 @@ A VM disk is the storage volume attached to a Compute Engine VM or a Vertex AI W
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ### What is a GCS bucket?
-For most ML workflows in GCP, **Google Cloud Storage (GCS) buckets** are recommended. A GCS bucket is a container in Google's object storage service where you can store an essentially unlimited number of files. Data in GCS can be accessed from Vertex AI training jobs, Workbench notebooks, and other GCP services using a *GCS URI* (e.g., `gs://your-bucket-name/your-file.csv`).
+For most ML/AI workflows in GCP, **Google Cloud Storage (GCS) buckets** are recommended. A GCS bucket is a container in Google's object storage service where you can store an essentially unlimited number of files. Data in GCS can be accessed from Vertex AI training jobs, Workbench notebooks, and other GCP services using a *GCS URI* (e.g., `gs://your-bucket-name/your-file.csv`).
 
 ::::::::::::::::::::::::::::::::::::: callout
 
@@ -58,7 +58,7 @@ GCS URIs follow the format `gs://bucket-name/path/to/file.csv`. Think of them as
 
 ::::::::::::::::::::::::::::::::::::: callout
 
-#### Benefits of using GCS (recommended for ML workflows)
+#### Benefits of using GCS (recommended for ML/AI workflows)
 - **Separation of storage and compute**: Data remains available even if VMs or notebooks are deleted.
 - **Easy sharing**: Buckets can be accessed by collaborators with the right IAM roles.
 - **Integration with Vertex AI and BigQuery**: Read and write data directly using other GCP tools.
@@ -85,7 +85,7 @@ GCS URIs follow the format `gs://bucket-name/path/to/file.csv`. Think of them as
 - **Bucket name**: Enter a globally unique name using the convention `teamname-firstlastname-dataname` (e.g., `sinkorswim-johndoe-titanic`).
 - **Labels**: Add cost-tracking labels — `project=teamname`, `name=firstname-lastname`, `purpose=bucket-dataname`. In shared accounts this is *mandatory*.
 - **Location**: Choose **Region** → `us-central1` (same region as your compute to avoid egress charges).
-- **Storage class**: **Standard** (best for active ML workflows).
+- **Storage class**: **Standard** (best for active ML/AI workflows).
 - **Access control**: **Uniform** (simpler IAM-based permissions).
 - **Protection**: Leave default **soft delete** enabled; skip versioning and retention policies.
 
