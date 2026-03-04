@@ -200,7 +200,7 @@ GCS costs are based on storage class, data transfer, and operations (requests).
 
 Now that our bucket is set up, let's use it from the Workbench notebook you created in the previous episode.
 
-If you haven't already cloned the repository, open JupyterLab from your Workbench Instance and run `!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git`. Then navigate to `/Intro_GCP_for_ML/notebooks/04-Accessing-and-managing-data.ipynb`.
+If you haven't already cloned the repository, open JupyterLab from your Workbench Instance and run `!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git`. Then navigate to `/Intro_GCP_for_ML/notebooks/03-Data-storage-and-access.ipynb`.
 
 ### Set up GCP environment
 Before interacting with GCS, initialize the client libraries. The `storage.Client()` call creates a connection using the credentials already attached to your Workbench VM.

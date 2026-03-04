@@ -198,7 +198,7 @@ Run the following command to clone the lesson repository. This contains pre-fill
 !git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
 ```
 
-Then, navigate to `/Intro_GCP_for_ML/notebooks/04-Accessing-and-managing-data.ipynb` to begin the next episode.
+Then, navigate to `/Intro_GCP_for_ML/notebooks/03-Data-storage-and-access.ipynb` to begin the next episode.
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
