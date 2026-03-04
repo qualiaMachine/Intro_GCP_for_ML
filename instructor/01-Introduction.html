@@ -417,8 +417,10 @@ excellent resources — but they have tradeoffs worth understanding:</p>
 <td>Free or subsidized</td>
 <td>Pay per hour</td>
 </tr><tr class="even"><td><strong>GPU availability</strong></td>
-<td>Shared queue; wait times during peak periods</td>
-<td>On-demand (subject to quota)</td>
+<td>Shared queue; wait times during peak periods and per-job runtime
+limits (often 24–72 hrs) that may require checkpointing long training
+runs</td>
+<td>On-demand (subject to quota); jobs run as long as needed</td>
 </tr><tr class="odd"><td><strong>Hardware variety</strong></td>
 <td>Fixed hardware refresh cycle (3–5 years)</td>
 <td>Latest GPUs available immediately (A100, H100, L4)</td>
@@ -429,12 +431,23 @@ excellent resources — but they have tradeoffs worth understanding:</p>
 <td>Sometimes available, depends on cluster</td>
 <td>Available on demand (e.g., A2/A3 instances with NVLink-connected
 multi-GPU nodes)</td>
-</tr><tr class="even"><td><strong>Software environment</strong></td>
-<td>Module system; may need IT support for new packages</td>
-<td>Full root access in containers; install anything</td>
-</tr><tr class="odd"><td><strong>Data governance</strong></td>
+</tr><tr class="even"><td><strong>Job orchestration</strong></td>
+<td>Writing scheduler scripts, packaging environments, and wiring up
+parallel job arrays can take days of refactoring</td>
+<td>A few SDK calls: define a job, set hardware, call
+<code>.run()</code> — parallelism (e.g., tuning trials) is built in</td>
+</tr><tr class="odd"><td><strong>Software environment</strong></td>
+<td>Module system; some clusters support Apptainer/Singularity
+containers — research computing staff can often help with setup</td>
+<td>Vertex AI provides <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-containers" class="external-link">prebuilt
+containers</a> for common ML frameworks (PyTorch, XGBoost, TensorFlow);
+add extra packages via a <code>requirements</code> list, or bring your
+own Docker image for full control</td>
+</tr><tr class="even"><td><strong>Data governance</strong></td>
 <td>On-campus, known compliance posture</td>
-<td>Requires configuring IAM, encryption, region controls</td>
+<td>Requires configuring IAM, encryption, region controls — but
+university-managed cloud accounts (e.g., UW-Madison’s <a href="mailto:cloud-services@cio.wisc.edu">Public Cloud Team</a>) often
+handle baseline security and compliance for you</td>
 </tr></tbody></table><p><strong>The short version:</strong> use your university cluster when
 it has the hardware you need and the queue isn’t blocking you. Use the
 cloud when you need hardware your cluster doesn’t have, need to scale
@@ -455,9 +468,13 @@ provide 1–16 GPUs per node connected via <strong>NVLink</strong>
 training, where GPUs need to exchange gradients quickly — NVLink
 provides 600+ GB/s bandwidth compared to ~32 GB/s over PCIe.</li>
 <li>
-<strong>Elastic scaling.</strong> Need to run 100 hyperparameter
-tuning trials? Cloud can provision hundreds of VMs simultaneously. On a
-shared cluster, that might mean days or weeks of queue time.</li>
+<strong>Elastic scaling with minimal code.</strong> Need to run 100
+hyperparameter tuning trials? On Vertex AI you define the search space,
+set <code>max_trial_count</code>, and the platform handles provisioning,
+parallelism, and teardown. On a university HPC cluster the same task
+often means writing Slurm/Condor job arrays, packaging environments into
+containers or tarballs, and wiring up result collection — work that can
+take days or weeks of refactoring before you run a single trial.</li>
 <li>
 <strong>Power and cooling are someone else’s problem.</strong> A
 single A100 GPU draws ~400W under load. A rack of 8 draws ~3.2kW just
