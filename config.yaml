@@ -78,7 +78,7 @@ episodes:
 
 # Information for Learners
 learners:
-- glossary.md
+- reference.md
 - instances-for-ML.md
 - uw-madison-cloud-resources.md
 - github-pat.md
