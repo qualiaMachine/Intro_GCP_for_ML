@@ -51,6 +51,8 @@ aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCK
 
 ## Prepare data as `.npz`
 
+Unlike the XGBoost script from Episode 4 (which handles preprocessing internally from raw CSV), our PyTorch script expects pre-processed NumPy arrays. We'll prepare those here and save them as `.npz` files.
+
 Why `.npz`? NumPy's `.npz` files are compressed binary containers that can store multiple arrays (e.g., features and labels) together in a single file:
 
 - **Compact & fast:** smaller than CSV, and one file can hold multiple arrays (`X_train`, `y_train`).
@@ -103,18 +105,11 @@ bucket.blob("data/val_data.npz").upload_from_filename("/home/jupyter/val_data.np
 print("Uploaded: gs://%s/data/train_data.npz and val_data.npz" % BUCKET_NAME)
 ```
 
-To check our work (bucket contents), we can again use the following code:
+Verify the upload by listing your bucket contents (same pattern as Episode 3):
 
 ```python
-total_size_bytes = 0
-# bucket = client.bucket(BUCKET_NAME)
-
 for blob in client.list_blobs(BUCKET_NAME):
-    total_size_bytes += blob.size
     print(blob.name)
-
-total_size_mb = total_size_bytes / (1024**2)
-print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
 ```
 
 ## Minimal PyTorch training script (`train_nn.py`) - local test
@@ -289,20 +284,6 @@ print("Artifacts folder:", ARTIFACT_DIR)
 
 **Quick link** (replace `YOUR_PROJECT_ID`): `https://console.cloud.google.com/vertex-ai/training/training-pipelines?project=YOUR_PROJECT_ID`
 
-Check our bucket contents to verify expected outputs are there.
-
-```python
-total_size_bytes = 0
-# bucket = client.bucket(BUCKET_NAME)
-
-for blob in client.list_blobs(BUCKET_NAME):
-    total_size_bytes += blob.size
-    print(blob.name)
-
-total_size_mb = total_size_bytes / (1024**2)
-print(f"Total size of bucket '{BUCKET_NAME}': {total_size_mb:.2f} MB")
-```
-
 After the job completes, your training script writes several output files to the GCS artifact directory. Here's what you'll find in `gs://…/artifacts/pytorch/<RUN_ID>/`:
 
 - `model.pt` — PyTorch weights (`state_dict`).
@@ -338,28 +319,13 @@ model_pt = io.BytesIO(model_bytes)
 state = torch.load(model_pt, map_location="cpu", weights_only=True)
 m = TitanicNet()
 m.load_state_dict(state)
-m.eval(); # set model to eval mode
-
-# -----------------
-# ALT: download copy of model into VM (costs extra storage)
-# -----------------
-# # Copy model.pt from GCS (replace RUN_ID with your run folder)
-# !gsutil cp {ARTIFACT_DIR}/model/model.pt /home/jupyter/model_vertex.pt
-# !ls
-# # rebuild model and load weights
-# m = TitanicNet()
-# state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu", weights_only=True)  
-# m.load_state_dict(state)
-# m.eval()
-
+m.eval();
 ```
 
-As before, we can run our model evaluation code with this model.
-
-To follow best practices, we will read our validation data from GCS and avoid having a copy in our VM.
+Evaluate using the same pattern from the CPU evaluation section above — load validation data from GCS, run predictions, and check accuracy. The results should match the CPU job since we set random seeds.
 
 ```python
-# read validation data into memory
+# Read validation data from GCS (reuses val data from local eval above)
 VAL_PATH = "data/val_data.npz"
 val_blob = bucket.blob(VAL_PATH)
 val_bytes = val_blob.download_as_bytes()
@@ -368,10 +334,9 @@ X_val, y_val = d["X_val"], d["y_val"]
 X_val_t = torch.tensor(X_val, dtype=torch.float32)
 y_val_t = torch.tensor(y_val, dtype=torch.long)
 
-# get predictions
 with torch.no_grad():
-    probs = m(X_val_t).squeeze(1)         # [N], sigmoid outputs in (0,1)
-    preds_t = (probs >= 0.5).long()       # threshold at 0.5 -> class label 0/1
+    probs = m(X_val_t).squeeze(1)
+    preds_t = (probs >= 0.5).long()
     correct = (preds_t == y_val_t).sum().item()
     acc = correct / y_val_t.shape[0]
 
@@ -486,33 +451,19 @@ model_pt = io.BytesIO(model_bytes)
 state = torch.load(model_pt, map_location="cpu", weights_only=True)
 m = TitanicNet()
 m.load_state_dict(state)
-m.eval(); # set model to eval mode
-
-# -----------------
-# ALT: download copy of model into VM (costs extra storage)
-# -----------------
-# # Copy model.pt from GCS (replace RUN_ID with your run folder)
-# !gsutil cp {ARTIFACT_DIR}/model/model.pt /home/jupyter/model_vertex.pt
-# !ls
-# # rebuild model and load weights
-# m = TitanicNet()
-# state = torch.load("/home/jupyter/model_vertex.pt", map_location="cpu", weights_only=True)
-# m.load_state_dict(state)
-# m.eval()
-
+m.eval();
 ```
 
-With the model loaded, we run predictions on the validation set and compute accuracy. Because we set random seeds in `train_nn.py`, this should match the CPU job's accuracy.
+Evaluate the GPU model using the same pattern — results should match because we set random seeds in `train_nn.py`.
 
 ```python
-# get predictions
 with torch.no_grad():
-    probs = m(X_val_t).squeeze(1)         # [N], sigmoid outputs in (0,1)
-    preds_t = (probs >= 0.5).long()       # threshold at 0.5 -> class label 0/1
+    probs = m(X_val_t).squeeze(1)
+    preds_t = (probs >= 0.5).long()
     correct = (preds_t == y_val_t).sum().item()
     acc = correct / y_val_t.shape[0]
 
-print(f"Vertex model val accuracy: {acc:.4f}")
+print(f"GPU model val accuracy: {acc:.4f}")
 ```
 
 :::::::::::::::::::::::::::::::::::::::: challenge

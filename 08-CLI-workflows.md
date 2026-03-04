@@ -1,5 +1,5 @@
 ---
-title: "Bonus: CLI Workflows Without Notebooks (Draft)"
+title: "Bonus: CLI Workflows Without Notebooks"
 teaching: 15
 exercises: 10
 ---
@@ -23,9 +23,9 @@ exercises: 10
 
 ::::::::::::::::::::::::::::::::::::: callout
 
-### Draft episode
+### Bonus episode
 
-This episode is a **work-in-progress bonus**. It is not part of the standard workshop flow and may be incomplete. Contributions and feedback are welcome — open an issue or pull request on the [lesson repository](https://github.com/qualiaMachine/Intro_GCP_for_ML).
+This episode is not part of the standard workshop flow. It covers CLI alternatives to the notebook-based workflows from earlier episodes. Contributions and feedback are welcome — open an issue or pull request on the [lesson repository](https://github.com/qualiaMachine/Intro_GCP_for_ML).
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -38,7 +38,7 @@ Throughout this workshop we used Jupyter notebooks on a Vertex AI Workbench VM a
 - **Reproducibility** — A shell script checked into version control is easier to review and reproduce than a notebook with hidden state.
 - **Cost** — If all you need is to submit a job, paying for a Workbench VM while you wait is unnecessary. You can submit from Cloud Shell (free) or your laptop.
 
-Everything we did with the Python SDK in episodes 06–08 has an equivalent `gcloud` command. This episode walks through the key ones.
+Everything we did with the Python SDK in Episodes 4–6 has an equivalent `gcloud` command. This episode walks through the key ones.
 
 
 ## Step 1: Install and authenticate
@@ -72,7 +72,7 @@ gcloud config set project YOUR_PROJECT_ID
 gcloud config set compute/region us-central1
 ```
 
-On a Workbench VM these steps are already done for you — the VM's attached service account provides credentials automatically. This is the authentication convenience mentioned in [episode 03](03-Notebooks-as-controllers.md).
+On a Workbench VM these steps are already done for you — the VM's attached service account provides credentials automatically. This is the authentication convenience mentioned in [Episode 2](02-Notebooks-as-controllers.md).
 
 ### Application Default Credentials
 
@@ -87,7 +87,7 @@ This stores a credential file locally that Google client libraries pick up autom
 
 ## Step 2: Upload data to GCS
 
-In episode 02 we uploaded data through the Cloud Console. From the CLI the equivalent is:
+In Episode 3 we uploaded data through the Cloud Console. From the CLI the equivalent is:
 
 ```bash
 # Create a bucket (if it doesn't already exist)
@@ -113,7 +113,7 @@ Older tutorials may reference `gsutil`. Google now recommends `gcloud storage` a
 
 ## Step 3: Submit a training job
 
-In episode 06 we used the Python SDK to create and run a `CustomTrainingJob`. The `gcloud` equivalent is `gcloud ai custom-jobs create`. You provide a JSON or YAML config file that describes the job.
+In Episode 4 we used the Python SDK to create and run a `CustomTrainingJob`. The `gcloud` equivalent is `gcloud ai custom-jobs create`. You provide a JSON or YAML config file that describes the job.
 
 ### Write a job config file
 
@@ -154,7 +154,7 @@ Vertex AI provisions a VM, runs your training container, and writes outputs to t
 
 ### GPU example (PyTorch)
 
-For the PyTorch GPU job from episode 07, the config includes an `acceleratorType` and `acceleratorCount`:
+For the PyTorch GPU job from Episode 5, the config includes an `acceleratorType` and `acceleratorCount`. Note that the argument names must match exactly what `train_nn.py` expects (`--train`, `--val`, `--learning_rate`, etc.):
 
 ```yaml
 # pytorch_gpu_job.yaml
@@ -162,19 +162,18 @@ displayName: cli-pytorch-titanic-gpu
 jobSpec:
   workerPoolSpecs:
     - machineSpec:
-        machineType: n1-standard-4
+        machineType: n1-standard-8
         acceleratorType: NVIDIA_TESLA_T4
         acceleratorCount: 1
       replicaCount: 1
       containerSpec:
-        imageUri: us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-1:latest
+        imageUri: us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest
         args:
-          - "--train_data=gs://sinkorswim-johndoe-titanic/train_data.npz"
-          - "--val_data=gs://sinkorswim-johndoe-titanic/val_data.npz"
-          - "--epochs=30"
-          - "--lr=0.001"
-          - "--hidden=64"
-          - "--dropout=0.3"
+          - "--train=gs://sinkorswim-johndoe-titanic/data/train_data.npz"
+          - "--val=gs://sinkorswim-johndoe-titanic/data/val_data.npz"
+          - "--epochs=500"
+          - "--learning_rate=0.001"
+          - "--patience=50"
   baseOutputDirectory:
     outputUriPrefix: gs://sinkorswim-johndoe-titanic/artifacts/pytorch/cli-gpu-run/
 ```
@@ -215,7 +214,7 @@ gcloud ai hp-tuning-jobs list --region=us-central1
 gcloud ai hp-tuning-jobs stream-logs JOB_ID --region=us-central1
 ```
 
-Creating HP tuning jobs via YAML is more verbose — for complex tuning configs, the Python SDK ([Episode 8](08-Hyperparameter-tuning.md)) is often more readable.
+Creating HP tuning jobs via YAML is more verbose — for complex tuning configs, the Python SDK ([Episode 6](06-Hyperparameter-tuning.md)) is often more readable.
 
 
 ## Step 5: Check for running resources (don't skip this)

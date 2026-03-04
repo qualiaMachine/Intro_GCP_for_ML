@@ -61,7 +61,7 @@ For this workshop, you will need the **Titanic dataset**, which can be used to t
    - `~/Downloads/data/titanic_train.csv`  
    - `~/Downloads/data/titanic_test.csv`  
 
-In the first episode, you will create a Cloud Storage bucket and upload this data to use with your notebook.
+In Episode 3, you will create a Cloud Storage bucket and upload this data to use with your notebook.
 
 ### 4. (Optional) Google Cloud Skills Boost — Getting Started with Google Cloud Fundamentals
 
