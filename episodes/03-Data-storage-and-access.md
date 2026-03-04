@@ -110,7 +110,15 @@ Click **Create** if everything looks good.
 
 ## Adjust bucket permissions
 
-We need to grant the Compute Engine default service account IAM roles so that our Workbench notebooks and training jobs can interact with the bucket. Open **Cloud Shell** — a browser-based terminal built into the Google Cloud Console (click the terminal icon **>\_** in the top-right toolbar).
+We need to grant the Compute Engine default service account IAM roles so that our Workbench notebooks and training jobs can interact with the bucket.
+
+::::::::::::::::::::::::::::::::::::: callout
+
+#### These commands run in Cloud Shell, not in a notebook
+
+Open [**Cloud Shell**](https://shell.cloud.google.com/?show=terminal) — a browser-based terminal built into the Google Cloud Console (click the **>\_** icon in the top-right toolbar). Copy the commands below and paste them into that terminal.
+
+::::::::::::::::::::::::::::::::::::::::::::::::
 
 #### Find your service account
 
