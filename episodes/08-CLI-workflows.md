@@ -256,7 +256,7 @@ gcloud workbench instances stop INSTANCE_NAME --location=us-central1-a
 
 ### Cost leaks are silent
 
-A forgotten endpoint bills ~$1.50–$3/hour depending on machine type — that's **$36–$72/day** doing nothing. A GPU training job you accidentally submitted twice burns money until you cancel it. There's no pop-up warning; you'll only find out on your billing dashboard or when you hit a quota.
+A forgotten endpoint bills ~ `$1.50`–`$3`/hour depending on machine type — that's **`$36`–`$72`/day** doing nothing. A GPU training job you accidentally submitted twice burns money until you cancel it. There's no pop-up warning; you'll only find out on your billing dashboard or when you hit a quota.
 
 Build the habit: **every time you finish a CLI session, run the check commands above.** For a more thorough cleanup checklist, see [Episode 9](09-Resource-management-cleanup.md).
 

@@ -117,6 +117,18 @@ Click **Create** if everything looks good.
 
 Your bucket exists, but your notebooks and training jobs don't automatically have permission to use it. GCP follows the **principle of least privilege** — services only get the access you explicitly grant. In this section we'll find the service account that Vertex AI uses and give it the right roles on your bucket.
 
+#### Check your project ID
+
+First, confirm which project your notebook is connected to. Run this cell in your Workbench notebook:
+
+```python
+from google.cloud import storage
+client = storage.Client()
+print(client.project)
+```
+
+Copy the output — you'll paste it into Cloud Shell commands below.
+
 ::::::::::::::::::::::::::::::::::::: callout
 
 #### These commands run in Cloud Shell, not in a notebook
@@ -133,7 +145,7 @@ If Cloud Shell doesn't already know your project, set it first:
 gcloud config set project YOUR_PROJECT_ID
 ```
 
-Replace `YOUR_PROJECT_ID` with your project ID (shown in the Console dashboard top-left dropdown). For the shared MLM25 workshop the project ID is **`doit-rci-mlm25-4626`**.
+Replace `YOUR_PROJECT_ID` with the project ID you copied above. For the shared MLM25 workshop the project ID is **`doit-rci-mlm25-4626`**.
 
 #### Find your service account
 
@@ -190,12 +202,12 @@ Older tutorials often reference `gsutil` for Cloud Storage operations. Google no
 
 GCS costs are based on three things: **storage class** (how you store data), **data transfer** (moving data in or out of GCP), and **operations** (API requests). Operations are the individual actions your code performs against Cloud Storage — every time a notebook reads a file or a training job writes a model, that's an API request.
 
-- **Standard storage**: ~$0.02 per GB per month in `us-central1`.
+- **Standard storage**: ~ `$0.02` per GB per month in `us-central1`.
 - **Uploading data (ingress)**: Free.
-- **Downloading data out of GCP (egress)**: ~$0.12 per GB.
-- **Cross-region access**: ~$0.01–$0.02 per GB within North America.
-- **GET requests** (reading/downloading objects): ~$0.004 per 10,000 requests.
-- **PUT/POST requests** (creating/uploading objects): ~$0.05 per 10,000 requests.
+- **Downloading data out of GCP (egress)**: ~ `$0.12` per GB.
+- **Cross-region access**: ~ `$0.01`–`$0.02` per GB within North America.
+- **GET requests** (reading/downloading objects): ~ `$0.004` per 10,000 requests.
+- **PUT/POST requests** (creating/uploading objects): ~ `$0.05` per 10,000 requests.
 - **Deleting data**: Free (but Nearline/Coldline/Archive early-deletion fees apply).
 
 ***For detailed pricing, see [GCS Pricing Information](https://cloud.google.com/storage/pricing).***
@@ -210,14 +222,14 @@ GCS costs are based on three things: **storage class** (how you store data), **d
 
 **2. Repeat the above calculation for datasets of 10 GB, 100 GB, and 1 TB (1024 GB).**
 
-**Hints**: Storage $0.02/GB/month, Egress $0.12/GB, GET requests negligible at this scale.
+**Hints**: Storage `$0.02`/GB/month, Egress `$0.12`/GB, GET requests negligible at this scale.
 
 :::::::::::::::: solution
 
-1. **1 GB**: Storage $0.02 + Egress $0.12 = **$0.14**
-2. **10 GB**: $0.20 + $1.20 = **$1.40**
-3. **100 GB**: $2.00 + $12.00 = **$14.00**
-4. **1 TB**: $20.48 + $122.88 = **$143.36**
+1. **1 GB**: Storage `$0.02` + Egress `$0.12` = **`$0.14`**
+2. **10 GB**: `$0.20` + `$1.20` = **`$1.40`**
+3. **100 GB**: `$2.00` + `$12.00` = **`$14.00`**
+4. **1 TB**: `$20.48` + `$122.88` = **`$143.36`**
 
 :::::::::::::::::::::::::
 
@@ -231,12 +243,12 @@ Now that our bucket is set up, let's use it from the Workbench notebook you crea
 If you haven't already cloned the repository, open JupyterLab from your Workbench Instance and run `!git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git`. Then navigate to `/Intro_GCP_for_ML/notebooks/03-Data-storage-and-access.ipynb`.
 
 ### Set up GCP environment
-Before interacting with GCS, initialize the client libraries. The `storage.Client()` call creates a connection using the credentials already attached to your Workbench VM.
+If you haven't already, initialize the storage client (same code from the permissions section earlier). The `storage.Client()` call creates a connection using the credentials already attached to your Workbench VM.
 
 ```python
 from google.cloud import storage
 client = storage.Client()
-print("Project:", client.project)
+print(client.project)
 ```
 
 ### Reading data directly into memory
