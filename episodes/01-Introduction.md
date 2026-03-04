@@ -44,7 +44,7 @@ Most universities offer shared HPC clusters with GPUs. These are excellent resou
 | **Cost** | Free or subsidized | Pay per hour |
 | **GPU availability** | Shared queue; wait times during peak periods | On-demand (subject to quota) |
 | **Hardware variety** | Fixed hardware refresh cycle (3–5 years) | Latest GPUs available immediately (A100, H100, L4) |
-| **Scaling** | Limited by cluster size | Spin up 10+ jobs in parallel |
+| **Scaling** | Limited by cluster size | Spin up hundreds of jobs in parallel |
 | **Multi-GPU / NVLink** | Sometimes available, depends on cluster | Available on demand (e.g., A2/A3 instances with NVLink-connected multi-GPU nodes) |
 | **Software environment** | Module system; may need IT support for new packages | Full root access in containers; install anything |
 | **Data governance** | On-campus, known compliance posture | Requires configuring IAM, encryption, region controls |
@@ -58,10 +58,25 @@ Many researchers use both — develop and test on HPC, then scale to cloud for l
 Cloud platforms give you access to compute that's hard to replicate locally:
 
 - **Multi-GPU nodes.** GCP's A2 and A3 machine families provide 1–16 GPUs per node connected via **NVLink** (high-bandwidth GPU-to-GPU interconnects). This matters for distributed training, where GPUs need to exchange gradients quickly — NVLink provides 600+ GB/s bandwidth compared to ~32 GB/s over PCIe.
-- **Elastic scaling.** Need to run 20 hyperparameter tuning trials? Cloud can provision 20 VMs simultaneously. On a shared cluster, that might mean a multi-day queue wait.
+- **Elastic scaling.** Need to run 100 hyperparameter tuning trials? Cloud can provision hundreds of VMs simultaneously. On a shared cluster, that might mean days or weeks of queue time.
 - **Power and cooling are someone else's problem.** A single A100 GPU draws ~400W under load. A rack of 8 draws ~3.2kW just for the GPUs. Cloud providers handle the power infrastructure, cooling, and hardware failures.
 
 We won't use multi-GPU training in this workshop (our dataset is small), but understanding what's available helps you plan for larger projects.
+
+### When does model size justify cloud compute?
+
+Not every model needs cloud hardware. Here's a rough guide:
+
+| Model scale | Parameters | Example models | Where to run |
+|-------------|-----------|----------------|--------------|
+| Small | < 10M | Logistic regression, small CNNs, XGBoost | Laptop or HPC — cloud adds overhead without much benefit |
+| Medium | 10M–500M | ResNets, BERT-base, mid-sized transformers | HPC or cloud with a single GPU (T4 or L4) |
+| Large | 500M–10B | GPT-2, LLaMA-7B, fine-tuning large transformers | Cloud — requires A100-class GPUs with 40–80 GB VRAM |
+| Very large | 10B+ | LLaMA-70B, Gemini, GPT-4-scale models | Cloud — requires multi-GPU nodes (A3/H100 or larger) |
+
+**Large language models (LLMs) are a strong use case for cloud.** Fine-tuning a 7B-parameter model requires ~28 GB of GPU memory just for the model weights (in mixed precision), plus memory for gradients and optimizer states — easily exceeding what a single consumer GPU provides. Inference with these models has similar requirements. Cloud platforms give you on-demand access to A100 (40/80 GB), H100 (80 GB), and B200 GPUs without purchasing hardware that costs tens of thousands of dollars.
+
+For smaller models (under ~500M parameters), a university HPC cluster with T4 or V100 GPUs is often sufficient. Cloud becomes the clear choice when your model or dataset outgrows local hardware, or when you need rapid iteration across many experiments.
 
 Google Cloud Platform (GCP) is one of several clouds that supports this. The rest of this episode explains what GCP offers for ML and how the pieces fit together.
 
