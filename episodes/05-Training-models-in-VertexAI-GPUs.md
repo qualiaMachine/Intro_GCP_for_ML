@@ -350,7 +350,7 @@ Our CPU job above worked fine for this small dataset. In practice, you'd switch 
 The changes from CPU to GPU are minimal — this is one of the advantages of Vertex AI's container-based approach:
 
 - The container image switches to the GPU-enabled version (`pytorch-gpu.2-4.py310:latest`), which includes CUDA and cuDNN.
-- The machine type (`n1-standard-8`) defines CPU and memory resources, while we add a GPU accelerator (`NVIDIA_TESLA_T4`, `NVIDIA_L4`, etc.). **For guidance on selecting a machine type and accelerator, visit the [Compute for ML](https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html) resource.**
+- The machine type (`n1-standard-8`) defines CPU and memory resources, while we add a GPU accelerator (`NVIDIA_TESLA_T4`, `NVIDIA_L4`, etc.). **For guidance on selecting a machine type and accelerator, visit the [Compute for ML](https://qualiamachine.github.io/Intro_GCP_for_ML/compute-for-ML.html) resource.**
 - The training script, arguments, and artifact handling all stay the same.
 
 ::::::::::::::::::::::::::::::::::::: callout
@@ -475,7 +475,7 @@ Now that you've run both a CPU and GPU training job, answer the following:
 1. **Artifact location**: Where did Vertex AI write your model artifacts? How does `base_output_dir` in `job.run()` relate to the `AIP_MODEL_DIR` environment variable inside the container?
 2. **CPU vs. GPU job time**: Compare the wall-clock times of your CPU and GPU jobs (visible in the Console under **Vertex AI > Training > Custom Jobs**). Which was faster? Why might the GPU job be *slower* for this dataset?
 3. **Container choice**: We used `pytorch-cpu.2-4.py310` for the CPU job and `pytorch-gpu.2-4.py310` for the GPU job. What would happen if you used the CPU container but still passed `accelerator_type` and `accelerator_count`?
-4. **Cost awareness**: You used `n1-standard-4` for CPU and `n1-standard-8` + T4 for GPU. Using the [Compute for ML](https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html) resource, estimate the relative hourly cost difference between these configurations.
+4. **Cost awareness**: You used `n1-standard-4` for CPU and `n1-standard-8` + T4 for GPU. Using the [Compute for ML](https://qualiamachine.github.io/Intro_GCP_for_ML/compute-for-ML.html) resource, estimate the relative hourly cost difference between these configurations.
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::
 
