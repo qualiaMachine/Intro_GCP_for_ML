@@ -417,8 +417,8 @@ to begin this notebook. <strong>Select the <em>PyTorch</em> environment
 (kernel).</strong> Local PyTorch is only needed for local tests. Your
 <em>Vertex AI job</em> uses the container specified by
 <code>container_uri</code> (e.g., <code>pytorch-cpu.2-6</code> or
-<code>pytorch-gpu.2-6</code>), so it brings its own framework at run
-time.</p>
+<code>pytorch-gpu.2-6</code> — without a <code>.py310</code> suffix), so
+it brings its own framework at run time.</p>
 </div>
 <div class="section level4">
 <h4 id="cd-to-instance-home-directory">2. CD to instance home directory<a class="anchor" aria-label="anchor" href="#cd-to-instance-home-directory"></a></h4>
@@ -712,11 +712,19 @@ automatically.</p>
 <div id="check-supported-container-versions" class="callout-inner">
 <h3 class="callout-title">Check supported container versions</h3>
 <div class="callout-content">
-<p>Google periodically retires older prebuilt images. Before running the
-cells below, verify that the PyTorch version in <code>IMAGE</code> is
-still listed at <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch" class="external-link">Prebuilt
-containers for training</a>. If you see an <code>INVALID_ARGUMENT</code>
-error about an unsupported image, update the version number (e.g.,
+<p><strong>Container URI format matters.</strong> Because we use
+<code>CustomTrainingJob</code> (which auto-packages your script as a
+Python package), the container must be registered for <em>python package
+training</em>. Use the <strong>short form</strong> without a
+Python-version suffix — e.g., <code>pytorch-cpu.2-6:latest</code>,
+<strong>not</strong> <code>pytorch-cpu.2-6.py310:latest</code>. The
+<code>.py310</code> variants work with
+<code>CustomJob.from_local_script</code> (used in Episode 6) but are
+rejected by <code>CustomTrainingJob</code>.</p>
+<p>Google also periodically retires older versions. If you see an
+<code>INVALID_ARGUMENT</code> error about an unsupported image, check
+the current list at <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch" class="external-link">Prebuilt
+containers for training</a> and update the version number (e.g.,
 <code>2-6</code> → <code>2-7</code>).</p>
 </div>
 </div>
@@ -727,7 +735,7 @@ error about an unsupported image, update the version number (e.g.,
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-6.py310:latest'</span> <span class="co"># cpu-only version</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-6:latest'</span> <span class="co"># cpu-only; no .py310 suffix for CustomTrainingJob</span></span>
 <span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span> <span class="co"># CPU fine for small datasets</span></span>
 <span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"RUN_ID = </span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">ARTIFACT_DIR = </span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ch">\n</span><span class="ss">MACHINE = </span><span class="sc">{</span>MACHINE<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
@@ -771,11 +779,12 @@ error about an unsupported image, update the version number (e.g.,
 </div>
 <div class="section level4">
 <h4 id="monitoring-training-jobs-in-the-console">Monitoring training jobs in the Console<a class="anchor" aria-label="anchor" href="#monitoring-training-jobs-in-the-console"></a></h4>
-<ol style="list-style-type: decimal"><li>Go to the Google Cloud Console.<br></li>
+<ol style="list-style-type: decimal"><li>Go to the <a href="https://console.cloud.google.com/vertex-ai/training/custom-jobs" class="external-link">Google
+Cloud Console</a>.</li>
 <li>Navigate to <strong>Vertex AI &gt; Training &gt; Custom
-Jobs</strong>.<br></li>
+Jobs</strong>.</li>
 <li>Click on your job name to see status, logs, and output model
-artifacts.<br></li>
+artifacts.</li>
 <li>Cancel jobs from the console if needed (be careful not to stop jobs
 you don’t own in shared projects).</li>
 </ol><p><strong>Quick link</strong> (replace <code>YOUR_PROJECT_ID</code>):
@@ -863,7 +872,7 @@ it here to learn the workflow.</p>
 <p>The changes from CPU to GPU are minimal — this is one of the
 advantages of Vertex AI’s container-based approach:</p>
 <ul><li>The container image switches to the GPU-enabled version
-(<code>pytorch-gpu.2-6.py310:latest</code>), which includes CUDA and
+(<code>pytorch-gpu.2-6:latest</code>), which includes CUDA and
 cuDNN.</li>
 <li>The machine type (<code>n1-standard-8</code>) defines CPU and memory
 resources, while we add a GPU accelerator (<code>NVIDIA_TESLA_T4</code>,
@@ -901,7 +910,7 @@ process.</p>
 <span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a></span>
 <span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co"># ---- Container image ----</span></span>
 <span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co"># Use a prebuilt TRAINING image that has PyTorch + CUDA. This enables GPU at runtime.</span></span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-6.py310:latest"</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-6:latest"</span></span>
 <span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a></span>
 <span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co"># ---- Machine vs Accelerator (important!) ----</span></span>
 <span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co"># machine_type = the VM's CPU/RAM shape. It is NOT a GPU by itself.</span></span>
@@ -1022,10 +1031,10 @@ of your CPU and GPU jobs (visible in the Console under <strong>Vertex AI
 the GPU job be <em>slower</em> for this dataset?</li>
 <li>
 <strong>Container choice</strong>: We used
-<code>pytorch-cpu.2-6.py310</code> for the CPU job and
-<code>pytorch-gpu.2-6.py310</code> for the GPU job. What would happen if
-you used the CPU container but still passed
-<code>accelerator_type</code> and <code>accelerator_count</code>?</li>
+<code>pytorch-cpu.2-6</code> for the CPU job and
+<code>pytorch-gpu.2-6</code> for the GPU job. What would happen if you
+used the CPU container but still passed <code>accelerator_type</code>
+and <code>accelerator_count</code>?</li>
 <li>
 <strong>Cost awareness</strong>: You used <code>n1-standard-4</code>
 for CPU and <code>n1-standard-8</code> + T4 for GPU. Using the <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/compute-for-ML.html" class="external-link">Compute

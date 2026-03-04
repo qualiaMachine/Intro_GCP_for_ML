@@ -567,7 +567,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>Data preprocessing</strong>: The script fills missing values
@@ -794,7 +794,7 @@ improve, or does it start overfitting?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Increasing <code>NUM_ROUND</code> from 100 to 200 may marginally
 improve accuracy but roughly doubles runtime. Increasing
@@ -960,11 +960,12 @@ stored under your specified artifact directory (e.g.,
 later register or deploy it manually when ready.</p>
 </div>
 </section><section><h2 class="section-heading" id="monitoring-training-jobs-in-the-console">Monitoring training jobs in the Console<a class="anchor" aria-label="anchor" href="#monitoring-training-jobs-in-the-console"></a></h2>
-<hr class="half-width"><ol style="list-style-type: decimal"><li>Go to the Google Cloud Console.<br></li>
+<hr class="half-width"><ol style="list-style-type: decimal"><li>Go to the <a href="https://console.cloud.google.com/vertex-ai/training/custom-jobs" class="external-link">Google
+Cloud Console</a>.</li>
 <li>Navigate to <strong>Vertex AI &gt; Training &gt; Custom
-Jobs</strong>.<br></li>
+Jobs</strong>.</li>
 <li>Click on your job name to see status, logs, and output model
-artifacts.<br></li>
+artifacts.</li>
 <li>Cancel jobs from the console if needed (be careful not to stop jobs
 you don’t own in shared projects).</li>
 </ol><div class="section level4">
@@ -1004,7 +1005,8 @@ resubmitting to avoid burning compute time on the same error.</li>
 </ol></div>
 </section><section><h2 class="section-heading" id="training-artifacts">Training artifacts<a class="anchor" aria-label="anchor" href="#training-artifacts"></a></h2>
 <hr class="half-width"><p>After the training run completes, we can manually view our bucket
-using the Google Cloud Console or run the below code.</p>
+using the <a href="https://console.cloud.google.com/storage/browser" class="external-link">Google Cloud
+Console</a> or run the below code.</p>
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -1088,7 +1090,7 @@ accuracy from the Vertex AI job. Are they the same? Why or why not?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p>The two accuracy values should be very close or identical. Both runs
 execute the same <code>train_xgboost.py</code> script with the same
@@ -1110,8 +1112,9 @@ and that the data in GCS matches the local copy.</p>
 <h3 class="callout-title">Explore job logs in the Console</h3>
 <div class="callout-content">
 <p>Navigate to <strong>Vertex AI &gt; Training &gt; Custom Jobs</strong>
-in the Google Cloud Console. Find your most recent job and click on it.
-Can you locate:</p>
+in the <a href="https://console.cloud.google.com/vertex-ai/training/custom-jobs" class="external-link">Google
+Cloud Console</a>. Find your most recent job and click on it. Can you
+locate:</p>
 <ol style="list-style-type: decimal"><li>The <strong>Logs</strong> tab showing your script’s
 <code>print()</code> output?</li>
 <li>The training time printed by <code>train_model()</code>?</li>
@@ -1124,7 +1127,7 @@ Can you locate:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>Click your job name, then select the <strong>Logs</strong> tab (or
 <strong>View logs</strong> link). Your script’s <code>print()</code>

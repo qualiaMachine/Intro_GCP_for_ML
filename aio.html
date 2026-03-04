@@ -1117,7 +1117,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.</p>
 <ul>
@@ -1156,7 +1156,7 @@ with idle shutdown enabled.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <ul>
 <li>
@@ -2015,7 +2015,8 @@ we uploaded earlier:</p>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
 <span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>    <span class="bu">print</span>(blob.name)</span></code></pre>
 </div>
-<p>For larger clean-up tasks, use the Cloud Console:</p>
+<p>For larger clean-up tasks, use the <a href="https://console.cloud.google.com/storage/browser" class="external-link">Cloud
+Console</a>:</p>
 <ul>
 <li>
 <strong>Delete files only</strong> – In your bucket, select the
@@ -2280,7 +2281,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -2524,7 +2525,7 @@ improve, or does it start overfitting?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Increasing <code>NUM_ROUND</code> from 100 to 200 may marginally
 improve accuracy but roughly doubles runtime. Increasing
@@ -2703,14 +2704,12 @@ later register or deploy it manually when ready.</p>
 </h2>
 <hr class="half-width">
 <ol style="list-style-type: decimal">
-<li>Go to the Google Cloud Console.<br>
-</li>
+<li>Go to the <a href="https://console.cloud.google.com/vertex-ai/training/custom-jobs" class="external-link">Google
+Cloud Console</a>.</li>
 <li>Navigate to <strong>Vertex AI &gt; Training &gt; Custom
-Jobs</strong>.<br>
-</li>
+Jobs</strong>.</li>
 <li>Click on your job name to see status, logs, and output model
-artifacts.<br>
-</li>
+artifacts.</li>
 <li>Cancel jobs from the console if needed (be careful not to stop jobs
 you don’t own in shared projects).</li>
 </ol>
@@ -2759,7 +2758,8 @@ resubmitting to avoid burning compute time on the same error.</li>
 </h2>
 <hr class="half-width">
 <p>After the training run completes, we can manually view our bucket
-using the Google Cloud Console or run the below code.</p>
+using the <a href="https://console.cloud.google.com/storage/browser" class="external-link">Google Cloud
+Console</a> or run the below code.</p>
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -2849,7 +2849,7 @@ accuracy from the Vertex AI job. Are they the same? Why or why not?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p>The two accuracy values should be very close or identical. Both runs
 execute the same <code>train_xgboost.py</code> script with the same
@@ -2871,8 +2871,9 @@ and that the data in GCS matches the local copy.</p>
 <h3 class="callout-title">Explore job logs in the Console</h3>
 <div class="callout-content">
 <p>Navigate to <strong>Vertex AI &gt; Training &gt; Custom Jobs</strong>
-in the Google Cloud Console. Find your most recent job and click on it.
-Can you locate:</p>
+in the <a href="https://console.cloud.google.com/vertex-ai/training/custom-jobs" class="external-link">Google
+Cloud Console</a>. Find your most recent job and click on it. Can you
+locate:</p>
 <ol style="list-style-type: decimal">
 <li>The <strong>Logs</strong> tab showing your script’s
 <code>print()</code> output?</li>
@@ -2887,7 +2888,7 @@ Can you locate:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>Click your job name, then select the <strong>Logs</strong> tab (or
@@ -3018,8 +3019,8 @@ to begin this notebook. <strong>Select the <em>PyTorch</em> environment
 (kernel).</strong> Local PyTorch is only needed for local tests. Your
 <em>Vertex AI job</em> uses the container specified by
 <code>container_uri</code> (e.g., <code>pytorch-cpu.2-6</code> or
-<code>pytorch-gpu.2-6</code>), so it brings its own framework at run
-time.</p>
+<code>pytorch-gpu.2-6</code> — without a <code>.py310</code> suffix), so
+it brings its own framework at run time.</p>
 </div>
 <div class="section level4">
 <h4 id="cd-to-instance-home-directory">2. CD to instance home directory<a class="anchor" aria-label="anchor" href="#cd-to-instance-home-directory"></a>
@@ -3332,11 +3333,19 @@ automatically.</p>
 <div id="check-supported-container-versions" class="callout-inner">
 <h3 class="callout-title">Check supported container versions</h3>
 <div class="callout-content">
-<p>Google periodically retires older prebuilt images. Before running the
-cells below, verify that the PyTorch version in <code>IMAGE</code> is
-still listed at <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch" class="external-link">Prebuilt
-containers for training</a>. If you see an <code>INVALID_ARGUMENT</code>
-error about an unsupported image, update the version number (e.g.,
+<p><strong>Container URI format matters.</strong> Because we use
+<code>CustomTrainingJob</code> (which auto-packages your script as a
+Python package), the container must be registered for <em>python package
+training</em>. Use the <strong>short form</strong> without a
+Python-version suffix — e.g., <code>pytorch-cpu.2-6:latest</code>,
+<strong>not</strong> <code>pytorch-cpu.2-6.py310:latest</code>. The
+<code>.py310</code> variants work with
+<code>CustomJob.from_local_script</code> (used in Episode 6) but are
+rejected by <code>CustomTrainingJob</code>.</p>
+<p>Google also periodically retires older versions. If you see an
+<code>INVALID_ARGUMENT</code> error about an unsupported image, check
+the current list at <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch" class="external-link">Prebuilt
+containers for training</a> and update the version number (e.g.,
 <code>2-6</code> → <code>2-7</code>).</p>
 </div>
 </div>
@@ -3347,7 +3356,7 @@ error about an unsupported image, update the version number (e.g.,
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-6.py310:latest'</span> <span class="co"># cpu-only version</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-6:latest'</span> <span class="co"># cpu-only; no .py310 suffix for CustomTrainingJob</span></span>
 <span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span> <span class="co"># CPU fine for small datasets</span></span>
 <span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"RUN_ID = </span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">ARTIFACT_DIR = </span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ch">\n</span><span class="ss">MACHINE = </span><span class="sc">{</span>MACHINE<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
@@ -3395,14 +3404,12 @@ error about an unsupported image, update the version number (e.g.,
 <h4 id="monitoring-training-jobs-in-the-console">Monitoring training jobs in the Console<a class="anchor" aria-label="anchor" href="#monitoring-training-jobs-in-the-console"></a>
 </h4>
 <ol style="list-style-type: decimal">
-<li>Go to the Google Cloud Console.<br>
-</li>
+<li>Go to the <a href="https://console.cloud.google.com/vertex-ai/training/custom-jobs" class="external-link">Google
+Cloud Console</a>.</li>
 <li>Navigate to <strong>Vertex AI &gt; Training &gt; Custom
-Jobs</strong>.<br>
-</li>
+Jobs</strong>.</li>
 <li>Click on your job name to see status, logs, and output model
-artifacts.<br>
-</li>
+artifacts.</li>
 <li>Cancel jobs from the console if needed (be careful not to stop jobs
 you don’t own in shared projects).</li>
 </ol>
@@ -3497,7 +3504,7 @@ it here to learn the workflow.</p>
 advantages of Vertex AI’s container-based approach:</p>
 <ul>
 <li>The container image switches to the GPU-enabled version
-(<code>pytorch-gpu.2-6.py310:latest</code>), which includes CUDA and
+(<code>pytorch-gpu.2-6:latest</code>), which includes CUDA and
 cuDNN.</li>
 <li>The machine type (<code>n1-standard-8</code>) defines CPU and memory
 resources, while we add a GPU accelerator (<code>NVIDIA_TESLA_T4</code>,
@@ -3536,7 +3543,7 @@ process.</p>
 <span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a></span>
 <span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co"># ---- Container image ----</span></span>
 <span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co"># Use a prebuilt TRAINING image that has PyTorch + CUDA. This enables GPU at runtime.</span></span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-6.py310:latest"</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-6:latest"</span></span>
 <span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a></span>
 <span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co"># ---- Machine vs Accelerator (important!) ----</span></span>
 <span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co"># machine_type = the VM's CPU/RAM shape. It is NOT a GPU by itself.</span></span>
@@ -3658,10 +3665,10 @@ of your CPU and GPU jobs (visible in the Console under <strong>Vertex AI
 the GPU job be <em>slower</em> for this dataset?</li>
 <li>
 <strong>Container choice</strong>: We used
-<code>pytorch-cpu.2-6.py310</code> for the CPU job and
-<code>pytorch-gpu.2-6.py310</code> for the GPU job. What would happen if
-you used the CPU container but still passed
-<code>accelerator_type</code> and <code>accelerator_count</code>?</li>
+<code>pytorch-cpu.2-6</code> for the CPU job and
+<code>pytorch-gpu.2-6</code> for the GPU job. What would happen if you
+used the CPU container but still passed <code>accelerator_type</code>
+and <code>accelerator_count</code>?</li>
 <li>
 <strong>Cost awareness</strong>: You used <code>n1-standard-4</code>
 for CPU and <code>n1-standard-8</code> + T4 for GPU. Using the <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/compute-for-ML.html" class="external-link">Compute
@@ -4061,9 +4068,14 @@ different parameter sets and track results.</p>
 <p>The number of total runs is set by <code>max_trial_count</code>, and
 the number of simultaneous runs is controlled by
 <code>parallel_trial_count</code>. Each trial’s output and metrics are
-logged under the GCS <code>base_output_dir</code>. <strong>ALWAYS START
-WITH 1 trial</strong> before scaling up
-<code>max_trial_count</code>.</p>
+logged under the GCS <code>base_output_dir</code>.</p>
+<p>For a first pass, we’ll run <strong>3 trials fully in
+parallel</strong>. With only 3 trials the adaptive optimizer has almost
+nothing to learn from, so running them simultaneously costs no search
+quality. This still validates that the full pipeline works end-to-end
+(metrics are reported, artifacts land in GCS, the tuner picks a best
+trial) while giving you a quick look at how results vary across
+different parameter combinations.</p>
 <div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -4090,21 +4102,23 @@ WITH 1 trial</strong> before scaling up
 <span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a></span>
 <span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a>DISPLAY_NAME <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>LAST_NAME<span class="sc">}</span><span class="ss">_pytorch_hpt_</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
 <span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a></span>
-<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co"># ALWAYS START WITH 1 trial before scaling up `max_trial_count`</span></span>
-<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a>tuning_job <span class="op">=</span> aiplatform.HyperparameterTuningJob(</span>
-<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
-<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,                 <span class="co"># must be a CustomJob (not CustomTrainingJob)</span></span>
-<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a>    metric_spec<span class="op">=</span>metric_spec,</span>
-<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a>    parameter_spec<span class="op">=</span>parameter_spec,</span>
-<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a>    max_trial_count<span class="op">=</span><span class="dv">1</span>,                    <span class="co"># controls how many configurations are tested</span></span>
-<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a>    parallel_trial_count<span class="op">=</span><span class="dv">1</span>,                <span class="co"># how many run concurrently (keep small for adaptive search)</span></span>
-<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a>    <span class="co"># search_algorithm="ALGORITHM_UNSPECIFIED",  # default = adaptive search (Bayesian)</span></span>
-<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a>    <span class="co"># search_algorithm="RANDOM_SEARCH",          # optional override</span></span>
-<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a>    <span class="co"># search_algorithm="GRID_SEARCH",            # optional override</span></span>
-<span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a>)</span>
-<span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a></span>
-<span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a>tuning_job.run(sync<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"HPT artifacts base:"</span>, ARTIFACT_DIR)</span></code></pre>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co"># Start with a small batch of 3 trials, all in parallel.</span></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="co"># With so few trials the adaptive optimizer has nothing to learn from,</span></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="co"># so full parallelism costs no search quality — and finishes faster.</span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a>tuning_job <span class="op">=</span> aiplatform.HyperparameterTuningJob(</span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a>    display_name<span class="op">=</span>DISPLAY_NAME,</span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,                 <span class="co"># must be a CustomJob (not CustomTrainingJob)</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a>    metric_spec<span class="op">=</span>metric_spec,</span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a>    parameter_spec<span class="op">=</span>parameter_spec,</span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a>    max_trial_count<span class="op">=</span><span class="dv">3</span>,                     <span class="co"># small initial sweep</span></span>
+<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a>    parallel_trial_count<span class="op">=</span><span class="dv">3</span>,                <span class="co"># all at once — adaptive search needs more data to help</span></span>
+<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a>    <span class="co"># search_algorithm="ALGORITHM_UNSPECIFIED",  # default = adaptive search (Bayesian)</span></span>
+<span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a>    <span class="co"># search_algorithm="RANDOM_SEARCH",          # optional override</span></span>
+<span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a>    <span class="co"># search_algorithm="GRID_SEARCH",            # optional override</span></span>
+<span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a>)</span>
+<span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" tabindex="-1"></a>tuning_job.run(sync<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"HPT artifacts base:"</span>, ARTIFACT_DIR)</span></code></pre>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="run-and-analyze-results">Run and analyze results<a class="anchor" aria-label="anchor" href="#run-and-analyze-results"></a>
@@ -4114,8 +4128,9 @@ WITH 1 trial</strong> before scaling up
 <h4 id="monitor-tuning-job">8. Monitor tuning job<a class="anchor" aria-label="anchor" href="#monitor-tuning-job"></a>
 </h4>
 <p>Open <strong>Vertex AI → Training → Hyperparameter tuning
-jobs</strong> in the Cloud Console to track trials, parameters, and
-metrics. You can also stop jobs from the console if needed.</p>
+jobs</strong> in the <a href="https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs" class="external-link">Cloud
+Console</a> to track trials, parameters, and metrics. You can also stop
+jobs from the console if needed.</p>
 <blockquote>
 <p><strong>Note:</strong> Replace the project ID in the URL below with
 your own if you are not using the shared workshop project.</p>
@@ -4267,7 +4282,7 @@ configuration.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4288,23 +4303,27 @@ appropriate.</p>
 </div>
 </div>
 </div>
-<div id="exercise-2-scale-up-trials" class="callout challenge">
+<div id="exercise-2-scale-up-trials-with-adaptive-search" class="callout challenge">
 <div class="callout-square">
 <i class="callout-icon" data-feather="zap"></i>
 </div>
 <span class="callout-header">Challenge</span>
-<div id="exercise-2-scale-up-trials" class="callout-inner">
-<h3 class="callout-title">Exercise 2: Scale up trials</h3>
+<div id="exercise-2-scale-up-trials-with-adaptive-search" class="callout-inner">
+<h3 class="callout-title">Exercise 2: Scale up trials with adaptive
+search</h3>
 <div class="callout-content">
-<p>After verifying your single-trial sanity check completed
-successfully, modify the tuning job configuration to run a proper
-search:</p>
+<p>Your initial 3-trial run validated the pipeline. Now scale up to a
+proper search where the adaptive optimizer can actually help — but keep
+parallelism <strong>low</strong> so the tuner learns between
+batches.</p>
 <ol style="list-style-type: decimal">
-<li>Set <code>max_trial_count=6</code> and
-<code>parallel_trial_count=2</code>.</li>
+<li>Set <code>max_trial_count=12</code> and
+<code>parallel_trial_count=3</code>.</li>
 <li>Before running, estimate the approximate cost: if each trial takes
 ~5 minutes on an <code>n1-standard-4</code> (~ <code>$0.19</code>/hr),
-how much would 6 trials cost?</li>
+how much would 12 trials cost?</li>
+<li>Why does it make sense to keep <code>parallel_trial_count</code> at
+3 instead of 12 now that we have more trials?</li>
 <li>Run the updated job and monitor it in the Vertex AI Console.</li>
 </ol>
 </div>
@@ -4315,7 +4334,7 @@ how much would 6 trials cost?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4325,17 +4344,22 @@ how much would 6 trials cost?</li>
 <span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>    custom_job<span class="op">=</span>custom_job,</span>
 <span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>    metric_spec<span class="op">=</span>metric_spec,</span>
 <span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>    parameter_spec<span class="op">=</span>parameter_spec,</span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>    max_trial_count<span class="op">=</span><span class="dv">6</span>,</span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>    parallel_trial_count<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>    max_trial_count<span class="op">=</span><span class="dv">12</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>    parallel_trial_count<span class="op">=</span><span class="dv">3</span>,</span>
 <span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>)</span></code></pre>
 </div>
-<p><strong>Cost estimate:</strong> 6 trials x 5 min each = 30 minutes of
-compute. At ~ <code>$0.19</code>/hr for <code>n1-standard-4</code>,
-that’s roughly <code>$0.10</code> total. With
-<code>parallel_trial_count=2</code>, wall-clock time would be
-approximately 15 minutes (3 batches of 2 trials). The adaptive search
-can still learn between batches since parallelism is kept low relative
-to total trials.</p>
+<p><strong>Cost estimate:</strong> 12 trials x 5 min each = 60 minutes
+of compute. At ~ <code>$0.19</code>/hr for <code>n1-standard-4</code>,
+that’s roughly <code>$0.19</code> total. With
+<code>parallel_trial_count=3</code>, wall-clock time would be
+approximately 20 minutes (4 batches of 3 trials).</p>
+<p><strong>Why not run all 12 in parallel?</strong> With 12 trials we
+have enough data for the adaptive optimizer to learn: after each batch
+of 3 completes, the tuner updates its model of which regions of the
+search space are promising and steers the next batch toward them.
+Running all 12 at once would turn the search into an expensive random
+sweep — every trial would be launched “blind” before any results come
+back.</p>
 </div>
 </div>
 </div>
@@ -4419,10 +4443,12 @@ is enabled, or you’re exploring many dimensions at once.</p>
 </div>
 </div>
 <p><strong>Practical recipe:</strong> - First run:
-<code>max_trial_count=1</code>, <code>parallel_trial_count=1</code>
-(pipeline sanity check). - Main run: <code>max_trial_count=10–20</code>,
-<code>parallel_trial_count=2–4</code>. - Scale up parallelism only after
-the above completes cleanly and you confirm adaptive performance is
+<code>max_trial_count=3</code>, <code>parallel_trial_count=3</code>
+(pipeline sanity check — too few trials for adaptive search to help, so
+run them all at once). - Main run: <code>max_trial_count=10–20</code>,
+<code>parallel_trial_count=2–4</code> (enough trials for the optimizer
+to learn between batches). - Scale up parallelism only after the above
+completes cleanly and you confirm adaptive performance is
 acceptable.</p>
 </div>
 </div>
@@ -4924,7 +4950,7 @@ context?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Smaller chunks (500 chars) produce more precise retrieval hits but
 each chunk has less context, so Gemini may struggle to synthesize a
@@ -4967,7 +4993,7 @@ for example:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Without the guardrail prompt, Gemini may produce a plausible-sounding
 answer from its training data, ignoring the “use only the following
@@ -5006,7 +5032,7 @@ tokens?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p>For well-grounded RAG queries (where the answer is clearly in the
 context), Flash often produces comparable answers at significantly lower
@@ -5045,7 +5071,7 @@ question?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
 <div class="accordion-body">
 <p>Lower <code>top_k</code> gives Gemini a tighter, more focused context
 — good when the answer is localized in one or two chunks. Higher
@@ -5406,8 +5432,8 @@ will fail with an authentication error.</p>
 </section><section><h2 class="section-heading" id="step-2-upload-data-to-gcs">Step 2: Upload data to GCS<a class="anchor" aria-label="anchor" href="#step-2-upload-data-to-gcs"></a>
 </h2>
 <hr class="half-width">
-<p>In Episode 3 we uploaded data through the Cloud Console. From the CLI
-the equivalent is:</p>
+<p>In Episode 3 we uploaded data through the <a href="https://console.cloud.google.com/storage/browser" class="external-link">Cloud
+Console</a>. From the CLI the equivalent is:</p>
 <div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -5684,11 +5710,10 @@ trigger it from CI.</p>
 <h3 class="callout-title">Cloud Shell — free CLI access</h3>
 <div class="callout-content">
 <p>If you do not want to install the <code>gcloud</code> CLI locally,
-you can use <strong>Cloud Shell</strong> directly in the Google Cloud
-Console. It gives you a free, temporary Linux VM with
-<code>gcloud</code> pre-installed and authenticated. Click the terminal
-icon (“&gt;_“) in the top-right corner of the Cloud Console to open
-it.</p>
+you can use <strong>Cloud Shell</strong> directly in the <a href="https://console.cloud.google.com/" class="external-link">Google Cloud Console</a>. It
+gives you a free, temporary Linux VM with <code>gcloud</code>
+pre-installed and authenticated. Click the terminal icon (“&gt;_“) in
+the top-right corner of the Cloud Console to open it.</p>
 <p>Cloud Shell is a good option for one-off job submissions or quick
 resource checks without spinning up a Workbench instance.</p>
 </div>
@@ -5714,7 +5739,7 @@ Custom Jobs</strong>.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -5748,7 +5773,7 @@ notebook.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb17">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -5783,7 +5808,7 @@ the accuracy value.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb18">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -5923,8 +5948,8 @@ forward.</p>
 <section><h2 class="section-heading" id="check-your-current-spend-first">Check your current spend first<a class="anchor" aria-label="anchor" href="#check-your-current-spend-first"></a>
 </h2>
 <hr class="half-width">
-<p>Before cleaning anything up, find out where you stand. Open the
-<strong>Cloud Console</strong> and navigate to:</p>
+<p>Before cleaning anything up, find out where you stand. Open the <a href="https://console.cloud.google.com/billing/reports" class="external-link"><strong>Cloud
+Console</strong></a> and navigate to:</p>
 <p><strong>Billing → Reports</strong></p>
 <ul>
 <li>Set the time range to <strong>This month</strong> (or
@@ -6256,8 +6281,8 @@ reports. Apply them consistently:</p>
 </h3>
 <p>This is the single most protective action you can take:</p>
 <ol style="list-style-type: decimal">
-<li>Go to <strong>Billing → Budgets &amp; alerts</strong> in the Cloud
-Console.</li>
+<li>Go to <strong>Billing → Budgets &amp; alerts</strong> in the <a href="https://console.cloud.google.com/billing/budgets" class="external-link">Cloud
+Console</a>.</li>
 <li>Click <strong>Create budget</strong>.</li>
 <li>Set a budget amount (e.g., <code>$10</code> or <code>$25</code> for
 a workshop).</li>
@@ -6348,8 +6373,9 @@ documentation</a> is a good starting point.</p>
 budget</h3>
 <div class="callout-content">
 <ol style="list-style-type: decimal">
-<li>Navigate to <strong>Billing → Reports</strong> in the Cloud Console.
-Find your project’s current‑month spend grouped by service.</li>
+<li>Navigate to <strong>Billing → Reports</strong> in the <a href="https://console.cloud.google.com/billing/reports" class="external-link">Cloud
+Console</a>. Find your project’s current‑month spend grouped by
+service.</li>
 <li>Navigate to <strong>Billing → Budgets &amp; alerts</strong>. Create
 a <strong><code>$10</code> budget</strong> with alert thresholds at 50%
 and 100%.</li>
@@ -6362,14 +6388,15 @@ and 100%.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
-<li><p>In the Cloud Console, click the <strong>Navigation menu
-(☰)</strong> → <strong>Billing</strong> → <strong>Reports</strong>. Set
-time range to “This month” and group by “Service.” You should see
-Compute Engine, Vertex AI, and Cloud Storage if you’ve been running
-workshop exercises.</p></li>
+<li><p>In the <a href="https://console.cloud.google.com/billing/reports" class="external-link">Cloud
+Console</a>, click the <strong>Navigation menu (☰)</strong> →
+<strong>Billing</strong> → <strong>Reports</strong>. Set time range to
+“This month” and group by “Service.” You should see Compute Engine,
+Vertex AI, and Cloud Storage if you’ve been running workshop
+exercises.</p></li>
 <li>
 <p>Go to <strong>Billing</strong> → <strong>Budgets &amp;
 alerts</strong> → <strong>Create budget</strong>. Set:</p>
@@ -6417,7 +6444,7 @@ are not actively using.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6453,7 +6480,7 @@ don’t need, and delete the endpoint.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6499,7 +6526,7 @@ objects. Apply it to your bucket.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
 <div class="accordion-body">
 <p>Save the following as <code>lifecycle.json</code>:</p>
 <div class="codewrapper sourceCode" id="cb14">
@@ -6555,7 +6582,7 @@ delete the bucket entirely.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution5" aria-expanded="false" aria-controls="collapseSolution5">
   <h4 class="accordion-header" id="headingSolution5"> Show me the solution </h4>
 </button>
-<div id="collapseSolution5" class="accordion-collapse collapse" aria-labelledby="headingSolution5" data-bs-parent="#accordionSolution5">
+<div id="collapseSolution5" class="accordion-collapse collapse" data-bs-parent="#accordionSolution5" aria-labelledby="headingSolution5">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
