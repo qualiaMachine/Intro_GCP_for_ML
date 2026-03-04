@@ -445,57 +445,21 @@ etc. For example, a sustainability research team could use this pipeline
 to extract AI water and energy metrics from published papers, getting
 cited answers instead of generic LLM summaries.</p>
 <figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram2_rag_gemini.svg" alt="Architecture diagram showing the RAG pipeline: a Workbench notebook orchestrates document chunking, embedding via the Gemini API, and retrieval-augmented generation, with documents and embeddings stored in a GCS bucket." class="figure mx-auto d-block"><div class="figcaption">RAG pipeline with Gemini API</div>
-</figure><div id="when-do-you-need-a-vector-database" class="callout">
+</figure><div id="scaling-beyond-in-memory-search" class="callout">
 <div class="callout-square">
 <i class="callout-icon" data-feather="bell"></i>
 </div>
 <span class="callout-header">Callout</span>
-<div id="when-do-you-need-a-vector-database" class="callout-inner">
-<h3 class="callout-title">When do you need a vector database?</h3>
+<div id="scaling-beyond-in-memory-search" class="callout-inner">
+<h3 class="callout-title">Scaling beyond in-memory search</h3>
 <div class="callout-content">
-<p>The pipeline in this episode stores embeddings <strong>in
-memory</strong> using scikit-learn’s <code>NearestNeighbors</code>. That
-works well for small-to-medium corpora (up to a few thousand documents)
-and is perfect for prototyping. But as your knowledge base grows, an
-in-memory index becomes impractical — it’s slow to rebuild, lost when
-the kernel restarts, and eventually exceeds available RAM.</p>
-<p>For larger or production workloads, consider a <strong>managed vector
-store</strong>:</p>
-<table class="table"><colgroup><col width="23%"><col width="34%"><col width="42%"></colgroup><thead><tr class="header"><th>Service</th>
-<th>What it does</th>
-<th>When to use it</th>
-</tr></thead><tbody><tr class="odd"><td><strong><a href="https://cloud.google.com/vertex-ai/docs/vector-search/overview" class="external-link">Vertex
-AI Vector Search</a></strong></td>
-<td>Managed, billion-scale nearest-neighbor index (the same technology
-behind Google Search and YouTube)</td>
-<td>You need full control over the retrieval pipeline and are working
-with very large datasets</td>
-</tr><tr class="even"><td><strong><a href="https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview" class="external-link">Vertex
-AI RAG Engine</a></strong></td>
-<td>Managed end-to-end pipeline — handles ingestion, chunking,
-embedding, and retrieval for you</td>
-<td>You want a turnkey RAG setup with less custom code</td>
-</tr><tr class="odd"><td><strong><a href="https://cloud.google.com/alloydb/docs/ai/work-with-embeddings" class="external-link">AlloyDB
-for PostgreSQL</a></strong></td>
-<td>Fully managed PostgreSQL with built-in <code>pgvector</code>
-support</td>
-<td>You want vector search alongside relational data in a single
-database</td>
-</tr></tbody></table><p><strong>A word of caution about turnkey solutions.</strong> RAG
-techniques are evolving fast — query planning, cross-encoder reranking,
-iterative retrieval with feedback, ensemble/voting strategies, and
-mixture-of-experts routing are all active areas of research. Managed
-services like RAG Engine trade flexibility for convenience: they handle
-the plumbing, but you may not be able to slot in a custom reranker or
-change how chunks are scored. If your use case demands fine-grained
-control over the retrieval strategy, a custom pipeline built on Vector
-Search (or even open-source tools like FAISS or LanceDB) will give you
-more room to experiment. This trade-off is shifting as managed offerings
-mature, so revisit it when you’re ready to scale.</p>
-<p>A good rule of thumb: <strong>start with the in-memory
-approach</strong> in this episode to understand the mechanics — that
-understanding transfers directly whether you later adopt a managed
-service or build a custom production pipeline.</p>
+<p>This episode stores embeddings <strong>in memory</strong> with
+scikit-learn’s <code>NearestNeighbors</code> — fine for prototyping with
+up to a few thousand chunks. For larger or production corpora, swap in a
+managed vector store such as <a href="https://cloud.google.com/vertex-ai/docs/vector-search/overview" class="external-link">Vertex
+AI Vector Search</a>. The core pipeline (chunk → embed → retrieve →
+generate) stays the same; only the index backend changes. See the
+<strong>What’s next?</strong> section at the end for more options.</p>
 </div>
 </div>
 </div>
@@ -813,7 +777,7 @@ context?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Smaller chunks (500 chars) produce more precise retrieval hits but
 each chunk has less context, so Gemini may struggle to synthesize a
@@ -854,7 +818,7 @@ for example:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Without the guardrail prompt, Gemini may produce a plausible-sounding
 answer from its training data, ignoring the “use only the following
@@ -891,7 +855,7 @@ tokens?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p>For well-grounded RAG queries (where the answer is clearly in the
 context), Flash often produces comparable answers at significantly lower
@@ -928,7 +892,7 @@ question?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
 <div class="accordion-body">
 <p>Lower <code>top_k</code> gives Gemini a tighter, more focused context
 — good when the answer is localized in one or two chunks. Higher
