@@ -272,7 +272,13 @@ train_data.describe()
 
 ### Alternative: reading directly with pandas
 
-Vertex AI Workbench comes with `gcsfs` pre-installed, so you can also read directly with `pd.read_csv("gs://your-bucket-name/titanic_train.csv")`. This is convenient for quick exploration. We use the `storage.Client` approach above because it gives you more control (listing blobs, checking sizes, uploading), which you'll need in the sections that follow.
+Vertex AI Workbench comes with `gcsfs` pre-installed, which lets pandas read GCS URIs directly — no `BytesIO` conversion needed:
+
+```python
+train_data = pd.read_csv("gs://doe-titanic/titanic_train.csv")  # ADJUST bucket name
+```
+
+This is convenient for quick exploration. We use the `storage.Client` approach above because it gives you more control (listing blobs, checking sizes, uploading), which you'll need in the sections that follow.
 
 :::::::::::::::::::::::::::::::::::::
 
