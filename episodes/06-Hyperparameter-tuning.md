@@ -326,7 +326,7 @@ parameter_spec = {
 After verifying your single-trial sanity check completed successfully, modify the tuning job configuration to run a proper search:
 
 1. Set `max_trial_count=6` and `parallel_trial_count=2`.
-2. Before running, estimate the approximate cost: if each trial takes ~5 minutes on an `n1-standard-4` (~$0.19/hr), how much would 6 trials cost?
+2. Before running, estimate the approximate cost: if each trial takes ~5 minutes on an `n1-standard-4` (~`$0.19`/hr), how much would 6 trials cost?
 3. Run the updated job and monitor it in the Vertex AI Console.
 
 ::::::::::::::::::::::: solution
@@ -342,7 +342,7 @@ tuning_job = aiplatform.HyperparameterTuningJob(
 )
 ```
 
-**Cost estimate:** 6 trials x 5 min each = 30 minutes of compute. At ~$0.19/hr for `n1-standard-4`, that's roughly $0.10 total. With `parallel_trial_count=2`, wall-clock time would be approximately 15 minutes (3 batches of 2 trials). The adaptive search can still learn between batches since parallelism is kept low relative to total trials.
+**Cost estimate:** 6 trials x 5 min each = 30 minutes of compute. At ~`$0.19`/hr for `n1-standard-4`, that's roughly `$0.10` total. With `parallel_trial_count=2`, wall-clock time would be approximately 15 minutes (3 batches of 2 trials). The adaptive search can still learn between batches since parallelism is kept low relative to total trials.
 
 :::::::::::::::::::::::::::::::
 
@@ -392,7 +392,7 @@ After tuning, your best model's weights sit in GCS under the best trial's artifa
 
 - **Batch prediction (most common):** Load the best model from GCS and run inference on a dataset — this is what we did in the evaluation sections of Episodes 4–5 when we loaded models from GCS into memory. For larger-scale batch prediction, Vertex AI offers [Batch Prediction Jobs](https://cloud.google.com/vertex-ai/docs/predictions/get-batch-predictions) that handle provisioning and scaling automatically.
 - **Experiment tracking:** Vertex AI [Experiments](https://cloud.google.com/vertex-ai/docs/experiments/intro-vertex-ai-experiments) can log metrics, parameters, and artifacts across runs for systematic comparison. Consider integrating this into your workflow as your projects grow.
-- **Online deployment:** If you need real-time predictions via an API, Vertex AI [Endpoints](https://cloud.google.com/vertex-ai/docs/predictions/get-online-predictions) let you deploy your model — but endpoints bill continuously (~$4.50/day for an `n1-standard-4`), so only deploy when you genuinely need a live API.
+- **Online deployment:** If you need real-time predictions via an API, Vertex AI [Endpoints](https://cloud.google.com/vertex-ai/docs/predictions/get-online-predictions) let you deploy your model — but endpoints bill continuously (~`$4.50`/day for an `n1-standard-4`), so only deploy when you genuinely need a live API.
 
 
 ::::::::::::::::::::::::::::::::::::: keypoints

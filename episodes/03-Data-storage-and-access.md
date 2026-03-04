@@ -168,12 +168,12 @@ Older tutorials often reference `gsutil` for Cloud Storage operations. Google no
 
 GCS costs are based on storage class, data transfer, and operations (requests).
 
-- **Standard storage**: ~$0.02 per GB per month in `us-central1`.
+- **Standard storage**: ~`$0.02` per GB per month in `us-central1`.
 - **Uploading data (ingress)**: Free.
-- **Downloading data out of GCP (egress)**: ~$0.12 per GB.
-- **Cross-region access**: ~$0.01–0.02 per GB within North America.
-- **GET requests**: ~$0.004 per 10,000 requests.
-- **PUT/POST requests**: ~$0.05 per 10,000 requests.
+- **Downloading data out of GCP (egress)**: ~`$0.12` per GB.
+- **Cross-region access**: ~`$0.01`–`$0.02` per GB within North America.
+- **GET requests**: ~`$0.004` per 10,000 requests.
+- **PUT/POST requests**: ~`$0.05` per 10,000 requests.
 - **Deleting data**: Free (but Nearline/Coldline/Archive early-deletion fees apply).
 
 ***For detailed pricing, see [GCS Pricing Information](https://cloud.google.com/storage/pricing).***
@@ -188,14 +188,14 @@ GCS costs are based on storage class, data transfer, and operations (requests).
 
 **2. Repeat the above calculation for datasets of 10 GB, 100 GB, and 1 TB (1024 GB).**
 
-**Hints**: Storage $0.02/GB/month, Egress $0.12/GB, GET requests negligible at this scale.
+**Hints**: Storage `$0.02`/GB/month, Egress `$0.12`/GB, GET requests negligible at this scale.
 
 :::::::::::::::: solution
 
-1. **1 GB**: Storage $0.02 + Egress $0.12 = **$0.14**
-2. **10 GB**: $0.20 + $1.20 = **$1.40**
-3. **100 GB**: $2.00 + $12.00 = **$14.00**
-4. **1 TB**: $20.48 + $122.88 = **$143.36**
+1. **1 GB**: Storage `$0.02` + Egress `$0.12` = **`$0.14`**
+2. **10 GB**: `$0.20` + `$1.20` = **`$1.40`**
+3. **100 GB**: `$2.00` + `$12.00` = **`$14.00`**
+4. **1 TB**: `$20.48` + `$122.88` = **`$143.36`**
 
 :::::::::::::::::::::::::
 
