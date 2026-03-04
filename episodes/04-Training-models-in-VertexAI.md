@@ -280,8 +280,9 @@ Finally, this next block launches the custom training job on Vertex AI using the
 
 If you need to cancel or modify a job mid-run, you can do so from the console or via the SDK by calling job.cancel(). When the job completes, Vertex automatically tears down the compute resources so you only pay for the active training time.
 
-- The `args` list passes command-line parameters directly into your training script, including hyperparameters and the path to the training data in GCS.  
-- `base_output_dir` specifies where all outputs (model, metrics, logs) will be written in Cloud Storage
+- The `args` list passes command-line parameters directly into your training script, including hyperparameters and the path to the training data in GCS.
+- `replica_count=1` means we run a single training worker. Increase this for distributed training across multiple machines (e.g., data-parallel training with large datasets).
+- `base_output_dir` specifies where all outputs (model, metrics, logs) will be written in Cloud Storage.
 - `machine_type` controls the compute resources used for training.
 - When `sync=True`, the notebook waits until the job finishes before continuing, making it easier to inspect results immediately after training.
 
