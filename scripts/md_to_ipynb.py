@@ -21,6 +21,10 @@ os.makedirs(notebooks_dir, exist_ok=True)
 # Regular expression to detect code blocks (matches ```language\n...\n```)
 code_block_pattern = re.compile(r"```(\w+)?\n(.*?)\n```", re.DOTALL)
 
+def escape_dollars(text):
+    """Escape bare $ signs before digits so Jupyter doesn't treat them as LaTeX."""
+    return re.sub(r'(?<!\\)\$(?=\d)', r'\\$', text)
+
 def split_markdown(md_content):
     """Splits Markdown content into separate Markdown and Code cells."""
     cells = []
@@ -30,8 +34,8 @@ def split_markdown(md_content):
         # Extract text before the code block as Markdown
         before_code = md_content[position:match.start()].strip()
         if before_code:
-            cells.append(new_markdown_cell(before_code))
-        
+            cells.append(new_markdown_cell(escape_dollars(before_code)))
+
         # Extract code block content
         code_content = match.group(2).strip()
         if code_content:
@@ -42,7 +46,7 @@ def split_markdown(md_content):
     # Add any remaining Markdown content after the last code block
     remaining_md = md_content[position:].strip()
     if remaining_md:
-        cells.append(new_markdown_cell(remaining_md))
+        cells.append(new_markdown_cell(escape_dollars(remaining_md)))
     
     return cells
 
