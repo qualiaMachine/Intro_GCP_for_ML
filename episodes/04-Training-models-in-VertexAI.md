@@ -58,6 +58,14 @@ LAST_NAME = "DOE" # ADJUST to your last name or name
 print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 ```
 
+::::::::::::::::::::::::::::::::::::: callout
+
+### How does `storage.Client()` know your project?
+
+When you call `storage.Client()` without arguments, the library automatically discovers your credentials and project ID. This works because Vertex AI Workbench VMs run on Google Compute Engine, which provides a **metadata server** at a known internal address. The client library queries this server to retrieve the project ID and a service-account token — no keys or config files needed. If you ran the same code on your laptop, you would need to authenticate first with `gcloud auth application-default login` (see [Episode 8](08-CLI-workflows.md) for details).
+
+:::::::::::::::::::::::::::::::::::::
+
 ## Testing train_xgboost.py locally in the notebook
 
 Before submitting a managed training job to Vertex AI, let's first examine and test the training script on our notebook VM. This ensures the code runs without errors before we spend money on cloud compute.
