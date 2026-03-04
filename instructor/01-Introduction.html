@@ -430,8 +430,8 @@ runs</td>
 </tr><tr class="odd"><td><strong>Multi-GPU / NVLink</strong></td>
 <td>Sometimes available, depends on cluster</td>
 <td>Available on demand (e.g., A2/A3 instances with NVLink-connected
-multi-GPU nodes) — essential for training or fine-tuning large LLMs that
-don’t fit in a single GPU’s memory</td>
+multi-GPU nodes) — essential for training, fine-tuning, or serving large
+LLMs that don’t fit in a single GPU’s memory</td>
 </tr><tr class="even"><td><strong>Job orchestration</strong></td>
 <td>Writing scheduler scripts, packaging environments, and wiring up
 parallel job arrays can take days of refactoring</td>
@@ -445,12 +445,11 @@ containers</a> for common ML frameworks (PyTorch, XGBoost, TensorFlow);
 add extra packages via a <code>requirements</code> list, or bring your
 own Docker image for full control</td>
 </tr><tr class="even"><td><strong>Power &amp; cooling</strong></td>
-<td>You bear the cost indirectly; university data centers typically have
-a PUE of 1.5–2.0, meaning 50–100% overhead goes to cooling and
-infrastructure</td>
-<td>Hyperscalers like Google operate at ~1.1 PUE — a single A100 draws
-~400 W under load, but power, cooling, and hardware failures are their
-problem, not yours</td>
+<td>Paid for by the university; campus data centers often spend nearly
+as much energy on cooling as on the computers themselves</td>
+<td>Google’s data centers are roughly twice as energy-efficient as a
+typical campus facility — and power, cooling, and hardware failures are
+their problem, not yours</td>
 </tr><tr class="odd"><td><strong>Data governance</strong></td>
 <td>On-campus, known compliance posture</td>
 <td>Requires configuring IAM, encryption, region controls — but
@@ -464,9 +463,6 @@ you can’t easily get on-campus.</p>
 <p>Many researchers use both — develop and test on HPC, then scale to
 cloud for large experiments or specialized hardware. This workshop
 teaches the cloud side of that workflow.</p>
-<p>We won’t use multi-GPU training in this workshop — our datasets are
-small and the models we train fit comfortably on a single GPU — but
-understanding what’s available helps you plan for larger projects.</p>
 </div>
 <div class="section level3">
 <h3 id="when-does-model-size-justify-cloud-compute">When does model size justify cloud compute?<a class="anchor" aria-label="anchor" href="#when-does-model-size-justify-cloud-compute"></a></h3>
