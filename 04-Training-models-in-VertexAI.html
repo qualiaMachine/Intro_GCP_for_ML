@@ -845,10 +845,14 @@ Vertex automatically tears down the compute resources so you only pay
 for the active training time.</p>
 <ul><li>The <code>args</code> list passes command-line parameters directly
 into your training script, including hyperparameters and the path to the
-training data in GCS.<br></li>
+training data in GCS.</li>
+<li>
+<code>replica_count=1</code> means we run a single training worker.
+Increase this for distributed training across multiple machines (e.g.,
+data-parallel training with large datasets).</li>
 <li>
 <code>base_output_dir</code> specifies where all outputs (model,
-metrics, logs) will be written in Cloud Storage</li>
+metrics, logs) will be written in Cloud Storage.</li>
 <li>
 <code>machine_type</code> controls the compute resources used for
 training.</li>

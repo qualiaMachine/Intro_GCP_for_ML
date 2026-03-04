@@ -1109,7 +1109,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane.</p>
 <ul>
@@ -1148,7 +1148,7 @@ with idle shutdown enabled.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <ul>
 <li>
@@ -1735,7 +1735,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1932,7 +1932,7 @@ columns?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -1971,7 +1971,7 @@ class (<code>Pclass</code>) and upload the result as
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb14">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -2560,11 +2560,14 @@ for the active training time.</p>
 <ul>
 <li>The <code>args</code> list passes command-line parameters directly
 into your training script, including hyperparameters and the path to the
-training data in GCS.<br>
-</li>
+training data in GCS.</li>
+<li>
+<code>replica_count=1</code> means we run a single training worker.
+Increase this for distributed training across multiple machines (e.g.,
+data-parallel training with large datasets).</li>
 <li>
 <code>base_output_dir</code> specifies where all outputs (model,
-metrics, logs) will be written in Cloud Storage</li>
+metrics, logs) will be written in Cloud Storage.</li>
 <li>
 <code>machine_type</code> controls the compute resources used for
 training.</li>
@@ -2941,7 +2944,7 @@ training is (not) worth it.</li>
 to begin this notebook. Select the <em>PyTorch</em> environment (kernel)
 Local PyTorch is only needed for local tests. Your <em>Vertex AI
 job</em> uses the container specified by <code>container_uri</code>
-(e.g., <code>pytorch-cpu.2-1</code> or <code>pytorch-gpu.2-1</code>), so
+(e.g., <code>pytorch-cpu.2-5</code> or <code>pytorch-gpu.2-5</code>), so
 it brings its own framework at run time.</p>
 </div>
 <div class="section level4">
@@ -3247,15 +3250,30 @@ automatically.</p>
 <div class="section level3">
 <h3 id="set-training-job-configuration-vars">Set training job configuration vars<a class="anchor" aria-label="anchor" href="#set-training-job-configuration-vars"></a>
 </h3>
-<p>For our image, we can find the corresponding PyTorch image by
-visiting: <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch" class="external-link">cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch</a></p>
+<div id="check-supported-container-versions" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="check-supported-container-versions" class="callout-inner">
+<h3 class="callout-title">Check supported container versions</h3>
+<div class="callout-content">
+<p>Google periodically retires older prebuilt images. Before running the
+cells below, verify that the PyTorch version in <code>IMAGE</code> is
+still listed at <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch" class="external-link">Prebuilt
+containers for training</a>. If you see an <code>INVALID_ARGUMENT</code>
+error about an unsupported image, update the version number (e.g.,
+<code>2-5</code> → <code>2-6</code>).</p>
+</div>
+</div>
+</div>
 <div class="codewrapper sourceCode" id="cb10">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-4.py310:latest'</span> <span class="co"># cpu-only version</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-5.py310:latest'</span> <span class="co"># cpu-only version</span></span>
 <span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span> <span class="co"># CPU fine for small datasets</span></span>
 <span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"RUN_ID = </span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">ARTIFACT_DIR = </span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ch">\n</span><span class="ss">MACHINE = </span><span class="sc">{</span>MACHINE<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
@@ -3405,7 +3423,7 @@ it here to learn the workflow.</p>
 advantages of Vertex AI’s container-based approach:</p>
 <ul>
 <li>The container image switches to the GPU-enabled version
-(<code>pytorch-gpu.2-4.py310:latest</code>), which includes CUDA and
+(<code>pytorch-gpu.2-5.py310:latest</code>), which includes CUDA and
 cuDNN.</li>
 <li>The machine type (<code>n1-standard-8</code>) defines CPU and memory
 resources, while we add a GPU accelerator (<code>NVIDIA_TESLA_T4</code>,
@@ -3444,7 +3462,7 @@ process.</p>
 <span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a></span>
 <span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co"># ---- Container image ----</span></span>
 <span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co"># Use a prebuilt TRAINING image that has PyTorch + CUDA. This enables GPU at runtime.</span></span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest"</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-5.py310:latest"</span></span>
 <span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a></span>
 <span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co"># ---- Machine vs Accelerator (important!) ----</span></span>
 <span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co"># machine_type = the VM's CPU/RAM shape. It is NOT a GPU by itself.</span></span>
@@ -3566,8 +3584,8 @@ of your CPU and GPU jobs (visible in the Console under <strong>Vertex AI
 the GPU job be <em>slower</em> for this dataset?</li>
 <li>
 <strong>Container choice</strong>: We used
-<code>pytorch-cpu.2-4.py310</code> for the CPU job and
-<code>pytorch-gpu.2-4.py310</code> for the GPU job. What would happen if
+<code>pytorch-cpu.2-5.py310</code> for the CPU job and
+<code>pytorch-gpu.2-5.py310</code> for the GPU job. What would happen if
 you used the CPU container but still passed
 <code>accelerator_type</code> and <code>accelerator_count</code>?</li>
 <li>
@@ -3584,7 +3602,7 @@ between these configurations.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -4176,7 +4194,7 @@ configuration.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4224,7 +4242,7 @@ how much would 6 trials cost?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6327,7 +6345,7 @@ and 100%.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li><p>In the Cloud Console, click the <strong>Navigation menu
@@ -6382,7 +6400,7 @@ are not actively using.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6418,7 +6436,7 @@ don’t need, and delete the endpoint.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6464,7 +6482,7 @@ objects. Apply it to your bucket.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
 <div class="accordion-body">
 <p>Save the following as <code>lifecycle.json</code>:</p>
 <div class="codewrapper sourceCode" id="cb14">
@@ -6520,7 +6538,7 @@ delete the bucket entirely.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution5" aria-expanded="false" aria-controls="collapseSolution5">
   <h4 class="accordion-header" id="headingSolution5"> Show me the solution </h4>
 </button>
-<div id="collapseSolution5" class="accordion-collapse collapse" aria-labelledby="headingSolution5" data-bs-parent="#accordionSolution5">
+<div id="collapseSolution5" class="accordion-collapse collapse" data-bs-parent="#accordionSolution5" aria-labelledby="headingSolution5">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
