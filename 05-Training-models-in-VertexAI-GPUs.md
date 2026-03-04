@@ -40,7 +40,7 @@ from google.cloud import aiplatform, storage
 client = storage.Client()
 PROJECT_ID = client.project
 REGION = "us-central1"
-BUCKET_NAME = "sinkorswim-johndoe-titanic" # ADJUST to your bucket's name
+BUCKET_NAME = "johndoe-titanic" # ADJUST to your bucket's name
 LAST_NAME = 'DOE' # ADJUST to your last name. Since we're in a shared account environment, this will help us track down jobs in the Console
 
 print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
