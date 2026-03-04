@@ -246,6 +246,8 @@ print(client.project)
 
 ### Reading data directly into memory
 
+The code below downloads a CSV from your bucket and loads it into a pandas DataFrame. The `blob.download_as_bytes()` call pulls the file contents as raw bytes, and `io.BytesIO` wraps those bytes in a file-like object that `pd.read_csv` can read — no temporary file on disk needed.
+
 ```python
 import pandas as pd
 import io
