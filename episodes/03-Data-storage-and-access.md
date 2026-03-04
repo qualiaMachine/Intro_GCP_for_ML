@@ -347,7 +347,7 @@ for blob in client.list_blobs(bucket_name):
 
 ### Challenge 2: Read and explore the test dataset
 
-Read `titanic_test.csv` from your GCS bucket, display its shape, and compare the columns to `train_data`. What column is missing from the test set, and why?
+Read `titanic_test.csv` from your GCS bucket and display its shape. How does the test set compare to the training set in size and columns?
 
 :::::::::::::::: solution
 
@@ -355,12 +355,12 @@ Read `titanic_test.csv` from your GCS bucket, display its shape, and compare the
 blob = client.bucket(bucket_name).blob("titanic_test.csv")
 test_data = pd.read_csv(io.BytesIO(blob.download_as_bytes()))
 print("Test shape:", test_data.shape)
-print("Train columns:", list(train_data.columns))
-print("Test columns:", list(test_data.columns))
+print("Train shape:", train_data.shape)
+print("Same columns?", list(test_data.columns) == list(train_data.columns))
 test_data.head()
 ```
 
-The `Survived` column is missing from the test set — that is the label we are trying to predict, so it is intentionally withheld for evaluation.
+Both datasets share the same 12 columns (including `Survived`). The test set is a smaller held-out subset (179 rows vs 712 in training) — roughly an 80/20 split used for final evaluation after the model is trained.
 
 :::::::::::::::::::::::::
 
