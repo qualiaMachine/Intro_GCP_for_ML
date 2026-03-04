@@ -34,12 +34,14 @@ One practical advantage of Workbench notebooks: **authentication is automatic.**
 We will follow these steps to create our first Workbench Instance:
 
 ### 1. Navigate to Workbench
+
 - Open the **Google Cloud Console** ([console.cloud.google.com](https://console.cloud.google.com/)) — this is the web dashboard where you manage all GCP resources. Search for "Workbench."
 - Click the "Instances" tab (this is the supported path going forward).
 
 ### 2. Create a new Workbench Instance
 
 #### Initial settings
+
 - Click **Create New** near the top of the Workbench page
 - **Name**: Use the convention `lastname-purpose` (e.g., `doe-workshop`). We'll use a single instance for training, tuning, RAG, and more, so `workshop` is a good general-purpose label.
 - **Region**: Select `us-central1`. When we create a storage bucket in [Episode 3](03-Data-storage-and-access.md), we'll use the same region — keeping compute and storage co-located avoids cross-region transfer charges and keeps data access fast.
@@ -47,8 +49,8 @@ We will follow these steps to create our first Workbench Instance:
   - If capacity or GPU availability is limited in one zone, switch to another zone in the same region.
 - **NVIDIA T4 GPU:** Leave unchecked for now  
   - We will request GPUs for training jobs separately. Attaching here increases idle costs.
-- **Apache Spark and BigQuery Kernels:** Leave unchecked  
-  - Enable only if you specifically need Spark or BigQuery notebooks; otherwise, it adds unnecessary images.
+- **Apache Spark and BigQuery Kernels:** Leave unchecked
+  - BigQuery kernels let you run SQL analytics directly in a notebook, but we won't need them in this workshop. Leave unchecked to avoid pulling extra container images.
 - **Network in this project:** If you're working in a shared workshop environment, select the network provided by your administrator (shared environments typically do not allow using external or default networks). If using a personal GCP project, the default network is fine.
 - **Network / Subnetwork:** Leave as pre-filled.
 ![Notebook settings (part 1)](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-settings1.jpg){alt="Notebook settings (part1)"}
@@ -99,6 +101,7 @@ Leave disk settings at their defaults for this workshop. Each Workbench Instance
 - **Assign External IP address**: Leave this option checked — you need an external IP.  
 
 ### Create notebook
+
 - Click **Create** to create the instance. Provisioning typically takes 3–5 minutes. You'll see the status change from "Provisioning" to "Running" with a green checkmark. While waiting, work through the challenges below.
 
 :::::::::::::::::::::::::::::::::::::::: challenge
@@ -113,6 +116,7 @@ Your university provides different compute options: laptops, on-prem HPC, and GC
 :::::::::::::::: solution
 
 The notebook serves as a lightweight control plane.
+
 - Like an HPC login node, it is not meant for heavy computation.
 - Suitable for small preprocessing, visualization, and orchestrating jobs.
 - Resource-intensive tasks (training, tuning, batch jobs) should be submitted to scalable cloud resources (GPU/large VM instances) via the Vertex AI SDK.
@@ -125,7 +129,7 @@ The notebook serves as a lightweight control plane.
 
 ### Challenge 2: Controller Cost Estimate
 
-Your controller notebook uses an `n2-standard-2` instance (~$0.07/hr).
+Your controller notebook uses an `n2-standard-2` instance (~$0.07/hr — see [Compute for ML](../compute-for-ML.html) for other common machine types and costs).
 
 - Estimate the monthly cost if you use it 8 hours/day, 5 days/week, with idle shutdown enabled.
 - Compare that to leaving it running 24/7 for the same month.
@@ -162,13 +166,15 @@ This pattern keeps costs low by running your notebook on a modest VM while only 
 
 #### You don't need a notebook to use Vertex AI
 
-We use Jupyter notebooks in this workshop because they're convenient for teaching — you can see code, output, and explanations in one place. But **notebooks are not required** for any of the workflows covered here. Everything we do through the Python SDK (submitting training jobs, running hyperparameter tuning, calling the Gemini API) can also be done from:
+We use **Vertex AI Workbench** notebooks rather than a plain local JupyterLab because Workbench comes pre-configured with ML frameworks, GPU drivers, and — most importantly — automatic GCP authentication through the VM's service account. You could run a self-managed Jupyter server on a Compute Engine VM, but you'd have to install libraries and configure credentials yourself. Working through Workbench also gets you comfortable with the GCP Console — navigating services, checking instance status, reading logs — skills that transfer to every other GCP workflow.
+
+That said, **notebooks are not required** for any of the workflows covered here. Everything we do through the Python SDK (submitting training jobs, running hyperparameter tuning, calling the Gemini API) can also be done from:
 
 - A **plain Python script** run from your terminal or an HPC scheduler.
 - The **`gcloud` CLI** (e.g., `gcloud ai custom-jobs create ...`) for submitting and managing jobs directly from the command line.
 - A **CI/CD pipeline** (GitHub Actions, Cloud Build, etc.) that triggers training runs automatically.
 
-If you're more comfortable working from a terminal, SSH session, or shell script, the same Vertex AI SDK calls work identically outside of a notebook. The notebook is just a convenient wrapper — the real work happens in the training scripts and SDK calls.
+The real work happens in the training scripts and SDK calls — the notebook is just a convenient wrapper for orchestrating them.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
