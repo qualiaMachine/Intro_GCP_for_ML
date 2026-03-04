@@ -133,7 +133,7 @@ If Cloud Shell doesn't already know your project, set it first:
 gcloud config set project YOUR_PROJECT_ID
 ```
 
-Replace `YOUR_PROJECT_ID` with the project ID shown in the Console dashboard (top-left dropdown).
+Replace `YOUR_PROJECT_ID` with your project ID (shown in the Console dashboard top-left dropdown). For the shared MLM25 workshop the project ID is **`doit-rci-mlm25-4626`**.
 
 #### Find your service account
 
