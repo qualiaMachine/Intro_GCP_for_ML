@@ -44,8 +44,6 @@ Most universities offer shared HPC clusters with GPUs. These are excellent resou
 
 Many researchers use both — develop and test on HPC, then scale to cloud for large experiments or specialized hardware. This workshop teaches the cloud side of that workflow.
 
-We won't use multi-GPU training in this workshop — our datasets are small and the models we train fit comfortably on a single GPU — but understanding what's available helps you plan for larger projects.
-
 ### When does model size justify cloud compute?
 
 Not every model needs cloud hardware. Here's a rough guide:
