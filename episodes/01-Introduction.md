@@ -107,32 +107,14 @@ This keeps costs low (the notebook VM is small) and keeps your work reproducible
 
 Here's how the pieces connect:
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        Google Cloud Platform                        │
-│                                                                     │
-│  ┌──────────────────┐         ┌──────────────────────────────────┐  │
-│  │  Workbench        │  submit │  Vertex AI Training Job          │  │
-│  │  Notebook (small) │────────▶│  (powerful: GPUs, more RAM)      │  │
-│  │                   │  via    │                                  │  │
-│  │  - explore data   │  SDK    │  - runs your training script     │  │
-│  │  - launch jobs    │         │  - auto-provisions hardware      │  │
-│  │  - inspect results│         │  - shuts down when done          │  │
-│  └────────┬──────────┘         └───────────────┬──────────────────┘  │
-│           │  read/write                         │  write artifacts   │
-│           ▼                                     ▼                    │
-│  ┌──────────────────────────────────────────────────────────────┐    │
-│  │          Google Cloud Storage (GCS) Bucket                   │    │
-│  │  datasets, model artifacts, logs, metrics                    │    │
-│  └──────────────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────────────┘
-```
+![Notebook as a controller](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram1_training_and_tuning.jpg){alt="Notebook as a controller diagram"}
+
 
 ::::::::::::::::::::::::::::::::::::: callout
 
 ### Console, notebooks, or CLI — your choice
 
-This workshop uses the **GCP web console** and **Workbench notebooks** for most tasks because they're visual and easy to follow. But nearly everything we do can also be done from the **`gcloud` command-line tool** — submitting training jobs, managing buckets, checking quotas. [Episode 8](08-CLI-workflows.md) covers the CLI equivalents. If you prefer terminal-based workflows or need to automate jobs in scripts and CI/CD pipelines, that episode shows you how.
+This workshop uses the **GCP web console** and **Workbench notebooks** for most tasks because they're visual and easy to follow for beginners. But nearly everything we do can also be done from the **`gcloud` command-line tool** — submitting training jobs, managing buckets, checking quotas. [Episode 8](08-CLI-workflows.md) covers the CLI equivalents. If you prefer terminal-based workflows or need to automate jobs in scripts and CI/CD pipelines, that episode shows you how.
 
 **One important caveat:** whether you use the console, notebooks, or CLI, resources you create (VMs, training jobs, endpoints) keep running and billing until you explicitly stop them. There's no automatic shutdown. We cover cleanup habits in [Episode 9](09-Resource-management-cleanup.md), but the short version is: always check for running resources before you walk away.
 
