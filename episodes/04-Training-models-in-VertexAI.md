@@ -404,7 +404,7 @@ Additional system-generated files (e.g., Vertex's `.tar.gz` code package or `exe
 
 ## Evaluate the trained model stored on GCS
 
-Now let's verify that the model produced by our Vertex AI job performs identically to the one we trained locally. This time, instead of loading from the local disk, we'll load both the test data and model artifact directly from GCS into memory — the recommended approach for production workflows.
+Now let's compare the model produced by our Vertex AI job to the one we trained locally. This time, instead of loading from the local disk, we'll load both the test data and model artifact directly from GCS into memory — the recommended approach for production workflows.
 
 ```python
 import io
@@ -444,7 +444,11 @@ Compare the test accuracy from your local training run with the accuracy from th
 
 ### Solution
 
-The two accuracy values should be very close or identical. Both runs execute the same `train_xgboost.py` script with the same hyperparameters and the same data. XGBoost's `binary:logistic` objective is deterministic given the same input, so the models should produce matching predictions. If they differ, check that you used the same hyperparameter values in both runs and that the data in GCS matches the local copy.
+You may notice the two accuracy values are **close but not identical** (e.g., 0.804 vs. 0.821). This is expected, even though both runs use the same script, the same hyperparameters, the same data, and the same random seed (`seed=42`).
+
+The reason is **different XGBoost versions**. Your notebook VM installs whatever version `pip install xgboost` resolves to (e.g., 2.0 or 2.1), while the Vertex AI job runs inside the `xgboost-cpu.2-1:latest` prebuilt container, which pins a specific XGBoost release. Across versions, XGBoost may change internal details — tree-building heuristics, default parameters, numerical precision, or split-finding algorithms — that produce slightly different models even with identical inputs and seeds.
+
+This is a general lesson for ML reproducibility: **a random seed only guarantees determinism within the same library version, hardware, and numerical backend.** To get bit-for-bit identical results between local and cloud training, you would need to pin the exact same XGBoost version in both environments (e.g., `pip install xgboost==2.1.0`).
 
 :::::::::::::::::::::::::::::::::::::::
 
