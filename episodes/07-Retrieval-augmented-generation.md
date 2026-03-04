@@ -39,7 +39,7 @@ This episode shifts from classical ML training (Episodes 4–6) to working with 
 
 This approach is useful any time you need to ground an LLM's answers in a specific corpus — research papers, policy documents, lab notebooks, etc. For example, a sustainability research team could use this pipeline to extract AI water and energy metrics from published papers, getting cited answers instead of generic LLM summaries.
 
-![RAG pipeline with Gemini API](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram2_rag_gemini.jpg){alt="Architecture diagram showing the RAG pipeline: a Workbench notebook orchestrates document chunking, embedding via the Gemini API, and retrieval-augmented generation, with documents and embeddings stored in a GCS bucket."}
+![RAG pipeline with Gemini API](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram2_rag_gemini.svg){alt="Architecture diagram showing the RAG pipeline: a Workbench notebook orchestrates document chunking, embedding via the Gemini API, and retrieval-augmented generation, with documents and embeddings stored in a GCS bucket."}
 
 ::::::::::::::::::::::::::::::::::::: callout
 
