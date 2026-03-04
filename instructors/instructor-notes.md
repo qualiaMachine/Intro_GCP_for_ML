@@ -26,7 +26,7 @@ Sam is a postdoc in environmental science who wants to use retrieval-augmented g
   4. **Verify access** by having at least one test account confirm they can see the shared project in the Cloud Console before the workshop begins.
   5. **After the workshop**, you can remove learners from the group (or delete it) to revoke access cleanly without touching individual IAM bindings.
 - Verify GPU quota in the workshop region (`us-central1`). Request increases for `NVIDIA_TESLA_T4` if needed — quota requests can take 1–3 business days.
-- Send a pre-workshop email with setup instructions (GitHub account, GCP access, data download).
+- Send a pre-workshop email with setup instructions (GCP access, data download).
 
 ### Test run
 - Walk through all episodes end-to-end on the shared project at least once. GCP UI changes frequently — confirm that screenshots and console paths still match.
