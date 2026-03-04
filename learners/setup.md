@@ -6,17 +6,12 @@ title: Setup
 
 Before attending this workshop, you'll need to complete a few setup steps to ensure you can follow along smoothly. The main requirements are:
 
-1. **GitHub Account** – Create an account and be ready to fork a repository.  
-2. **GCP Access** – Use the **shared Google Cloud project** provided by RCI and ML+X (standard for UW-Madison workshops) or sign up for a personal GCP Free Tier account.
-3. **Titanic Dataset** – Download the required CSV files in advance.  
-4. **(Optional) Google Cloud Skills Boost** — For a broader overview of GCP, visit the [Getting Started with Google Cloud Fundamentals](https://www.cloudskillsboost.google/paths/8) course.
+1. **GCP Access** – Use the **shared Google Cloud project** provided by RCI and ML+X (standard for UW-Madison workshops) or sign up for a personal GCP Free Tier account.
+2. **Titanic Dataset** – Download the required CSV files in advance.
+3. **(Optional) Google Cloud Skills Boost** — For a broader overview of GCP, visit the [Getting Started with Google Cloud Fundamentals](https://www.cloudskillsboost.google/paths/8) course.
+4. **(Optional) GitHub Account** — Only needed if you want to push your work back to a fork. See the [GitHub PAT guide](github-pat.html) for details.
 
 Details on each step are outlined below.
-
-### 1. GitHub Account
-
-You will need a GitHub account to access the code provided during this lesson. If you don't already have a GitHub account, please [sign up for GitHub](https://github.com/) to create a free account.  
-Don't worry if you're a little rusty on using GitHub or git; we will only use a couple of git commands during the lesson, and the instructor will guide you through them.
 
 ### 2. GCP Access
 

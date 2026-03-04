@@ -4,6 +4,10 @@ title: "Using a GitHub Personal Access Token (PAT) in Vertex AI"
 
 This is a **self-guided reference** for pushing/pulling code to and from GitHub within a Vertex AI Workbench notebook. It is most useful for learners who are newer to Git or haven't used a Personal Access Token before.
 
+## Prerequisites
+
+You will need a **GitHub account**. If you don't have one, [sign up for free at github.com](https://github.com/).
+
 ## Step 0: Initial setup
 In the previous episode, we cloned our forked repository as part of the [workshop setup](../setup.html). In this episode, we'll see how to push our code to this fork. Complete these three setup steps before moving forward.
 
