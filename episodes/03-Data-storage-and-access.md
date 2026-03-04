@@ -90,7 +90,7 @@ GCS URIs follow the format `gs://bucket-name/path/to/file.csv`. Think of them as
 
 - **Bucket name**: Enter a globally unique name using the convention `lastname-dataname` (e.g., `doe-titanic`).
 - **Labels**: Add cost-tracking labels (same keys you used for the Workbench Instance in [Episode 2](02-Notebooks-as-controllers.md), plus a `dataset` tag):
-  - `name = lastname`
+  - `name = firstname-lastname`
   - `purpose = workshop`
   - `dataset = titanic`
 
