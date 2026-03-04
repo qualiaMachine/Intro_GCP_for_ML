@@ -167,7 +167,7 @@ This pattern keeps costs low by running your notebook on a modest VM while only 
 
 #### You don't need a notebook to use Vertex AI
 
-We use **Vertex AI Workbench** notebooks rather than a plain local JupyterLab because Workbench comes pre-configured with ML frameworks, GPU drivers, and — most importantly — automatic GCP authentication through the VM's service account. You could run a self-managed Jupyter server on a Compute Engine VM, but you'd have to install libraries and configure credentials yourself.
+We use **Vertex AI Workbench** notebooks rather than a plain local JupyterLab because Workbench comes pre-configured with ML frameworks, GPU drivers, and — most importantly — automatic GCP authentication through the VM's service account. You could run a self-managed Jupyter server on a Compute Engine VM, but you'd have to install libraries and configure credentials yourself. Working through Workbench also gets you comfortable with the GCP Console — navigating services, checking instance status, reading logs — skills that transfer to every other GCP workflow.
 
 That said, **notebooks are not required** for any of the workflows covered here. Everything we do through the Python SDK (submitting training jobs, running hyperparameter tuning, calling the Gemini API) can also be done from:
 
