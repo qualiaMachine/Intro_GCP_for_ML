@@ -43,21 +43,9 @@ This approach is useful any time you need to ground an LLM's answers in a specif
 
 ::::::::::::::::::::::::::::::::::::: callout
 
-### When do you need a vector database?
+### Scaling beyond in-memory search
 
-The pipeline in this episode stores embeddings **in memory** using scikit-learn's `NearestNeighbors`. That works well for small-to-medium corpora (up to a few thousand documents) and is perfect for prototyping. But as your knowledge base grows, an in-memory index becomes impractical — it's slow to rebuild, lost when the kernel restarts, and eventually exceeds available RAM.
-
-For larger or production workloads, consider a **managed vector store**:
-
-| Service | What it does | When to use it |
-|---------|-------------|----------------|
-| **[Vertex AI Vector Search](https://cloud.google.com/vertex-ai/docs/vector-search/overview)** | Managed, billion-scale nearest-neighbor index (the same technology behind Google Search and YouTube) | You need full control over the retrieval pipeline and are working with very large datasets |
-| **[Vertex AI RAG Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview)** | Managed end-to-end pipeline — handles ingestion, chunking, embedding, and retrieval for you | You want a turnkey RAG setup with less custom code |
-| **[AlloyDB for PostgreSQL](https://cloud.google.com/alloydb/docs/ai/work-with-embeddings)** | Fully managed PostgreSQL with built-in `pgvector` support | You want vector search alongside relational data in a single database |
-
-**A word of caution about turnkey solutions.** RAG techniques are evolving fast — query planning, cross-encoder reranking, iterative retrieval with feedback, ensemble/voting strategies, and mixture-of-experts routing are all active areas of research. Managed services like RAG Engine trade flexibility for convenience: they handle the plumbing, but you may not be able to slot in a custom reranker or change how chunks are scored. If your use case demands fine-grained control over the retrieval strategy, a custom pipeline built on Vector Search (or even open-source tools like FAISS or LanceDB) will give you more room to experiment. This trade-off is shifting as managed offerings mature, so revisit it when you're ready to scale.
-
-A good rule of thumb: **start with the in-memory approach** in this episode to understand the mechanics — that understanding transfers directly whether you later adopt a managed service or build a custom production pipeline.
+This episode stores embeddings **in memory** with scikit-learn's `NearestNeighbors` — fine for prototyping with up to a few thousand chunks. For larger or production corpora, swap in a managed vector store such as [Vertex AI Vector Search](https://cloud.google.com/vertex-ai/docs/vector-search/overview). The core pipeline (chunk → embed → retrieve → generate) stays the same; only the index backend changes. See the **What's next?** section at the end for more options.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
