@@ -592,32 +592,29 @@ and training jobs run on Compute Engine under the hood.</td>
 Vertex AI API.</td>
 </tr></tbody></table><p>For a full list of terms, see the <a href="reference.html">Glossary</a>.</p>
 </section><section><h2 class="section-heading" id="the-notebook-as-controller-pattern">The notebook-as-controller pattern<a class="anchor" aria-label="anchor" href="#the-notebook-as-controller-pattern"></a></h2>
-<hr class="half-width"><p>Throughout this workshop, we will primarily work in a lightweight
-<strong>Vertex AI Workbench</strong> notebook — a small, cheap VM where
-you explore data, visualize results, and iterate. When it’s time to do
-heavy lifting, you use the <strong>Vertex AI Python SDK</strong> to
-launch jobs on separate, powerful machines:</p>
+<hr class="half-width"><p>The central idea of this workshop is simple: you work in a
+lightweight <strong>Vertex AI Workbench</strong> notebook — a small,
+cheap VM — and use the <strong>Vertex AI Python SDK</strong> to dispatch
+work to managed services. The notebook itself does not run heavy
+compute. Instead, it orchestrates:</p>
 <ul><li>
-<strong>Training jobs</strong> run your training script on
+<strong>Training jobs</strong> (Eps 4–5) — run your script on
 auto-provisioned GPU hardware, then shut down when complete.</li>
 <li>
-<strong>Hyperparameter tuning jobs</strong> search a parameter space
-across parallel trials and return the best configuration and
-metrics.</li>
-</ul><p>Both job types write their outputs — model artifacts, checkpoints,
-logs, metrics, and trial results — to <strong>Google Cloud Storage
-(GCS)</strong>, which acts as shared persistent storage. You then pull
-results back into your notebook to inspect and iterate.</p>
-<p>This keeps costs low (the notebook VM stays small) and keeps your
-work reproducible (each job is a clean, logged run on dedicated
-hardware).</p>
-<p>Here’s how the pieces connect:</p>
-<figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram1_training_and_tuning.svg" alt="Notebook as a controller diagram" class="figure mx-auto d-block"><div class="figcaption">Notebook as a controller</div>
-</figure><p>The same notebook can also orchestrate <strong>Retrieval-Augmented
-Generation (RAG)</strong> pipelines — chunking documents, building
-embeddings via the Gemini API, and generating grounded answers, all with
-data stored in GCS:</p>
-<figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram2_rag_gemini.svg" alt="Architecture diagram showing the RAG pipeline: a Workbench notebook orchestrates document chunking, embedding via the Gemini API, and retrieval-augmented generation, with documents and embeddings stored in a GCS bucket." class="figure mx-auto d-block"><div class="figcaption">RAG pipeline with Gemini API</div>
+<strong>Hyperparameter tuning jobs</strong> (Ep 6) — search a
+parameter space across parallel trials and return the best
+configuration.</li>
+<li>
+<strong>Cloud Storage</strong> (Ep 3) — shared persistent storage
+for datasets, model artifacts, logs, and results.</li>
+<li>
+<strong>Gemini API</strong> (Ep 7) — embeddings and generation for
+Retrieval-Augmented Generation (RAG) pipelines.</li>
+</ul><p>All of these are accessed via SDK calls from the notebook. This keeps
+costs low (the notebook VM stays small) and keeps your work reproducible
+(each job is a clean, logged run on dedicated hardware).</p>
+<figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram4_notebook_as_controller.svg" alt="Architecture diagram showing a Workbench notebook at the center orchestrating four managed services via SDK calls: Training Jobs (Eps 4-5), HP Tuning Jobs (Ep 6), Cloud Storage (Ep 3), and Gemini API (Ep 7)." class="figure mx-auto d-block"><div class="figcaption">Notebook as controller — overview of workshop
+architecture</div>
 </figure><div id="console-notebooks-or-cli-your-choice" class="callout">
 <div class="callout-square">
 <i class="callout-icon" data-feather="bell"></i>

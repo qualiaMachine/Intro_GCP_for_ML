@@ -447,10 +447,10 @@ forward).</li>
 <ul><li>Click <strong>Create New</strong> near the top of the Workbench
 page</li>
 <li>
-<strong>Name</strong>: For this workshop, we can use the following
-naming convention to easily locate our notebooks:
-<code>teamname-yourname-purpose</code> (e.g.,
-sinkorswim-johndoe-train)</li>
+<strong>Name</strong>: Use the convention
+<code>lastname-purpose</code> (e.g., <code>doe-workshop</code>). We’ll
+use a single instance for training, tuning, RAG, and more, so
+<code>workshop</code> is a good general-purpose label.</li>
 <li>
 <strong>Region</strong>: Choose the same region as your storage
 bucket (e.g., <code>us-central1</code>). This avoids cross-region
@@ -492,12 +492,8 @@ network is fine.</li>
 Details menu, add the following tags (all lowercase) so that you can
 track the total cost of your activity on GCP later:
 <ul><li>
-<code>project = teamname</code> (your team’s name)</li>
-<li>
-<code>name = name</code> (firstname-lastname)</li>
-<li>
-<code>purpose = train</code> (i.e., the notebook’s overall purpose —
-train, tune, RAG, etc.)</li>
+<code>name = lastname</code> (your last name)</li>
+<li><code>purpose = workshop</code></li>
 </ul></li>
 </ul></li>
 </ul><figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-tags.jpg" alt="Screenshot showing required tags for notebook" class="figure mx-auto d-block"><div class="figcaption">Required tags for notebook.</div>
@@ -603,7 +599,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane. - Like an HPC
 login node, it is not meant for heavy computation. - Suitable for small
@@ -636,7 +632,7 @@ with idle shutdown enabled.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <ul><li>
 <strong>With idle shutdown:</strong> 8 hrs × 5 days × 4 weeks = 160
