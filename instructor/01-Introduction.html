@@ -444,7 +444,14 @@ containers — research computing staff can often help with setup</td>
 containers</a> for common ML frameworks (PyTorch, XGBoost, TensorFlow);
 add extra packages via a <code>requirements</code> list, or bring your
 own Docker image for full control</td>
-</tr><tr class="even"><td><strong>Data governance</strong></td>
+</tr><tr class="even"><td><strong>Power &amp; cooling</strong></td>
+<td>You bear the cost indirectly; university data centers typically have
+a PUE of 1.5–2.0, meaning 50–100% overhead goes to cooling and
+infrastructure</td>
+<td>Hyperscalers like Google operate at ~1.1 PUE — a single A100 draws
+~400 W under load, but power, cooling, and hardware failures are their
+problem, not yours</td>
+</tr><tr class="odd"><td><strong>Data governance</strong></td>
 <td>On-campus, known compliance posture</td>
 <td>Requires configuring IAM, encryption, region controls — but
 university-managed cloud accounts (e.g., UW-Madison’s <a href="mailto:cloud-services@cio.wisc.edu">Public Cloud Team</a>) often
@@ -457,31 +464,7 @@ you can’t easily get on-campus.</p>
 <p>Many researchers use both — develop and test on HPC, then scale to
 cloud for large experiments or specialized hardware. This workshop
 teaches the cloud side of that workflow.</p>
-</div>
-<div class="section level3">
-<h3 id="scalability-beyond-a-single-gpu">Scalability beyond a single GPU<a class="anchor" aria-label="anchor" href="#scalability-beyond-a-single-gpu"></a></h3>
-<p>Cloud platforms give you access to compute that’s hard to replicate
-locally:</p>
-<ul><li>
-<strong>Multi-GPU nodes.</strong> GCP’s A2 and A3 machine families
-provide 1–16 GPUs per node connected via <strong>NVLink</strong>
-(high-bandwidth GPU-to-GPU interconnects). This matters for distributed
-training, where GPUs need to exchange gradients quickly — NVLink
-provides 600+ GB/s bandwidth compared to ~32 GB/s over PCIe.</li>
-<li>
-<strong>Elastic scaling with minimal code.</strong> Need to run 100
-hyperparameter tuning trials? On Vertex AI you define the search space,
-set <code>max_trial_count</code>, and the platform handles provisioning,
-parallelism, and teardown. On a university HPC cluster the same task
-often means writing Slurm/Condor job arrays, packaging environments into
-containers or tarballs, and wiring up result collection — work that can
-take days or weeks of refactoring before you run a single trial.</li>
-<li>
-<strong>Power and cooling are someone else’s problem.</strong> A
-single A100 GPU draws ~400W under load. A rack of 8 draws ~3.2kW just
-for the GPUs. Cloud providers handle the power infrastructure, cooling,
-and hardware failures.</li>
-</ul><p>We won’t use multi-GPU training in this workshop — our datasets are
+<p>We won’t use multi-GPU training in this workshop — our datasets are
 small and the models we train fit comfortably on a single GPU — but
 understanding what’s available helps you plan for larger projects.</p>
 </div>
