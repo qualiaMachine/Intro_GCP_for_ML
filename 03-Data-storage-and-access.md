@@ -88,8 +88,13 @@ GCS URIs follow the format `gs://bucket-name/path/to/file.csv`. Think of them as
 
 - Click **Create bucket** and configure the following settings:
 
-- **Bucket name**: Enter a globally unique name using the convention `firstlastname-dataname` (e.g., `johndoe-titanic`).
-- **Labels**: Add cost-tracking labels — `name=firstname-lastname`, `purpose=bucket-dataname`. In shared accounts this is *mandatory*.
+- **Bucket name**: Enter a globally unique name using the convention `lastname-dataname` (e.g., `doe-titanic`).
+- **Labels**: Add cost-tracking labels (same keys you used for the Workbench Instance in [Episode 2](02-Notebooks-as-controllers.md), plus a `dataset` tag):
+  - `name = lastname`
+  - `purpose = workshop`
+  - `dataset = titanic`
+
+  In shared accounts, labels are *mandatory*.
 - **Location**: Choose **Region** → `us-central1` (same region as your compute to avoid egress charges).
 - **Storage class**: **Standard** (best for active ML/AI workflows).
 - **Access control**: **Uniform** (simpler IAM-based permissions).
@@ -106,7 +111,7 @@ Click **Create** if everything looks good.
 - In the bucket dashboard, click **Upload Files**.
 - Select your Titanic CSVs (`titanic_train.csv` and `titanic_test.csv`) and upload.
 
-**Note the GCS URI for your data** After uploading, click on a file and find its **gs:// URI** (e.g., `gs://johndoe-titanic/titanic_test.csv`). This URI will be used to access the data in your notebook.
+**Note the GCS URI for your data** After uploading, click on a file and find its **gs:// URI** (e.g., `gs://doe-titanic/titanic_test.csv`). This URI will be used to access the data in your notebook.
 
 ## Adjust bucket permissions
 
@@ -152,7 +157,7 @@ gcloud storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME \
 ```
 
 <!-- prefilled example:
-gcloud storage buckets add-iam-policy-binding gs://johndoe-titanic \
+gcloud storage buckets add-iam-policy-binding gs://doe-titanic \
   --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
   --role="roles/storage.objectViewer"
 -->
@@ -168,12 +173,12 @@ Older tutorials often reference `gsutil` for Cloud Storage operations. Google no
 
 GCS costs are based on storage class, data transfer, and operations (requests).
 
-- **Standard storage**: ~$0.02 per GB per month in `us-central1`.
+- **Standard storage**: ~`$0.02` per GB per month in `us-central1`.
 - **Uploading data (ingress)**: Free.
-- **Downloading data out of GCP (egress)**: ~$0.12 per GB.
-- **Cross-region access**: ~$0.01–0.02 per GB within North America.
-- **GET requests**: ~$0.004 per 10,000 requests.
-- **PUT/POST requests**: ~$0.05 per 10,000 requests.
+- **Downloading data out of GCP (egress)**: ~`$0.12` per GB.
+- **Cross-region access**: ~`$0.01`–`$0.02` per GB within North America.
+- **GET requests**: ~`$0.004` per 10,000 requests.
+- **PUT/POST requests**: ~`$0.05` per 10,000 requests.
 - **Deleting data**: Free (but Nearline/Coldline/Archive early-deletion fees apply).
 
 ***For detailed pricing, see [GCS Pricing Information](https://cloud.google.com/storage/pricing).***
@@ -188,14 +193,14 @@ GCS costs are based on storage class, data transfer, and operations (requests).
 
 **2. Repeat the above calculation for datasets of 10 GB, 100 GB, and 1 TB (1024 GB).**
 
-**Hints**: Storage $0.02/GB/month, Egress $0.12/GB, GET requests negligible at this scale.
+**Hints**: Storage `$0.02`/GB/month, Egress `$0.12`/GB, GET requests negligible at this scale.
 
 :::::::::::::::: solution
 
-1. **1 GB**: Storage $0.02 + Egress $0.12 = **$0.14**
-2. **10 GB**: $0.20 + $1.20 = **$1.40**
-3. **100 GB**: $2.00 + $12.00 = **$14.00**
-4. **1 TB**: $20.48 + $122.88 = **$143.36**
+1. **1 GB**: Storage `$0.02` + Egress `$0.12` = **`$0.14`**
+2. **10 GB**: `$0.20` + `$1.20` = **`$1.40`**
+3. **100 GB**: `$2.00` + `$12.00` = **`$14.00`**
+4. **1 TB**: `$20.48` + `$122.88` = **`$143.36`**
 
 :::::::::::::::::::::::::
 
@@ -223,7 +228,7 @@ print("Project:", client.project)
 import pandas as pd
 import io
 
-bucket_name = "johndoe-titanic" # ADJUST to your bucket's name
+bucket_name = "doe-titanic" # ADJUST to your bucket's name
 
 bucket = client.bucket(bucket_name)
 blob = bucket.blob("titanic_train.csv")
