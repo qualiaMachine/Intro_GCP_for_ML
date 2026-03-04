@@ -394,10 +394,27 @@ print("Summary uploaded to GCS.")
 
 ## Removing unused data (complete *after* the workshop)
 
-After you are done using your data, remove unused files/buckets to stop costs:
+After you are done using your data, remove unused files/buckets to stop costs.
 
-- **Option 1: Delete files only** – In your bucket, select the files you want to remove and click **Delete**.
-- **Option 2: Delete the bucket entirely** – In **Cloud Storage > Buckets**, select your bucket and click **Delete**.
+You can delete files programmatically. Let's clean up the notes file we uploaded earlier:
+
+```python
+blob = client.bucket(bucket_name).blob("docs/Notes.txt")
+blob.delete()
+print("docs/Notes.txt deleted.")
+```
+
+Verify it's gone:
+
+```python
+for blob in client.list_blobs(bucket_name):
+    print(blob.name)
+```
+
+For larger clean-up tasks, use the Cloud Console:
+
+- **Delete files only** – In your bucket, select the files you want to remove and click **Delete**.
+- **Delete the bucket entirely** – In **Cloud Storage > Buckets**, select your bucket and click **Delete**.
 
 For a detailed walkthrough of cleaning up all workshop resources, see [Episode 9: Resource Management and Cleanup](09-Resource-management-cleanup.md).
 
