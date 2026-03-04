@@ -19,6 +19,9 @@ os.makedirs(notebooks_dir, exist_ok=True)
 # Regular expression to detect code blocks (matches ```language\n...\n```)
 code_block_pattern = re.compile(r"```(\w+)?\n(.*?)\n```", re.DOTALL)
 
+# Languages that should stay as formatted markdown, not become code cells
+SHELL_LANGS = {"sh", "bash", "shell", "zsh"}
+
 def escape_dollars(text):
     """Escape bare $ signs before digits so Jupyter doesn't treat them as LaTeX."""
     return re.sub(r'(?<!\\)\$(?=\d)', r'\\$', text)
@@ -46,9 +49,16 @@ def split_markdown(md_content):
             cells.append(new_markdown_cell(escape_dollars(before_code)))
 
         # Extract code block content
+        lang = (match.group(1) or "").lower()
         code_content = match.group(2).strip()
         if code_content:
-            cells.append(new_code_cell(code_content))
+            if lang in SHELL_LANGS:
+                # Keep shell blocks as readable markdown so learners
+                # don't accidentally run them inside the notebook.
+                md = f"**Run in Cloud Shell / terminal:**\n```{lang}\n{code_content}\n```"
+                cells.append(new_markdown_cell(md))
+            else:
+                cells.append(new_code_cell(code_content))
 
         position = match.end()
 
