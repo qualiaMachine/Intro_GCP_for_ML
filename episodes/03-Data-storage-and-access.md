@@ -205,8 +205,8 @@ GCS costs are based on three things: **storage class** (how you store data), **d
 ### Challenge 1: Estimating Storage Costs
 
 **1. Estimate the total cost of storing 1 GB in GCS Standard storage (us-central1) for one month assuming:**
-- Dataset retrieved 100 times for training and tuning
-- Data is downloaded once out of GCP at the end of the project
+- Dataset read from the bucket 100 times within GCP (e.g., each training or tuning run fetches the data via a GET request — this stays inside Google's network, so no egress charge)
+- Data is downloaded once out of GCP to your laptop at the end of the project (this *does* incur an egress charge)
 
 **2. Repeat the above calculation for datasets of 10 GB, 100 GB, and 1 TB (1024 GB).**
 
