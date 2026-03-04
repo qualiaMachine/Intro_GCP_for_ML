@@ -37,19 +37,12 @@ Most universities offer shared HPC clusters with GPUs. These are excellent resou
 | **Multi-GPU / NVLink** | Sometimes available, depends on cluster | Available on demand (e.g., A2/A3 instances with NVLink-connected multi-GPU nodes) — essential for training or fine-tuning large LLMs that don't fit in a single GPU's memory |
 | **Job orchestration** | Writing scheduler scripts, packaging environments, and wiring up parallel job arrays can take days of refactoring | A few SDK calls: define a job, set hardware, call `.run()` — parallelism (e.g., tuning trials) is built in |
 | **Software environment** | Module system; some clusters support Apptainer/Singularity containers — research computing staff can often help with setup | Vertex AI provides [prebuilt containers](https://cloud.google.com/vertex-ai/docs/training/pre-built-containers) for common ML frameworks (PyTorch, XGBoost, TensorFlow); add extra packages via a `requirements` list, or bring your own Docker image for full control |
+| **Power & cooling** | You bear the cost indirectly; university data centers typically have a PUE of 1.5–2.0, meaning 50–100% overhead goes to cooling and infrastructure | Hyperscalers like Google operate at ~1.1 PUE — a single A100 draws ~400 W under load, but power, cooling, and hardware failures are their problem, not yours |
 | **Data governance** | On-campus, known compliance posture | Requires configuring IAM, encryption, region controls — but university-managed cloud accounts (e.g., UW-Madison's [Public Cloud Team](mailto:cloud-services@cio.wisc.edu)) often handle baseline security and compliance for you |
 
 **The short version:** use your university cluster when it has the hardware you need and the queue isn't blocking you. Use the cloud when you need hardware your cluster doesn't have, need to scale beyond what the queue allows, or need a specific software environment you can't easily get on-campus.
 
 Many researchers use both — develop and test on HPC, then scale to cloud for large experiments or specialized hardware. This workshop teaches the cloud side of that workflow.
-
-### Scalability beyond a single GPU
-
-Cloud platforms give you access to compute that's hard to replicate locally:
-
-- **Multi-GPU nodes.** GCP's A2 and A3 machine families provide 1–16 GPUs per node connected via **NVLink** (high-bandwidth GPU-to-GPU interconnects). This matters for distributed training, where GPUs need to exchange gradients quickly — NVLink provides 600+ GB/s bandwidth compared to ~32 GB/s over PCIe.
-- **Elastic scaling with minimal code.** Need to run 100 hyperparameter tuning trials? On Vertex AI you define the search space, set `max_trial_count`, and the platform handles provisioning, parallelism, and teardown. On a university HPC cluster the same task often means writing Slurm/Condor job arrays, packaging environments into containers or tarballs, and wiring up result collection — work that can take days or weeks of refactoring before you run a single trial.
-- **Power and cooling are someone else's problem.** A single A100 GPU draws ~400W under load. A rack of 8 draws ~3.2kW just for the GPUs. Cloud providers handle the power infrastructure, cooling, and hardware failures.
 
 We won't use multi-GPU training in this workshop — our datasets are small and the models we train fit comfortably on a single GPU — but understanding what's available helps you plan for larger projects.
 
