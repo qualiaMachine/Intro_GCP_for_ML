@@ -95,7 +95,7 @@ For a full list of terms, see the [Glossary](../learners/reference.md).
 
 ## The notebook-as-controller pattern
 
-The central idea of this workshop is simple. You work in a lightweight **Vertex AI Workbench** notebook — a small, cheap VM where you explore data, visualize results, and iterate. When it's time to do heavy lifting, you use the **Vertex AI Python SDK** to launch jobs on separate, powerful machines:
+Throughout this workshop, we will primarily work in a lightweight **Vertex AI Workbench** notebook — a small, cheap VM where you explore data, visualize results, and iterate. When it's time to do heavy lifting, you use the **Vertex AI Python SDK** to launch jobs on separate, powerful machines:
 
 - **Training jobs** run your training script on auto-provisioned GPU hardware, then shut down when complete.
 - **Hyperparameter tuning jobs** search a parameter space across parallel trials and return the best configuration and metrics.
