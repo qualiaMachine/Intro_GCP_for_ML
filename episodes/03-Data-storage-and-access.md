@@ -33,6 +33,7 @@ ML/AI projects rely on data, making efficient storage and management essential. 
 A VM disk is the storage volume attached to a Compute Engine VM or a Vertex AI Workbench notebook. It can store datasets and intermediate results, but it is tied to the lifecycle of the VM.
 
 #### When to store data directly on a VM disk
+
 - Useful for small, temporary datasets processed interactively.
 - Data persists if the VM is stopped, but storage costs continue as long as the disk exists.
 - Not ideal for collaboration, scaling, or long-term dataset storage.
@@ -40,6 +41,7 @@ A VM disk is the storage volume attached to a Compute Engine VM or a Vertex AI W
 ::::::::::::::::::::::::::::::::::::: callout
 
 #### Limitations of VM disk storage
+
 - **Scalability**: Limited by disk size quota.
 - **Sharing**: Harder to share across projects or team members.
 - **Cost**: More expensive per GB compared to GCS for long-term storage.
@@ -59,6 +61,7 @@ GCS URIs follow the format `gs://bucket-name/path/to/file.csv`. Think of them as
 ::::::::::::::::::::::::::::::::::::: callout
 
 #### Benefits of using GCS (recommended for ML/AI workflows)
+
 - **Separation of storage and compute**: Data remains available even if VMs or notebooks are deleted.
 - **Easy sharing**: Buckets can be accessed by collaborators with the right IAM roles.
 - **Integration with Vertex AI and BigQuery**: Read and write data directly using other GCP tools.
@@ -72,14 +75,17 @@ GCS URIs follow the format `gs://bucket-name/path/to/file.csv`. Think of them as
 ## Creating a GCS bucket
 
 ### 1. Sign in to Google Cloud Console
+
 - Go to [console.cloud.google.com](https://console.cloud.google.com/) and log in with your credentials. <!-- shared workshop project URL: https://console.cloud.google.com/welcome?project=doit-rci-mlm25-4626 -->
 - Select your project from the project dropdown at the top of the page. If you're using the shared workshop project, the instructor will provide the project name.
 
 ### 2. Navigate to Cloud Storage
+
 - In the search bar, type **Storage**.
 - Click **Cloud Storage > Buckets**.
 
 ### 3. Create a new bucket
+
 - Click **Create bucket** and configure the following settings:
 
 - **Bucket name**: Enter a globally unique name using the convention `teamname-firstlastname-dataname` (e.g., `sinkorswim-johndoe-titanic`).
@@ -94,6 +100,7 @@ GCS URIs follow the format `gs://bucket-name/path/to/file.csv`. Think of them as
 Click **Create** if everything looks good.
 
 ### 4. Upload files to the bucket
+
 - If you haven't yet, download the data for this workshop (Right-click → Save as):
    [data.zip](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/data/data.zip)
   - Extract the zip folder contents (Right-click → Extract all on Windows; double-click on macOS).
