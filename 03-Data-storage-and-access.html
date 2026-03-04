@@ -535,12 +535,17 @@ provide the project name.</li>
 <ul><li><p>Click <strong>Create bucket</strong> and configure the following
 settings:</p></li>
 <li><p><strong>Bucket name</strong>: Enter a globally unique name using
-the convention <code>firstlastname-dataname</code> (e.g.,
-<code>johndoe-titanic</code>).</p></li>
-<li><p><strong>Labels</strong>: Add cost-tracking labels —
-<code>name=firstname-lastname</code>,
-<code>purpose=bucket-dataname</code>. In shared accounts this is
-<em>mandatory</em>.</p></li>
+the convention <code>lastname-dataname</code> (e.g.,
+<code>doe-titanic</code>).</p></li>
+<li>
+<p><strong>Labels</strong>: Add cost-tracking labels (same keys you
+used for the Workbench Instance in <a href="02-Notebooks-as-controllers.html">Episode 2</a>, plus a
+<code>dataset</code> tag):</p>
+<ul><li><code>name = lastname</code></li>
+<li><code>purpose = workshop</code></li>
+<li><code>dataset = titanic</code></li>
+</ul><p>In shared accounts, labels are <em>mandatory</em>.</p>
+</li>
 <li><p><strong>Location</strong>: Choose <strong>Region</strong> →
 <code>us-central1</code> (same region as your compute to avoid egress
 charges).</p></li>
@@ -569,8 +574,8 @@ episodes.</li>
 <code>titanic_test.csv</code>) and upload.</li>
 </ul><p><strong>Note the GCS URI for your data</strong> After uploading,
 click on a file and find its <strong>gs:// URI</strong> (e.g.,
-<code>gs://johndoe-titanic/titanic_test.csv</code>). This URI will be
-used to access the data in your notebook.</p>
+<code>gs://doe-titanic/titanic_test.csv</code>). This URI will be used
+to access the data in your notebook.</p>
 </div>
 </section><section><h2 class="section-heading" id="adjust-bucket-permissions">Adjust bucket permissions<a class="anchor" aria-label="anchor" href="#adjust-bucket-permissions"></a></h2>
 <hr class="half-width"><p>We need to grant the Compute Engine default service account IAM roles
@@ -627,7 +632,7 @@ value in the commands below.</p>
 <span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectAdmin"</span></span></code></pre>
 </div>
 <!-- prefilled example:
-gcloud storage buckets add-iam-policy-binding gs://johndoe-titanic \
+gcloud storage buckets add-iam-policy-binding gs://doe-titanic \
   --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
   --role="roles/storage.objectViewer"
 -->
@@ -655,20 +660,22 @@ CLI.</p>
 <hr class="half-width"><p>GCS costs are based on storage class, data transfer, and operations
 (requests).</p>
 <ul><li>
-<strong>Standard storage</strong>: ~$0.02 per GB per month in
-<code>us-central1</code>.</li>
+<strong>Standard storage</strong>: ~<code>$0.02</code> per GB per
+month in <code>us-central1</code>.</li>
 <li>
 <strong>Uploading data (ingress)</strong>: Free.</li>
 <li>
-<strong>Downloading data out of GCP (egress)</strong>: ~$0.12 per
-GB.</li>
+<strong>Downloading data out of GCP (egress)</strong>:
+~<code>$0.12</code> per GB.</li>
 <li>
-<strong>Cross-region access</strong>: ~$0.01–0.02 per GB within
-North America.</li>
+<strong>Cross-region access</strong>:
+~<code>$0.01</code>–<code>$0.02</code> per GB within North America.</li>
 <li>
-<strong>GET requests</strong>: ~$0.004 per 10,000 requests.</li>
+<strong>GET requests</strong>: ~<code>$0.004</code> per 10,000
+requests.</li>
 <li>
-<strong>PUT/POST requests</strong>: ~$0.05 per 10,000 requests.</li>
+<strong>PUT/POST requests</strong>: ~<code>$0.05</code> per 10,000
+requests.</li>
 <li>
 <strong>Deleting data</strong>: Free (but Nearline/Coldline/Archive
 early-deletion fees apply).</li>
@@ -688,8 +695,8 @@ retrieved 100 times for training and tuning - Data is downloaded once
 out of GCP at the end of the project</p>
 <p><strong>2. Repeat the above calculation for datasets of 10 GB, 100
 GB, and 1 TB (1024 GB).</strong></p>
-<p><strong>Hints</strong>: Storage $0.02/GB/month, Egress $0.12/GB, GET
-requests negligible at this scale.</p>
+<p><strong>Hints</strong>: Storage <code>$0.02</code>/GB/month, Egress
+<code>$0.12</code>/GB, GET requests negligible at this scale.</p>
 </div>
 </div>
 </div>
@@ -701,19 +708,20 @@ requests negligible at this scale.</p>
 <div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
-<strong>1 GB</strong>: Storage $0.02 + Egress $0.12 =
-<strong>$0.14</strong>
+<strong>1 GB</strong>: Storage <code>$0.02</code> + Egress
+<code>$0.12</code> = <strong><code>$0.14</code></strong>
 </li>
 <li>
-<strong>10 GB</strong>: $0.20 + $1.20 = <strong>$1.40</strong>
+<strong>10 GB</strong>: <code>$0.20</code> + <code>$1.20</code> =
+<strong><code>$1.40</code></strong>
 </li>
 <li>
-<strong>100 GB</strong>: $2.00 + $12.00 =
-<strong>$14.00</strong>
+<strong>100 GB</strong>: <code>$2.00</code> + <code>$12.00</code> =
+<strong><code>$14.00</code></strong>
 </li>
 <li>
-<strong>1 TB</strong>: $20.48 + $122.88 =
-<strong>$143.36</strong>
+<strong>1 TB</strong>: <code>$20.48</code> + <code>$122.88</code> =
+<strong><code>$143.36</code></strong>
 </li>
 </ol></div>
 </div>
@@ -748,7 +756,7 @@ credentials already attached to your Workbench VM.</p>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="im">import</span> io</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>bucket_name <span class="op">=</span> <span class="st">"johndoe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>bucket_name <span class="op">=</span> <span class="st">"doe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_train.csv"</span>)</span>

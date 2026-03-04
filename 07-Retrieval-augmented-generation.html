@@ -813,7 +813,7 @@ context?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Smaller chunks (500 chars) produce more precise retrieval hits but
 each chunk has less context, so Gemini may struggle to synthesize a
@@ -854,7 +854,7 @@ for example:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Without the guardrail prompt, Gemini may produce a plausible-sounding
 answer from its training data, ignoring the “use only the following
@@ -891,7 +891,7 @@ tokens?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p>For well-grounded RAG queries (where the answer is clearly in the
 context), Flash often produces comparable answers at significantly lower
@@ -928,7 +928,7 @@ question?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
 <div class="accordion-body">
 <p>Lower <code>top_k</code> gives Gemini a tighter, more focused context
 — good when the answer is localized in one or two chunks. Higher
@@ -944,7 +944,7 @@ that span multiple sections of a paper, higher values help.</p>
 </section><section><h2 class="section-heading" id="step-5-cost-summary">Step 5: Cost summary<a class="anchor" aria-label="anchor" href="#step-5-cost-summary"></a></h2>
 <hr class="half-width"><p>Understanding the cost of each pipeline component helps you decide
 where to optimize. For a small workshop with a handful of PDFs, total
-costs are typically well under $1.</p>
+costs are typically well under <code>$1</code>.</p>
 <table class="table"><colgroup><col width="13%"><col width="24%"><col width="28%"><col width="33%"></colgroup><thead><tr class="header"><th>Step</th>
 <th>Resource</th>
 <th>Cost Driver</th>
@@ -952,11 +952,11 @@ costs are typically well under $1.</p>
 </tr></thead><tbody><tr class="odd"><td>VM runtime</td>
 <td>Vertex AI Workbench (<code>n1-standard-4</code>)</td>
 <td>Uptime (hourly)</td>
-<td>~$0.20/hr</td>
+<td>~<code>$0.20</code>/hr</td>
 </tr><tr class="even"><td>Embeddings</td>
 <td><code>gemini-embedding-001</code></td>
 <td>Tokens embedded (one-time)</td>
-<td>~$0.10 / 1M tokens</td>
+<td>~<code>$0.10</code> / 1M tokens</td>
 </tr><tr class="odd"><td>Retrieval</td>
 <td>Local <code>NearestNeighbors</code>
 </td>
@@ -965,11 +965,11 @@ costs are typically well under $1.</p>
 </tr><tr class="even"><td>Generation</td>
 <td><code>gemini-2.5-pro</code></td>
 <td>Input + output tokens per query</td>
-<td>~$1.25–$10 / 1M tokens</td>
+<td>~<code>$1.25</code>–<code>$10</code> / 1M tokens</td>
 </tr><tr class="odd"><td>Generation (alt)</td>
 <td><code>gemini-2.5-flash</code></td>
 <td>Input + output tokens per query</td>
-<td>~$0.15–$0.60 / 1M tokens</td>
+<td>~<code>$0.15</code>–<code>$0.60</code> / 1M tokens</td>
 </tr></tbody></table><p><strong>Tip:</strong> Embeddings are the best investment — compute
 them once, reuse them for every query. Generation is the ongoing cost;
 choosing Flash over Pro and keeping prompts concise are the two biggest

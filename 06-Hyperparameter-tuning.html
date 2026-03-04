@@ -544,7 +544,7 @@ locations in GCS.</p>
 <span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>PROJECT_ID <span class="op">=</span> client.project</span>
 <span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>REGION <span class="op">=</span> <span class="st">"us-central1"</span></span>
 <span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">"DOE"</span>  <span class="co"># change to your name or unique ID</span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"johndoe-titanic"</span>  <span class="co"># replace with your bucket name</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"doe-titanic"</span>  <span class="co"># replace with your bucket name</span></span>
 <span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a></span>
 <span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>aiplatform.init(</span>
 <span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>    project<span class="op">=</span>PROJECT_ID,</span>
@@ -846,8 +846,8 @@ search:</p>
 <ol style="list-style-type: decimal"><li>Set <code>max_trial_count=6</code> and
 <code>parallel_trial_count=2</code>.</li>
 <li>Before running, estimate the approximate cost: if each trial takes
-~5 minutes on an <code>n1-standard-4</code> (~$0.19/hr), how much would
-6 trials cost?</li>
+~5 minutes on an <code>n1-standard-4</code> (~<code>$0.19</code>/hr),
+how much would 6 trials cost?</li>
 <li>Run the updated job and monitor it in the Vertex AI Console.</li>
 </ol></div>
 </div>
@@ -872,11 +872,12 @@ search:</p>
 <span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>)</span></code></pre>
 </div>
 <p><strong>Cost estimate:</strong> 6 trials x 5 min each = 30 minutes of
-compute. At ~$0.19/hr for <code>n1-standard-4</code>, that’s roughly
-$0.10 total. With <code>parallel_trial_count=2</code>, wall-clock time
-would be approximately 15 minutes (3 batches of 2 trials). The adaptive
-search can still learn between batches since parallelism is kept low
-relative to total trials.</p>
+compute. At ~<code>$0.19</code>/hr for <code>n1-standard-4</code>,
+that’s roughly <code>$0.10</code> total. With
+<code>parallel_trial_count=2</code>, wall-clock time would be
+approximately 15 minutes (3 batches of 2 trials). The adaptive search
+can still learn between batches since parallelism is kept low relative
+to total trials.</p>
 </div>
 </div>
 </div>
@@ -966,9 +967,9 @@ projects grow.</li>
 <li>
 <strong>Online deployment:</strong> If you need real-time
 predictions via an API, Vertex AI <a href="https://cloud.google.com/vertex-ai/docs/predictions/get-online-predictions" class="external-link">Endpoints</a>
-let you deploy your model — but endpoints bill continuously (~$4.50/day
-for an <code>n1-standard-4</code>), so only deploy when you genuinely
-need a live API.</li>
+let you deploy your model — but endpoints bill continuously
+(~<code>$4.50</code>/day for an <code>n1-standard-4</code>), so only
+deploy when you genuinely need a live API.</li>
 </ul><div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
 <i class="callout-icon" data-feather="key"></i>

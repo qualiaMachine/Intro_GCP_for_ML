@@ -445,14 +445,14 @@ encounter in this workshop, ordered from most to least dangerous:</p>
 </tr></thead><tbody><tr class="odd"><td><strong>Vertex AI endpoints</strong></td>
 <td>Per node‑hour, <strong>24/7 while deployed</strong>
 </td>
-<td>~$4.50/day for one <code>n1-standard-4</code> node</td>
+<td>~<code>$4.50</code>/day for one <code>n1-standard-4</code> node</td>
 <td>
 <strong>High</strong> — bills even with zero traffic</td>
 </tr><tr class="even"><td>
 <strong>Workbench Instances</strong> (running)</td>
 <td>Per VM‑hour + GPU</td>
-<td>~$0.19/hr CPU‑only (<code>n1-standard-4</code>); add ~$0.35/hr per
-T4 GPU</td>
+<td>~<code>$0.19</code>/hr CPU‑only (<code>n1-standard-4</code>); add
+~<code>$0.35</code>/hr per T4 GPU</td>
 <td>
 <strong>High</strong> — easy to forget overnight</td>
 </tr><tr class="odd"><td><strong>Training / HPT jobs</strong></td>
@@ -463,17 +463,18 @@ T4 GPU</td>
 </tr><tr class="even"><td>
 <strong>Workbench disks</strong> (stopped VM)</td>
 <td>Per GB‑month for persistent disk</td>
-<td>~$0.04/GB/month (~$4/month for 100 GB)</td>
+<td>~<code>$0.04</code>/GB/month (~<code>$4</code>/month for 100
+GB)</td>
 <td>
 <strong>Low</strong> — small but adds up</td>
 </tr><tr class="odd"><td><strong>GCS storage</strong></td>
 <td>Per GB‑month + operations + egress</td>
-<td>~$0.02/GB/month (Standard)</td>
+<td>~<code>$0.02</code>/GB/month (Standard)</td>
 <td>
 <strong>Low</strong> — cheap until multi‑TB</td>
 </tr><tr class="even"><td><strong>Network egress</strong></td>
 <td>Per GB downloaded out of GCP</td>
-<td>~$0.12/GB</td>
+<td>~<code>$0.12</code>/GB</td>
 <td>
 <strong>Low</strong> — avoid large downloads to local</td>
 </tr></tbody></table><blockquote>
@@ -525,8 +526,8 @@ minutes.</li>
 <code>gcloud workbench instances create</code> command.</li>
 </ul><blockquote>
 <p><strong>Disks still cost money while the VM is stopped</strong>
-(~$4/month for 100 GB). If you’re completely done with an instance,
-<strong>delete</strong> it rather than just stopping it.</p>
+(~<code>$4</code>/month for 100 GB). If you’re completely done with an
+instance, <strong>delete</strong> it rather than just stopping it.</p>
 </blockquote>
 </div>
 </section><section><h2 class="section-heading" id="cleaning-up-training-tuning-and-batch-jobs">Cleaning up training, tuning, and batch jobs<a class="anchor" aria-label="anchor" href="#cleaning-up-training-tuning-and-batch-jobs"></a></h2>
@@ -571,7 +572,8 @@ for reference, then delete the rest to reduce console clutter.</p>
 </section><section><h2 class="section-heading" id="undeploy-models-and-delete-endpoints-major-cost-pitfall">Undeploy models and delete endpoints (major cost pitfall)<a class="anchor" aria-label="anchor" href="#undeploy-models-and-delete-endpoints-major-cost-pitfall"></a></h2>
 <hr class="half-width"><p>Deployed endpoints are billed per node‑hour <strong>24/7</strong>,
 even with zero prediction traffic. A single forgotten endpoint can cost
-~$135/month. Always undeploy models before deleting the endpoint.</p>
+~<code>$135</code>/month. Always undeploy models before deleting the
+endpoint.</p>
 <div class="section level3">
 <h3 id="find-endpoints-and-deployed-models">Find endpoints and deployed models<a class="anchor" aria-label="anchor" href="#find-endpoints-and-deployed-models"></a></h3>
 <div class="codewrapper sourceCode" id="cb6">
@@ -665,17 +667,18 @@ most recent versions.</li>
 </div>
 <div class="section level3">
 <h3 id="egress-reminder">Egress reminder<a class="anchor" aria-label="anchor" href="#egress-reminder"></a></h3>
-<p>Downloading data out of GCP to your laptop costs ~$0.12/GB. Prefer
-<strong>in‑cloud</strong> training and evaluation, and share results via
-GCS links rather than local downloads.</p>
+<p>Downloading data out of GCP to your laptop costs
+~<code>$0.12</code>/GB. Prefer <strong>in‑cloud</strong> training and
+evaluation, and share results via GCS links rather than local
+downloads.</p>
 </div>
 </section><section><h2 class="section-heading" id="labels-and-budgets">Labels and budgets<a class="anchor" aria-label="anchor" href="#labels-and-budgets"></a></h2>
 <hr class="half-width"><div class="section level3">
 <h3 id="standardize-labels-on-all-resources">Standardize labels on all resources<a class="anchor" aria-label="anchor" href="#standardize-labels-on-all-resources"></a></h3>
 <p>Labels let you track costs per user, team, or experiment in billing
 reports. Apply them consistently:</p>
-<ul><li>Examples: <code>owner=yourname</code>,
-<code>team=ml-workshop</code>, <code>purpose=titanic-demo</code>
+<ul><li>Examples: <code>name=lastname</code>, <code>purpose=workshop</code>,
+<code>dataset=titanic</code>
 </li>
 <li>The Vertex AI Python SDK supports labels on job creation;
 <code>gcloud</code> commands accept
@@ -688,7 +691,8 @@ reports. Apply them consistently:</p>
 <ol style="list-style-type: decimal"><li>Go to <strong>Billing → Budgets &amp; alerts</strong> in the Cloud
 Console.</li>
 <li>Click <strong>Create budget</strong>.</li>
-<li>Set a budget amount (e.g., $10 or $25 for a workshop).</li>
+<li>Set a budget amount (e.g., <code>$10</code> or <code>$25</code> for
+a workshop).</li>
 <li>Set alert thresholds at <strong>50%</strong>, <strong>80%</strong>,
 and <strong>100%</strong>.</li>
 <li>Add <strong>forecast‑based alerts</strong> to catch trends before
@@ -753,8 +757,8 @@ budget</h3>
 <ol style="list-style-type: decimal"><li>Navigate to <strong>Billing → Reports</strong> in the Cloud Console.
 Find your project’s current‑month spend grouped by service.</li>
 <li>Navigate to <strong>Billing → Budgets &amp; alerts</strong>. Create
-a <strong>$10 budget</strong> with alert thresholds at 50% and
-100%.</li>
+a <strong><code>$10</code> budget</strong> with alert thresholds at 50%
+and 100%.</li>
 </ol></div>
 </div>
 </div>
@@ -763,7 +767,7 @@ a <strong>$10 budget</strong> with alert thresholds at 50% and
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li><p>In the Cloud Console, click the <strong>Navigation menu
 (☰)</strong> → <strong>Billing</strong> → <strong>Reports</strong>. Set
@@ -780,7 +784,8 @@ alerts</strong> → <strong>Create budget</strong>. Set:</p>
 <strong>Amount</strong>: <code>$10</code>
 </li>
 <li>
-<strong>Thresholds</strong>: 50% ($5) and 100% ($10)</li>
+<strong>Thresholds</strong>: 50% (<code>$5</code>) and 100%
+(<code>$10</code>)</li>
 <li>
 <strong>Alerts to</strong>: your email address</li>
 </ul></li>
@@ -813,7 +818,7 @@ are not actively using.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -849,7 +854,7 @@ don’t need, and delete the endpoint.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -895,7 +900,7 @@ objects. Apply it to your bucket.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
 <div class="accordion-body">
 <p>Save the following as <code>lifecycle.json</code>:</p>
 <div class="codewrapper sourceCode" id="cb14">
@@ -949,7 +954,7 @@ delete the bucket entirely.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution5" aria-expanded="false" aria-controls="collapseSolution5">
   <h4 class="accordion-header" id="headingSolution5"> Show me the solution </h4>
 </button>
-<div id="collapseSolution5" class="accordion-collapse collapse" aria-labelledby="headingSolution5" data-bs-parent="#accordionSolution5">
+<div id="collapseSolution5" class="accordion-collapse collapse" data-bs-parent="#accordionSolution5" aria-labelledby="headingSolution5">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>

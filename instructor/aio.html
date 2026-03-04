@@ -1504,12 +1504,19 @@ provide the project name.</li>
 <li><p>Click <strong>Create bucket</strong> and configure the following
 settings:</p></li>
 <li><p><strong>Bucket name</strong>: Enter a globally unique name using
-the convention <code>firstlastname-dataname</code> (e.g.,
-<code>johndoe-titanic</code>).</p></li>
-<li><p><strong>Labels</strong>: Add cost-tracking labels —
-<code>name=firstname-lastname</code>,
-<code>purpose=bucket-dataname</code>. In shared accounts this is
-<em>mandatory</em>.</p></li>
+the convention <code>lastname-dataname</code> (e.g.,
+<code>doe-titanic</code>).</p></li>
+<li>
+<p><strong>Labels</strong>: Add cost-tracking labels (same keys you
+used for the Workbench Instance in <a href="02-Notebooks-as-controllers.html">Episode 2</a>, plus a
+<code>dataset</code> tag):</p>
+<ul>
+<li><code>name = lastname</code></li>
+<li><code>purpose = workshop</code></li>
+<li><code>dataset = titanic</code></li>
+</ul>
+<p>In shared accounts, labels are <em>mandatory</em>.</p>
+</li>
 <li><p><strong>Location</strong>: Choose <strong>Region</strong> →
 <code>us-central1</code> (same region as your compute to avoid egress
 charges).</p></li>
@@ -1544,8 +1551,8 @@ episodes.</li>
 </ul>
 <p><strong>Note the GCS URI for your data</strong> After uploading,
 click on a file and find its <strong>gs:// URI</strong> (e.g.,
-<code>gs://johndoe-titanic/titanic_test.csv</code>). This URI will be
-used to access the data in your notebook.</p>
+<code>gs://doe-titanic/titanic_test.csv</code>). This URI will be used
+to access the data in your notebook.</p>
 </div>
 </section><section><h2 class="section-heading" id="adjust-bucket-permissions">Adjust bucket permissions<a class="anchor" aria-label="anchor" href="#adjust-bucket-permissions"></a>
 </h2>
@@ -1606,7 +1613,7 @@ value in the commands below.</p>
 <span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectAdmin"</span></span></code></pre>
 </div>
 <!-- prefilled example:
-gcloud storage buckets add-iam-policy-binding gs://johndoe-titanic \
+gcloud storage buckets add-iam-policy-binding gs://doe-titanic \
   --member="serviceAccount:549047673858-compute@developer.gserviceaccount.com" \
   --role="roles/storage.objectViewer"
 -->
@@ -1637,20 +1644,22 @@ CLI.</p>
 (requests).</p>
 <ul>
 <li>
-<strong>Standard storage</strong>: ~$0.02 per GB per month in
-<code>us-central1</code>.</li>
+<strong>Standard storage</strong>: ~<code>$0.02</code> per GB per
+month in <code>us-central1</code>.</li>
 <li>
 <strong>Uploading data (ingress)</strong>: Free.</li>
 <li>
-<strong>Downloading data out of GCP (egress)</strong>: ~$0.12 per
-GB.</li>
+<strong>Downloading data out of GCP (egress)</strong>:
+~<code>$0.12</code> per GB.</li>
 <li>
-<strong>Cross-region access</strong>: ~$0.01–0.02 per GB within
-North America.</li>
+<strong>Cross-region access</strong>:
+~<code>$0.01</code>–<code>$0.02</code> per GB within North America.</li>
 <li>
-<strong>GET requests</strong>: ~$0.004 per 10,000 requests.</li>
+<strong>GET requests</strong>: ~<code>$0.004</code> per 10,000
+requests.</li>
 <li>
-<strong>PUT/POST requests</strong>: ~$0.05 per 10,000 requests.</li>
+<strong>PUT/POST requests</strong>: ~<code>$0.05</code> per 10,000
+requests.</li>
 <li>
 <strong>Deleting data</strong>: Free (but Nearline/Coldline/Archive
 early-deletion fees apply).</li>
@@ -1671,8 +1680,8 @@ retrieved 100 times for training and tuning - Data is downloaded once
 out of GCP at the end of the project</p>
 <p><strong>2. Repeat the above calculation for datasets of 10 GB, 100
 GB, and 1 TB (1024 GB).</strong></p>
-<p><strong>Hints</strong>: Storage $0.02/GB/month, Egress $0.12/GB, GET
-requests negligible at this scale.</p>
+<p><strong>Hints</strong>: Storage <code>$0.02</code>/GB/month, Egress
+<code>$0.12</code>/GB, GET requests negligible at this scale.</p>
 </div>
 </div>
 </div>
@@ -1685,19 +1694,20 @@ requests negligible at this scale.</p>
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
-<strong>1 GB</strong>: Storage $0.02 + Egress $0.12 =
-<strong>$0.14</strong>
+<strong>1 GB</strong>: Storage <code>$0.02</code> + Egress
+<code>$0.12</code> = <strong><code>$0.14</code></strong>
 </li>
 <li>
-<strong>10 GB</strong>: $0.20 + $1.20 = <strong>$1.40</strong>
+<strong>10 GB</strong>: <code>$0.20</code> + <code>$1.20</code> =
+<strong><code>$1.40</code></strong>
 </li>
 <li>
-<strong>100 GB</strong>: $2.00 + $12.00 =
-<strong>$14.00</strong>
+<strong>100 GB</strong>: <code>$2.00</code> + <code>$12.00</code> =
+<strong><code>$14.00</code></strong>
 </li>
 <li>
-<strong>1 TB</strong>: $20.48 + $122.88 =
-<strong>$143.36</strong>
+<strong>1 TB</strong>: <code>$20.48</code> + <code>$122.88</code> =
+<strong><code>$143.36</code></strong>
 </li>
 </ol>
 </div>
@@ -1737,7 +1747,7 @@ credentials already attached to your Workbench VM.</p>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="im">import</span> io</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>bucket_name <span class="op">=</span> <span class="st">"johndoe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>bucket_name <span class="op">=</span> <span class="st">"doe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
 <span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_train.csv"</span>)</span>
@@ -2040,10 +2050,11 @@ status using the Google Cloud Console.</li>
 <h3 class="callout-title">Cost awareness: training jobs</h3>
 <div class="callout-content">
 <p>Training jobs bill per VM-hour while the job is running. An
-<code>n1-standard-4</code> (CPU) costs ~$0.19/hr; adding a T4 GPU brings
-the total to ~$0.54/hr. Jobs automatically stop (and stop billing) when
-the script finishes. For a complete cost reference, see the <a href="compute-for-ML.html">Compute for ML</a> page and the cost table in
-<a href="09-Resource-management-cleanup.html">Episode 9</a>.</p>
+<code>n1-standard-4</code> (CPU) costs ~<code>$0.19</code>/hr; adding a
+T4 GPU brings the total to ~<code>$0.54</code>/hr. Jobs automatically
+stop (and stop billing) when the script finishes. For a complete cost
+reference, see the <a href="compute-for-ML.html">Compute for ML</a> page
+and the cost table in <a href="09-Resource-management-cleanup.html">Episode 9</a>.</p>
 </div>
 </div>
 </div>
@@ -2089,7 +2100,7 @@ region close to your data).</li>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>client <span class="op">=</span> storage.Client()</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>PROJECT_ID <span class="op">=</span> client.project</span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>REGION <span class="op">=</span> <span class="st">"us-central1"</span></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"johndoe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"doe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">"DOE"</span> <span class="co"># ADJUST to your last name or name</span></span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"project = </span><span class="sc">{</span>PROJECT_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">region = </span><span class="sc">{</span>REGION<span class="sc">}</span><span class="ch">\n</span><span class="ss">bucket = </span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
 </div>
@@ -2487,14 +2498,14 @@ AI using the configuration defined earlier. <strong>We won’t be charged
 for our selected <code>MACHINE</code> until we run the below code using
 <code>job.run()</code>.</strong> For an <code>n1-standard-4</code>
 running 2–5 minutes, expect a cost of roughly
-<strong>$0.01–$0.02</strong> — negligible, but good to be aware of as
-you scale to larger machines. This marks the point when our script
-actually begins executing remotely on the Vertex training
-infrastructure. Once <code>job.run()</code> is called, Vertex handles
-packaging your training script, transferring it to the managed training
-environment, provisioning the requested compute instance, and monitoring
-the run. The job’s status and logs can be viewed directly in the Vertex
-AI Console under Training → Custom jobs.</p>
+<strong><code>$0.01</code>–<code>$0.02</code></strong> — negligible, but
+good to be aware of as you scale to larger machines. This marks the
+point when our script actually begins executing remotely on the Vertex
+training infrastructure. Once <code>job.run()</code> is called, Vertex
+handles packaging your training script, transferring it to the managed
+training environment, provisioning the requested compute instance, and
+monitoring the run. The job’s status and logs can be viewed directly in
+the Vertex AI Console under Training → Custom jobs.</p>
 <p>If you need to cancel or modify a job mid-run, you can do so from the
 console or via the SDK by calling job.cancel(). When the job completes,
 Vertex automatically tears down the compute resources so you only pay
@@ -2910,7 +2921,7 @@ input/output data.</p>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>client <span class="op">=</span> storage.Client()</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>PROJECT_ID <span class="op">=</span> client.project</span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>REGION <span class="op">=</span> <span class="st">"us-central1"</span></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"johndoe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"doe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">'DOE'</span> <span class="co"># ADJUST to your last name. Since we're in a shared account environment, this will help us track down jobs in the Console</span></span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a></span>
 <span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"project = </span><span class="sc">{</span>PROJECT_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">region = </span><span class="sc">{</span>REGION<span class="sc">}</span><span class="ch">\n</span><span class="ss">bucket = </span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span>
@@ -3526,7 +3537,7 @@ between these configurations.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -3546,8 +3557,9 @@ doesn’t include CUDA/cuDNN, so even if a GPU is attached to the VM,
 PyTorch can’t use it. Always match your container image to your hardware
 configuration.</li>
 <li>Approximate on-demand rates (us-central1):
-<code>n1-standard-4</code> is ~$0.19/hr; <code>n1-standard-8</code> + 1x
-T4 is ~$0.54/hr (VM) + ~$0.35/hr (T4) = ~$0.89/hr total. The GPU
+<code>n1-standard-4</code> is ~<code>$0.19</code>/hr;
+<code>n1-standard-8</code> + 1x T4 is ~<code>$0.54</code>/hr (VM) +
+~<code>$0.35</code>/hr (T4) = ~<code>$0.89</code>/hr total. The GPU
 configuration is roughly 4–5x more expensive per hour — worth it only
 when training speedup exceeds that cost ratio.</li>
 </ol>
@@ -3831,7 +3843,7 @@ locations in GCS.</p>
 <span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>PROJECT_ID <span class="op">=</span> client.project</span>
 <span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>REGION <span class="op">=</span> <span class="st">"us-central1"</span></span>
 <span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">"DOE"</span>  <span class="co"># change to your name or unique ID</span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"johndoe-titanic"</span>  <span class="co"># replace with your bucket name</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"doe-titanic"</span>  <span class="co"># replace with your bucket name</span></span>
 <span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a></span>
 <span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>aiplatform.init(</span>
 <span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>    project<span class="op">=</span>PROJECT_ID,</span>
@@ -4153,8 +4165,8 @@ search:</p>
 <li>Set <code>max_trial_count=6</code> and
 <code>parallel_trial_count=2</code>.</li>
 <li>Before running, estimate the approximate cost: if each trial takes
-~5 minutes on an <code>n1-standard-4</code> (~$0.19/hr), how much would
-6 trials cost?</li>
+~5 minutes on an <code>n1-standard-4</code> (~<code>$0.19</code>/hr),
+how much would 6 trials cost?</li>
 <li>Run the updated job and monitor it in the Vertex AI Console.</li>
 </ol>
 </div>
@@ -4180,11 +4192,12 @@ search:</p>
 <span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>)</span></code></pre>
 </div>
 <p><strong>Cost estimate:</strong> 6 trials x 5 min each = 30 minutes of
-compute. At ~$0.19/hr for <code>n1-standard-4</code>, that’s roughly
-$0.10 total. With <code>parallel_trial_count=2</code>, wall-clock time
-would be approximately 15 minutes (3 batches of 2 trials). The adaptive
-search can still learn between batches since parallelism is kept low
-relative to total trials.</p>
+compute. At ~<code>$0.19</code>/hr for <code>n1-standard-4</code>,
+that’s roughly <code>$0.10</code> total. With
+<code>parallel_trial_count=2</code>, wall-clock time would be
+approximately 15 minutes (3 batches of 2 trials). The adaptive search
+can still learn between batches since parallelism is kept low relative
+to total trials.</p>
 </div>
 </div>
 </div>
@@ -4298,9 +4311,9 @@ projects grow.</li>
 <li>
 <strong>Online deployment:</strong> If you need real-time
 predictions via an API, Vertex AI <a href="https://cloud.google.com/vertex-ai/docs/predictions/get-online-predictions" class="external-link">Endpoints</a>
-let you deploy your model — but endpoints bill continuously (~$4.50/day
-for an <code>n1-standard-4</code>), so only deploy when you genuinely
-need a live API.</li>
+let you deploy your model — but endpoints bill continuously
+(~<code>$4.50</code>/day for an <code>n1-standard-4</code>), so only
+deploy when you genuinely need a live API.</li>
 </ul>
 <div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
@@ -4827,7 +4840,7 @@ context?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Smaller chunks (500 chars) produce more precise retrieval hits but
 each chunk has less context, so Gemini may struggle to synthesize a
@@ -4870,7 +4883,7 @@ for example:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Without the guardrail prompt, Gemini may produce a plausible-sounding
 answer from its training data, ignoring the “use only the following
@@ -4909,7 +4922,7 @@ tokens?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p>For well-grounded RAG queries (where the answer is clearly in the
 context), Flash often produces comparable answers at significantly lower
@@ -4948,7 +4961,7 @@ question?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
 <div class="accordion-body">
 <p>Lower <code>top_k</code> gives Gemini a tighter, more focused context
 — good when the answer is localized in one or two chunks. Higher
@@ -4966,7 +4979,7 @@ that span multiple sections of a paper, higher values help.</p>
 <hr class="half-width">
 <p>Understanding the cost of each pipeline component helps you decide
 where to optimize. For a small workshop with a handful of PDFs, total
-costs are typically well under $1.</p>
+costs are typically well under <code>$1</code>.</p>
 <table class="table">
 <colgroup>
 <col width="13%">
@@ -4985,13 +4998,13 @@ costs are typically well under $1.</p>
 <td>VM runtime</td>
 <td>Vertex AI Workbench (<code>n1-standard-4</code>)</td>
 <td>Uptime (hourly)</td>
-<td>~$0.20/hr</td>
+<td>~<code>$0.20</code>/hr</td>
 </tr>
 <tr class="even">
 <td>Embeddings</td>
 <td><code>gemini-embedding-001</code></td>
 <td>Tokens embedded (one-time)</td>
-<td>~$0.10 / 1M tokens</td>
+<td>~<code>$0.10</code> / 1M tokens</td>
 </tr>
 <tr class="odd">
 <td>Retrieval</td>
@@ -5004,13 +5017,13 @@ costs are typically well under $1.</p>
 <td>Generation</td>
 <td><code>gemini-2.5-pro</code></td>
 <td>Input + output tokens per query</td>
-<td>~$1.25–$10 / 1M tokens</td>
+<td>~<code>$1.25</code>–<code>$10</code> / 1M tokens</td>
 </tr>
 <tr class="odd">
 <td>Generation (alt)</td>
 <td><code>gemini-2.5-flash</code></td>
 <td>Input + output tokens per query</td>
-<td>~$0.15–$0.60 / 1M tokens</td>
+<td>~<code>$0.15</code>–<code>$0.60</code> / 1M tokens</td>
 </tr>
 </tbody>
 </table>
@@ -5316,15 +5329,15 @@ the equivalent is:</p>
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Create a bucket (if it doesn't already exist)</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets create gs://johndoe-titanic <span class="dt">\</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets create gs://doe-titanic <span class="dt">\</span></span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="at">--location</span><span class="op">=</span>us-central1</span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co"># Upload the Titanic CSV files</span></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="ex">gcloud</span> storage cp ~/Downloads/data/titanic_train.csv gs://johndoe-titanic/</span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="ex">gcloud</span> storage cp ~/Downloads/data/titanic_test.csv  gs://johndoe-titanic/</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="ex">gcloud</span> storage cp ~/Downloads/data/titanic_train.csv gs://doe-titanic/</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="ex">gcloud</span> storage cp ~/Downloads/data/titanic_test.csv  gs://doe-titanic/</span>
 <span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a></span>
 <span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co"># Verify</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="ex">gcloud</span> storage ls gs://johndoe-titanic/</span></code></pre>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="ex">gcloud</span> storage ls gs://doe-titanic/</span></code></pre>
 </div>
 <div id="gsutil-vs-gcloud-storage" class="callout">
 <div class="callout-square">
@@ -5366,14 +5379,14 @@ config file that describes the job.</p>
 <span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="at">      </span><span class="fu">containerSpec</span><span class="kw">:</span></span>
 <span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="at">        </span><span class="fu">imageUri</span><span class="kw">:</span><span class="at"> us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest</span></span>
 <span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="at">        </span><span class="fu">args</span><span class="kw">:</span></span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--train=gs://johndoe-titanic/titanic_train.csv"</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--train=gs://doe-titanic/titanic_train.csv"</span></span>
 <span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--max_depth=6"</span></span>
 <span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--eta=0.3"</span></span>
 <span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--subsample=0.8"</span></span>
 <span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--colsample_bytree=0.8"</span></span>
 <span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--num_round=100"</span></span>
 <span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="at">  </span><span class="fu">baseOutputDirectory</span><span class="kw">:</span></span>
-<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="at">    </span><span class="fu">outputUriPrefix</span><span class="kw">:</span><span class="at"> gs://johndoe-titanic/artifacts/xgb/cli-run/</span></span></code></pre>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="at">    </span><span class="fu">outputUriPrefix</span><span class="kw">:</span><span class="at"> gs://doe-titanic/artifacts/xgb/cli-run/</span></span></code></pre>
 </div>
 <p>Replace the bucket name and hyperparameters to match your setup.</p>
 </div>
@@ -5415,13 +5428,13 @@ expects (<code>--train</code>, <code>--val</code>,
 <span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="at">      </span><span class="fu">containerSpec</span><span class="kw">:</span></span>
 <span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="at">        </span><span class="fu">imageUri</span><span class="kw">:</span><span class="at"> us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest</span></span>
 <span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="at">        </span><span class="fu">args</span><span class="kw">:</span></span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--train=gs://johndoe-titanic/data/train_data.npz"</span></span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--val=gs://johndoe-titanic/data/val_data.npz"</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--train=gs://doe-titanic/data/train_data.npz"</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--val=gs://doe-titanic/data/val_data.npz"</span></span>
 <span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--epochs=500"</span></span>
 <span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--learning_rate=0.001"</span></span>
 <span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--patience=50"</span></span>
 <span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="at">  </span><span class="fu">baseOutputDirectory</span><span class="kw">:</span></span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="at">    </span><span class="fu">outputUriPrefix</span><span class="kw">:</span><span class="at"> gs://johndoe-titanic/artifacts/pytorch/cli-gpu-run/</span></span></code></pre>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="at">    </span><span class="fu">outputUriPrefix</span><span class="kw">:</span><span class="at"> gs://doe-titanic/artifacts/pytorch/cli-gpu-run/</span></span></code></pre>
 </div>
 <p>Submit the same way:</p>
 <div class="codewrapper sourceCode" id="cb8">
@@ -5521,11 +5534,12 @@ away:</strong></p>
 <div id="cost-leaks-are-silent" class="callout-inner">
 <h3 class="callout-title">Cost leaks are silent</h3>
 <div class="callout-content">
-<p>A forgotten endpoint bills ~$1.50–$3/hour depending on machine type —
-that’s <strong>$36–$72/day</strong> doing nothing. A GPU training job
-you accidentally submitted twice burns money until you cancel it.
-There’s no pop-up warning; you’ll only find out on your billing
-dashboard or when you hit a quota.</p>
+<p>A forgotten endpoint bills ~<code>$1.50</code>–<code>$3</code>/hour
+depending on machine type — that’s
+<strong><code>$36</code>–<code>$72</code>/day</strong> doing nothing. A
+GPU training job you accidentally submitted twice burns money until you
+cancel it. There’s no pop-up warning; you’ll only find out on your
+billing dashboard or when you hit a quota.</p>
 <p>Build the habit: <strong>every time you finish a CLI session, run the
 check commands above.</strong> For a more thorough cleanup checklist,
 see <a href="09-Resource-management-cleanup.html">Episode 9</a>.</p>
@@ -5540,10 +5554,10 @@ see <a href="09-Resource-management-cleanup.html">Episode 9</a>.</p>
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># List what the job wrote</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="ex">gcloud</span> storage ls gs://johndoe-titanic/artifacts/xgb/cli-run/</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="ex">gcloud</span> storage ls gs://doe-titanic/artifacts/xgb/cli-run/</span>
 <span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a></span>
 <span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="co"># Download everything locally</span></span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="ex">gcloud</span> storage cp <span class="at">-r</span> gs://johndoe-titanic/artifacts/xgb/cli-run/ ./local_results/</span></code></pre>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="ex">gcloud</span> storage cp <span class="at">-r</span> gs://doe-titanic/artifacts/xgb/cli-run/ ./local_results/</span></code></pre>
 </div>
 <p>You can then load the model and metrics in a local Python session for
 evaluation — no Workbench VM required.</p>
@@ -5561,7 +5575,7 @@ trigger it from CI.</p>
 <span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a></span>
 <span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="va">PROJECT_ID</span><span class="op">=</span><span class="st">"your-project-id"</span></span>
 <span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="va">REGION</span><span class="op">=</span><span class="st">"us-central1"</span></span>
-<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="va">BUCKET</span><span class="op">=</span><span class="st">"johndoe-titanic"</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="va">BUCKET</span><span class="op">=</span><span class="st">"doe-titanic"</span></span>
 <span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="va">RUN_ID</span><span class="op">=</span><span class="va">$(</span><span class="fu">date</span> +%Y%m%d-%H%M%S<span class="va">)</span></span>
 <span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a></span>
 <span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co"># Upload latest training data</span></span>
@@ -5617,7 +5631,7 @@ Custom Jobs</strong>.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -5651,7 +5665,7 @@ notebook.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb17">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -5686,7 +5700,7 @@ the accuracy value.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb18">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -5873,7 +5887,7 @@ encounter in this workshop, ordered from most to least dangerous:</p>
 <td><strong>Vertex AI endpoints</strong></td>
 <td>Per node‑hour, <strong>24/7 while deployed</strong>
 </td>
-<td>~$4.50/day for one <code>n1-standard-4</code> node</td>
+<td>~<code>$4.50</code>/day for one <code>n1-standard-4</code> node</td>
 <td>
 <strong>High</strong> — bills even with zero traffic</td>
 </tr>
@@ -5881,8 +5895,8 @@ encounter in this workshop, ordered from most to least dangerous:</p>
 <td>
 <strong>Workbench Instances</strong> (running)</td>
 <td>Per VM‑hour + GPU</td>
-<td>~$0.19/hr CPU‑only (<code>n1-standard-4</code>); add ~$0.35/hr per
-T4 GPU</td>
+<td>~<code>$0.19</code>/hr CPU‑only (<code>n1-standard-4</code>); add
+~<code>$0.35</code>/hr per T4 GPU</td>
 <td>
 <strong>High</strong> — easy to forget overnight</td>
 </tr>
@@ -5897,21 +5911,22 @@ T4 GPU</td>
 <td>
 <strong>Workbench disks</strong> (stopped VM)</td>
 <td>Per GB‑month for persistent disk</td>
-<td>~$0.04/GB/month (~$4/month for 100 GB)</td>
+<td>~<code>$0.04</code>/GB/month (~<code>$4</code>/month for 100
+GB)</td>
 <td>
 <strong>Low</strong> — small but adds up</td>
 </tr>
 <tr class="odd">
 <td><strong>GCS storage</strong></td>
 <td>Per GB‑month + operations + egress</td>
-<td>~$0.02/GB/month (Standard)</td>
+<td>~<code>$0.02</code>/GB/month (Standard)</td>
 <td>
 <strong>Low</strong> — cheap until multi‑TB</td>
 </tr>
 <tr class="even">
 <td><strong>Network egress</strong></td>
 <td>Per GB downloaded out of GCP</td>
-<td>~$0.12/GB</td>
+<td>~<code>$0.12</code>/GB</td>
 <td>
 <strong>Low</strong> — avoid large downloads to local</td>
 </tr>
@@ -5974,8 +5989,8 @@ minutes.</li>
 </ul>
 <blockquote>
 <p><strong>Disks still cost money while the VM is stopped</strong>
-(~$4/month for 100 GB). If you’re completely done with an instance,
-<strong>delete</strong> it rather than just stopping it.</p>
+(~<code>$4</code>/month for 100 GB). If you’re completely done with an
+instance, <strong>delete</strong> it rather than just stopping it.</p>
 </blockquote>
 </div>
 </section><section><h2 class="section-heading" id="cleaning-up-training-tuning-and-batch-jobs">Cleaning up training, tuning, and batch jobs<a class="anchor" aria-label="anchor" href="#cleaning-up-training-tuning-and-batch-jobs"></a>
@@ -6026,7 +6041,8 @@ for reference, then delete the rest to reduce console clutter.</p>
 <hr class="half-width">
 <p>Deployed endpoints are billed per node‑hour <strong>24/7</strong>,
 even with zero prediction traffic. A single forgotten endpoint can cost
-~$135/month. Always undeploy models before deleting the endpoint.</p>
+~<code>$135</code>/month. Always undeploy models before deleting the
+endpoint.</p>
 <div class="section level3">
 <h3 id="find-endpoints-and-deployed-models">Find endpoints and deployed models<a class="anchor" aria-label="anchor" href="#find-endpoints-and-deployed-models"></a>
 </h3>
@@ -6129,9 +6145,10 @@ most recent versions.</li>
 <div class="section level3">
 <h3 id="egress-reminder">Egress reminder<a class="anchor" aria-label="anchor" href="#egress-reminder"></a>
 </h3>
-<p>Downloading data out of GCP to your laptop costs ~$0.12/GB. Prefer
-<strong>in‑cloud</strong> training and evaluation, and share results via
-GCS links rather than local downloads.</p>
+<p>Downloading data out of GCP to your laptop costs
+~<code>$0.12</code>/GB. Prefer <strong>in‑cloud</strong> training and
+evaluation, and share results via GCS links rather than local
+downloads.</p>
 </div>
 </section><section><h2 class="section-heading" id="labels-and-budgets">Labels and budgets<a class="anchor" aria-label="anchor" href="#labels-and-budgets"></a>
 </h2>
@@ -6142,8 +6159,8 @@ GCS links rather than local downloads.</p>
 <p>Labels let you track costs per user, team, or experiment in billing
 reports. Apply them consistently:</p>
 <ul>
-<li>Examples: <code>owner=yourname</code>,
-<code>team=ml-workshop</code>, <code>purpose=titanic-demo</code>
+<li>Examples: <code>name=lastname</code>, <code>purpose=workshop</code>,
+<code>dataset=titanic</code>
 </li>
 <li>The Vertex AI Python SDK supports labels on job creation;
 <code>gcloud</code> commands accept
@@ -6159,7 +6176,8 @@ reports. Apply them consistently:</p>
 <li>Go to <strong>Billing → Budgets &amp; alerts</strong> in the Cloud
 Console.</li>
 <li>Click <strong>Create budget</strong>.</li>
-<li>Set a budget amount (e.g., $10 or $25 for a workshop).</li>
+<li>Set a budget amount (e.g., <code>$10</code> or <code>$25</code> for
+a workshop).</li>
 <li>Set alert thresholds at <strong>50%</strong>, <strong>80%</strong>,
 and <strong>100%</strong>.</li>
 <li>Add <strong>forecast‑based alerts</strong> to catch trends before
@@ -6250,8 +6268,8 @@ budget</h3>
 <li>Navigate to <strong>Billing → Reports</strong> in the Cloud Console.
 Find your project’s current‑month spend grouped by service.</li>
 <li>Navigate to <strong>Billing → Budgets &amp; alerts</strong>. Create
-a <strong>$10 budget</strong> with alert thresholds at 50% and
-100%.</li>
+a <strong><code>$10</code> budget</strong> with alert thresholds at 50%
+and 100%.</li>
 </ol>
 </div>
 </div>
@@ -6261,7 +6279,7 @@ a <strong>$10 budget</strong> with alert thresholds at 50% and
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li><p>In the Cloud Console, click the <strong>Navigation menu
@@ -6280,7 +6298,8 @@ alerts</strong> → <strong>Create budget</strong>. Set:</p>
 <strong>Amount</strong>: <code>$10</code>
 </li>
 <li>
-<strong>Thresholds</strong>: 50% ($5) and 100% ($10)</li>
+<strong>Thresholds</strong>: 50% (<code>$5</code>) and 100%
+(<code>$10</code>)</li>
 <li>
 <strong>Alerts to</strong>: your email address</li>
 </ul>
@@ -6315,7 +6334,7 @@ are not actively using.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6351,7 +6370,7 @@ don’t need, and delete the endpoint.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6397,7 +6416,7 @@ objects. Apply it to your bucket.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
 <div class="accordion-body">
 <p>Save the following as <code>lifecycle.json</code>:</p>
 <div class="codewrapper sourceCode" id="cb14">
@@ -6453,7 +6472,7 @@ delete the bucket entirely.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution5" aria-expanded="false" aria-controls="collapseSolution5">
   <h4 class="accordion-header" id="headingSolution5"> Show me the solution </h4>
 </button>
-<div id="collapseSolution5" class="accordion-collapse collapse" aria-labelledby="headingSolution5" data-bs-parent="#accordionSolution5">
+<div id="collapseSolution5" class="accordion-collapse collapse" data-bs-parent="#accordionSolution5" aria-labelledby="headingSolution5">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>

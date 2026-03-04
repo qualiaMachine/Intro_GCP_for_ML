@@ -417,10 +417,11 @@ status using the Google Cloud Console.</li>
 <h3 class="callout-title">Cost awareness: training jobs</h3>
 <div class="callout-content">
 <p>Training jobs bill per VM-hour while the job is running. An
-<code>n1-standard-4</code> (CPU) costs ~$0.19/hr; adding a T4 GPU brings
-the total to ~$0.54/hr. Jobs automatically stop (and stop billing) when
-the script finishes. For a complete cost reference, see the <a href="compute-for-ML.html">Compute for ML</a> page and the cost table in
-<a href="09-Resource-management-cleanup.html">Episode 9</a>.</p>
+<code>n1-standard-4</code> (CPU) costs ~<code>$0.19</code>/hr; adding a
+T4 GPU brings the total to ~<code>$0.54</code>/hr. Jobs automatically
+stop (and stop billing) when the script finishes. For a complete cost
+reference, see the <a href="compute-for-ML.html">Compute for ML</a> page
+and the cost table in <a href="09-Resource-management-cleanup.html">Episode 9</a>.</p>
 </div>
 </div>
 </div>
@@ -458,7 +459,7 @@ region close to your data).</li>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>client <span class="op">=</span> storage.Client()</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>PROJECT_ID <span class="op">=</span> client.project</span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>REGION <span class="op">=</span> <span class="st">"us-central1"</span></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"johndoe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>BUCKET_NAME <span class="op">=</span> <span class="st">"doe-titanic"</span> <span class="co"># ADJUST to your bucket's name</span></span>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">"DOE"</span> <span class="co"># ADJUST to your last name or name</span></span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"project = </span><span class="sc">{</span>PROJECT_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">region = </span><span class="sc">{</span>REGION<span class="sc">}</span><span class="ch">\n</span><span class="ss">bucket = </span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
 </div>
@@ -830,14 +831,14 @@ AI using the configuration defined earlier. <strong>We won’t be charged
 for our selected <code>MACHINE</code> until we run the below code using
 <code>job.run()</code>.</strong> For an <code>n1-standard-4</code>
 running 2–5 minutes, expect a cost of roughly
-<strong>$0.01–$0.02</strong> — negligible, but good to be aware of as
-you scale to larger machines. This marks the point when our script
-actually begins executing remotely on the Vertex training
-infrastructure. Once <code>job.run()</code> is called, Vertex handles
-packaging your training script, transferring it to the managed training
-environment, provisioning the requested compute instance, and monitoring
-the run. The job’s status and logs can be viewed directly in the Vertex
-AI Console under Training → Custom jobs.</p>
+<strong><code>$0.01</code>–<code>$0.02</code></strong> — negligible, but
+good to be aware of as you scale to larger machines. This marks the
+point when our script actually begins executing remotely on the Vertex
+training infrastructure. Once <code>job.run()</code> is called, Vertex
+handles packaging your training script, transferring it to the managed
+training environment, provisioning the requested compute instance, and
+monitoring the run. The job’s status and logs can be viewed directly in
+the Vertex AI Console under Training → Custom jobs.</p>
 <p>If you need to cancel or modify a job mid-run, you can do so from the
 console or via the SDK by calling job.cancel(). When the job completes,
 Vertex automatically tears down the compute resources so you only pay
