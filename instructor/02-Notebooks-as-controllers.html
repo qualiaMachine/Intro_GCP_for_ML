@@ -510,7 +510,8 @@ auto-configure the instance at boot.</p>
 <h4 id="advanced-settings-machine-type">Advanced settings: Machine Type<a class="anchor" aria-label="anchor" href="#advanced-settings-machine-type"></a></h4>
 <ul><li>
 <strong>Machine type</strong>: Select a small machine (e.g.,
-<code>n2-standard-2</code>, ~$0.07/hr) to act as the controller.
+<code>n2-standard-2</code>, ~ <code>$0.07</code>/hr) to act as the
+controller.
 <ul><li>This keeps costs low while you delegate heavy lifting to training
 jobs.</li>
 <li>For guidance on common machine types and their costs, see <a href="compute-for-ML.html">Compute for ML</a>. For help deciding when
@@ -533,8 +534,8 @@ Disks. Keep “Delete to trash” unchecked so deleted files free space
 immediately.</p>
 <p><strong>Rule of thumb:</strong> allocate ≈ 2× your dataset size for
 the data disk, and keep bulk data in Cloud Storage (<code>gs://</code>)
-rather than on local disk — PDs cost ~$0.10/GB/month vs. ~$0.02/GB/month
-for Cloud Storage.</p>
+rather than on local disk — PDs cost ~ <code>$0.10</code>/GB/month vs. ~
+<code>$0.02</code>/GB/month for Cloud Storage.</p>
 <div id="disk-sizing-and-cost-details" class="callout">
 <div class="callout-square">
 <i class="callout-icon" data-feather="bell"></i>
@@ -552,8 +553,9 @@ frameworks.</li>
 Disks can be resized anytime without downtime, so start small and expand
 when needed.</li>
 <li>
-<strong>Cost comparison:</strong> A 200 GB dataset costs ~$24/month
-on a PD but only ~$5/month in Cloud Storage.</li>
+<strong>Cost comparison:</strong> A 200 GB dataset costs ~
+<code>$24</code>/month on a PD but only ~ <code>$5</code>/month in Cloud
+Storage.</li>
 <li>
 <strong>Pricing:</strong> <a href="https://cloud.google.com/compute/disks-image-pricing" class="external-link">Persistent
 Disk pricing</a> · <a href="https://cloud.google.com/storage/pricing" class="external-link">Cloud Storage
@@ -620,8 +622,8 @@ Vertex AI SDK.</li>
 <h3 class="callout-title">Challenge 2: Controller Cost Estimate</h3>
 <div class="callout-content">
 <p>Your controller notebook uses an <code>n2-standard-2</code> instance
-(~$0.07/hr — see <a href="compute-for-ML.html">Compute for ML</a> for
-other common machine types and costs).</p>
+(~ <code>$0.07</code>/hr — see <a href="compute-for-ML.html">Compute for
+ML</a> for other common machine types and costs).</p>
 <ul><li>Estimate the monthly cost if you use it 8 hours/day, 5 days/week,
 with idle shutdown enabled.</li>
 <li>Compare that to leaving it running 24/7 for the same month.</li>
@@ -637,14 +639,16 @@ with idle shutdown enabled.</li>
 <div class="accordion-body">
 <ul><li>
 <strong>With idle shutdown:</strong> 8 hrs × 5 days × 4 weeks = 160
-hrs → 160 × $0.07 ≈ <strong>$11.20/month</strong>
+hrs → 160 × <code>$0.07</code> ≈
+<strong><code>$11.20</code>/month</strong>
 </li>
 <li>
 <strong>Running 24/7:</strong> 24 hrs × 30 days = 720 hrs → 720 ×
-$0.07 ≈ <strong>$50.40/month</strong>
+<code>$0.07</code> ≈ <strong><code>$50.40</code>/month</strong>
 </li>
-<li>Idle shutdown saves you ~$39/month on a single small controller
-instance. The savings are even larger for bigger machine types.</li>
+<li>Idle shutdown saves you ~ <code>$39</code>/month on a single small
+controller instance. The savings are even larger for bigger machine
+types.</li>
 </ul></div>
 </div>
 </div>

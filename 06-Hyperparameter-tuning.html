@@ -846,7 +846,7 @@ search:</p>
 <ol style="list-style-type: decimal"><li>Set <code>max_trial_count=6</code> and
 <code>parallel_trial_count=2</code>.</li>
 <li>Before running, estimate the approximate cost: if each trial takes
-~5 minutes on an <code>n1-standard-4</code> (~<code>$0.19</code>/hr),
+~5 minutes on an <code>n1-standard-4</code> (~ <code>$0.19</code>/hr),
 how much would 6 trials cost?</li>
 <li>Run the updated job and monitor it in the Vertex AI Console.</li>
 </ol></div>
@@ -872,7 +872,7 @@ how much would 6 trials cost?</li>
 <span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>)</span></code></pre>
 </div>
 <p><strong>Cost estimate:</strong> 6 trials x 5 min each = 30 minutes of
-compute. At ~<code>$0.19</code>/hr for <code>n1-standard-4</code>,
+compute. At ~ <code>$0.19</code>/hr for <code>n1-standard-4</code>,
 that’s roughly <code>$0.10</code> total. With
 <code>parallel_trial_count=2</code>, wall-clock time would be
 approximately 15 minutes (3 batches of 2 trials). The adaptive search
@@ -967,8 +967,8 @@ projects grow.</li>
 <li>
 <strong>Online deployment:</strong> If you need real-time
 predictions via an API, Vertex AI <a href="https://cloud.google.com/vertex-ai/docs/predictions/get-online-predictions" class="external-link">Endpoints</a>
-let you deploy your model — but endpoints bill continuously
-(~<code>$4.50</code>/day for an <code>n1-standard-4</code>), so only
+let you deploy your model — but endpoints bill continuously (~
+<code>$4.50</code>/day for an <code>n1-standard-4</code>), so only
 deploy when you genuinely need a live API.</li>
 </ul><div id="keypoints1" class="callout keypoints">
 <div class="callout-square">

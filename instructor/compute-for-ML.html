@@ -469,49 +469,54 @@ the <code>us-central1</code> region.</p>
 </tr></thead><tbody><tr class="odd"><td><code>E2</code></td>
 <td>General purpose</td>
 <td><code>e2-standard-8</code></td>
-<td>~$0.25</td>
+<td>~ <code>$0.25</code>
+</td>
 <td>Small jobs or lightweight scripts</td>
 <td>Cheapest option; slower CPUs</td>
 </tr><tr class="even"><td><code>N1</code></td>
 <td>Balanced compute (older gen)</td>
 <td><code>n1-standard-8</code></td>
-<td>~$0.35</td>
+<td>~ <code>$0.35</code>
+</td>
 <td>Small to mid-sized ML (&lt;100M params)</td>
 <td>Broad GPU compatibility</td>
 </tr><tr class="odd"><td><code>N2</code></td>
 <td>Balanced compute (newer gen)</td>
 <td><code>n2-standard-8</code></td>
-<td>~$0.38</td>
+<td>~ <code>$0.38</code>
+</td>
 <td>Mid-sized ML and RAG pipelines (100M–500M params)</td>
 <td>Common choice for notebooks</td>
 </tr><tr class="even"><td><code>C2</code></td>
 <td>Compute optimized</td>
 <td><code>c2-standard-8</code></td>
-<td>~$0.45</td>
+<td>~ <code>$0.45</code>
+</td>
 <td>CPU-heavy preprocessing or feature extraction</td>
 <td>High single-thread performance</td>
 </tr><tr class="odd"><td><code>C3</code></td>
 <td>Next-gen compute optimized</td>
 <td><code>c3-standard-8</code></td>
-<td>~$0.50</td>
+<td>~ <code>$0.50</code>
+</td>
 <td>High-performance CPU-only workloads</td>
 <td>Faster I/O and networking</td>
 </tr><tr class="even"><td><code>A2</code></td>
 <td>GPU (A100)</td>
 <td><code>a2-highgpu-1g</code></td>
-<td>~$2.93 (with 1×A100)</td>
+<td>~ <code>$2.93</code> (with 1×A100)</td>
 <td>Large DL models (0.5B–10B params)</td>
 <td>Fixed GPU counts, quota required</td>
 </tr><tr class="odd"><td><code>A3</code></td>
 <td>GPU (H100)</td>
 <td><code>a3-highgpu-8g</code></td>
-<td>~$32.00 (with 8×H100)</td>
+<td>~ <code>$32.00</code> (with 8×H100)</td>
 <td>Transformer-scale models (10B–70B params)</td>
 <td>High throughput, limited quota</td>
 </tr><tr class="even"><td><code>A4</code></td>
 <td>GPU (B200)</td>
 <td><code>a4-highgpu-4g</code></td>
-<td>~$36.00 (with 4×B200)</td>
+<td>~ <code>$36.00</code> (with 4×B200)</td>
 <td>Foundation models (70B+ params)</td>
 <td>Highest-end, limited availability</td>
 </tr><tr class="odd"><td>
@@ -519,7 +524,8 @@ the <code>us-central1</code> region.</p>
 </td>
 <td>Arm or AMD CPUs</td>
 <td><code>t2a-standard-8</code></td>
-<td>~$0.20</td>
+<td>~ <code>$0.20</code>
+</td>
 <td>Low-cost inference or lightweight workloads</td>
 <td>No GPU support</td>
 </tr></tbody></table><p><strong>Cost notes:</strong><br>
@@ -572,42 +578,48 @@ cost-effective.</p>
 <th>Typical Use</th>
 </tr></thead><tbody><tr class="odd"><td><code>NVIDIA_TESLA_T4</code></td>
 <td>CUDA 11.x–12.x</td>
-<td>~$0.35</td>
+<td>~ <code>$0.35</code>
+</td>
 <td>≤100 M params</td>
 <td>≤10 GB</td>
 <td>≥16 GB</td>
 <td>Entry GPU for CNNs, small transformers</td>
 </tr><tr class="even"><td><code>NVIDIA_L4</code></td>
 <td>CUDA 12.x</td>
-<td>~$0.60</td>
+<td>~ <code>$0.60</code>
+</td>
 <td>≤500 M–1 B params</td>
 <td>≤50 GB</td>
 <td>≥32 GB</td>
 <td>Moderate training, RAG inference, fine-tuning</td>
 </tr><tr class="odd"><td><code>NVIDIA_TESLA_V100</code></td>
 <td>CUDA 11.x</td>
-<td>~$2.48</td>
+<td>~ <code>$2.48</code>
+</td>
 <td>0.5 B–2 B params</td>
 <td>≤100 GB</td>
 <td>≥64 GB</td>
 <td>High-performance deep learning</td>
 </tr><tr class="even"><td><code>NVIDIA_A100_40GB</code></td>
 <td>CUDA 11.x–12.x</td>
-<td>~$2.93</td>
+<td>~ <code>$2.93</code>
+</td>
 <td>2 B–10 B params</td>
 <td>≤200 GB</td>
 <td>≥128 GB</td>
 <td>Research-scale model training</td>
 </tr><tr class="odd"><td><code>NVIDIA_H100</code></td>
 <td>CUDA 12.x</td>
-<td>~$4.00</td>
+<td>~ <code>$4.00</code>
+</td>
 <td>10 B–70 B params</td>
 <td>≤500 GB</td>
 <td>≥256 GB</td>
 <td>Transformer and LLM training/inference</td>
 </tr><tr class="even"><td><code>NVIDIA_B200</code></td>
 <td>CUDA 12.x</td>
-<td>~$5.00+</td>
+<td>~ <code>$5.00+</code>
+</td>
 <td>&gt;70 B params</td>
 <td>≥1 TB</td>
 <td>≥512 GB</td>
@@ -635,9 +647,10 @@ parameters):</strong> Large models (1B–70B parameters) often require
 multiple A100, H100, or B200 GPUs in parallel. Recommended:
 <code>a2-highgpu-2g</code> (2×A100) or larger depending on model size
 and parallelism. Cost note: Fine-tuning billion-parameter models can
-easily exceed $200–$500 per hour of GPU time. Even short fine-tunes may
-consume hundreds of dollars in credits. Plan carefully, monitor
-utilization, and test your pipeline with smaller models first.</li>
+easily exceed <code>$200</code>–<code>$500</code> per hour of GPU time.
+Even short fine-tunes may consume hundreds of dollars in credits. Plan
+carefully, monitor utilization, and test your pipeline with smaller
+models first.</li>
 </ul></div>
 <div class="section level3">
 <h3 id="example-configurations">Example Configurations<a class="anchor" aria-label="anchor" href="#example-configurations"></a></h3>
@@ -661,7 +674,8 @@ utilization, and test your pipeline with smaller models first.</li>
 <td>4</td>
 <td>16</td>
 <td>None</td>
-<td>~$0.17</td>
+<td>~ <code>$0.17</code>
+</td>
 <td>Preprocessing, regression, small models</td>
 </tr><tr class="odd"><td>&lt; 1 GB</td>
 <td>
@@ -670,14 +684,16 @@ utilization, and test your pipeline with smaller models first.</li>
 <td>8</td>
 <td>30</td>
 <td>1× T4</td>
-<td>~$0.55</td>
+<td>~ <code>$0.55</code>
+</td>
 <td>Entry GPU runs, small CNNs</td>
 </tr><tr class="even"><td>10 GB</td>
 <td><code>c2-standard-8</code></td>
 <td>8</td>
 <td>32</td>
 <td>None</td>
-<td>~$0.34</td>
+<td>~ <code>$0.34</code>
+</td>
 <td>CPU-heavy ML tasks</td>
 </tr><tr class="odd"><td>10 GB</td>
 <td>
@@ -686,7 +702,8 @@ utilization, and test your pipeline with smaller models first.</li>
 <td>8</td>
 <td>32</td>
 <td>1× L4</td>
-<td>~$0.75</td>
+<td>~ <code>$0.75</code>
+</td>
 <td>Moderate deep learning workloads</td>
 </tr><tr class="even"><td>50 GB</td>
 <td>
@@ -694,7 +711,8 @@ utilization, and test your pipeline with smaller models first.</li>
 <td>24</td>
 <td>170</td>
 <td>2× A100</td>
-<td>~$5.90</td>
+<td>~ <code>$5.90</code>
+</td>
 <td>Multi-GPU training, large-model inference</td>
 </tr><tr class="odd"><td>100 GB</td>
 <td>
@@ -702,7 +720,8 @@ utilization, and test your pipeline with smaller models first.</li>
 <td>128</td>
 <td>512</td>
 <td>8× H100</td>
-<td>~$32.00</td>
+<td>~ <code>$32.00</code>
+</td>
 <td>Transformer or LLM fine-tuning</td>
 </tr><tr class="even"><td>1 TB+</td>
 <td>
@@ -710,7 +729,8 @@ utilization, and test your pipeline with smaller models first.</li>
 <td>96</td>
 <td>768</td>
 <td>4× B200</td>
-<td>~$36.00</td>
+<td>~ <code>$36.00</code>
+</td>
 <td>Foundation-model scale training</td>
 </tr></tbody></table></div>
 <div class="section level3">
