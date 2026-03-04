@@ -166,15 +166,15 @@ This pattern keeps costs low by running your notebook on a modest VM while only 
 
 #### You don't need a notebook to use Vertex AI
 
-We use **Vertex AI Workbench** notebooks rather than a plain local JupyterLab because Workbench comes pre-configured with ML frameworks, GPU drivers, and — most importantly — automatic GCP authentication through the VM's service account. You could run a self-managed Jupyter server on a Compute Engine VM, but you'd have to install libraries and configure credentials yourself. Working through Workbench also gets you comfortable with the GCP Console — navigating services, checking instance status, reading logs — skills that transfer to every other GCP workflow.
+We start with **Vertex AI Workbench** notebooks because they give you authenticated access to buckets, training jobs, and other GCP services out of the box — no credential setup required. The Console UI also lets you see and manage running jobs directly, which matters when you're learning: accidentally submitting a duplicate training job is easy to spot and cancel in the Console, harder to notice from a terminal.
 
-That said, **notebooks are not required** for any of the workflows covered here. Everything we do through the Python SDK (submitting training jobs, running hyperparameter tuning, calling the Gemini API) can also be done from:
+[Episode 8](08-CLI-workflows.md) introduces the **`gcloud` CLI** once these concepts are familiar. **Notebooks are not required** for any of the workflows covered here — everything we do through the Python SDK can also be done from:
 
 - A **plain Python script** run from your terminal or an HPC scheduler.
-- The **`gcloud` CLI** (e.g., `gcloud ai custom-jobs create ...`) for submitting and managing jobs directly from the command line.
-- A **CI/CD pipeline** (GitHub Actions, Cloud Build, etc.) that triggers training runs automatically.
+- The **`gcloud` CLI** (e.g., `gcloud ai custom-jobs create ...`).
+- A **CI/CD pipeline** (GitHub Actions, Cloud Build, etc.).
 
-The real work happens in the training scripts and SDK calls — the notebook is just a convenient wrapper for orchestrating them.
+The real work happens in the training scripts and SDK calls — the notebook is just a convenient starting point.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
