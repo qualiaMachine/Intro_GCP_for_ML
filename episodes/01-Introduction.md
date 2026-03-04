@@ -112,11 +112,11 @@ This keeps costs low (the notebook VM stays small) and keeps your work reproduci
 
 Here's how the pieces connect:
 
-![Notebook as a controller](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram1_training_and_tuning.jpg){alt="Notebook as a controller diagram"}
+![Notebook as a controller](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram1_training_and_tuning.svg){alt="Notebook as a controller diagram"}
 
 The same notebook can also orchestrate **Retrieval-Augmented Generation (RAG)** pipelines — chunking documents, building embeddings via the Gemini API, and generating grounded answers, all with data stored in GCS:
 
-![RAG pipeline with Gemini API](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram2_rag_gemini.jpg){alt="Architecture diagram showing the RAG pipeline: a Workbench notebook orchestrates document chunking, embedding via the Gemini API, and retrieval-augmented generation, with documents and embeddings stored in a GCS bucket."}
+![RAG pipeline with Gemini API](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram2_rag_gemini.svg){alt="Architecture diagram showing the RAG pipeline: a Workbench notebook orchestrates document chunking, embedding via the Gemini API, and retrieval-augmented generation, with documents and embeddings stored in a GCS bucket."}
 
 ::::::::::::::::::::::::::::::::::::: callout
 
