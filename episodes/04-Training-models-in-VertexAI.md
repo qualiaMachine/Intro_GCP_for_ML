@@ -334,12 +334,16 @@ This launches a managed training job with Vertex AI. It should take 2-5 minutes 
 After your job finishes, you may see a message like: `Training did not produce a Managed Model returning None.` This is expected when running a `CustomTrainingJob` without specifying deployment parameters.  Vertex AI supports two modes:
 
 - **CustomTrainingJob (research/development)** – You control training and save models/logs to Cloud Storage via `AIP_MODEL_DIR`. This is ideal for experimentation and cost control.
-- **TrainingPipeline (for deployment)** – You include `model_serving_container_image_uri` and `model_display_name`, and Vertex automatically registers a *Managed Model* in the Model Registry for deployment to an endpoint.
+- **CustomTrainingJob with model registration (for deployment)** – You include `model_serving_container_image_uri` and `model_display_name`, and Vertex automatically registers a *Managed Model* in the Model Registry for deployment to an endpoint.
 
-In our setup, we're intentionally using the simpler **CustomTrainingJob** path. Your trained model is safely stored under your specified artifact directory (e.g., `gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/`), and you can later register or deploy it manually when ready.
+In our setup, we're intentionally using the simpler **CustomTrainingJob** path without model registration. Your trained model is safely stored under your specified artifact directory (e.g., `gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/`), and you can later register or deploy it manually when ready.
 
 
 ## Monitoring training jobs in the Console
+
+> **Why do I see both a Training Pipeline and a Custom Job?**
+> Under the hood, `CustomTrainingJob.run()` creates a **TrainingPipeline** resource, which in turn launches a **CustomJob** to do the actual compute work. This is normal — the pipeline is a thin wrapper that manages job lifecycle and (optionally) model registration. You can monitor progress from either view, but **Custom Jobs** shows the most useful details (logs, machine type, status).
+
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/vertex-ai/training/custom-jobs).
 2. Navigate to **Vertex AI > Training > Custom Jobs**.
 3. Click on your job name to see status, logs, and output model artifacts.

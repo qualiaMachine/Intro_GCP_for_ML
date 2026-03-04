@@ -283,12 +283,14 @@ job.run(
 print("Artifacts folder:", ARTIFACT_DIR)
 ```
 #### Monitoring training jobs in the Console
+
+> **Why do I see both a Training Pipeline and a Custom Job?**
+> Under the hood, `CustomTrainingJob.run()` creates a **TrainingPipeline** resource, which in turn launches a **CustomJob** to do the actual compute work. This is normal — the pipeline is a thin wrapper that manages job lifecycle. You can monitor progress from either view, but **Custom Jobs** shows the most useful details (logs, machine type, status).
+
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/vertex-ai/training/custom-jobs).
 2. Navigate to **Vertex AI > Training > Custom Jobs**.
 3. Click on your job name to see status, logs, and output model artifacts.
 4. Cancel jobs from the console if needed (be careful not to stop jobs you don't own in shared projects).
-
-**Quick link** (replace `YOUR_PROJECT_ID`): `https://console.cloud.google.com/vertex-ai/training/training-pipelines?project=YOUR_PROJECT_ID`
 
 After the job completes, your training script writes several output files to the GCS artifact directory. Here's what you'll find in `gs://…/artifacts/pytorch/<RUN_ID>/`:
 
