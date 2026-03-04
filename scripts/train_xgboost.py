@@ -59,8 +59,11 @@ def read_csv_any(path: str) -> pd.DataFrame:
 
 def save_model_any(model, dest_path: str):
     """Save a model to a local file OR a GCS URI — caller doesn't need to know which.
-    joblib.dump requires a local file, so for GCS we write to a temp file first,
-    then upload."""
+
+    Why the temp file?  joblib.dump serializes to a filesystem path — it can't
+    stream directly to a GCS blob.  So when dest_path is gs://…, we dump to a
+    temporary local file first, then upload the bytes to Cloud Storage.  The
+    tempfile is automatically cleaned up when the 'with' block exits."""
     if _is_gcs(dest_path):
         client = _gcs_client()
         bucket, _, key = dest_path[5:].partition("/")

@@ -411,7 +411,7 @@ for blob in client.list_blobs(bucket_name):
     print(blob.name)
 ```
 
-For larger clean-up tasks, use the Cloud Console:
+For larger clean-up tasks, use the [Cloud Console](https://console.cloud.google.com/storage/browser):
 
 - **Delete files only** – In your bucket, select the files you want to remove and click **Delete**.
 - **Delete the bucket entirely** – In **Cloud Storage > Buckets**, select your bucket and click **Delete**.
