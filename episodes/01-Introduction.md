@@ -35,6 +35,7 @@ Most universities offer shared HPC clusters with GPUs. These are excellent resou
 | **Hardware variety** | Fixed hardware refresh cycle (3–5 years) | Latest GPUs available immediately (A100, H100, L4) |
 | **Scaling** | Limited by cluster size | Spin up hundreds of jobs in parallel |
 | **Multi-GPU / NVLink** | Sometimes available, depends on cluster | Available on demand (e.g., A2/A3 instances with NVLink-connected multi-GPU nodes) |
+| **Job orchestration** | Writing scheduler scripts, packaging environments, and wiring up parallel job arrays can take days of refactoring | A few SDK calls: define a job, set hardware, call `.run()` — parallelism (e.g., tuning trials) is built in |
 | **Software environment** | Module system; may need IT support for new packages | Full root access in containers; install anything |
 | **Data governance** | On-campus, known compliance posture | Requires configuring IAM, encryption, region controls |
 
@@ -47,7 +48,7 @@ Many researchers use both — develop and test on HPC, then scale to cloud for l
 Cloud platforms give you access to compute that's hard to replicate locally:
 
 - **Multi-GPU nodes.** GCP's A2 and A3 machine families provide 1–16 GPUs per node connected via **NVLink** (high-bandwidth GPU-to-GPU interconnects). This matters for distributed training, where GPUs need to exchange gradients quickly — NVLink provides 600+ GB/s bandwidth compared to ~32 GB/s over PCIe.
-- **Elastic scaling.** Need to run 100 hyperparameter tuning trials? Cloud can provision hundreds of VMs simultaneously. On a shared cluster, that might mean days or weeks of queue time.
+- **Elastic scaling with minimal code.** Need to run 100 hyperparameter tuning trials? On Vertex AI you define the search space, set `max_trial_count`, and the platform handles provisioning, parallelism, and teardown. On a university HPC cluster the same task often means writing Slurm/Condor job arrays, packaging environments into containers or tarballs, and wiring up result collection — work that can take days or weeks of refactoring before you run a single trial.
 - **Power and cooling are someone else's problem.** A single A100 GPU draws ~400W under load. A rack of 8 draws ~3.2kW just for the GPUs. Cloud providers handle the power infrastructure, cooling, and hardware failures.
 
 We won't use multi-GPU training in this workshop — our datasets are small and the models we train fit comfortably on a single GPU — but understanding what's available helps you plan for larger projects.
