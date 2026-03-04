@@ -1,32 +1,8 @@
 ---
-title: "Using a GitHub Personal Access Token (PAT) to Push/Pull from a Vertex AI Notebook"
-teaching: 15
-exercises: 5
+title: "Using a GitHub Personal Access Token (PAT) in Vertex AI"
 ---
 
-:::::::::::::::::::::::::::::::::::::: questions 
-
-- How can I securely push/pull code to and from GitHub within a Vertex AI Workbench notebook?  
-- What steps are necessary to set up a GitHub PAT for authentication in GCP?  
-- How can I convert notebooks to `.py` files and ignore `.ipynb` files in version control?  
-
-::::::::::::::::::::::::::::::::::::::::::::::::
-
-::::::::::::::::::::::::::::::::::::: objectives
-
-- Configure Git in a Vertex AI Workbench notebook to use a GitHub Personal Access Token (PAT) for HTTPS-based authentication.  
-- Securely handle credentials in a notebook environment using `getpass`.  
-- Convert `.ipynb` files to `.py` files for better version control practices in collaborative projects.  
-
-::::::::::::::::::::::::::::::::::::::::::::::::
-
-:::::::::::::::::::::::::::::::::::::::: callout
-
-### This episode is optional in live workshops
-
-If you're short on time, this episode can be skipped during a live session. It is most useful for learners who are newer to Git or haven't used a Personal Access Token before. In a live workshop, the instructor may choose to skip ahead to the next episode and point learners here as a self-guided reference.
-
-::::::::::::::::::::::::::::::::::::::::::::::::::
+This is a **self-guided reference** for pushing/pulling code to and from GitHub within a Vertex AI Workbench notebook. It is most useful for learners who are newer to Git or haven't used a Personal Access Token before.
 
 ## Step 0: Initial setup
 In the previous episode, we cloned our forked repository as part of the [workshop setup](../setup.html). In this episode, we'll see how to push our code to this fork. Complete these three setup steps before moving forward.

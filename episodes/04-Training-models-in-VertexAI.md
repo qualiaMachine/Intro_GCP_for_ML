@@ -22,7 +22,15 @@ exercises: 15
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-## Initial setup 
+::::::::::::::::::::::::::::::::::::: callout
+
+### Cost awareness: training jobs
+
+Training jobs bill per VM-hour while the job is running. An `n1-standard-4` (CPU) costs ~$0.19/hr; adding a T4 GPU brings the total to ~$0.54/hr. Jobs automatically stop (and stop billing) when the script finishes. For a complete cost reference, see the [Instances for ML](../instances-for-ML.html) page and the cost table in [Episode 9](09-Resource-management-cleanup.md).
+
+::::::::::::::::::::::::::::::::::::::::::::::::
+
+## Initial setup
 
 #### 1. Open pre-filled notebook
 Navigate to `/Intro_GCP_for_ML/notebooks/06-Training-models-in-VertexAI.ipynb` to begin this notebook.
@@ -237,7 +245,7 @@ MACHINE = 'n1-standard-4'
 
 ### Creating a custom training job with the SDK
 
-> **Reminder:** We're using the Python SDK from a notebook here, but the same `aiplatform.CustomTrainingJob` calls work identically in a standalone `.py` script, a shell session, or a CI pipeline. You can also submit jobs entirely from the command line with `gcloud ai custom-jobs create`. See the callout in episode 03 for more details.
+> **Reminder:** We're using the Python SDK from a notebook here, but the same `aiplatform.CustomTrainingJob` calls work identically in a standalone `.py` script, a shell session, or a CI pipeline. You can also submit jobs entirely from the command line with `gcloud ai custom-jobs create`. See the callout in Episode 2 for more details.
 
 We'll first initialize the Vertex AI platform with our environment variables. We'll also set a `RUN_ID` and `ARTIFACT_DIR` to help store outputs.
 

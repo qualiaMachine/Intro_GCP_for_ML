@@ -29,7 +29,7 @@ The notebook instance functions as a *controller* to manage more resource-intens
 
 This approach minimizes costs while giving you access to scalable infrastructure for demanding tasks like model training, batch prediction, and hyperparameter tuning.
 
-One practical advantage of Workbench notebooks: **authentication is automatic.** A Workbench VM inherits the permissions of its attached service account, so calls to Cloud Storage, Vertex AI, and the Gemini API work with no extra credential setup. If you run the same code from your laptop or an HPC cluster, you'll need to configure [Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials) separately.
+One practical advantage of Workbench notebooks: **authentication is automatic.** A Workbench VM inherits the permissions of its attached service account, so calls to Cloud Storage, Vertex AI, and the Gemini API work with no extra credential setup — no API keys or login commands needed. If you later run the same code from your laptop or an HPC cluster, you'll need to set up credentials separately (see the [GCP authentication docs](https://cloud.google.com/docs/authentication)). (Prefer working from a terminal? [Episode 8: CLI Workflows](08-CLI-workflows.md) covers how to do everything in this workshop using `gcloud` commands instead of notebooks.)
 
 We will follow these steps to create our first Workbench Instance:
 
@@ -71,9 +71,9 @@ Leave environment settings at their defaults for this workshop. Workbench uses J
 
 #### Advanced settings: Machine Type 
 
-- **Machine type**: Select a small machine (e.g., `n2-standard-2`) to act as the controller.  
-  - This keeps costs low while you delegate heavy lifting to training jobs.  
-  - For guidance on common machine types for ML, refer to [Instances for ML on GCP](../instances-for-ML.html).
+- **Machine type**: Select a small machine (e.g., `n2-standard-2`, ~$0.07/hr) to act as the controller.
+  - This keeps costs low while you delegate heavy lifting to training jobs.
+  - For guidance on common machine types and their costs, see [Instances for ML on GCP](../instances-for-ML.html).
 
 - **Set idle shutdown**: To save on costs when you aren't doing anything in your notebook, lower the default idle shutdown time to **60 (minutes)**.
 
@@ -192,16 +192,12 @@ Run the following command to clone the lesson repository. This contains pre-fill
 
 Then, navigate to `/Intro_GCP_for_ML/notebooks/04-Accessing-and-managing-data.ipynb` to begin the next episode.
 
-::::::::::::::::::::::::::::::::::::: keypoints 
+::::::::::::::::::::::::::::::::::::: keypoints
 
-- Use a small Workbench Instance notebook as a controller to manage larger, resource-intensive tasks.
-- Workbench VMs automatically inherit service account permissions, simplifying authentication for Cloud Storage, Vertex AI, and Gemini API calls.
-- Always navigate to the "Instances" tab in Workbench, since older notebook types are deprecated.
+- Use a small Workbench Instance as a controller — delegate heavy training to Vertex AI jobs.
+- Workbench VMs inherit service account permissions automatically, simplifying authentication.
 - Choose the same region for your Workbench Instance and storage bucket to avoid extra transfer costs.
-- Submit training and tuning jobs to scalable instances using the Vertex AI SDK.
-- Labels help track costs effectively, especially in shared or multi-project environments.
-- Workbench Instances come with JupyterLab 3 and GPU frameworks preinstalled, making them an easy entry point for ML workflows.
-- Enable idle auto-stop and manually stop instances when not in use to avoid unexpected charges.
+- Apply labels to all resources for cost tracking, and enable idle auto-stop to avoid surprise charges.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 

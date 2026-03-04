@@ -20,6 +20,15 @@ exercises: 10
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
+## Background concepts
+
+This episode shifts from classical ML training (Episodes 4–6) to working with large language models (LLMs). If any of the following terms are new to you, here's a quick primer:
+
+- **Embeddings:** A numerical vector (list of numbers) that represents the *meaning* of a piece of text. Texts with similar meanings have similar vectors. This lets us search "by meaning" rather than by keyword matching.
+- **Cosine similarity:** A measure of how similar two vectors are (1.0 = identical direction, 0.0 = unrelated). Used to find which stored text chunks are most relevant to a question.
+- **Large Language Model (LLM):** A model (like Gemini, GPT, or LLaMA) trained on massive text corpora that can generate coherent text given a prompt. In this episode, we use an LLM to *answer questions* based on retrieved text, not to train one from scratch.
+- **Foundation model APIs:** In this episode, we use the `google-genai` client library to access Google's managed embedding and generation models. This is separate from the `google-cloud-aiplatform` SDK used for training jobs in earlier episodes.
+
 ## Overview: What we're building
 
 **Retrieval-Augmented Generation (RAG)** is a pattern:
@@ -236,7 +245,7 @@ def ask(query, top_k=5, temperature=0.2):
     context_block = "\n\n".join(context_lines)
 
     prompt = (
-        "You are a sustainability analyst. "
+        "You are a research assistant. "
         "Use only the following context to answer the question. "
         "Cite your sources using the [doc#chunk] tags.\n\n"
         f"{context_block}\n\n"
@@ -382,7 +391,7 @@ When choosing, consider: output dimensions (higher = more expressive but more me
 
 ### Cleanup note
 
-The embeddings and nearest-neighbors index in this episode are held **in memory** — they disappear when your notebook kernel restarts or your VM stops. No persistent cloud resources (endpoints, buckets, or managed indexes) were created, so there's nothing extra to clean up beyond the VM itself. If you're done for the day, stop your Workbench instance to avoid ongoing charges (see [Episode 9](09-Resource-management-cleanup.md)).
+The embeddings and nearest-neighbors index in this episode are held **in memory** — they disappear when your notebook kernel restarts or your VM stops. No persistent cloud resources (endpoints, buckets, or managed indexes) were created, so there's nothing extra to clean up beyond the VM itself. If you're done for the day, stop your Workbench Instance to avoid ongoing charges (see [Episode 9](09-Resource-management-cleanup.md)).
 
 ## Key takeaways
 
