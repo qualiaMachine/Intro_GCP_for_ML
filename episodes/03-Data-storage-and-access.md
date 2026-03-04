@@ -125,6 +125,16 @@ Open [**Cloud Shell**](https://shell.cloud.google.com/?show=terminal) — a brow
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
+#### Set your project
+
+If Cloud Shell doesn't already know your project, set it first:
+
+```sh
+gcloud config set project YOUR_PROJECT_ID
+```
+
+Replace `YOUR_PROJECT_ID` with the project ID shown in the Console dashboard (top-left dropdown).
+
 #### Find your service account
 
 ```sh
