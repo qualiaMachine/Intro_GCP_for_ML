@@ -246,6 +246,8 @@ print(client.project)
 
 ### Reading data directly into memory
 
+The code below downloads a CSV from your bucket and loads it into a pandas DataFrame. The `blob.download_as_bytes()` call pulls the file contents as raw bytes, and `io.BytesIO` wraps those bytes in a file-like object that `pd.read_csv` can read — no temporary file on disk needed.
+
 ```python
 import pandas as pd
 import io
@@ -270,7 +272,13 @@ train_data.describe()
 
 ### Alternative: reading directly with pandas
 
-Vertex AI Workbench comes with `gcsfs` pre-installed, so you can also read directly with `pd.read_csv("gs://your-bucket-name/titanic_train.csv")`. This is convenient for quick exploration. We use the `storage.Client` approach above because it gives you more control (listing blobs, checking sizes, uploading), which you'll need in the sections that follow.
+Vertex AI Workbench comes with `gcsfs` pre-installed, which lets pandas read GCS URIs directly — no `BytesIO` conversion needed:
+
+```python
+train_data = pd.read_csv("gs://doe-titanic/titanic_train.csv")  # ADJUST bucket name
+```
+
+This is convenient for quick exploration. We use the `storage.Client` approach above because it gives you more control (listing blobs, checking sizes, uploading), which you'll need in the sections that follow.
 
 :::::::::::::::::::::::::::::::::::::
 
@@ -386,10 +394,27 @@ print("Summary uploaded to GCS.")
 
 ## Removing unused data (complete *after* the workshop)
 
-After you are done using your data, remove unused files/buckets to stop costs:
+After you are done using your data, remove unused files/buckets to stop costs.
 
-- **Option 1: Delete files only** – In your bucket, select the files you want to remove and click **Delete**.
-- **Option 2: Delete the bucket entirely** – In **Cloud Storage > Buckets**, select your bucket and click **Delete**.
+You can delete files programmatically. Let's clean up the notes file we uploaded earlier:
+
+```python
+blob = client.bucket(bucket_name).blob("docs/Notes.txt")
+blob.delete()
+print("docs/Notes.txt deleted.")
+```
+
+Verify it's gone:
+
+```python
+for blob in client.list_blobs(bucket_name):
+    print(blob.name)
+```
+
+For larger clean-up tasks, use the Cloud Console:
+
+- **Delete files only** – In your bucket, select the files you want to remove and click **Delete**.
+- **Delete the bucket entirely** – In **Cloud Storage > Buckets**, select your bucket and click **Delete**.
 
 For a detailed walkthrough of cleaning up all workshop resources, see [Episode 9: Resource Management and Cleanup](09-Resource-management-cleanup.md).
 
