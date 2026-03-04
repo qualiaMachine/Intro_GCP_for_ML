@@ -557,17 +557,24 @@ and training jobs run on Compute Engine under the hood.</td>
 Vertex AI API.</td>
 </tr></tbody></table><p>For a full list of terms, see the <a href="reference.html">Glossary</a>.</p>
 </section><section><h2 class="section-heading" id="the-notebook-as-controller-pattern">The notebook-as-controller pattern<a class="anchor" aria-label="anchor" href="#the-notebook-as-controller-pattern"></a></h2>
-<hr class="half-width"><p>The central idea of this workshop is simple. You work in a small,
-cheap Jupyter notebook in the cloud (a <strong>Vertex AI
-Workbench</strong> instance). That notebook is your control panel — you
-write code, explore data, and inspect results there. But when it’s time
-to train a model, you don’t train inside the notebook. Instead, you use
-the <strong>Vertex AI Python SDK</strong> to submit a training job to a
-separate, more powerful machine (with GPUs, more memory, etc.). When the
-job finishes, results land in <strong>Cloud Storage</strong> and you
-pull them back into your notebook.</p>
-<p>This keeps costs low (the notebook VM is small) and keeps your work
-reproducible (each job is a clean, logged run on dedicated
+<hr class="half-width"><p>The central idea of this workshop is simple. You work in a
+lightweight <strong>Vertex AI Workbench</strong> notebook — a small,
+cheap VM where you explore data, visualize results, and iterate. When
+it’s time to do heavy lifting, you use the <strong>Vertex AI Python
+SDK</strong> to launch jobs on separate, powerful machines:</p>
+<ul><li>
+<strong>Training jobs</strong> run your training script on
+auto-provisioned GPU hardware, then shut down when complete.</li>
+<li>
+<strong>Hyperparameter tuning jobs</strong> search a parameter space
+across parallel trials and return the best configuration and
+metrics.</li>
+</ul><p>Both job types write their outputs — model artifacts, checkpoints,
+logs, metrics, and trial results — to <strong>Google Cloud Storage
+(GCS)</strong>, which acts as shared persistent storage. You then pull
+results back into your notebook to inspect and iterate.</p>
+<p>This keeps costs low (the notebook VM stays small) and keeps your
+work reproducible (each job is a clean, logged run on dedicated
 hardware).</p>
 <p>Here’s how the pieces connect:</p>
 <figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram1_training_and_tuning.jpg" alt="Notebook as a controller diagram" class="figure mx-auto d-block"><div class="figcaption">Notebook as a controller</div>
