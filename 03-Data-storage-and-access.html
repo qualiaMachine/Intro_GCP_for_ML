@@ -578,8 +578,11 @@ click on a file and find its <strong>gs:// URI</strong> (e.g.,
 to access the data in your notebook.</p>
 </div>
 </section><section><h2 class="section-heading" id="adjust-bucket-permissions">Adjust bucket permissions<a class="anchor" aria-label="anchor" href="#adjust-bucket-permissions"></a></h2>
-<hr class="half-width"><p>We need to grant the Compute Engine default service account IAM roles
-so that our Workbench notebooks and training jobs can interact with the
+<hr class="half-width"><p>Your bucket exists, but your notebooks and training jobs don’t
+automatically have permission to use it. GCP follows the
+<strong>principle of least privilege</strong> — services only get the
+access you explicitly grant. In this section we’ll find the service
+account that Vertex AI uses and give it the right roles on your
 bucket.</p>
 <div id="these-commands-run-in-cloud-shell-not-in-a-notebook" class="callout">
 <div class="callout-square">
@@ -611,37 +614,49 @@ the project ID is <strong><code>doit-rci-mlm25-4626</code></strong>.</p>
 </div>
 <div class="section level4">
 <h4 id="find-your-service-account">Find your service account<a class="anchor" aria-label="anchor" href="#find-your-service-account"></a></h4>
+<p>When you create a GCP project, Google automatically provisions a
+<strong>Compute Engine default service account</strong>. This is the
+identity that Vertex AI Workbench notebooks and training jobs use when
+they call other GCP services (like Cloud Storage). By default this
+account may not have access to your bucket, so we need to grant it the
+right IAM roles explicitly.</p>
+<p>First, look up the service account email:</p>
 <div class="codewrapper sourceCode" id="cb2">
 <h3 class="code-label">SH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode sh" tabindex="0"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="ex">gcloud</span> iam service-accounts list <span class="at">--filter</span><span class="op">=</span><span class="st">"displayName:Compute Engine default service account"</span> <span class="at">--format</span><span class="op">=</span><span class="st">"value(email)"</span></span></code></pre>
 </div>
 <p>This will return an email like
-<code>123456789-compute@developer.gserviceaccount.com</code>. Use that
-value in the commands below.</p>
+<code>123456789-compute@developer.gserviceaccount.com</code>. Copy it —
+you’ll paste it into the commands below.</p>
 <!-- shared workshop service account: 549047673858-compute@developer.gserviceaccount.com -->
 </div>
 <div class="section level4">
 <h4 id="grant-permissions">Grant permissions<a class="anchor" aria-label="anchor" href="#grant-permissions"></a></h4>
+<p>Now we give that service account the ability to read from and write
+to your bucket. Without these roles, your notebooks would get “Access
+Denied” errors when trying to load training data or save model
+artifacts.</p>
 <p>Replace <code>YOUR_BUCKET_NAME</code> and
 <code>YOUR_SERVICE_ACCOUNT</code>, then run:</p>
 <div class="codewrapper sourceCode" id="cb3">
 <h3 class="code-label">SH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode sh" tabindex="0"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Grant read permissions on the bucket</span></span>
+<pre class="sourceCode sh" tabindex="0"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># objectViewer — lets notebooks READ data (e.g., load CSVs for training)</span></span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME <span class="dt">\</span></span>
 <span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:YOUR_SERVICE_ACCOUNT"</span> <span class="dt">\</span></span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectViewer"</span></span>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co"># Grant write permissions on the bucket</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co"># objectCreator — lets training jobs WRITE outputs (e.g., saved models, logs)</span></span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME <span class="dt">\</span></span>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:YOUR_SERVICE_ACCOUNT"</span> <span class="dt">\</span></span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectCreator"</span></span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co"># (Only if you also need overwrite/delete)</span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME <span class="dt">\</span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:YOUR_SERVICE_ACCOUNT"</span> <span class="dt">\</span></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectAdmin"</span></span></code></pre>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co"># objectAdmin — adds OVERWRITE and DELETE (only needed if you want to</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co"># re-run jobs that replace existing files or clean up old artifacts)</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="ex">gcloud</span> storage buckets add-iam-policy-binding gs://YOUR_BUCKET_NAME <span class="dt">\</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  <span class="at">--member</span><span class="op">=</span><span class="st">"serviceAccount:YOUR_SERVICE_ACCOUNT"</span> <span class="dt">\</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>  <span class="at">--role</span><span class="op">=</span><span class="st">"roles/storage.objectAdmin"</span></span></code></pre>
 </div>
 <!-- prefilled example:
 gcloud storage buckets add-iam-policy-binding gs://doe-titanic \
@@ -717,7 +732,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>1 GB</strong>: Storage <code>$0.02</code> + Egress
@@ -901,7 +916,7 @@ is missing from the test set, and why?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -939,7 +954,7 @@ class (<code>Pclass</code>) and upload the result as
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
