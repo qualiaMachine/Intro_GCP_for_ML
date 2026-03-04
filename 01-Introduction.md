@@ -64,6 +64,7 @@ Cloud computing is not free, but it's worth putting costs in context:
 
 - **Hardware is expensive and ages fast.** A single A100 GPU costs ~ `$15,000` and is outdated within a few years. Cloud lets you rent the latest hardware by the hour.
 - **You pay only for what you use.** Stop a VM and the meter stops — valuable for bursty research workloads.
+- **Managed services save development time.** You don't have to build DAGs, write scheduling logic, package custom containers, or maintain orchestration infrastructure — GCP handles that plumbing so you can focus on the ML.
 - **Budgets and alerts keep you safe.** GCP billing dashboards and budget alerts help prevent surprise bills. We cover cleanup in [Episode 9](09-Resource-management-cleanup.md).
 
 The key habit: choose the right machine size, stop resources when idle, and monitor spending. We'll reinforce this throughout.
