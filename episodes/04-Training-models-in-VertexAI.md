@@ -152,8 +152,9 @@ print("Downloaded titanic_train.csv")
 - For larger models, use smaller model equivalents (e.g., 100M vs 7B params) when testing locally
 
 ```python
-# We need to add xgboost to our VM before running the script
-!pip install xgboost
+# Pin the same XGBoost version used by the Vertex AI prebuilt container
+# (xgboost-cpu.2-1) so local and cloud results are identical.
+!pip install xgboost==2.1.0
 ```
 
 ```python
@@ -310,6 +311,8 @@ job = aiplatform.CustomTrainingJob(
 )
 ```
 
+> **Version alignment:** Notice that the container tag `xgboost-cpu.2-1` matches the `xgboost==2.1.0` we installed locally. This is intentional — pinning the same library version in both environments ensures that local and cloud training produce identical results given the same data and random seed.
+
 Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier. **We won't be charged for our selected `MACHINE` until we run the below code using `job.run()`.** For an `n1-standard-4` running 2–5 minutes, expect a cost of roughly **`$0.01`–`$0.02`** — negligible, but good to be aware of as you scale to larger machines. This marks the point when our script actually begins executing remotely on the Vertex training infrastructure. Once `job.run()` is called, Vertex handles packaging your training script, transferring it to the managed training environment, provisioning the requested compute instance, and monitoring the run. The job's status and logs can be viewed directly in the Vertex AI Console under Training → Custom jobs.
 
 If you need to cancel or modify a job mid-run, you can do so from the console or via the SDK by calling job.cancel(). When the job completes, Vertex automatically tears down the compute resources so you only pay for the active training time.
@@ -444,11 +447,9 @@ Compare the test accuracy from your local training run with the accuracy from th
 
 ### Solution
 
-You may notice the two accuracy values are **close but not identical** (e.g., 0.804 vs. 0.821). This is expected, even though both runs use the same script, the same hyperparameters, the same data, and the same random seed (`seed=42`).
+The two accuracy values should be **identical**. Both runs execute the same script with the same hyperparameters, the same data, and the same random seed (`seed=42`). Because we pinned `xgboost==2.1.0` locally — matching the `xgboost-cpu.2-1` prebuilt container — the algorithm behaves identically in both environments.
 
-The reason is **different XGBoost versions**. Your notebook VM installs whatever version `pip install xgboost` resolves to (e.g., 2.0 or 2.1), while the Vertex AI job runs inside the `xgboost-cpu.2-1:latest` prebuilt container, which pins a specific XGBoost release. Across versions, XGBoost may change internal details — tree-building heuristics, default parameters, numerical precision, or split-finding algorithms — that produce slightly different models even with identical inputs and seeds.
-
-This is a general lesson for ML reproducibility: **a random seed only guarantees determinism within the same library version, hardware, and numerical backend.** To get bit-for-bit identical results between local and cloud training, you would need to pin the exact same XGBoost version in both environments (e.g., `pip install xgboost==2.1.0`).
+If the values differ, the most likely cause is a **library version mismatch**. A random seed only guarantees determinism within the same library version, hardware, and numerical backend. If you had installed XGBoost without pinning (e.g., `pip install xgboost`), you might get a different version than the container uses, and even small version differences can change tree-building heuristics or numerical precision enough to shift results.
 
 :::::::::::::::::::::::::::::::::::::::
 
