@@ -36,7 +36,7 @@ Most universities offer shared HPC clusters with GPUs. These are excellent resou
 | **Scaling** | Limited by cluster size | Spin up hundreds of jobs in parallel |
 | **Multi-GPU / NVLink** | Sometimes available, depends on cluster | Available on demand (e.g., A2/A3 instances with NVLink-connected multi-GPU nodes) |
 | **Job orchestration** | Writing scheduler scripts, packaging environments, and wiring up parallel job arrays can take days of refactoring | A few SDK calls: define a job, set hardware, call `.run()` — parallelism (e.g., tuning trials) is built in |
-| **Software environment** | Module system; may need IT support for new packages | Full root access in containers; install anything |
+| **Software environment** | Module system; some clusters support Apptainer/Singularity containers — research computing staff can often help with setup | Vertex AI provides [prebuilt containers](https://cloud.google.com/vertex-ai/docs/training/pre-built-containers) for common ML frameworks (PyTorch, XGBoost, TensorFlow); add extra packages via a `requirements` list, or bring your own Docker image for full control |
 | **Data governance** | On-campus, known compliance posture | Requires configuring IAM, encryption, region controls — but university-managed cloud accounts (e.g., UW-Madison's [Public Cloud Team](mailto:cloud-services@cio.wisc.edu)) often handle baseline security and compliance for you |
 
 **The short version:** use your university cluster when it has the hardware you need and the queue isn't blocking you. Use the cloud when you need hardware your cluster doesn't have, need to scale beyond what the queue allows, or need a specific software environment you can't easily get on-campus.
