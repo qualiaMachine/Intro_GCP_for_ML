@@ -58,9 +58,31 @@ LAST_NAME = "DOE" # ADJUST to your last name or name
 print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 ```
 
+::::::::::::::::::::::::::::::::::::: callout
+
+### How does `storage.Client()` know your project?
+
+When you call `storage.Client()` without arguments, the library automatically discovers your credentials and project ID. This works because Vertex AI Workbench VMs run on Google Compute Engine, which provides a **metadata server** at a known internal address. The client library queries this server to retrieve the project ID and a service-account token — no keys or config files needed. If you ran the same code on your laptop, you would need to authenticate first with `gcloud auth application-default login` (see [Episode 8](08-CLI-workflows.md) for details).
+
+:::::::::::::::::::::::::::::::::::::
+
 ## Testing train_xgboost.py locally in the notebook
 
 Before submitting a managed training job to Vertex AI, let's first examine and test the training script on our notebook VM. This ensures the code runs without errors before we spend money on cloud compute.
+
+::::::::::::::::::::::::::::::::::::: callout
+
+### One script, two environments
+
+A key design goal of `train_xgboost.py` is that the **same script runs unchanged** on your laptop, inside a Workbench notebook, and as a Vertex AI managed training job. Two patterns make this possible:
+
+1. **GCS-aware I/O helpers** (`read_csv_any`, `save_model_any`): These functions check whether a path starts with `gs://`. If it does, they use the `google-cloud-storage` client to read or write. If not, they use plain local file I/O. This means you can pass `--train ./titanic_train.csv` for a local test and `--train=gs://my-bucket/titanic_train.csv` for a cloud job without changing any code.
+
+2. **`AIP_MODEL_DIR` environment variable**: When Vertex AI runs a CustomTrainingJob with `base_output_dir` set, it injects `AIP_MODEL_DIR` (a `gs://` path) into the container. The script reads this variable to decide where to save the model. Locally, the variable is unset, so it falls back to the current directory (`.`).
+
+This "write once, run anywhere" approach means you can **debug locally first** (fast, free) and then submit the exact same script to Vertex AI (scalable, managed) with confidence.
+
+:::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::::: challenge
 

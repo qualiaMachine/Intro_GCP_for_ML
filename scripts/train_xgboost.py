@@ -10,7 +10,25 @@ from sklearn.model_selection import train_test_split
 from time import time
 import joblib
 
-# Optional: only needed if you pass gs:// paths
+# ---------------------------------------------------------------------------
+# GCS helpers — these let the SAME script run unchanged on your laptop,
+# inside a Workbench notebook, or as a Vertex AI CustomTrainingJob.
+#
+# The pattern:
+#   1. Detect whether a path starts with "gs://".
+#   2. If yes  → use the google-cloud-storage client to read/write.
+#      If no   → use plain local file I/O.
+#
+# This means you can test locally with:
+#     python train_xgboost.py --train ./titanic_train.csv
+# and submit the exact same script to Vertex AI with:
+#     --train=gs://my-bucket/titanic_train.csv
+# without changing a single line of code.
+# ---------------------------------------------------------------------------
+
+# Optional import: only needed when the script receives gs:// paths.
+# On your laptop (no GCS SDK installed) this gracefully falls back
+# so the script still works with local files.
 try:
     from google.cloud import storage
     _HAS_GCS = True
@@ -19,6 +37,7 @@ except Exception:
 
 
 def _is_gcs(p: str) -> bool:
+    """Return True if the path is a GCS URI (starts with 'gs://')."""
     return str(p).startswith("gs://")
 
 
@@ -29,6 +48,7 @@ def _gcs_client():
 
 
 def read_csv_any(path: str) -> pd.DataFrame:
+    """Read a CSV from a local file OR a GCS URI — caller doesn't need to know which."""
     if _is_gcs(path):
         client = _gcs_client()
         bucket, _, key = path[5:].partition("/")
@@ -38,7 +58,9 @@ def read_csv_any(path: str) -> pd.DataFrame:
 
 
 def save_model_any(model, dest_path: str):
-    # joblib.dump needs a local file; upload if gs://
+    """Save a model to a local file OR a GCS URI — caller doesn't need to know which.
+    joblib.dump requires a local file, so for GCS we write to a temp file first,
+    then upload."""
     if _is_gcs(dest_path):
         client = _gcs_client()
         bucket, _, key = dest_path[5:].partition("/")
@@ -82,11 +104,15 @@ if __name__ == "__main__":
     parser.add_argument("--num_round", type=int, default=100)
     args = parser.parse_args()
 
-    # GCP-style env vars (analogous to SageMaker's)
-    # AIP_MODEL_DIR may be gs:// (Vertex AI CustomJob) or empty (Workbench/local)
-    input_data_path = args.train  # pass local path or gs:// explicitly
+    # WHERE DO ARTIFACTS GO?
+    # When Vertex AI launches a CustomTrainingJob with base_output_dir set,
+    # it injects the env var AIP_MODEL_DIR (a gs:// path) into the container.
+    # Our script reads that var to decide where to save the model.
+    # When running locally (laptop or Workbench), AIP_MODEL_DIR is unset,
+    # so we fall back to "." (current directory).  Same script, both worlds.
+    input_data_path = args.train  # local path or gs:// — read_csv_any handles both
     output_dir = os.environ.get("AIP_MODEL_DIR", ".")
-    output_data_path = os.path.join(output_dir, "xgboost-model")  
+    output_data_path = os.path.join(output_dir, "xgboost-model")
 
     # Load and preprocess data
     df = read_csv_any(input_data_path)
