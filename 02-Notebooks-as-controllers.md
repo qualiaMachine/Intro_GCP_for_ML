@@ -70,7 +70,7 @@ Leave environment settings at their defaults for this workshop. Workbench uses J
 
 #### Advanced settings: Machine Type 
 
-- **Machine type**: Select a small machine (e.g., `n2-standard-2`, ~$0.07/hr) to act as the controller.
+- **Machine type**: Select a small machine (e.g., `n2-standard-2`, ~ `$0.07`/hr) to act as the controller.
   - This keeps costs low while you delegate heavy lifting to training jobs.
   - For guidance on common machine types and their costs, see [Compute for ML](../compute-for-ML.html). For help deciding when you need cloud hardware at all, see [When does model size justify cloud compute?](01-Introduction.md#when-does-model-size-justify-cloud-compute) in Episode 1.
 
@@ -82,7 +82,7 @@ Leave environment settings at their defaults for this workshop. Workbench uses J
 
 Leave disk settings at their defaults for this workshop. Each Workbench Instance has two disks: a **boot disk** (100 GB — holds the OS and libraries) and a **data disk** (150 GB default — holds your datasets and outputs). Both use Balanced Persistent Disks. Keep "Delete to trash" unchecked so deleted files free space immediately.
 
-**Rule of thumb:** allocate ≈ 2× your dataset size for the data disk, and keep bulk data in Cloud Storage (`gs://`) rather than on local disk — PDs cost ~$0.10/GB/month vs. ~$0.02/GB/month for Cloud Storage.
+**Rule of thumb:** allocate ≈ 2× your dataset size for the data disk, and keep bulk data in Cloud Storage (`gs://`) rather than on local disk — PDs cost ~ `$0.10`/GB/month vs. ~ `$0.02`/GB/month for Cloud Storage.
 
 ::::::::::::::::::::::::::::::::::::: callout
 
@@ -90,7 +90,7 @@ Leave disk settings at their defaults for this workshop. Each Workbench Instance
 
 - **Boot disk:** Rarely needs resizing. Increase to 150–200 GB only for large custom environments or multiple frameworks.
 - **Data disk:** Use SSD PD only for high-I/O workloads. Disks can be resized anytime without downtime, so start small and expand when needed.
-- **Cost comparison:** A 200 GB dataset costs ~$24/month on a PD but only ~$5/month in Cloud Storage.
+- **Cost comparison:** A 200 GB dataset costs ~ `$24`/month on a PD but only ~ `$5`/month in Cloud Storage.
 - **Pricing:** [Persistent Disk pricing](https://cloud.google.com/compute/disks-image-pricing) · [Cloud Storage pricing](https://cloud.google.com/storage/pricing)
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
@@ -129,16 +129,16 @@ The notebook serves as a lightweight control plane.
 
 ### Challenge 2: Controller Cost Estimate
 
-Your controller notebook uses an `n2-standard-2` instance (~$0.07/hr — see [Compute for ML](../compute-for-ML.html) for other common machine types and costs).
+Your controller notebook uses an `n2-standard-2` instance (~ `$0.07`/hr — see [Compute for ML](../compute-for-ML.html) for other common machine types and costs).
 
 - Estimate the monthly cost if you use it 8 hours/day, 5 days/week, with idle shutdown enabled.
 - Compare that to leaving it running 24/7 for the same month.
 
 :::::::::::::::: solution
 
-- **With idle shutdown:** 8 hrs × 5 days × 4 weeks = 160 hrs → 160 × $0.07 ≈ **$11.20/month**
-- **Running 24/7:** 24 hrs × 30 days = 720 hrs → 720 × $0.07 ≈ **$50.40/month**
-- Idle shutdown saves you ~$39/month on a single small controller instance. The savings are even larger for bigger machine types.
+- **With idle shutdown:** 8 hrs × 5 days × 4 weeks = 160 hrs → 160 × `$0.07` ≈ **`$11.20`/month**
+- **Running 24/7:** 24 hrs × 30 days = 720 hrs → 720 × `$0.07` ≈ **`$50.40`/month**
+- Idle shutdown saves you ~ `$39`/month on a single small controller instance. The savings are even larger for bigger machine types.
 
 :::::::::::::::::::::::::
 

@@ -42,11 +42,11 @@ What to expect:
 If the instructors aren't providing a shared account environment, please follow these instructions:
 
 1. Go to the [GCP Free Tier page](https://cloud.google.com/free) and click **Get started for free**.  
-2. Complete the signup process. The Free Tier includes a $300 credit valid for 90 days and ongoing free usage for some smaller services.  
+2. Complete the signup process. The Free Tier includes a `$300` credit valid for 90 days and ongoing free usage for some smaller services.  
 3. Once your account is ready, log in to the [Google Cloud Console](https://console.cloud.google.com/).  
 4. During the lesson, we will enable only a few APIs (Compute Engine, Cloud Storage, and Notebooks).  
 
-Following the lesson should cost well under $15 total if you are using your own credits.
+Following the lesson should cost well under `$15` total if you are using your own credits.
 
 ### 3. Download the Data
 

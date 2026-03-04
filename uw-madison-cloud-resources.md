@@ -21,7 +21,7 @@ These services are managed by the [UW Public Cloud Team](https://kb.wisc.edu/pag
 A self-provisioned cloud account (one you create directly with Google or AWS) is a personal agreement between you and the vendor — it is **not** covered by UW-Madison's institutional contracts. Going through the UW Public Cloud Team gives you:
 
 - **Negotiated pricing** via [Internet2 NET+](https://internet2.edu/cloud/cloud-solutions-community/net-plus/) agreements. GCP accounts include a [network egress waiver](https://kb.wisc.edu/100173) (up to 15% of your total bill); Azure accounts receive ~3.5% off retail pricing.
-- **Lower overhead on grants** — Cloud expenses normally carry 55.5% F&A overhead. With a UW cloud account that drops to **26%**, saving ~$2,950 per $10,000 spent. See the [Cloud Computing Pilot](https://rsp.wisc.edu/proposalprep/cloudComputeInfo.cfm).
+- **Lower overhead on grants** — Cloud expenses normally carry 55.5% F&A overhead. With a UW cloud account that drops to **26%**, saving ~ `$2,950` per `$10,000` spent. See the [Cloud Computing Pilot](https://rsp.wisc.edu/proposalprep/cloudComputeInfo.cfm).
 - **NIH STRIDES discounts** — Additional pricing reductions for NIH-funded researchers, layered on top of UW rates. See [STRIDES at UW-Madison](https://kb.wisc.edu/109813).
 - **Security and compliance** — Accounts come with baseline [CIS benchmark](https://www.cisecurity.org/cis-benchmarks) configuration, NetID authentication, Security Command Center monitoring, and a Business Associates Agreement (BAA) for HIPAA-regulated data.
 - **Dedicated support** — Email [cloud-services@cio.wisc.edu](mailto:cloud-services@cio.wisc.edu), attend [office hours](https://kb.wisc.edu/101516), or schedule a consultation.
@@ -44,7 +44,7 @@ NIH-funded researchers get negotiated pricing on GCP, AWS, and Azure services th
 
 ### Google Cloud Research Credits
 
-Google offers up to **$5,000 in cloud credits** for faculty, postdoctoral, and non-profit researchers (up to $1,000 for PhD students).
+Google offers up to **`$5,000` in cloud credits** for faculty, postdoctoral, and non-profit researchers (up to `$1,000` for PhD students).
 
 - [Apply for Google Cloud Research Credits](https://edu.google.com/intl/ALL_us/programs/credits/research/)
 - Applications accepted on a rolling basis; decisions typically take 6–8 weeks.
@@ -53,7 +53,7 @@ Google offers up to **$5,000 in cloud credits** for faculty, postdoctoral, and n
 
 AWS offers promotional credits for academic researchers through its [Cloud Credit for Research](https://aws.amazon.com/government-education/research-and-technical-computing/cloud-credit-for-research/) program.
 
-- **Students**: up to **$5,000** in AWS credits.
+- **Students**: up to **`$5,000`** in AWS credits.
 - **Faculty and staff**: award amounts vary by proposal (no fixed cap).
 - Applications are reviewed on a rolling basis; typical review cycles are 90–120 days.
 - Credits are valid for 1 year from issuance or until fully used.
@@ -62,9 +62,9 @@ AWS offers promotional credits for academic researchers through its [Cloud Credi
 
 Microsoft offers several credit programs for academic researchers:
 
-- **[Azure for Students](https://azure.microsoft.com/en-us/free/students/)**: **$100** in credits (12 months), no credit card required.
+- **[Azure for Students](https://azure.microsoft.com/en-us/free/students/)**: **`$100`** in credits (12 months), no credit card required.
 - **[Azure Research Credits](https://www.microsoft.com/en-us/azure-academic-research/)**: Open to faculty and researchers for proof-of-concept, migration, or tool-building projects.
-- **[Internet2 Azure Accelerator Program](https://internet2.edu/)**: Up to **$5,000** in credits for research and education proposals (365-day expiration).
+- **[Internet2 Azure Accelerator Program](https://internet2.edu/)**: Up to **`$5,000`** in credits for research and education proposals (365-day expiration).
 
 ### Google Cloud Skills Boost
 
