@@ -18,13 +18,13 @@
   <div class="container-fluid top-nav-container">
     <div class="col-md-8">
       <div class="large-logo">
-        <img id="incubator-logo" alt="Lesson Description" src="../assets/images/incubator-logo.svg"><span class="badge text-bg-danger">
-          <abbr title="This lesson is in the pre-alpha phase, which means that it is in early development, but has not yet been taught.">
+        <img id="incubator-logo" alt="Lesson Description" src="../assets/images/incubator-logo.svg"><span class="badge text-bg-warning">
+          <abbr title="This lesson is in the alpha phase, which means that it has been taught once and lesson authors are iterating on feedback.">
             <a href="https://docs.carpentries.org/resources/curriculum/lesson-life-cycle.html" class="external-link alert-link">
-              <i aria-hidden="true" class="icon" data-feather="alert-octagon" style="border-radius: 5px"></i>
-              Pre-Alpha
+              <i aria-hidden="true" class="icon" data-feather="alert-triangle" style="border-radius: 5px"></i>
+              Alpha
             </a>
-            <span class="visually-hidden">This lesson is in the pre-alpha phase, which means that it is in early development, but has not yet been taught.</span>
+            <span class="visually-hidden">This lesson is in the alpha phase, which means that it has been taught once and lesson authors are iterating on feedback.</span>
           </abbr>
         </span>
 
@@ -56,6 +56,7 @@
             </li>
           </ul></li>
       </div>
+
 
       <div class="dropdown" id="instructor-dropdown">
         <button class="btn btn-secondary dropdown-toggle bordered-button" type="button" id="dropdownMenu1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -99,7 +100,7 @@
           <button class="nav-link dropdown-toggle" id="navbarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
             More <i data-feather="chevron-down"></i>
           </button>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown"><hr><li><a class="dropdown-item" href="compute-for-ML.html">Compute for ML</a></li><li><a class="dropdown-item" href="glossary.html">Glossary</a></li>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown"><hr><li><a class="dropdown-item" href="reference.html">Reference</a></li><li><a class="dropdown-item" href="compute-for-ML.html">Compute for ML</a></li><li><a class="dropdown-item" href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a></li><li><a class="dropdown-item" href="github-pat.html">Using a GitHub Personal Access Token (PAT) in Vertex AI</a></li>
           </ul></li>
       </ul></div>
     <!--
@@ -206,7 +207,7 @@
 <div class="accordion accordion-flush" id="accordionFlush2">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading2">
-        <a href="01-Introduction.html">1. Overview of Google Cloud for Machine Learning</a>
+        <a href="01-Introduction.html">1. Overview of Google Cloud for Machine Learning and AI</a>
     </div><!--/div.accordion-header-->
 
   </div><!--/div.accordion-item-->
@@ -215,7 +216,7 @@
 <div class="accordion accordion-flush" id="accordionFlush3">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading3">
-        <a href="02-Data-storage.html">2. Data Storage: Setting up GCS</a>
+        <a href="02-Notebooks-as-controllers.html">2. Notebooks as Controllers</a>
     </div><!--/div.accordion-header-->
 
   </div><!--/div.accordion-item-->
@@ -224,7 +225,7 @@
 <div class="accordion accordion-flush" id="accordionFlush4">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading4">
-        <a href="03-Notebooks-as-controllers.html">3. Notebooks as Controllers</a>
+        <a href="03-Data-storage-and-access.html">3. Data Storage and Access</a>
     </div><!--/div.accordion-header-->
 
   </div><!--/div.accordion-item-->
@@ -233,7 +234,7 @@
 <div class="accordion accordion-flush" id="accordionFlush5">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading5">
-        <a href="04-Accessing-and-managing-data.html">4. Accessing and Managing Data in GCS with Vertex AI Notebooks</a>
+        <a href="04-Training-models-in-VertexAI.html">4. Training Models in Vertex AI: Intro</a>
     </div><!--/div.accordion-header-->
 
   </div><!--/div.accordion-item-->
@@ -242,7 +243,7 @@
 <div class="accordion accordion-flush" id="accordionFlush6">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading6">
-        <a href="05-Interacting-with-code-repo.html">5. Using a GitHub Personal Access Token (PAT) to Push/Pull from a Vertex AI Notebook</a>
+        <a href="05-Training-models-in-VertexAI-GPUs.html">5. Training Models in Vertex AI: PyTorch Example</a>
     </div><!--/div.accordion-header-->
 
   </div><!--/div.accordion-item-->
@@ -251,7 +252,7 @@
 <div class="accordion accordion-flush" id="accordionFlush7">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading7">
-        <a href="06-Training-models-in-VertexAI.html">6. Training Models in Vertex AI: Intro</a>
+        <a href="06-Hyperparameter-tuning.html">6. Hyperparameter Tuning in Vertex AI: Neural Network Example</a>
     </div><!--/div.accordion-header-->
 
   </div><!--/div.accordion-item-->
@@ -260,7 +261,7 @@
 <div class="accordion accordion-flush" id="accordionFlush8">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading8">
-        <a href="07-Training-models-in-VertexAI-GPUs.html">7. Training Models in Vertex AI: PyTorch Example</a>
+        <a href="07-Retrieval-augmented-generation.html">7. Retrieval-Augmented Generation (RAG) with Vertex AI</a>
     </div><!--/div.accordion-header-->
 
   </div><!--/div.accordion-item-->
@@ -269,7 +270,7 @@
 <div class="accordion accordion-flush" id="accordionFlush9">
   <div class="accordion-item">
     <div class="accordion-header" id="flush-heading9">
-        <a href="08-Hyperparameter-tuning.html">8. Hyperparameter Tuning in Vertex AI: Neural Network Example</a>
+        <a href="08-CLI-workflows.html">8. Bonus: CLI Workflows Without Notebooks</a>
     </div><!--/div.accordion-header-->
 
   </div><!--/div.accordion-item-->
@@ -306,7 +307,7 @@
                       <li>
                         <a href="../instructor/images.html">Extract All Images</a>
                       </li>
-                      <hr><li><a class="dropdown-item" href="compute-for-ML.html">Compute for ML</a></li><li><a class="dropdown-item" href="glossary.html">Glossary</a></li>
+                      <hr><li><a class="dropdown-item" href="reference.html">Reference</a></li><li><a class="dropdown-item" href="compute-for-ML.html">Compute for ML</a></li><li><a class="dropdown-item" href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a></li><li><a class="dropdown-item" href="github-pat.html">Using a GitHub Personal Access Token (PAT) in Vertex AI</a></li>
                     </ul></div>
                 </div>
               </div>
@@ -342,9 +343,9 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Compute for ML</h1>
-        <p>Last updated on 2025-10-29 |
+        <p>Last updated on 2026-03-04 |
 
-        <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/learners/compute-for-ML.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
+        <a href="https://github.com/qualiaMachine/Intro_GCP_for_ML/edit/main/learners/compute-for-ML.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
 
 
@@ -357,14 +358,22 @@
         
 
 <p>This page provides guidance for selecting compute configurations in
-Google Cloud Platform (GCP) for machine learning workloads.<br>
-While instance size is an important factor, effective performance
-depends on how you pair a machine type with optional GPU
-accelerators.</p>
+Google Cloud Platform (GCP) for machine learning workloads. While
+instance size is an important factor, effective performance depends on
+how you pair a machine type with optional GPU accelerators.</p>
 <p>All pricing estimates are based on public rates for
-<code>us-central1</code> as of October 2025.<br>
-Actual cost depends on sustained-use discounts, attached GPU quotas, and
-whether your project has promotional or educational credits.</p>
+<code>us-central1</code> as of October 2025. Actual cost depends on
+sustained-use discounts, attached GPU quotas, and whether your project
+has promotional or educational credits.</p>
+<div class="section level3">
+<h3 id="reference-docs">Reference Docs<a class="anchor" aria-label="anchor" href="#reference-docs"></a></h3>
+<ul><li><a href="https://cloud.google.com/compute/vm-instance-pricing" class="external-link">Compute
+Engine VM Instance Pricing (applies to notebook backends)</a></li>
+<li><a href="https://cloud.google.com/compute/gpus-pricing" class="external-link">Compute
+Engine GPU Pricing</a></li>
+<li><a href="https://cloud.google.com/compute/all-pricing" class="external-link">All Compute
+Pricing Overview</a></li>
+</ul></div>
 <div class="section level3">
 <h3 id="key-terms">Key Terms<a class="anchor" aria-label="anchor" href="#key-terms"></a></h3>
 <ul><li>
@@ -393,20 +402,20 @@ for a specific balance of performance, memory, and cost (e.g.,
 <li>
 <strong>Accelerator</strong>: Optional hardware (such as GPUs or
 TPUs) that can be attached to certain VM families to speed up training
-and inference.<br></li>
+and inference.</li>
+<li>
+<strong>Accelerator count</strong>: Defines how many GPUs are
+attached to a single VM. Most training jobs begin with
+<code>accelerator_count=1</code>. Increasing the count (for example, to
+2, 4, or 8) enables multi-GPU training, but it also requires
+proportional increases in CPU, memory, and disk I/O to feed data
+efficiently to all GPUs. Performance scaling is rarely linear — expect
+diminishing returns beyond 2–4 GPUs unless your model and batch sizes
+are very large.<br></li>
 <li>
 <strong>Region</strong>: The physical location of your compute
 resources (e.g., <code>us-central1</code>). Pricing and GPU availability
 can vary by region.</li>
-</ul></div>
-<div class="section level3">
-<h3 id="reference-docs">Reference Docs<a class="anchor" aria-label="anchor" href="#reference-docs"></a></h3>
-<ul><li><a href="https://cloud.google.com/compute/vm-instance-pricing" class="external-link">Compute
-Engine VM Instance Pricing (applies to notebook backends)</a></li>
-<li><a href="https://cloud.google.com/compute/gpus-pricing" class="external-link">Compute
-Engine GPU Pricing</a></li>
-<li><a href="https://cloud.google.com/compute/all-pricing" class="external-link">All Compute
-Pricing Overview</a></li>
 </ul></div>
 <div class="section level3">
 <h3 id="key-concepts">Key Concepts<a class="anchor" aria-label="anchor" href="#key-concepts"></a></h3>
@@ -418,16 +427,24 @@ attach a GPU by adding <code>accelerator_type</code> and
 <code>NVIDIA_TESLA_T4</code>). Only specialized machine families like
 <code>A2</code> include GPUs automatically.<br></li>
 <li>
-<strong>Full names and syntax</strong>: Machine types follow the
-pattern <code>&lt;family&gt;-&lt;series&gt;-&lt;vCPU count&gt;</code>.
-For example:
+<strong>Full names and syntax</strong>: Most machine types follow
+the pattern
+<code>&lt;family&gt;-&lt;series&gt;-&lt;vCPU count&gt;</code>. For
+example:
 <ul><li>
-<code>n2-standard-8</code>: 8 vCPUs, 32 GB RAM<br></li>
+<code>n2-standard-8</code>: N2 family, standard series, 8 vCPUs, 32
+GB RAM</li>
 <li>
-<code>c2-standard-8</code>: 8 vCPUs, 32 GB RAM (CPU-optimized)<br></li>
+<code>c2-standard-8</code>: C2 family, standard series, 8 vCPUs, 32
+GB RAM (CPU-optimized)</li>
 <li>
-<code>a2-highgpu-1g</code>: 12 vCPUs, 85 GB RAM, and 1 attached A100
-GPU<br></li>
+<strong>Exception — GPU families (A2, A3, A4):</strong> These use
+<code>&lt;family&gt;-&lt;series&gt;-&lt;GPU count&gt;g</code> instead.
+The trailing number is the <strong>GPU count</strong>, not the vCPU
+count. For example, <code>a2-highgpu-1g</code> means 1× A100 GPU (with
+12 vCPUs and 85 GB RAM bundled automatically). Similarly,
+<code>a3-highgpu-8g</code> means 8× H100 GPUs. CPU and memory are fixed
+per configuration — you don’t choose them independently.</li>
 </ul></li>
 <li>
 <strong>RAM requirements</strong>: Minimum RAM should be at least
@@ -507,8 +524,8 @@ the <code>us-central1</code> region.</p>
 <td>No GPU support</td>
 </tr></tbody></table><p><strong>Cost notes:</strong><br>
 - Prices vary by region and storage/network configuration.<br>
-- <code>N2</code> instances are a typical choice for cost-effective ML
-workloads.<br>
+- <code>N2</code> instances are a typical choice for cost-effective
+ML/AI workloads.<br>
 - <code>A2–A4</code> families include GPUs by default; all others
 require attaching GPUs manually.</p>
 </div>
@@ -702,11 +719,26 @@ utilization, and test your pipeline with smaller models first.</li>
 run.<br></li>
 <li>When moving from CPU to GPU training, keep the same script and
 simply change:
-<ul><li>
-<code>container_uri</code> to a GPU-enabled image (for example,
-<code>pytorch-gpu.*</code>)</li>
-<li>Add <code>accelerator_type</code> and <code>accelerator_count</code>
-in your <code>CustomTrainingJob</code>.</li>
+<ul><li><p><code>container_uri</code> to a GPU-enabled image (for example,
+<code>pytorch-gpu.*</code>)</p></li>
+<li>
+<p>Add both <code>accelerator_type</code> and
+<code>accelerator_count</code> in your <code>CustomTrainingJob</code>.
+For example:</p>
+<div class="codewrapper sourceCode" id="cb1">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>job.run(</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>    machine_type<span class="op">=</span><span class="st">"n2-standard-8"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>    accelerator_type<span class="op">=</span><span class="st">"NVIDIA_L4"</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>    accelerator_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>    base_output_dir<span class="op">=</span>ARTIFACTS,</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>)</span></code></pre>
+</div>
+</li>
+<li><p>Increasing <code>accelerator_count</code> (e.g., 2–4) enables
+parallel training but requires larger datasets and batch sizes to avoid
+idle GPUs.</p></li>
 </ul></li>
 </ul></div>
 <div class="section level3">
@@ -754,20 +786,22 @@ any links that you are not going to use.
         <p>This lesson is subject to the <a href="CODE_OF_CONDUCT.html">Code of Conduct</a></p>
         <p>
 
-        <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/edit/main/learners/compute-for-ML.md" class="external-link">Edit on GitHub</a>
+        <a href="https://github.com/qualiaMachine/Intro_GCP_for_ML/edit/main/learners/compute-for-ML.md" class="external-link">Edit on GitHub</a>
 
 	
-        | <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/blob/main/CONTRIBUTING.md" class="external-link">Contributing</a>
-        | <a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/" class="external-link">Source</a></p>
-				<p><a href="https://github.com/qualiaMachine/Intro_GCP_VertexAI/blob/main/CITATION.cff" class="external-link">Cite</a> | <a href="mailto:endemann@wisc.edu">Contact</a> | <a href="https://carpentries.org/about/" class="external-link">About</a></p>
-			</div>
-			<div class="col-md-6">
+        | <a href="https://github.com/qualiaMachine/Intro_GCP_for_ML/blob/main/CONTRIBUTING.md" class="external-link">Contributing</a>
+        | <a href="https://github.com/qualiaMachine/Intro_GCP_for_ML/" class="external-link">Source</a></p>
+        <p>
+        <a href="../citation.html">Cite</a>
+        | <a href="mailto:endemann@wisc.edu">Contact</a> | <a href="https://carpentries.org/about/" class="external-link">About</a></p>
+		</div>
+		<div class="col-md-6">
 
         <p>Materials licensed under <a href="LICENSE.html">CC-BY 4.0</a> by the authors</p>
 
         <p>Template licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/" class="external-link">CC-BY 4.0</a> by <a href="https://carpentries.org/" class="external-link">The Carpentries</a></p>
-        <p>Built with <a href="https://github.com/carpentries/sandpaper/tree/0.17.1" class="external-link">sandpaper (0.17.1)</a>, <a href="https://github.com/carpentries/pegboard/tree/0.7.9" class="external-link">pegboard (0.7.9)</a>, and <a href="https://github.com/carpentries/varnish/tree/1.0.7" class="external-link">varnish (1.0.7)</a></p>
-			</div>
+        <p>Built with <a href="https://github.com/carpentries/sandpaper/tree/0.20.0" class="external-link">sandpaper (0.20.0)</a>, <a href="https://github.com/carpentries/pegboard/tree/0.7.9" class="external-link">pegboard (0.7.9)</a>, and <a href="https://github.com/carpentries/varnish/tree/1.0.9" class="external-link">varnish (1.0.9)</a></p>
+		</div>
 		</footer></div> <!-- / div.container -->
 	<div id="to-top">
 		<a href="#top">
@@ -778,18 +812,18 @@ any links that you are not going to use.
     {
   "@context": "https://schema.org",
   "@type": "LearningResource",
-  "@id": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/compute-for-ML.html",
+  "@id": "https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/compute-for-ML.html",
   "inLanguage": "en",
   "dct:conformsTo": "https://bioschemas.org/profiles/LearningResource/1.0-RELEASE",
   "description": "A Carpentries Lesson teaching foundational data and coding skills to researchers worldwide",
   "keywords": "cloud, GCP, lesson, The Carpentries, ML, AI, GPU",
   "name": "Compute for ML",
   "creativeWorkStatus": "active",
-  "url": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/compute-for-ML.html",
-  "identifier": "https://qualiaMachine.github.io/Intro_GCP_VertexAI/instructor/compute-for-ML.html",
+  "url": "https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/compute-for-ML.html",
+  "identifier": "https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/compute-for-ML.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2025-10-29",
-  "datePublished": "2025-10-29"
+  "dateModified": "2026-03-04",
+  "datePublished": "2026-03-04"
 }
 
   </script><script>

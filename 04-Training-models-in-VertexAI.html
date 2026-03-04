@@ -100,7 +100,7 @@
           <button class="nav-link dropdown-toggle" id="navbarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
             More <i data-feather="chevron-down"></i>
           </button>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown"><li><a class="dropdown-item" href="reference.html">Reference</a></li><li><a class="dropdown-item" href="instances-for-ML.html">Compute for ML</a></li><li><a class="dropdown-item" href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a></li><li><a class="dropdown-item" href="github-pat.html">Using a GitHub Personal Access Token (PAT) in Vertex AI</a></li>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown"><li><a class="dropdown-item" href="reference.html">Reference</a></li><li><a class="dropdown-item" href="compute-for-ML.html">Compute for ML</a></li><li><a class="dropdown-item" href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a></li><li><a class="dropdown-item" href="github-pat.html">Using a GitHub Personal Access Token (PAT) in Vertex AI</a></li>
           </ul></li>
       </ul></div>
     <!--
@@ -326,7 +326,7 @@
                       <li>
                         <a href="profiles.html">Learner Profiles</a>
                       </li>
-                      <li><a href="reference.html">Reference</a></li><li><a href="instances-for-ML.html">Compute for ML</a></li><li><a href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a></li><li><a href="github-pat.html">Using a GitHub Personal Access Token (PAT) in Vertex AI</a></li>
+                      <li><a href="reference.html">Reference</a></li><li><a href="compute-for-ML.html">Compute for ML</a></li><li><a href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a></li><li><a href="github-pat.html">Using a GitHub Personal Access Token (PAT) in Vertex AI</a></li>
                     </ul></div>
                 </div>
               </div>
@@ -419,9 +419,8 @@ status using the Google Cloud Console.</li>
 <p>Training jobs bill per VM-hour while the job is running. An
 <code>n1-standard-4</code> (CPU) costs ~$0.19/hr; adding a T4 GPU brings
 the total to ~$0.54/hr. Jobs automatically stop (and stop billing) when
-the script finishes. For a complete cost reference, see the <a href="instances-for-ML.html">Instances for ML</a> page and the cost
-table in <a href="09-Resource-management-cleanup.html">Episode
-9</a>.</p>
+the script finishes. For a complete cost reference, see the <a href="compute-for-ML.html">Compute for ML</a> page and the cost table in
+<a href="09-Resource-management-cleanup.html">Episode 9</a>.</p>
 </div>
 </div>
 </div>
@@ -762,8 +761,8 @@ outputs to GCS.</p>
 <div class="section level3">
 <h3 id="which-machine-type-to-start-with">Which machine type to start with?<a class="anchor" aria-label="anchor" href="#which-machine-type-to-start-with"></a></h3>
 <p>Start with a small CPU machine like <code>n1-standard-4</code>. Only
-scale up to GPUs/TPUs once you’ve verified your script. See <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html" class="external-link">Instances
-for ML on GCP</a> for guidance.</p>
+scale up to GPUs/TPUs once you’ve verified your script. See <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/compute-for-ML.html" class="external-link">Compute
+for ML</a> for guidance.</p>
 <div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>

@@ -124,7 +124,7 @@
           </button>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
 <li><a class="dropdown-item" href="reference.html">Reference</a></li>
-<li><a class="dropdown-item" href="instances-for-ML.html">Compute for ML</a></li>
+<li><a class="dropdown-item" href="compute-for-ML.html">Compute for ML</a></li>
 <li><a class="dropdown-item" href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a></li>
 <li><a class="dropdown-item" href="github-pat.html">Using a GitHub Personal Access Token (PAT) in Vertex AI</a></li>
           </ul>
@@ -377,7 +377,7 @@
                         <a href="profiles.html">Learner Profiles</a>
                       </li>
                       <li><a href="reference.html">Reference</a></li>
-<li><a href="instances-for-ML.html">Compute for ML</a></li>
+<li><a href="compute-for-ML.html">Compute for ML</a></li>
 <li><a href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a></li>
 <li><a href="github-pat.html">Using a GitHub Personal Access Token (PAT) in Vertex AI</a></li>
                     </ul>
@@ -657,7 +657,7 @@ your workload:</p>
 feature engineering.</li>
 <li>
 <strong>GPUs</strong> (NVIDIA T4, L4, V100, A100, H100) for training
-deep learning models. For help choosing, see <a href="instances-for-ML.html">Instances for ML on GCP</a>.</li>
+deep learning models. For help choosing, see <a href="compute-for-ML.html">Compute for ML</a>.</li>
 <li>
 <strong>TPUs</strong> (Tensor Processing Units) — Google’s custom
 hardware for matrix-heavy workloads. TPUs work best with TensorFlow and
@@ -1022,7 +1022,9 @@ auto-configure the instance at boot.</p>
 <ul>
 <li>This keeps costs low while you delegate heavy lifting to training
 jobs.</li>
-<li>For guidance on common machine types and their costs, see <a href="instances-for-ML.html">Instances for ML on GCP</a>.</li>
+<li>For guidance on common machine types and their costs, see <a href="compute-for-ML.html">Compute for ML</a>. For help deciding when
+you need cloud hardware at all, see <a href="01-Introduction.html#when-does-model-size-justify-cloud-compute">When
+does model size justify cloud compute?</a> in Episode 1.</li>
 </ul>
 </li>
 <li>
@@ -2023,9 +2025,8 @@ status using the Google Cloud Console.</li>
 <p>Training jobs bill per VM-hour while the job is running. An
 <code>n1-standard-4</code> (CPU) costs ~$0.19/hr; adding a T4 GPU brings
 the total to ~$0.54/hr. Jobs automatically stop (and stop billing) when
-the script finishes. For a complete cost reference, see the <a href="instances-for-ML.html">Instances for ML</a> page and the cost
-table in <a href="09-Resource-management-cleanup.html">Episode
-9</a>.</p>
+the script finishes. For a complete cost reference, see the <a href="compute-for-ML.html">Compute for ML</a> page and the cost table in
+<a href="09-Resource-management-cleanup.html">Episode 9</a>.</p>
 </div>
 </div>
 </div>
@@ -2398,8 +2399,8 @@ outputs to GCS.</p>
 <h3 id="which-machine-type-to-start-with">Which machine type to start with?<a class="anchor" aria-label="anchor" href="#which-machine-type-to-start-with"></a>
 </h3>
 <p>Start with a small CPU machine like <code>n1-standard-4</code>. Only
-scale up to GPUs/TPUs once you’ve verified your script. See <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html" class="external-link">Instances
-for ML on GCP</a> for guidance.</p>
+scale up to GPUs/TPUs once you’ve verified your script. See <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/compute-for-ML.html" class="external-link">Compute
+for ML</a> for guidance.</p>
 <div class="codewrapper sourceCode" id="cb8">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -3333,7 +3334,7 @@ cuDNN.</li>
 <li>The machine type (<code>n1-standard-8</code>) defines CPU and memory
 resources, while we add a GPU accelerator (<code>NVIDIA_TESLA_T4</code>,
 <code>NVIDIA_L4</code>, etc.). <strong>For guidance on selecting a
-machine type and accelerator, visit the <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html" class="external-link">Compute
+machine type and accelerator, visit the <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/compute-for-ML.html" class="external-link">Compute
 for ML</a> resource.</strong>
 </li>
 <li>The training script, arguments, and artifact handling all stay the
@@ -3495,7 +3496,7 @@ you used the CPU container but still passed
 <code>accelerator_type</code> and <code>accelerator_count</code>?</li>
 <li>
 <strong>Cost awareness</strong>: You used <code>n1-standard-4</code>
-for CPU and <code>n1-standard-8</code> + T4 for GPU. Using the <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/instances-for-ML.html" class="external-link">Compute
+for CPU and <code>n1-standard-8</code> + T4 for GPU. Using the <a href="https://qualiamachine.github.io/Intro_GCP_for_ML/compute-for-ML.html" class="external-link">Compute
 for ML</a> resource, estimate the relative hourly cost difference
 between these configurations.</li>
 </ol>
@@ -4097,7 +4098,7 @@ configuration.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4145,7 +4146,7 @@ search:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4806,7 +4807,7 @@ context?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Smaller chunks (500 chars) produce more precise retrieval hits but
 each chunk has less context, so Gemini may struggle to synthesize a
@@ -4849,7 +4850,7 @@ for example:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Without the guardrail prompt, Gemini may produce a plausible-sounding
 answer from its training data, ignoring the “use only the following
@@ -4888,7 +4889,7 @@ tokens?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p>For well-grounded RAG queries (where the answer is clearly in the
 context), Flash often produces comparable answers at significantly lower
@@ -4927,7 +4928,7 @@ question?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
 <div class="accordion-body">
 <p>Lower <code>top_k</code> gives Gemini a tighter, more focused context
 — good when the answer is localized in one or two chunks. Higher
