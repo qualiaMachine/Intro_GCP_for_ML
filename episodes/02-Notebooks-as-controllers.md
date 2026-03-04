@@ -36,15 +36,13 @@ We will follow these steps to create our first Workbench Instance:
 ### 1. Navigate to Workbench
 - Open the **Google Cloud Console** ([console.cloud.google.com](https://console.cloud.google.com/)) — this is the web dashboard where you manage all GCP resources. Search for "Workbench."
 - Click the "Instances" tab (this is the supported path going forward).
-- Pin Workbench to your navigation bar for quick access.  
 
 ### 2. Create a new Workbench Instance
 
 #### Initial settings
 - Click **Create New** near the top of the Workbench page
-- **Name**: For this workshop, we can use the following naming convention to easily locate our notebooks: `teamname-yourname-purpose` (e.g., sinkorswim-johndoe-train)
-- **Region**: Choose the same region as your storage bucket (e.g., `us-central1`). This avoids cross-region transfer charges and keeps data access latency low.
-    - If you are unsure, check your bucket's location in the Cloud Storage console (click the bucket name → look under "Location").
+- **Name**: Use the convention `lastname-purpose` (e.g., `doe-workshop`). We'll use a single instance for training, tuning, RAG, and more, so `workshop` is a good general-purpose label.
+- **Region**: Select `us-central1`. When we create a storage bucket in [Episode 3](03-Data-storage-and-access.md), we'll use the same region — keeping compute and storage co-located avoids cross-region transfer charges and keeps data access fast.
 - **Zone:** `us-central1-a` (or another zone in `us-central1`, like `-b` or `-c`)  
   - If capacity or GPU availability is limited in one zone, switch to another zone in the same region.
 - **NVIDIA T4 GPU:** Leave unchecked for now  
@@ -59,9 +57,8 @@ We will follow these steps to create our first Workbench Instance:
 
 - **IMPORTANT:** Open the "Advanced options" menu next.
   -  **Labels (required for cost tracking):**  Under the Details menu, add the following tags (all lowercase) so that you can track the total cost of your activity on GCP later:
-      - `project = teamname` (your team's name)
-      - `name = name` (firstname-lastname)
-      - `purpose = train` (i.e., the notebook's overall purpose — train, tune, RAG, etc.)
+      - `name = lastname` (your last name)
+      - `purpose = workshop`
         
 ![Required tags for notebook.](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-tags.jpg){alt="Screenshot showing required tags for notebook"}
 
@@ -73,7 +70,7 @@ Leave environment settings at their defaults for this workshop. Workbench uses J
 
 - **Machine type**: Select a small machine (e.g., `n2-standard-2`, ~$0.07/hr) to act as the controller.
   - This keeps costs low while you delegate heavy lifting to training jobs.
-  - For guidance on common machine types and their costs, see [Instances for ML on GCP](../instances-for-ML.html).
+  - For guidance on common machine types and their costs, see [Compute for ML](../compute-for-ML.html). For help deciding when you need cloud hardware at all, see [When does model size justify cloud compute?](01-Introduction.md#when-does-model-size-justify-cloud-compute) in Episode 1.
 
 - **Set idle shutdown**: To save on costs when you aren't doing anything in your notebook, lower the default idle shutdown time to **60 (minutes)**.
 

@@ -105,6 +105,6 @@ Task Type (Embedding)
 
 ## Additional Resources
 
-- [Instances for ML on GCP](instances-for-ML.html) — guide to choosing machine types and GPUs
+- [Compute for ML](compute-for-ML.html) — guide to choosing machine types and GPUs
 - [UW-Madison Cloud Resources](uw-madison-cloud-resources.html) — discounts, credits, and campus support for UW researchers
 - [Using a GitHub PAT in Vertex AI](github-pat.html) — pushing/pulling code from Workbench notebooks
