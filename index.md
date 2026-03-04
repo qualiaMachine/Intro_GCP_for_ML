@@ -2,7 +2,16 @@
 site: sandpaper::sandpaper_site
 ---
 
-This workshop teaches core workflows for building, training, and tuning ML/AI models in Google Cloud's Vertex AI platform. Participants learn to set up data, configure Vertex AI Workbench notebooks, launch training and tuning jobs, and optimize resource costs effectively within GCP. The workshop also includes a section on building retrieval-augmented generation (RAG) pipelines using Gemini models. 
+Already know how to train an ML model in Python but haven't used the cloud? This hands-on workshop gets you running ML/AI workloads on **Google Cloud Platform (GCP)** — no prior cloud experience required. By the end, you'll be able to move a local training workflow into GCP's **Vertex AI** platform and take advantage of cloud-scale hardware and managed services.
+
+**What you'll learn:**
+
+- **Cloud-based notebooks** — Set up a Vertex AI Workbench notebook as your development environment and cloud controller.
+- **Data in the cloud** — Upload datasets to Cloud Storage and connect them to your training code.
+- **Scalable model training** — Launch custom training jobs on cloud GPUs/CPUs with your own PyTorch (or other framework) code.
+- **Hyperparameter tuning** — Run parallel tuning jobs in Vertex AI to efficiently search for optimal model settings.
+- **RAG pipelines** — Build a retrieval-augmented generation pipeline using Google's Gemini models and Vertex AI vector search.
+- **Cost management** — Monitor spending, set budget alerts, and clean up resources to avoid surprise bills.
 
 #### Prerequisites
 
