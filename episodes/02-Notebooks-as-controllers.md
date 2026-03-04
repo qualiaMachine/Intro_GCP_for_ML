@@ -36,7 +36,6 @@ We will follow these steps to create our first Workbench Instance:
 ### 1. Navigate to Workbench
 - Open the **Google Cloud Console** ([console.cloud.google.com](https://console.cloud.google.com/)) — this is the web dashboard where you manage all GCP resources. Search for "Workbench."
 - Click the "Instances" tab (this is the supported path going forward).
-- Pin Workbench to your navigation bar for quick access.  
 
 ### 2. Create a new Workbench Instance
 
