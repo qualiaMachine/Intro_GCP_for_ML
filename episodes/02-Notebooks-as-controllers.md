@@ -43,8 +43,7 @@ We will follow these steps to create our first Workbench Instance:
 #### Initial settings
 - Click **Create New** near the top of the Workbench page
 - **Name**: Use the convention `lastname-purpose` (e.g., `doe-workshop`). We'll use a single instance for training, tuning, RAG, and more, so `workshop` is a good general-purpose label.
-- **Region**: Choose the same region as your storage bucket (e.g., `us-central1`). This avoids cross-region transfer charges and keeps data access latency low.
-    - If you are unsure, check your bucket's location in the Cloud Storage console (click the bucket name → look under "Location").
+- **Region**: Select `us-central1`. When we create a storage bucket in [Episode 3](03-Data-storage-and-access.md), we'll use the same region — keeping compute and storage co-located avoids cross-region transfer charges and keeps data access fast.
 - **Zone:** `us-central1-a` (or another zone in `us-central1`, like `-b` or `-c`)  
   - If capacity or GPU availability is limited in one zone, switch to another zone in the same region.
 - **NVIDIA T4 GPU:** Leave unchecked for now  
