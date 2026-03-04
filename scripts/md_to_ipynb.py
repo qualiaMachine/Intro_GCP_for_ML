@@ -22,15 +22,21 @@ code_block_pattern = re.compile(r"```(\w+)?\n(.*?)\n```", re.DOTALL)
 # Languages that should stay as formatted markdown, not become code cells
 SHELL_LANGS = {"sh", "bash", "shell", "zsh"}
 
-def escape_dollars(text):
-    """Escape bare $ signs before digits so Jupyter doesn't treat them as LaTeX."""
-    return re.sub(r'(?<!\\)\$(?=\d)', r'\\$', text)
-
 def strip_solutions(md_content):
-    """Remove Carpentries solution blocks so learners don't see answers in notebooks."""
+    """Remove Carpentries solution blocks so learners don't see answers in notebooks.
+
+    If a solution contains a code block, replace it with an empty code cell
+    placeholder so learners get a blank cell to work in.
+    """
+    def _replace_solution(match):
+        body = match.group(0)
+        if re.search(r'```\w*\n', body):
+            return '```python\n# Your code here\n```'
+        return ''
+
     return re.sub(
         r'^:{16,}\s*solution\s*\n.*?\n:{16,}\s*$',
-        '', md_content, flags=re.MULTILINE | re.DOTALL
+        _replace_solution, md_content, flags=re.MULTILINE | re.DOTALL
     )
 
 def strip_fenced_divs(text):
@@ -46,7 +52,7 @@ def split_markdown(md_content):
         # Extract text before the code block as Markdown
         before_code = md_content[position:match.start()].strip()
         if before_code:
-            cells.append(new_markdown_cell(escape_dollars(before_code)))
+            cells.append(new_markdown_cell(before_code))
 
         # Extract code block content
         lang = (match.group(1) or "").lower()
@@ -65,7 +71,7 @@ def split_markdown(md_content):
     # Add any remaining Markdown content after the last code block
     remaining_md = md_content[position:].strip()
     if remaining_md:
-        cells.append(new_markdown_cell(escape_dollars(remaining_md)))
+        cells.append(new_markdown_cell(remaining_md))
     
     return cells
 
