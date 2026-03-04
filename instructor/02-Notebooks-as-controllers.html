@@ -448,7 +448,8 @@ forward).</li>
 page</li>
 <li>
 <strong>Name</strong>: Use the convention
-<code>lastname-purpose</code> (e.g., <code>doe-workshop</code>). We’ll
+<code>lastname-purpose</code> (e.g., <code>doe-workshop</code>). GCP
+resource names only allow lowercase letters, numbers, and hyphens. We’ll
 use a single instance for training, tuning, RAG, and more, so
 <code>workshop</code> is a good general-purpose label.</li>
 <li>
@@ -490,8 +491,7 @@ network is fine.</li>
 <strong>Labels (required for cost tracking):</strong> Under the
 Details menu, add the following tags (all lowercase) so that you can
 track the total cost of your activity on GCP later:
-<ul><li>
-<code>name = lastname</code> (your last name)</li>
+<ul><li><code>name = firstname-lastname</code></li>
 <li><code>purpose = workshop</code></li>
 </ul></li>
 </ul></li>
@@ -682,28 +682,26 @@ in use.</p>
 <h3 class="callout-title">You don’t need a notebook to use Vertex
 AI</h3>
 <div class="callout-content">
-<p>We use <strong>Vertex AI Workbench</strong> notebooks rather than a
-plain local JupyterLab because Workbench comes pre-configured with ML
-frameworks, GPU drivers, and — most importantly — automatic GCP
-authentication through the VM’s service account. You could run a
-self-managed Jupyter server on a Compute Engine VM, but you’d have to
-install libraries and configure credentials yourself. Working through
-Workbench also gets you comfortable with the GCP Console — navigating
-services, checking instance status, reading logs — skills that transfer
-to every other GCP workflow.</p>
-<p>That said, <strong>notebooks are not required</strong> for any of the
-workflows covered here. Everything we do through the Python SDK
-(submitting training jobs, running hyperparameter tuning, calling the
-Gemini API) can also be done from:</p>
+<p>We start with <strong>Vertex AI Workbench</strong> notebooks because
+they give you authenticated access to buckets, training jobs, and other
+GCP services out of the box — no credential setup required. The Console
+UI also lets you see and manage running jobs directly, which matters
+when you’re learning: accidentally submitting a duplicate training job
+is easy to spot and cancel in the Console, harder to notice from a
+terminal.</p>
+<p><a href="08-CLI-workflows.html">Episode 8</a> introduces the
+<strong><code>gcloud</code> CLI</strong> once these concepts are
+familiar. <strong>Notebooks are not required</strong> for any of the
+workflows covered here — everything we do through the Python SDK can
+also be done from:</p>
 <ul><li>A <strong>plain Python script</strong> run from your terminal or an
 HPC scheduler.</li>
 <li>The <strong><code>gcloud</code> CLI</strong> (e.g.,
-<code>gcloud ai custom-jobs create ...</code>) for submitting and
-managing jobs directly from the command line.</li>
+<code>gcloud ai custom-jobs create ...</code>).</li>
 <li>A <strong>CI/CD pipeline</strong> (GitHub Actions, Cloud Build,
-etc.) that triggers training runs automatically.</li>
+etc.).</li>
 </ul><p>The real work happens in the training scripts and SDK calls — the
-notebook is just a convenient wrapper for orchestrating them.</p>
+notebook is just a convenient starting point.</p>
 </div>
 </div>
 </div>
