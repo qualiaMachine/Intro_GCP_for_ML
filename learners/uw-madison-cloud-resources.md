@@ -2,7 +2,7 @@
 title: UW-Madison Cloud Resources
 ---
 
-This page collects UW-Madison-specific cloud computing resources, contacts, and funding opportunities relevant to ML researchers. It is meant as a companion to the workshop material and a starting point for learners who want to continue using cloud resources after the workshop.
+This page collects UW-Madison-specific cloud computing resources, contacts, and funding opportunities relevant to ML/AI researchers. It is meant as a companion to the workshop material and a starting point for learners who want to continue using cloud resources after the workshop.
 
 Much of this information is drawn from the [ML+X Nexus UW Cloud Services page](https://uw-madison-datascience.github.io/ML-X-Nexus/Toolbox/Compute/UW-Cloud-Services.html) — check there for the most up-to-date version.
 

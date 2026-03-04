@@ -13,14 +13,14 @@ exercises: 15
 
 ::::::::::::::::::::::::::::::::::::: objectives
 
-- Describe how Vertex AI Workbench notebooks fit into ML workflows on GCP.
+- Describe how Vertex AI Workbench notebooks fit into ML/AI workflows on GCP.
 - Set up a Jupyter-based Workbench Instance as a lightweight controller to manage compute tasks.
 - Configure a Workbench Instance with appropriate machine type, labels, and idle shutdown for cost-efficient orchestration.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## Setting up our notebook environment
-Google Cloud Workbench provides JupyterLab-based environments that can be used to orchestrate machine learning workflows. In this workshop, we will use a **Workbench Instance**—the recommended option going forward, as other Workbench environments are being deprecated.  
+Google Cloud Workbench provides JupyterLab-based environments that can be used to orchestrate ML/AI workflows. In this workshop, we will use a **Workbench Instance**—the recommended option going forward, as other Workbench environments are being deprecated.  
 
 > Workbench Instances come with JupyterLab 3 pre-installed and are configured with GPU-enabled ML frameworks (TensorFlow, PyTorch, etc.), making it easy to start experimenting without additional setup. Learn more in the [Workbench Instances documentation](https://cloud.google.com/vertex-ai/docs/workbench/instances/introduction).  
 
