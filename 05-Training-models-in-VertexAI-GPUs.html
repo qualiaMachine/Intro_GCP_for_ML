@@ -413,11 +413,12 @@ training is (not) worth it.</li>
 <h4 id="open-pre-filled-notebook">1. Open pre-filled notebook<a class="anchor" aria-label="anchor" href="#open-pre-filled-notebook"></a></h4>
 <p>Navigate to
 <code>/Intro_GCP_for_ML/notebooks/05-Training-models-in-VertexAI-GPUs.ipynb</code>
-to begin this notebook. Select the <em>PyTorch</em> environment (kernel)
-Local PyTorch is only needed for local tests. Your <em>Vertex AI
-job</em> uses the container specified by <code>container_uri</code>
-(e.g., <code>pytorch-cpu.2-5</code> or <code>pytorch-gpu.2-5</code>), so
-it brings its own framework at run time.</p>
+to begin this notebook. <strong>Select the <em>PyTorch</em> environment
+(kernel).</strong> Local PyTorch is only needed for local tests. Your
+<em>Vertex AI job</em> uses the container specified by
+<code>container_uri</code> (e.g., <code>pytorch-cpu.2-6</code> or
+<code>pytorch-gpu.2-6</code>), so it brings its own framework at run
+time.</p>
 </div>
 <div class="section level4">
 <h4 id="cd-to-instance-home-directory">2. CD to instance home directory<a class="anchor" aria-label="anchor" href="#cd-to-instance-home-directory"></a></h4>
@@ -716,7 +717,7 @@ cells below, verify that the PyTorch version in <code>IMAGE</code> is
 still listed at <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch" class="external-link">Prebuilt
 containers for training</a>. If you see an <code>INVALID_ARGUMENT</code>
 error about an unsupported image, update the version number (e.g.,
-<code>2-5</code> → <code>2-6</code>).</p>
+<code>2-6</code> → <code>2-7</code>).</p>
 </div>
 </div>
 </div>
@@ -726,7 +727,7 @@ error about an unsupported image, update the version number (e.g.,
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-5.py310:latest'</span> <span class="co"># cpu-only version</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-6.py310:latest'</span> <span class="co"># cpu-only version</span></span>
 <span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span> <span class="co"># CPU fine for small datasets</span></span>
 <span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"RUN_ID = </span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">ARTIFACT_DIR = </span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ch">\n</span><span class="ss">MACHINE = </span><span class="sc">{</span>MACHINE<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
@@ -862,7 +863,7 @@ it here to learn the workflow.</p>
 <p>The changes from CPU to GPU are minimal — this is one of the
 advantages of Vertex AI’s container-based approach:</p>
 <ul><li>The container image switches to the GPU-enabled version
-(<code>pytorch-gpu.2-5.py310:latest</code>), which includes CUDA and
+(<code>pytorch-gpu.2-6.py310:latest</code>), which includes CUDA and
 cuDNN.</li>
 <li>The machine type (<code>n1-standard-8</code>) defines CPU and memory
 resources, while we add a GPU accelerator (<code>NVIDIA_TESLA_T4</code>,
@@ -900,7 +901,7 @@ process.</p>
 <span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a></span>
 <span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co"># ---- Container image ----</span></span>
 <span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co"># Use a prebuilt TRAINING image that has PyTorch + CUDA. This enables GPU at runtime.</span></span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-5.py310:latest"</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-6.py310:latest"</span></span>
 <span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a></span>
 <span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co"># ---- Machine vs Accelerator (important!) ----</span></span>
 <span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co"># machine_type = the VM's CPU/RAM shape. It is NOT a GPU by itself.</span></span>
@@ -1021,8 +1022,8 @@ of your CPU and GPU jobs (visible in the Console under <strong>Vertex AI
 the GPU job be <em>slower</em> for this dataset?</li>
 <li>
 <strong>Container choice</strong>: We used
-<code>pytorch-cpu.2-5.py310</code> for the CPU job and
-<code>pytorch-gpu.2-5.py310</code> for the GPU job. What would happen if
+<code>pytorch-cpu.2-6.py310</code> for the CPU job and
+<code>pytorch-gpu.2-6.py310</code> for the GPU job. What would happen if
 you used the CPU container but still passed
 <code>accelerator_type</code> and <code>accelerator_count</code>?</li>
 <li>
@@ -1038,7 +1039,7 @@ between these configurations.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <code>base_output_dir</code> tells the Vertex AI SDK to set the

@@ -1734,7 +1734,7 @@ GB, and 1 TB (1024 GB).</strong></p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1786,6 +1786,11 @@ Workbench VM.</p>
 <div class="section level3">
 <h3 id="reading-data-directly-into-memory">Reading data directly into memory<a class="anchor" aria-label="anchor" href="#reading-data-directly-into-memory"></a>
 </h3>
+<p>The code below downloads a CSV from your bucket and loads it into a
+pandas DataFrame. The <code>blob.download_as_bytes()</code> call pulls
+the file contents as raw bytes, and <code>io.BytesIO</code> wraps those
+bytes in a file-like object that <code>pd.read_csv</code> can read — no
+temporary file on disk needed.</p>
 <div class="codewrapper sourceCode" id="cb6">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -1817,10 +1822,15 @@ data in Episode 4.</p>
 <div id="alternative-reading-directly-with-pandas" class="callout-inner">
 <h3 class="callout-title">Alternative: reading directly with pandas</h3>
 <div class="callout-content">
-<p>Vertex AI Workbench comes with <code>gcsfs</code> pre-installed, so
-you can also read directly with
-<code>pd.read_csv("gs://your-bucket-name/titanic_train.csv")</code>.
-This is convenient for quick exploration. We use the
+<p>Vertex AI Workbench comes with <code>gcsfs</code> pre-installed,
+which lets pandas read GCS URIs directly — no <code>BytesIO</code>
+conversion needed:</p>
+<div class="codewrapper sourceCode" id="cb8">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>train_data <span class="op">=</span> pd.read_csv(<span class="st">"gs://doe-titanic/titanic_train.csv"</span>)  <span class="co"># ADJUST bucket name</span></span></code></pre>
+</div>
+<p>This is convenient for quick exploration. We use the
 <code>storage.Client</code> approach above because it gives you more
 control (listing blobs, checking sizes, uploading), which you’ll need in
 the sections that follow.</p>
@@ -1858,58 +1868,58 @@ Workbench Instance (not a local machine).</li>
 <hr class="half-width">
 <p>It’s good practice to periodically check how much storage your bucket
 is using. The code below sums up all object sizes.</p>
-<div class="codewrapper sourceCode" id="cb8">
-<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>total_size_bytes <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
-<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    total_size_bytes <span class="op">+=</span> blob.size</span>
-<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>total_size_mb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)</span>
-<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>bucket_name<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
-</div>
 <div class="codewrapper sourceCode" id="cb9">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>storage_price_per_gb <span class="op">=</span> <span class="fl">0.02</span>   <span class="co"># $/GB/month for Standard storage</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>egress_price_per_gb <span class="op">=</span> <span class="fl">0.12</span>    <span class="co"># $/GB for internet egress (same-region transfers are free)</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>total_size_gb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">3</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>monthly_storage <span class="op">=</span> total_size_gb <span class="op">*</span> storage_price_per_gb</span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>egress_cost <span class="op">=</span> total_size_gb <span class="op">*</span> egress_price_per_gb</span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Bucket size: </span><span class="sc">{</span>total_size_gb<span class="sc">:.4f}</span><span class="ss"> GB"</span>)</span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated monthly storage cost: $</span><span class="sc">{</span>monthly_storage<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated annual storage cost:  $</span><span class="sc">{</span>monthly_storage<span class="op">*</span><span class="dv">12</span><span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"One-time full download (egress) cost: $</span><span class="sc">{</span>egress_cost<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>total_size_bytes <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    total_size_bytes <span class="op">+=</span> blob.size</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>total_size_mb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Total size of bucket '</span><span class="sc">{</span>bucket_name<span class="sc">}</span><span class="ss">': </span><span class="sc">{</span>total_size_mb<span class="sc">:.2f}</span><span class="ss"> MB"</span>)</span></code></pre>
+</div>
+<div class="codewrapper sourceCode" id="cb10">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>storage_price_per_gb <span class="op">=</span> <span class="fl">0.02</span>   <span class="co"># $/GB/month for Standard storage</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>egress_price_per_gb <span class="op">=</span> <span class="fl">0.12</span>    <span class="co"># $/GB for internet egress (same-region transfers are free)</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>total_size_gb <span class="op">=</span> total_size_bytes <span class="op">/</span> (<span class="dv">1024</span><span class="op">**</span><span class="dv">3</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>monthly_storage <span class="op">=</span> total_size_gb <span class="op">*</span> storage_price_per_gb</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>egress_cost <span class="op">=</span> total_size_gb <span class="op">*</span> egress_price_per_gb</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Bucket size: </span><span class="sc">{</span>total_size_gb<span class="sc">:.4f}</span><span class="ss"> GB"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated monthly storage cost: $</span><span class="sc">{</span>monthly_storage<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated annual storage cost:  $</span><span class="sc">{</span>monthly_storage<span class="op">*</span><span class="dv">12</span><span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"One-time full download (egress) cost: $</span><span class="sc">{</span>egress_cost<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
 </section><section><h2 class="section-heading" id="writing-output-files-to-gcs">Writing output files to GCS<a class="anchor" aria-label="anchor" href="#writing-output-files-to-gcs"></a>
 </h2>
 <hr class="half-width">
-<div class="codewrapper sourceCode" id="cb10">
-<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
-</h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># Create a sample file locally on the notebook VM</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>file_path <span class="op">=</span> <span class="st">"/home/jupyter/Notes.txt"</span></span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(file_path, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>    f.write(<span class="st">"This is a test note for GCS."</span>)</span></code></pre>
-</div>
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"docs/Notes.txt"</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>blob.upload_from_filename(file_path)</span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"File uploaded successfully."</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="co"># Create a sample file locally on the notebook VM</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>file_path <span class="op">=</span> <span class="st">"/home/jupyter/Notes.txt"</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(file_path, <span class="st">"w"</span>) <span class="im">as</span> f:</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    f.write(<span class="st">"This is a test note for GCS."</span>)</span></code></pre>
 </div>
-<p>List bucket contents:</p>
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>    <span class="bu">print</span>(blob.name)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(bucket_name)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"docs/Notes.txt"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>blob.upload_from_filename(file_path)</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"File uploaded successfully."</span>)</span></code></pre>
+</div>
+<p>List bucket contents:</p>
+<div class="codewrapper sourceCode" id="cb13">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>    <span class="bu">print</span>(blob.name)</span></code></pre>
 </div>
 <div id="challenge-2-read-and-explore-the-test-dataset" class="callout challenge">
 <div class="callout-square">
@@ -1931,17 +1941,17 @@ columns?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
-<div class="codewrapper sourceCode" id="cb13">
+<div class="codewrapper sourceCode" id="cb14">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>blob <span class="op">=</span> client.bucket(bucket_name).blob(<span class="st">"titanic_test.csv"</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>test_data <span class="op">=</span> pd.read_csv(io.BytesIO(blob.download_as_bytes()))</span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Test shape:"</span>, test_data.shape)</span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Train shape:"</span>, train_data.shape)</span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Same columns?"</span>, <span class="bu">list</span>(test_data.columns) <span class="op">==</span> <span class="bu">list</span>(train_data.columns))</span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>test_data.head()</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>blob <span class="op">=</span> client.bucket(bucket_name).blob(<span class="st">"titanic_test.csv"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>test_data <span class="op">=</span> pd.read_csv(io.BytesIO(blob.download_as_bytes()))</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Test shape:"</span>, test_data.shape)</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Train shape:"</span>, train_data.shape)</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Same columns?"</span>, <span class="bu">list</span>(test_data.columns) <span class="op">==</span> <span class="bu">list</span>(train_data.columns))</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>test_data.head()</span></code></pre>
 </div>
 <p>Both datasets share the same 12 columns (including
 <code>Survived</code>). The test set is a smaller held-out subset (179
@@ -1970,20 +1980,20 @@ class (<code>Pclass</code>) and upload the result as
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
-<div class="codewrapper sourceCode" id="cb14">
+<div class="codewrapper sourceCode" id="cb15">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>summary <span class="op">=</span> train_data.groupby(<span class="st">"Pclass"</span>)[<span class="st">"Survived"</span>].mean().reset_index()</span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>summary.columns <span class="op">=</span> [<span class="st">"Pclass"</span>, <span class="st">"SurvivalRate"</span>]</span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="bu">print</span>(summary)</span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="co"># Save locally then upload</span></span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>summary.to_csv(<span class="st">"/home/jupyter/survival_by_class.csv"</span>, index<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>blob <span class="op">=</span> client.bucket(bucket_name).blob(<span class="st">"results/survival_by_class.csv"</span>)</span>
-<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>blob.upload_from_filename(<span class="st">"/home/jupyter/survival_by_class.csv"</span>)</span>
-<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Summary uploaded to GCS."</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>summary <span class="op">=</span> train_data.groupby(<span class="st">"Pclass"</span>)[<span class="st">"Survived"</span>].mean().reset_index()</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>summary.columns <span class="op">=</span> [<span class="st">"Pclass"</span>, <span class="st">"SurvivalRate"</span>]</span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="bu">print</span>(summary)</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="co"># Save locally then upload</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>summary.to_csv(<span class="st">"/home/jupyter/survival_by_class.csv"</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>blob <span class="op">=</span> client.bucket(bucket_name).blob(<span class="st">"results/survival_by_class.csv"</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>blob.upload_from_filename(<span class="st">"/home/jupyter/survival_by_class.csv"</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Summary uploaded to GCS."</span>)</span></code></pre>
 </div>
 </div>
 </div>
@@ -1993,16 +2003,32 @@ class (<code>Pclass</code>) and upload the result as
 </h2>
 <hr class="half-width">
 <p>After you are done using your data, remove unused files/buckets to
-stop costs:</p>
+stop costs.</p>
+<p>You can delete files programmatically. Let’s clean up the notes file
+we uploaded earlier:</p>
+<div class="codewrapper sourceCode" id="cb16">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>blob <span class="op">=</span> client.bucket(bucket_name).blob(<span class="st">"docs/Notes.txt"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>blob.delete()</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"docs/Notes.txt deleted."</span>)</span></code></pre>
+</div>
+<p>Verify it’s gone:</p>
+<div class="codewrapper sourceCode" id="cb17">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="cf">for</span> blob <span class="kw">in</span> client.list_blobs(bucket_name):</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>    <span class="bu">print</span>(blob.name)</span></code></pre>
+</div>
+<p>For larger clean-up tasks, use the Cloud Console:</p>
 <ul>
 <li>
-<strong>Option 1: Delete files only</strong> – In your bucket,
-select the files you want to remove and click
-<strong>Delete</strong>.</li>
+<strong>Delete files only</strong> – In your bucket, select the
+files you want to remove and click <strong>Delete</strong>.</li>
 <li>
-<strong>Option 2: Delete the bucket entirely</strong> – In
-<strong>Cloud Storage &gt; Buckets</strong>, select your bucket and
-click <strong>Delete</strong>.</li>
+<strong>Delete the bucket entirely</strong> – In <strong>Cloud
+Storage &gt; Buckets</strong>, select your bucket and click
+<strong>Delete</strong>.</li>
 </ul>
 <p>For a detailed walkthrough of cleaning up all workshop resources, see
 <a href="09-Resource-management-cleanup.html">Episode 9: Resource
@@ -2150,6 +2176,26 @@ region close to your data).</li>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">"DOE"</span> <span class="co"># ADJUST to your last name or name</span></span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"project = </span><span class="sc">{</span>PROJECT_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">region = </span><span class="sc">{</span>REGION<span class="sc">}</span><span class="ch">\n</span><span class="ss">bucket = </span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
 </div>
+<div id="how-does-storage.client-know-your-project" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="how-does-storage.client-know-your-project" class="callout-inner">
+<h3 class="callout-title">How does <code>storage.Client()</code> know
+your project?</h3>
+<div class="callout-content">
+<p>When you call <code>storage.Client()</code> without arguments, the
+library automatically discovers your credentials and project ID. This
+works because Vertex AI Workbench VMs run on Google Compute Engine,
+which provides a <strong>metadata server</strong> at a known internal
+address. The client library queries this server to retrieve the project
+ID and a service-account token — no keys or config files needed. If you
+ran the same code on your laptop, you would need to authenticate first
+with <code>gcloud auth application-default login</code> (see <a href="08-CLI-workflows.html">Episode 8</a> for details).</p>
+</div>
+</div>
+</div>
 </div>
 </section><section><h2 class="section-heading" id="testing-train_xgboost-py-locally-in-the-notebook">Testing train_xgboost.py locally in the notebook<a class="anchor" aria-label="anchor" href="#testing-train_xgboost-py-locally-in-the-notebook"></a>
 </h2>
@@ -2157,6 +2203,41 @@ region close to your data).</li>
 <p>Before submitting a managed training job to Vertex AI, let’s first
 examine and test the training script on our notebook VM. This ensures
 the code runs without errors before we spend money on cloud compute.</p>
+<div id="one-script-two-environments" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="one-script-two-environments" class="callout-inner">
+<h3 class="callout-title">One script, two environments</h3>
+<div class="callout-content">
+<p>A key design goal of <code>train_xgboost.py</code> is that the
+<strong>same script runs unchanged</strong> on your laptop, inside a
+Workbench notebook, and as a Vertex AI managed training job. Two
+patterns make this possible:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>GCS-aware I/O helpers</strong>
+(<code>read_csv_any</code>, <code>save_model_any</code>): These
+functions check whether a path starts with <code>gs://</code>. If it
+does, they use the <code>google-cloud-storage</code> client to read or
+write. If not, they use plain local file I/O. This means you can pass
+<code>--train ./titanic_train.csv</code> for a local test and
+<code>--train=gs://my-bucket/titanic_train.csv</code> for a cloud job
+without changing any code.</p></li>
+<li><p><strong><code>AIP_MODEL_DIR</code> environment variable</strong>:
+When Vertex AI runs a CustomTrainingJob with
+<code>base_output_dir</code> set, it injects <code>AIP_MODEL_DIR</code>
+(a <code>gs://</code> path) into the container. The script reads this
+variable to decide where to save the model. Locally, the variable is
+unset, so it falls back to the current directory
+(<code>.</code>).</p></li>
+</ol>
+<p>This “write once, run anywhere” approach means you can <strong>debug
+locally first</strong> (fast, free) and then submit the exact same
+script to Vertex AI (scalable, managed) with confidence.</p>
+</div>
+</div>
+</div>
 <div id="understanding-the-xgboost-training-script-gcp-version" class="callout discussion">
 <div class="callout-square">
 <i class="callout-icon" data-feather="message-circle"></i>
@@ -2205,7 +2286,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -2449,7 +2530,7 @@ improve, or does it start overfitting?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <p>Increasing <code>NUM_ROUND</code> from 100 to 200 may marginally
 improve accuracy but roughly doubles runtime. Increasing
@@ -2774,7 +2855,7 @@ accuracy from the Vertex AI job. Are they the same? Why or why not?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <p>The two accuracy values should be very close or identical. Both runs
 execute the same <code>train_xgboost.py</code> script with the same
@@ -2812,7 +2893,7 @@ Can you locate:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>Click your job name, then select the <strong>Logs</strong> tab (or
@@ -2940,11 +3021,12 @@ training is (not) worth it.</li>
 </h4>
 <p>Navigate to
 <code>/Intro_GCP_for_ML/notebooks/05-Training-models-in-VertexAI-GPUs.ipynb</code>
-to begin this notebook. Select the <em>PyTorch</em> environment (kernel)
-Local PyTorch is only needed for local tests. Your <em>Vertex AI
-job</em> uses the container specified by <code>container_uri</code>
-(e.g., <code>pytorch-cpu.2-5</code> or <code>pytorch-gpu.2-5</code>), so
-it brings its own framework at run time.</p>
+to begin this notebook. <strong>Select the <em>PyTorch</em> environment
+(kernel).</strong> Local PyTorch is only needed for local tests. Your
+<em>Vertex AI job</em> uses the container specified by
+<code>container_uri</code> (e.g., <code>pytorch-cpu.2-6</code> or
+<code>pytorch-gpu.2-6</code>), so it brings its own framework at run
+time.</p>
 </div>
 <div class="section level4">
 <h4 id="cd-to-instance-home-directory">2. CD to instance home directory<a class="anchor" aria-label="anchor" href="#cd-to-instance-home-directory"></a>
@@ -3262,7 +3344,7 @@ cells below, verify that the PyTorch version in <code>IMAGE</code> is
 still listed at <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-containers#pytorch" class="external-link">Prebuilt
 containers for training</a>. If you see an <code>INVALID_ARGUMENT</code>
 error about an unsupported image, update the version number (e.g.,
-<code>2-5</code> → <code>2-6</code>).</p>
+<code>2-6</code> → <code>2-7</code>).</p>
 </div>
 </div>
 </div>
@@ -3272,7 +3354,7 @@ error about an unsupported image, update the version number (e.g.,
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="im">import</span> datetime <span class="im">as</span> dt</span>
 <span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-5.py310:latest'</span> <span class="co"># cpu-only version</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">'us-docker.pkg.dev/vertex-ai/training/pytorch-cpu.2-6.py310:latest'</span> <span class="co"># cpu-only version</span></span>
 <span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span> <span class="co"># CPU fine for small datasets</span></span>
 <span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"RUN_ID = </span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">ARTIFACT_DIR = </span><span class="sc">{</span>ARTIFACT_DIR<span class="sc">}</span><span class="ch">\n</span><span class="ss">MACHINE = </span><span class="sc">{</span>MACHINE<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
@@ -3422,7 +3504,7 @@ it here to learn the workflow.</p>
 advantages of Vertex AI’s container-based approach:</p>
 <ul>
 <li>The container image switches to the GPU-enabled version
-(<code>pytorch-gpu.2-5.py310:latest</code>), which includes CUDA and
+(<code>pytorch-gpu.2-6.py310:latest</code>), which includes CUDA and
 cuDNN.</li>
 <li>The machine type (<code>n1-standard-8</code>) defines CPU and memory
 resources, while we add a GPU accelerator (<code>NVIDIA_TESLA_T4</code>,
@@ -3461,7 +3543,7 @@ process.</p>
 <span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a></span>
 <span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co"># ---- Container image ----</span></span>
 <span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co"># Use a prebuilt TRAINING image that has PyTorch + CUDA. This enables GPU at runtime.</span></span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-5.py310:latest"</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-6.py310:latest"</span></span>
 <span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a></span>
 <span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="co"># ---- Machine vs Accelerator (important!) ----</span></span>
 <span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co"># machine_type = the VM's CPU/RAM shape. It is NOT a GPU by itself.</span></span>
@@ -3583,8 +3665,8 @@ of your CPU and GPU jobs (visible in the Console under <strong>Vertex AI
 the GPU job be <em>slower</em> for this dataset?</li>
 <li>
 <strong>Container choice</strong>: We used
-<code>pytorch-cpu.2-5.py310</code> for the CPU job and
-<code>pytorch-gpu.2-5.py310</code> for the GPU job. What would happen if
+<code>pytorch-cpu.2-6.py310</code> for the CPU job and
+<code>pytorch-gpu.2-6.py310</code> for the GPU job. What would happen if
 you used the CPU container but still passed
 <code>accelerator_type</code> and <code>accelerator_count</code>?</li>
 <li>
@@ -3601,7 +3683,7 @@ between these configurations.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -3763,11 +3845,11 @@ of parallelization.</p>
 </h4>
 <p>Navigate to
 <code>/Intro_GCP_for_ML/notebooks/06-Hyperparameter-tuning.ipynb</code>
-to begin this notebook. Select the <em>PyTorch</em> environment
-(kernel). Local PyTorch is only needed for local tests — your <em>Vertex
-AI job</em> uses the container specified by <code>container_uri</code>
-(e.g., <code>pytorch-gpu.2-1</code>), so it brings its own framework at
-run time.</p>
+to begin this notebook. <strong>Select the <em>PyTorch</em> environment
+(kernel).</strong> Local PyTorch is only needed for local tests — your
+<em>Vertex AI job</em> uses the container specified by
+<code>container_uri</code> (e.g., <code>pytorch-gpu.2-6</code>), so it
+brings its own framework at run time.</p>
 </div>
 <div class="section level4">
 <h4 id="cd-to-instance-home-directory">2. CD to instance home directory<a class="anchor" aria-label="anchor" href="#cd-to-instance-home-directory"></a>
@@ -3946,7 +4028,7 @@ CPU-only runs. Change these to attach a GPU when needed.</li>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>RUN_ID <span class="op">=</span> dt.datetime.now().strftime(<span class="st">"%Y%m</span><span class="sc">%d</span><span class="st">-%H%M%S"</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>ARTIFACT_DIR <span class="op">=</span> <span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/artifacts/pytorch_hpt/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">"</span></span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest"</span>  <span class="co"># XLA container includes cloudml-hypertune</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>IMAGE <span class="op">=</span> <span class="st">"us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-6.py310:latest"</span>  <span class="co"># XLA container includes cloudml-hypertune</span></span>
 <span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>MACHINE <span class="op">=</span> <span class="st">"n1-standard-4"</span></span>
 <span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>ACCELERATOR_TYPE <span class="op">=</span> <span class="st">"ACCELERATOR_TYPE_UNSPECIFIED"</span></span>
 <span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>ACCELERATOR_COUNT <span class="op">=</span> <span class="dv">0</span></span></code></pre>
@@ -5437,7 +5519,7 @@ expects (<code>--train</code>, <code>--val</code>,
 <span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="at">        </span><span class="fu">acceleratorCount</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
 <span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="at">      </span><span class="fu">replicaCount</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
 <span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="at">      </span><span class="fu">containerSpec</span><span class="kw">:</span></span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="at">        </span><span class="fu">imageUri</span><span class="kw">:</span><span class="at"> us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="at">        </span><span class="fu">imageUri</span><span class="kw">:</span><span class="at"> us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-6.py310:latest</span></span>
 <span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="at">        </span><span class="fu">args</span><span class="kw">:</span></span>
 <span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--train=gs://doe-titanic/data/train_data.npz"</span></span>
 <span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--val=gs://doe-titanic/data/val_data.npz"</span></span>
@@ -6291,7 +6373,7 @@ and 100%.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li><p>In the Cloud Console, click the <strong>Navigation menu
@@ -6346,7 +6428,7 @@ are not actively using.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6382,7 +6464,7 @@ don’t need, and delete the endpoint.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6428,7 +6510,7 @@ objects. Apply it to your bucket.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
 <div class="accordion-body">
 <p>Save the following as <code>lifecycle.json</code>:</p>
 <div class="codewrapper sourceCode" id="cb14">
@@ -6484,7 +6566,7 @@ delete the bucket entirely.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution5" aria-expanded="false" aria-controls="collapseSolution5">
   <h4 class="accordion-header" id="headingSolution5"> Show me the solution </h4>
 </button>
-<div id="collapseSolution5" class="accordion-collapse collapse" data-bs-parent="#accordionSolution5" aria-labelledby="headingSolution5">
+<div id="collapseSolution5" class="accordion-collapse collapse" aria-labelledby="headingSolution5" data-bs-parent="#accordionSolution5">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>

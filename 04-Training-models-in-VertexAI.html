@@ -463,11 +463,64 @@ region close to your data).</li>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>LAST_NAME <span class="op">=</span> <span class="st">"DOE"</span> <span class="co"># ADJUST to your last name or name</span></span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"project = </span><span class="sc">{</span>PROJECT_ID<span class="sc">}</span><span class="ch">\n</span><span class="ss">region = </span><span class="sc">{</span>REGION<span class="sc">}</span><span class="ch">\n</span><span class="ss">bucket = </span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">"</span>)</span></code></pre>
 </div>
+<div id="how-does-storage.client-know-your-project" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="how-does-storage.client-know-your-project" class="callout-inner">
+<h3 class="callout-title">How does <code>storage.Client()</code> know
+your project?</h3>
+<div class="callout-content">
+<p>When you call <code>storage.Client()</code> without arguments, the
+library automatically discovers your credentials and project ID. This
+works because Vertex AI Workbench VMs run on Google Compute Engine,
+which provides a <strong>metadata server</strong> at a known internal
+address. The client library queries this server to retrieve the project
+ID and a service-account token — no keys or config files needed. If you
+ran the same code on your laptop, you would need to authenticate first
+with <code>gcloud auth application-default login</code> (see <a href="08-CLI-workflows.html">Episode 8</a> for details).</p>
+</div>
+</div>
+</div>
 </div>
 </section><section><h2 class="section-heading" id="testing-train_xgboost-py-locally-in-the-notebook">Testing train_xgboost.py locally in the notebook<a class="anchor" aria-label="anchor" href="#testing-train_xgboost-py-locally-in-the-notebook"></a></h2>
 <hr class="half-width"><p>Before submitting a managed training job to Vertex AI, let’s first
 examine and test the training script on our notebook VM. This ensures
 the code runs without errors before we spend money on cloud compute.</p>
+<div id="one-script-two-environments" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="one-script-two-environments" class="callout-inner">
+<h3 class="callout-title">One script, two environments</h3>
+<div class="callout-content">
+<p>A key design goal of <code>train_xgboost.py</code> is that the
+<strong>same script runs unchanged</strong> on your laptop, inside a
+Workbench notebook, and as a Vertex AI managed training job. Two
+patterns make this possible:</p>
+<ol style="list-style-type: decimal"><li><p><strong>GCS-aware I/O helpers</strong>
+(<code>read_csv_any</code>, <code>save_model_any</code>): These
+functions check whether a path starts with <code>gs://</code>. If it
+does, they use the <code>google-cloud-storage</code> client to read or
+write. If not, they use plain local file I/O. This means you can pass
+<code>--train ./titanic_train.csv</code> for a local test and
+<code>--train=gs://my-bucket/titanic_train.csv</code> for a cloud job
+without changing any code.</p></li>
+<li><p><strong><code>AIP_MODEL_DIR</code> environment variable</strong>:
+When Vertex AI runs a CustomTrainingJob with
+<code>base_output_dir</code> set, it injects <code>AIP_MODEL_DIR</code>
+(a <code>gs://</code> path) into the container. The script reads this
+variable to decide where to save the model. Locally, the variable is
+unset, so it falls back to the current directory
+(<code>.</code>).</p></li>
+</ol><p>This “write once, run anywhere” approach means you can <strong>debug
+locally first</strong> (fast, free) and then submit the exact same
+script to Vertex AI (scalable, managed) with confidence.</p>
+</div>
+</div>
+</div>
 <div id="understanding-the-xgboost-training-script-gcp-version" class="callout discussion">
 <div class="callout-square">
 <i class="callout-icon" data-feather="message-circle"></i>
@@ -514,7 +567,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>Data preprocessing</strong>: The script fills missing values
@@ -741,7 +794,7 @@ improve, or does it start overfitting?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <p>Increasing <code>NUM_ROUND</code> from 100 to 200 may marginally
 improve accuracy but roughly doubles runtime. Increasing
@@ -1035,7 +1088,7 @@ accuracy from the Vertex AI job. Are they the same? Why or why not?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <p>The two accuracy values should be very close or identical. Both runs
 execute the same <code>train_xgboost.py</code> script with the same
@@ -1071,7 +1124,7 @@ Can you locate:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>Click your job name, then select the <strong>Logs</strong> tab (or
 <strong>View logs</strong> link). Your script’s <code>print()</code>
