@@ -162,7 +162,9 @@ In short:
 `CustomJob` defines how to run one training run.  
 `HyperparameterTuningJob` defines how to repeat it with different parameter sets and track results.  
 
-The number of total runs is set by `max_trial_count`, and the number of simultaneous runs is controlled by `parallel_trial_count`.  Each trial's output and metrics are logged under the GCS `base_output_dir`. **ALWAYS START WITH 1 trial** before scaling up `max_trial_count`.
+The number of total runs is set by `max_trial_count`, and the number of simultaneous runs is controlled by `parallel_trial_count`.  Each trial's output and metrics are logged under the GCS `base_output_dir`.
+
+For a first pass, we'll run **3 trials fully in parallel**. With only 3 trials the adaptive optimizer has almost nothing to learn from, so running them simultaneously costs no search quality. This still validates that the full pipeline works end-to-end (metrics are reported, artifacts land in GCS, the tuner picks a best trial) while giving you a quick look at how results vary across different parameter combinations.
 
 
 ```python
@@ -189,14 +191,16 @@ custom_job = aiplatform.CustomJob.from_local_script(
 
 DISPLAY_NAME = f"{LAST_NAME}_pytorch_hpt_{RUN_ID}"
 
-# ALWAYS START WITH 1 trial before scaling up `max_trial_count`
+# Start with a small batch of 3 trials, all in parallel.
+# With so few trials the adaptive optimizer has nothing to learn from,
+# so full parallelism costs no search quality — and finishes faster.
 tuning_job = aiplatform.HyperparameterTuningJob(
     display_name=DISPLAY_NAME,
     custom_job=custom_job,                 # must be a CustomJob (not CustomTrainingJob)
     metric_spec=metric_spec,
     parameter_spec=parameter_spec,
-    max_trial_count=1,                    # controls how many configurations are tested
-    parallel_trial_count=1,                # how many run concurrently (keep small for adaptive search)
+    max_trial_count=3,                     # small initial sweep
+    parallel_trial_count=3,                # all at once — adaptive search needs more data to help
     # search_algorithm="ALGORITHM_UNSPECIFIED",  # default = adaptive search (Bayesian)
     # search_algorithm="RANDOM_SEARCH",          # optional override
     # search_algorithm="GRID_SEARCH",            # optional override
@@ -321,13 +325,14 @@ parameter_spec = {
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
-### Exercise 2: Scale up trials
+### Exercise 2: Scale up trials with adaptive search
 
-After verifying your single-trial sanity check completed successfully, modify the tuning job configuration to run a proper search:
+Your initial 3-trial run validated the pipeline. Now scale up to a proper search where the adaptive optimizer can actually help — but keep parallelism **low** so the tuner learns between batches.
 
-1. Set `max_trial_count=6` and `parallel_trial_count=2`.
-2. Before running, estimate the approximate cost: if each trial takes ~5 minutes on an `n1-standard-4` (~ `$0.19`/hr), how much would 6 trials cost?
-3. Run the updated job and monitor it in the Vertex AI Console.
+1. Set `max_trial_count=12` and `parallel_trial_count=3`.
+2. Before running, estimate the approximate cost: if each trial takes ~5 minutes on an `n1-standard-4` (~ `$0.19`/hr), how much would 12 trials cost?
+3. Why does it make sense to keep `parallel_trial_count` at 3 instead of 12 now that we have more trials?
+4. Run the updated job and monitor it in the Vertex AI Console.
 
 ::::::::::::::::::::::: solution
 
@@ -337,12 +342,14 @@ tuning_job = aiplatform.HyperparameterTuningJob(
     custom_job=custom_job,
     metric_spec=metric_spec,
     parameter_spec=parameter_spec,
-    max_trial_count=6,
-    parallel_trial_count=2,
+    max_trial_count=12,
+    parallel_trial_count=3,
 )
 ```
 
-**Cost estimate:** 6 trials x 5 min each = 30 minutes of compute. At ~ `$0.19`/hr for `n1-standard-4`, that's roughly `$0.10` total. With `parallel_trial_count=2`, wall-clock time would be approximately 15 minutes (3 batches of 2 trials). The adaptive search can still learn between batches since parallelism is kept low relative to total trials.
+**Cost estimate:** 12 trials x 5 min each = 60 minutes of compute. At ~ `$0.19`/hr for `n1-standard-4`, that's roughly `$0.19` total. With `parallel_trial_count=3`, wall-clock time would be approximately 20 minutes (4 batches of 3 trials).
+
+**Why not run all 12 in parallel?** With 12 trials we have enough data for the adaptive optimizer to learn: after each batch of 3 completes, the tuner updates its model of which regions of the search space are promising and steers the next batch toward them. Running all 12 at once would turn the search into an expensive random sweep — every trial would be launched "blind" before any results come back.
 
 :::::::::::::::::::::::::::::::
 
@@ -379,8 +386,8 @@ tuning_job = aiplatform.HyperparameterTuningJob(
 :::::::::::::::::::::::::::::::::::::::::::::::
 
 **Practical recipe:**
-- First run: `max_trial_count=1`, `parallel_trial_count=1` (pipeline sanity check).
-- Main run: `max_trial_count=10–20`, `parallel_trial_count=2–4`.
+- First run: `max_trial_count=3`, `parallel_trial_count=3` (pipeline sanity check — too few trials for adaptive search to help, so run them all at once).
+- Main run: `max_trial_count=10–20`, `parallel_trial_count=2–4` (enough trials for the optimizer to learn between batches).
 - Scale up parallelism only after the above completes cleanly and you confirm adaptive performance is acceptable.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
