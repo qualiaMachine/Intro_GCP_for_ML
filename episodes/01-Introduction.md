@@ -20,6 +20,17 @@ exercises: 2
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
+## Prerequisites
+
+This workshop assumes you have a **fundamental ML/AI background**. Specifically, you should be comfortable with:
+
+- **Python** — writing scripts, using packages like pandas and NumPy.
+- **Core ML concepts** — train/test splits, overfitting, loss functions, hyperparameters.
+- **Training a model** — you've trained at least one model in any framework (scikit-learn, PyTorch, TensorFlow, XGBoost, etc.).
+- **Command line basics** — navigating directories, running commands in a terminal.
+
+No prior GCP or cloud experience is required — that's what this workshop teaches.
+
 ## Why run ML in the cloud?
 
 You have ML code that works on your laptop. But at some point you need more — a bigger GPU, a dataset that won't fit on disk, or the ability to run dozens of training experiments overnight. You could invest in local hardware or compete for time on a shared HPC cluster, but cloud platforms let you rent exactly the hardware you need, for exactly as long as you need it, and then shut it down.
@@ -62,11 +73,34 @@ The central idea of this workshop is simple. You work in a small, cheap Jupyter 
 
 This keeps costs low (the notebook VM is small) and keeps your work reproducible (each job is a clean, logged run on dedicated hardware).
 
+Here's how the pieces connect:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Google Cloud Platform                        │
+│                                                                     │
+│  ┌──────────────────┐         ┌──────────────────────────────────┐  │
+│  │  Workbench        │  submit │  Vertex AI Training Job          │  │
+│  │  Notebook (small) │────────▶│  (powerful: GPUs, more RAM)      │  │
+│  │                   │  via    │                                  │  │
+│  │  - explore data   │  SDK    │  - runs your training script     │  │
+│  │  - launch jobs    │         │  - auto-provisions hardware      │  │
+│  │  - inspect results│         │  - shuts down when done          │  │
+│  └────────┬──────────┘         └───────────────┬──────────────────┘  │
+│           │  read/write                         │  write artifacts   │
+│           ▼                                     ▼                    │
+│  ┌──────────────────────────────────────────────────────────────┐    │
+│  │          Google Cloud Storage (GCS) Bucket                   │    │
+│  │  datasets, model artifacts, logs, metrics                    │    │
+│  └──────────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
 ::::::::::::::::::::::::::::::::::::: callout
 
 ### Console, notebooks, or CLI — your choice
 
-This workshop uses the **GCP web console** and **Workbench notebooks** for most tasks because they're visual and easy to follow. But nearly everything we do can also be done from the **`gcloud` command-line tool** — submitting training jobs, managing buckets, checking quotas. [Episode 11](11-CLI-workflows.md) covers the CLI equivalents. If you prefer terminal-based workflows or need to automate jobs in scripts and CI/CD pipelines, that episode shows you how.
+This workshop uses the **GCP web console** and **Workbench notebooks** for most tasks because they're visual and easy to follow. But nearly everything we do can also be done from the **`gcloud` command-line tool** — submitting training jobs, managing buckets, checking quotas. [Episode 8](08-CLI-workflows.md) covers the CLI equivalents. If you prefer terminal-based workflows or need to automate jobs in scripts and CI/CD pipelines, that episode shows you how.
 
 **One important caveat:** whether you use the console, notebooks, or CLI, resources you create (VMs, training jobs, endpoints) keep running and billing until you explicitly stop them. There's no automatic shutdown. We cover cleanup habits in [Episode 9](09-Resource-management-cleanup.md), but the short version is: always check for running resources before you walk away.
 
@@ -86,15 +120,7 @@ The key habit: choose the right machine size, stop resources when idle, and moni
 
 ### For UW-Madison researchers
 
-If you're at UW-Madison, the university offers several resources that can significantly reduce your cloud costs:
-
-- **Reduced overhead on grants** — The [Cloud Computing Pilot](https://rsp.wisc.edu/proposalprep/cloudComputeInfo.cfm) drops F&A overhead from 55.5% to **26%** on cloud expenses when using a UW-provisioned account, saving ~$2,950 per $10,000 spent.
-- **NIH STRIDES discounts** — Negotiated pricing on GCP, AWS, and Azure services for NIH-funded researchers. See [STRIDES at UW-Madison](https://kb.wisc.edu/109813) or contact [STRIDES@nih.gov](mailto:STRIDES@nih.gov).
-- **Google Cloud Research Credits** — Up to **$5,000** in free credits for faculty and postdocs ($1,000 for PhD students). [Apply here](https://edu.google.com/intl/ALL_us/programs/credits/research/).
-- **Free on-campus GPUs** — [CHTC](https://chtc.cs.wisc.edu/) provides access to hundreds of GPUs (including A100s) at no cost.
-- **Support** — The [Public Cloud Team](mailto:cloud-services@cio.wisc.edu) offers weekly office hours and architecture consultations. The [ML+X community](https://hub.datascience.wisc.edu/communities/mlx/) holds monthly meetings on ML/AI topics.
-
-See the [UW-Madison Cloud Resources](../uw-madison-cloud-resources.html) page for the full list.
+UW-Madison offers reduced-overhead cloud billing, NIH STRIDES discounts, Google Cloud research credits (up to $5,000), free on-campus GPUs via [CHTC](https://chtc.cs.wisc.edu/), and dedicated support from the [Public Cloud Team](mailto:cloud-services@cio.wisc.edu). See the [UW-Madison Cloud Resources](../uw-madison-cloud-resources.html) page for details.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -117,6 +143,6 @@ Take 3–5 minutes to discuss with a partner or share in the workshop chat.
 - Cloud platforms let you rent hardware on demand instead of buying or waiting for shared resources.
 - GCP organizes its ML services under Vertex AI — notebooks, training jobs, tuning, and model hosting.
 - The notebook-as-controller pattern keeps your notebook cheap while offloading heavy training to dedicated Vertex AI jobs.
-- Everything in this workshop can also be done from the `gcloud` CLI ([Episode 11](11-CLI-workflows.md)).
+- Everything in this workshop can also be done from the `gcloud` CLI ([Episode 8](08-CLI-workflows.md)).
 
 ::::::::::::::::::::::::::::::::::::::::::::::::

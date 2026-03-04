@@ -34,7 +34,7 @@ life_cycle: 'alpha'
 license: 'CC-BY 4.0'
 
 # Link to the source repository for this lesson
-source: 'https://github.com/qualiaMachine/Intro_GCP_VertexAI' 
+source: 'https://github.com/qualiaMachine/Intro_GCP_for_ML' 
 
 # Default branch of your lesson
 branch: 'main'
@@ -65,24 +65,23 @@ contact: 'endemann@wisc.edu'
 # - another-learner.md
 
 # Order of episodes in your lesson
-episodes: 
+episodes:
 - 01-Introduction.md
-- 02-Data-storage.md
-- 03-Notebooks-as-controllers.md
-- 04-Accessing-and-managing-data.md
-- 05-Interacting-with-code-repo.md
-- 06-Training-models-in-VertexAI.md
-- 07-Training-models-in-VertexAI-GPUs.md
-- 08-Hyperparameter-tuning.md
+- 02-Notebooks-as-controllers.md
+- 03-Data-storage-and-access.md
+- 04-Training-models-in-VertexAI.md
+- 05-Training-models-in-VertexAI-GPUs.md
+- 06-Hyperparameter-tuning.md
+- 07-Retrieval-augmented-generation.md
+- 08-CLI-workflows.md
 - 09-Resource-management-cleanup.md
-- 10-Retrieval-augmented-generation.md
-- 11-CLI-workflows.md
 
 # Information for Learners
 learners:
 - glossary.md
 - instances-for-ML.md
 - uw-madison-cloud-resources.md
+- github-pat.md
 
 # Information for Instructors
 instructors: 

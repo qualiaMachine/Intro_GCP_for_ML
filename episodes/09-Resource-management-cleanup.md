@@ -21,15 +21,7 @@ exercises: 10
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-You've now run training jobs, tuning jobs, and possibly deployed models across the previous episodes. Before moving on, let's make sure none of those resources are still billing you — and learn the habits that prevent surprise charges going forward.
-
-::::::::::::::::::::::::::::::::::::: callout
-
-### Continuing to Episodes 10–11?
-
-If you plan to work through **Episode 10 (RAG)** or **Episode 11 (CLI Workflows)** after this one, **keep your Workbench Instance and GCS bucket** — just make sure to **stop the notebook runtime** when you're not actively using it. You can come back to the full teardown checklist at the very end of the workshop.
-
-::::::::::::::::::::::::::::::::::::::::::::::::
+You've now run training jobs, tuning jobs, built a RAG pipeline, and possibly explored CLI workflows across the previous episodes. Before closing your laptop, let's make sure none of those resources are still billing you — and learn the habits that prevent surprise charges going forward.
 
 ## Check your current spend first
 
@@ -71,7 +63,7 @@ Not all resources cost equally. Here are the main cost drivers you'll encounter 
 
 ## Shutting down Workbench Instances
 
-In Episode 3 we created a **Workbench Instance** — the currently recommended notebook environment. Here's how to stop or delete it:
+In Episode 2 we created a **Workbench Instance** — the currently recommended notebook environment. Here's how to stop or delete it:
 
 ### Stop via Console
 Vertex AI → **Workbench** → **Instances** tab → select your instance → **Stop**.
