@@ -31,7 +31,7 @@ Most universities offer shared HPC clusters with GPUs. These are excellent resou
 | Factor | University HPC | Cloud (GCP) |
 |--------|---------------|-------------|
 | **Cost** | Free or subsidized | Pay per hour |
-| **GPU availability** | Shared queue; wait times during peak periods | On-demand (subject to quota) |
+| **GPU availability** | Shared queue; wait times during peak periods and per-job runtime limits (often 24–72 hrs) that may require checkpointing long training runs | On-demand (subject to quota); jobs run as long as needed |
 | **Hardware variety** | Fixed hardware refresh cycle (3–5 years) | Latest GPUs available immediately (A100, H100, L4) |
 | **Scaling** | Limited by cluster size | Spin up hundreds of jobs in parallel |
 | **Multi-GPU / NVLink** | Sometimes available, depends on cluster | Available on demand (e.g., A2/A3 instances with NVLink-connected multi-GPU nodes) |
