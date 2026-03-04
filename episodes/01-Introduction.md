@@ -35,6 +35,34 @@ No prior GCP or cloud experience is required — that's what this workshop teach
 
 You have ML code that works on your laptop. But at some point you need more — a bigger GPU, a dataset that won't fit on disk, or the ability to run dozens of training experiments overnight. You could invest in local hardware or compete for time on a shared HPC cluster, but cloud platforms let you rent exactly the hardware you need, for exactly as long as you need it, and then shut it down.
 
+### Cloud vs. university HPC clusters
+
+Most universities offer shared HPC clusters with GPUs. These are excellent resources — but they have tradeoffs worth understanding:
+
+| Factor | University HPC | Cloud (GCP) |
+|--------|---------------|-------------|
+| **Cost** | Free or subsidized | Pay per hour |
+| **GPU availability** | Shared queue; wait times during peak periods | On-demand (subject to quota) |
+| **Hardware variety** | Fixed hardware refresh cycle (3–5 years) | Latest GPUs available immediately (A100, H100, L4) |
+| **Scaling** | Limited by cluster size | Spin up 10+ jobs in parallel |
+| **Multi-GPU / NVLink** | Sometimes available, depends on cluster | Available on demand (e.g., A2/A3 instances with NVLink-connected multi-GPU nodes) |
+| **Software environment** | Module system; may need IT support for new packages | Full root access in containers; install anything |
+| **Data governance** | On-campus, known compliance posture | Requires configuring IAM, encryption, region controls |
+
+**The short version:** use your university cluster when it has the hardware you need and the queue isn't blocking you. Use the cloud when you need hardware your cluster doesn't have, need to scale beyond what the queue allows, or need a specific software environment you can't easily get on-campus.
+
+Many researchers use both — develop and test on HPC, then scale to cloud for large experiments or specialized hardware. This workshop teaches the cloud side of that workflow.
+
+### Scalability beyond a single GPU
+
+Cloud platforms give you access to compute that's hard to replicate locally:
+
+- **Multi-GPU nodes.** GCP's A2 and A3 machine families provide 1–16 GPUs per node connected via **NVLink** (high-bandwidth GPU-to-GPU interconnects). This matters for distributed training, where GPUs need to exchange gradients quickly — NVLink provides 600+ GB/s bandwidth compared to ~32 GB/s over PCIe.
+- **Elastic scaling.** Need to run 20 hyperparameter tuning trials? Cloud can provision 20 VMs simultaneously. On a shared cluster, that might mean a multi-day queue wait.
+- **Power and cooling are someone else's problem.** A single A100 GPU draws ~400W under load. A rack of 8 draws ~3.2kW just for the GPUs. Cloud providers handle the power infrastructure, cooling, and hardware failures.
+
+We won't use multi-GPU training in this workshop (our dataset is small), but understanding what's available helps you plan for larger projects.
+
 Google Cloud Platform (GCP) is one of several clouds that supports this. The rest of this episode explains what GCP offers for ML and how the pieces fit together.
 
 ## What GCP provides for ML
@@ -44,7 +72,7 @@ GCP gives you three things that matter for applied ML research:
 **Flexible compute.** You pick the hardware that fits your workload:
 
 - **CPUs** for lightweight models, preprocessing, or feature engineering.
-- **GPUs** (NVIDIA T4, V100, A100, etc.) for training deep learning models.
+- **GPUs** (NVIDIA T4, L4, V100, A100, H100) for training deep learning models. For help choosing, see [Instances for ML on GCP](../instances-for-ML.html).
 - **TPUs** (Tensor Processing Units) — Google's custom hardware for matrix-heavy workloads. TPUs work best with TensorFlow and JAX; PyTorch support is improving but still less mature.
 
 **Scalable storage.** Google Cloud Storage (GCS) buckets give you a place to store datasets, scripts, and model artifacts that any job or notebook can access. Think of it as a shared filesystem for your project.
@@ -65,7 +93,7 @@ Google Cloud has many products and brand names. Here are the ones you'll use in 
 | **Compute Engine** | Virtual machines you configure with CPUs, GPUs, or TPUs. Workbench and training jobs run on Compute Engine under the hood. |
 | **Gemini** | Google's family of large language models, accessed through the Vertex AI API. |
 
-For a full list of terms, see the [Glossary](../learners/glossary.md).
+For a full list of terms, see the [Glossary](../learners/reference.md).
 
 ## The notebook-as-controller pattern
 
