@@ -23,8 +23,12 @@ A self-provisioned cloud account (one you create directly with Google or AWS) is
 - **Negotiated pricing** via [Internet2 NET+](https://internet2.edu/cloud/cloud-solutions-community/net-plus/) agreements. GCP accounts include a [network egress waiver](https://kb.wisc.edu/100173) (up to 15% of your total bill); Azure accounts receive ~3.5% off retail pricing.
 - **Lower overhead on grants** — Cloud expenses normally carry 55.5% F&A overhead. With a UW cloud account that drops to **26%**, saving ~ `$2,950` per `$10,000` spent. See the [Cloud Computing Pilot](https://rsp.wisc.edu/proposalprep/cloudComputeInfo.cfm).
 - **NIH STRIDES discounts** — Additional pricing reductions for NIH-funded researchers, layered on top of UW rates. See [STRIDES at UW-Madison](https://kb.wisc.edu/109813).
-- **Security and compliance** — Accounts come with baseline [CIS benchmark](https://www.cisecurity.org/cis-benchmarks) configuration, NetID authentication, Security Command Center monitoring, and a Business Associates Agreement (BAA) for HIPAA-regulated data.
+- **Business Associates Agreement (BAA)** — UW's contracts include a BAA that governs vendor access to your data, which is critical for HIPAA-regulated health data.
+- **Security monitoring** — UW accounts benefit from Security Command Center monitoring with alerts escalated to the UW Cybersecurity Operations Team (CSOC).
+- **Baseline security configuration** — Accounts come pre-configured to meet [CIS benchmark](https://www.cisecurity.org/cis-benchmarks) standards with NetID authentication built in.
 - **Dedicated support** — Email [cloud-services@cio.wisc.edu](mailto:cloud-services@cio.wisc.edu), attend [office hours](https://kb.wisc.edu/101516), or schedule a consultation.
+
+For the full breakdown, see [Why Should I Use a UW Madison Public Cloud Account?](https://kb.wisc.edu/page.php?id=109785) on the UW KnowledgeBase.
 
 ## How to request a UW cloud account
 
@@ -66,9 +70,21 @@ Microsoft offers several credit programs for academic researchers:
 - **[Azure Research Credits](https://www.microsoft.com/en-us/azure-academic-research/)**: Open to faculty and researchers for proof-of-concept, migration, or tool-building projects.
 - **[Internet2 Azure Accelerator Program](https://internet2.edu/)**: Up to **`$5,000`** in credits for research and education proposals (365-day expiration).
 
-### Google Cloud Skills Boost
+### Grants for social impact & sustainability research
 
-UW-Madison has a limited number of seats for [Google Cloud Skills Boost](https://www.cloudskillsboost.google/). Contact the Public Cloud Team at [cloud-services@cio.wisc.edu](mailto:cloud-services@cio.wisc.edu) to request access.
+The major cloud providers also offer larger grants for research focused on public good — sustainability, environmental science, public health, education, and underserved communities:
+
+- **Google**: The [Google.org Impact Challenge: AI for Science](https://opportunitydesk.org/2026/02/25/google-org-impact-challenge-ai-for-science-2026/) awards $500K–$3M for projects using AI to tackle scientific challenges, with a focus on climate resilience and environmental science.
+- **AWS**: The [AWS Imagine Grant](https://aws.amazon.com/government-education/nonprofits/aws-imagine-grant-program/) provides up to `$200K` in unrestricted funding plus AWS credits to nonprofits and research organizations working on social impact.
+- **Microsoft**: The [AI for Good Lab](https://www.microsoft.com/en-us/research/academic-program/ai-for-good-lab-open-call/) runs open calls awarding Azure credits and scientific collaboration for projects in sustainability, public health, education, and human rights. Microsoft also offers free access to petabytes of environmental data through the [Planetary Computer](https://planetarycomputer.microsoft.com/).
+
+### Free cloud training
+
+Each platform offers free, self-paced training to help you get started:
+
+- **GCP**: UW-Madison has a limited number of seats for [Google Cloud Skills Boost](https://www.cloudskillsboost.google/) — contact the Public Cloud Team at [cloud-services@cio.wisc.edu](mailto:cloud-services@cio.wisc.edu) to request access.
+- **AWS**: [AWS Skill Builder](https://skillbuilder.aws/) offers 600+ free courses covering compute, ML, and more.
+- **Azure**: [Microsoft Learn](https://learn.microsoft.com/en-us/training/azure/) provides free, structured learning paths for Azure services.
 
 ## Data protection and compliance
 
@@ -115,16 +131,19 @@ For more details, see the [CHTC page on Nexus](https://uw-madison-datascience.gi
 
 ## Getting help
 
-- **Public Cloud Office Hours** — Thursdays, 2:00–3:15 PM via [Zoom](https://kb.wisc.edu/101516). Open to the entire UW community.
-- **Cloud Community** — Join the [UW Cloud Community](https://it.wisc.edu/research-ci/building-cloud-community-at-uw-madison/) group, which meets every other month to share cloud computing experiences.
+- **Office hours** — The RCI and Public Cloud Team hold drop-in hours on **Thursdays, 2–3:15 PM** via [Zoom](https://kb.wisc.edu/101516). Open to the entire UW community.
+- **Cloud Community** — Join the [UW Cloud Community](https://it.wisc.edu/research-ci/building-cloud-community-at-uw-madison/) group — they meet every other month to share cloud computing experiences and tips.
 - **Email** — [cloud-services@cio.wisc.edu](mailto:cloud-services@cio.wisc.edu)
-- **KnowledgeBase** — [kb.wisc.edu](https://kb.wisc.edu/page.php?id=109785) for FAQs, pricing details, and how-to guides.
-- **ML+X Community** — Join [ML+X](https://hub.datascience.wisc.edu/communities/mlx/) for monthly meetings on machine learning and AI at UW-Madison. Contact [endemann@wisc.edu](mailto:endemann@wisc.edu) or join the `#ml-community` channel in the [Data Science Hub Slack](https://hub.datascience.wisc.edu/).
+- **Public Cloud KnowledgeBase** — [kb.wisc.edu](https://kb.wisc.edu/page.php?id=109785) — FAQs, pricing info, and how-to guides.
+- **ML+X Community** — Join [ML+X](https://uw-madison-datascience.github.io/ML-X-Nexus/) for monthly meetings on machine learning and AI at UW-Madison. Contact [endemann@wisc.edu](mailto:endemann@wisc.edu) or join the `#ml-community` channel in the [Data Science Hub Slack](https://hub.datascience.wisc.edu/).
 - **RCI** — The [Research Cyberinfrastructure](https://it.wisc.edu/about/division-of-information-technology/research-cyberinfrastructure/) team can help with architecture design, cost estimates, and comparing cloud vs. on-premises options. Email [rci@g-groups.wisc.edu](mailto:rci@g-groups.wisc.edu).
 
 ## Related resources
 
-- [Intro to GCP for ML & AI](https://uw-madison-datascience.github.io/ML-X-Nexus/Learn/Workshops/Intro-GCP.html) — This workshop on Nexus.
-- [Intro to AWS SageMaker for Predictive ML/AI](https://uw-madison-datascience.github.io/ML-X-Nexus/Learn/Workshops/Intro-Amazon_SageMaker.html) — Companion workshop for AWS.
-- [UW Generative AI Services & Policies](https://uw-madison-datascience.github.io/ML-X-Nexus/Toolbox/GenAI/GenAI-at-UW-Madison.html) — UW-vetted AI tools including pay-as-you-go cloud AI services.
+- [Intro to GCP for ML & AI](https://uw-madison-datascience.github.io/ML-X-Nexus/Learn/Workshops/Intro-GCP.html) — Hands-on workshop covering Vertex AI, model training/tuning, and RAG pipelines on GCP.
+- [Intro to AWS SageMaker for Predictive ML/AI](https://uw-madison-datascience.github.io/ML-X-Nexus/Learn/Workshops/Intro-Amazon_SageMaker.html) — Workshop covering ML workflows in AWS SageMaker.
+- [Google Colab](https://uw-madison-datascience.github.io/ML-X-Nexus/Toolbox/Compute/GoogleColab.html) — Free cloud-based Jupyter notebooks with GPU access.
+- [Center for High Throughput Computing (CHTC)](https://uw-madison-datascience.github.io/ML-X-Nexus/Toolbox/Compute/CHTC.html) — Free on-campus HPC/HTC resources for UW researchers.
+- [BadgerCompute](https://uw-madison-datascience.github.io/ML-X-Nexus/Toolbox/Compute/BadgerCompute.html) — UW-Madison's lightweight, NetID-authenticated Jupyter service.
+- [UW Generative AI Services & Policies](https://uw-madison-datascience.github.io/ML-X-Nexus/Toolbox/GenAI/GenAI-at-UW-Madison.html) — Overview of UW-vetted AI tools including pay-as-you-go cloud AI services.
 - [Introduction to AWS for Researchers (RCI)](https://researchci.it.wisc.edu/introduction-to-aws-for-researchers/) — RCI's guide for getting started with AWS.
