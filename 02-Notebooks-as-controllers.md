@@ -102,7 +102,7 @@ Leave disk settings at their defaults for this workshop. Each Workbench Instance
 
 ### Create notebook
 
-- Click **Create** to create the instance. Provisioning typically takes 3–5 minutes. You'll see the status change from "Provisioning" to "Running" with a green checkmark. While waiting, work through the challenges below.
+- Click **Create** to create the instance. Provisioning typically takes 3–5 minutes. You'll see the status change from "Provisioning" to "Active" with a green checkmark. While waiting, work through the challenges below.
 
 :::::::::::::::::::::::::::::::::::::::: challenge
 
@@ -189,7 +189,7 @@ The real work happens in the training scripts and SDK calls — the notebook is 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ### Load pre-filled Jupyter notebooks
-Once your instance shows as "Running" (green checkmark), click **Open JupyterLab**. From the Launcher, select **Python 3 (ipykernel)** under Notebook to create a new notebook — we don't need the TensorFlow or PyTorch kernels yet, as those are used in later episodes for training jobs.
+Once your instance shows as "Active" (green checkmark), click **Open JupyterLab**. From the Launcher, select **Python 3 (ipykernel)** under Notebook to create a new notebook — we don't need the TensorFlow or PyTorch kernels yet, as those are used in later episodes for training jobs.
 
 Run the following command to clone the lesson repository. This contains pre-filled notebooks for each episode and the training scripts we'll use later, so you won't need to write boilerplate code from scratch.
 
@@ -197,7 +197,7 @@ Run the following command to clone the lesson repository. This contains pre-fill
 !git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
 ```
 
-Then, navigate to `/Intro_GCP_for_ML/notebooks/04-Accessing-and-managing-data.ipynb` to begin the next episode.
+Then, navigate to `/Intro_GCP_for_ML/notebooks/03-Data-storage-and-access.ipynb` to begin the next episode.
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 

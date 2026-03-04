@@ -33,7 +33,7 @@ Training jobs bill per VM-hour while the job is running. An `n1-standard-4` (CPU
 ## Initial setup
 
 #### 1. Open pre-filled notebook
-Navigate to `/Intro_GCP_for_ML/notebooks/06-Training-models-in-VertexAI.ipynb` to begin this notebook.
+Navigate to `/Intro_GCP_for_ML/notebooks/04-Training-models-in-VertexAI.ipynb` to begin this notebook.
 
 #### 2. CD to instance home directory
 To ensure we're all in the same starting spot, change directory to your Jupyter home directory.
