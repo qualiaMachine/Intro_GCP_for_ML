@@ -167,7 +167,7 @@ jobSpec:
         acceleratorCount: 1
       replicaCount: 1
       containerSpec:
-        imageUri: us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-6.py310:latest
+        imageUri: us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest
         args:
           - "--train=gs://doe-titanic/data/train_data.npz"
           - "--val=gs://doe-titanic/data/val_data.npz"

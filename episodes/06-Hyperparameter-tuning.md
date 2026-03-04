@@ -38,7 +38,7 @@ The overall process involves these steps:
 ## Initial setup
 
 #### 1. Open pre-filled notebook
-Navigate to `/Intro_GCP_for_ML/notebooks/06-Hyperparameter-tuning.ipynb` to begin this notebook. **Select the *PyTorch* environment (kernel).** Local PyTorch is only needed for local tests — your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-gpu.2-6`), so it brings its own framework at run time.
+Navigate to `/Intro_GCP_for_ML/notebooks/06-Hyperparameter-tuning.ipynb` to begin this notebook. **Select the *PyTorch* environment (kernel).** Local PyTorch is only needed for local tests — your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-xla.2-4.py310`), so it brings its own framework at run time.
 
 #### 2. CD to instance home directory
 Change to your Jupyter home folder to keep paths consistent.
