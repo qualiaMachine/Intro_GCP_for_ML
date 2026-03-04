@@ -155,6 +155,10 @@ In the following episodes, we will use the **Vertex AI Python SDK (`google-cloud
 - Training a model on a GPU-backed instance.
 - Running hyperparameter tuning jobs managed by Vertex AI.
 
+Here's how the notebook, jobs, and storage connect:
+
+![Training and tuning workflow](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram1_training_and_tuning.svg){alt="Architecture diagram showing how a lightweight Workbench notebook uses the Vertex AI SDK to launch training jobs and HP tuning jobs on powerful GPUs, with all artifacts stored in GCS."}
+
 This pattern keeps costs low by running your notebook on a modest VM while only incurring charges for larger resources when they are actively in use.
 
 ::::::::::::::::::::::::::::::::::::: callout
