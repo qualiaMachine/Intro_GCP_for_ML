@@ -48,8 +48,8 @@ We will follow these steps to create our first Workbench Instance:
   - If capacity or GPU availability is limited in one zone, switch to another zone in the same region.
 - **NVIDIA T4 GPU:** Leave unchecked for now  
   - We will request GPUs for training jobs separately. Attaching here increases idle costs.
-- **Apache Spark and BigQuery Kernels:** Leave unchecked  
-  - Enable only if you specifically need Spark or BigQuery notebooks; otherwise, it adds unnecessary images.
+- **Apache Spark and BigQuery Kernels:** Leave unchecked
+  - BigQuery kernels let you run SQL analytics directly in a notebook, but we won't need them in this workshop. Leave unchecked to avoid pulling extra container images.
 - **Network in this project:** If you're working in a shared workshop environment, select the network provided by your administrator (shared environments typically do not allow using external or default networks). If using a personal GCP project, the default network is fine.
 - **Network / Subnetwork:** Leave as pre-filled.
 ![Notebook settings (part 1)](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/new-instance-settings1.jpg){alt="Notebook settings (part1)"}
