@@ -101,9 +101,14 @@ For a full list of terms, see the [Glossary](../learners/reference.md).
 
 ## The notebook-as-controller pattern
 
-The central idea of this workshop is simple. You work in a small, cheap Jupyter notebook in the cloud (a **Vertex AI Workbench** instance). That notebook is your control panel — you write code, explore data, and inspect results there. But when it's time to train a model, you don't train inside the notebook. Instead, you use the **Vertex AI Python SDK** to submit a training job to a separate, more powerful machine (with GPUs, more memory, etc.). When the job finishes, results land in **Cloud Storage** and you pull them back into your notebook.
+The central idea of this workshop is simple. You work in a lightweight **Vertex AI Workbench** notebook — a small, cheap VM where you explore data, visualize results, and iterate. When it's time to do heavy lifting, you use the **Vertex AI Python SDK** to launch jobs on separate, powerful machines:
 
-This keeps costs low (the notebook VM is small) and keeps your work reproducible (each job is a clean, logged run on dedicated hardware).
+- **Training jobs** run your training script on auto-provisioned GPU hardware, then shut down when complete.
+- **Hyperparameter tuning jobs** search a parameter space across parallel trials and return the best configuration and metrics.
+
+Both job types write their outputs — model artifacts, checkpoints, logs, metrics, and trial results — to **Google Cloud Storage (GCS)**, which acts as shared persistent storage. You then pull results back into your notebook to inspect and iterate.
+
+This keeps costs low (the notebook VM stays small) and keeps your work reproducible (each job is a clean, logged run on dedicated hardware).
 
 Here's how the pieces connect:
 
