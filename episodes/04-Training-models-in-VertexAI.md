@@ -26,7 +26,7 @@ exercises: 15
 
 ### Cost awareness: training jobs
 
-Training jobs bill per VM-hour while the job is running. An `n1-standard-4` (CPU) costs ~$0.19/hr; adding a T4 GPU brings the total to ~$0.54/hr. Jobs automatically stop (and stop billing) when the script finishes. For a complete cost reference, see the [Compute for ML](../compute-for-ML.html) page and the cost table in [Episode 9](09-Resource-management-cleanup.md).
+Training jobs bill per VM-hour while the job is running. An `n1-standard-4` (CPU) costs ~`$0.19`/hr; adding a T4 GPU brings the total to ~`$0.54`/hr. Jobs automatically stop (and stop billing) when the script finishes. For a complete cost reference, see the [Compute for ML](../compute-for-ML.html) page and the cost table in [Episode 9](09-Resource-management-cleanup.md).
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -53,7 +53,7 @@ from google.cloud import storage
 client = storage.Client()
 PROJECT_ID = client.project
 REGION = "us-central1"
-BUCKET_NAME = "johndoe-titanic" # ADJUST to your bucket's name
+BUCKET_NAME = "doe-titanic" # ADJUST to your bucket's name
 LAST_NAME = "DOE" # ADJUST to your last name or name
 print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}")
 ```
@@ -276,7 +276,7 @@ job = aiplatform.CustomTrainingJob(
 )
 ```
 
-Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier. **We won't be charged for our selected `MACHINE` until we run the below code using `job.run()`.** For an `n1-standard-4` running 2–5 minutes, expect a cost of roughly **$0.01–$0.02** — negligible, but good to be aware of as you scale to larger machines. This marks the point when our script actually begins executing remotely on the Vertex training infrastructure. Once `job.run()` is called, Vertex handles packaging your training script, transferring it to the managed training environment, provisioning the requested compute instance, and monitoring the run. The job's status and logs can be viewed directly in the Vertex AI Console under Training → Custom jobs.
+Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier. **We won't be charged for our selected `MACHINE` until we run the below code using `job.run()`.** For an `n1-standard-4` running 2–5 minutes, expect a cost of roughly **`$0.01`–`$0.02`** — negligible, but good to be aware of as you scale to larger machines. This marks the point when our script actually begins executing remotely on the Vertex training infrastructure. Once `job.run()` is called, Vertex handles packaging your training script, transferring it to the managed training environment, provisioning the requested compute instance, and monitoring the run. The job's status and logs can be viewed directly in the Vertex AI Console under Training → Custom jobs.
 
 If you need to cancel or modify a job mid-run, you can do so from the console or via the SDK by calling job.cancel(). When the job completes, Vertex automatically tears down the compute resources so you only pay for the active training time.
 
