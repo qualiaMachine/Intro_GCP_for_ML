@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="nbG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <filter id="cs4" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="5" stdDeviation="10" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <filter id="gl4">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="aOut" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#60a5fa"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="600" rx="20" fill="url(#bg4)"/>
+
+  <!-- Grid -->
+  <g opacity="0.03" stroke="#fff" stroke-width="0.5">
+    <line x1="60" y1="0" x2="60" y2="600"/><line x1="120" y1="0" x2="120" y2="600"/>
+    <line x1="180" y1="0" x2="180" y2="600"/><line x1="240" y1="0" x2="240" y2="600"/>
+    <line x1="300" y1="0" x2="300" y2="600"/><line x1="360" y1="0" x2="360" y2="600"/>
+    <line x1="420" y1="0" x2="420" y2="600"/><line x1="480" y1="0" x2="480" y2="600"/>
+    <line x1="540" y1="0" x2="540" y2="600"/><line x1="600" y1="0" x2="600" y2="600"/>
+    <line x1="660" y1="0" x2="660" y2="600"/><line x1="720" y1="0" x2="720" y2="600"/>
+    <line x1="780" y1="0" x2="780" y2="600"/><line x1="840" y1="0" x2="840" y2="600"/>
+    <line x1="900" y1="0" x2="900" y2="600"/><line x1="960" y1="0" x2="960" y2="600"/>
+    <line x1="1020" y1="0" x2="1020" y2="600"/><line x1="1080" y1="0" x2="1080" y2="600"/>
+    <line x1="1140" y1="0" x2="1140" y2="600"/>
+    <line x1="0" y1="60" x2="1200" y2="60"/><line x1="0" y1="120" x2="1200" y2="120"/>
+    <line x1="0" y1="180" x2="1200" y2="180"/><line x1="0" y1="240" x2="1200" y2="240"/>
+    <line x1="0" y1="300" x2="1200" y2="300"/><line x1="0" y1="360" x2="1200" y2="360"/>
+    <line x1="0" y1="420" x2="1200" y2="420"/><line x1="0" y1="480" x2="1200" y2="480"/>
+    <line x1="0" y1="540" x2="1200" y2="540"/>
+  </g>
+
+  <!-- ==================== NOTEBOOK (center) ==================== -->
+  <g filter="url(#cs4)">
+    <rect x="400" y="160" width="400" height="280" rx="16" fill="#1a2744" stroke="#3b82f6" stroke-width="2.5"/>
+  </g>
+  <rect x="400" y="160" width="400" height="8" rx="4" fill="url(#nbG)"/>
+
+  <g transform="translate(430, 190)">
+    <rect x="0" y="0" width="30" height="24" rx="4" fill="none" stroke="#60a5fa" stroke-width="2"/>
+    <line x1="8" y1="7" x2="22" y2="7" stroke="#60a5fa" stroke-width="1.5"/>
+    <line x1="8" y1="12" x2="20" y2="12" stroke="#60a5fa" stroke-width="1.5"/>
+    <line x1="8" y1="17" x2="17" y2="17" stroke="#60a5fa" stroke-width="1.5"/>
+  </g>
+  <text x="472" y="210" fill="#e2e8f0" font-size="22" font-weight="700">Workbench Notebook</text>
+  <text x="472" y="234" fill="#60a5fa" font-size="16" font-weight="600">THE CONTROLLER</text>
+
+  <text x="430" y="270" fill="#94a3b8" font-size="15">Lightweight, cheap VM that</text>
+  <text x="430" y="292" fill="#94a3b8" font-size="15">orchestrates everything via SDK calls.</text>
+  <text x="430" y="322" fill="#cbd5e1" font-size="15" font-weight="600">Does NOT run heavy compute itself.</text>
+
+  <!-- Key point callout -->
+  <rect x="420" y="350" width="360" height="70" rx="10" fill="#172540" stroke="#1e3a5f" stroke-width="1"/>
+  <text x="440" y="374" fill="#fbbf24" font-size="14" font-weight="700">KEY IDEA</text>
+  <text x="440" y="396" fill="#94a3b8" font-size="14">Keep the notebook small &amp; cheap.</text>
+  <text x="440" y="414" fill="#94a3b8" font-size="14">Let managed services do the heavy lifting.</text>
+
+  <!-- ==================== DISPATCHED SERVICES (around the notebook) ==================== -->
+
+  <!-- Training Jobs (top-left) -->
+  <g filter="url(#cs4)">
+    <rect x="40" y="40" width="280" height="100" rx="12" fill="#2a1f10" stroke="#f97316" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="40" width="280" height="6" rx="3" fill="#f97316"/>
+  <text x="68" y="74" fill="#e2e8f0" font-size="17" font-weight="700">Training Jobs</text>
+  <text x="68" y="96" fill="#94a3b8" font-size="14">GPUs, auto-provision, auto-stop</text>
+  <rect x="68" y="108" width="90" height="20" rx="5" fill="#261a08" stroke="#f97316" stroke-width="0.7"/>
+  <text x="76" y="122" fill="#fb923c" font-size="11">Eps 4 &amp; 5</text>
+
+  <!-- HP Tuning (top-right) -->
+  <g filter="url(#cs4)">
+    <rect x="880" y="40" width="280" height="100" rx="12" fill="#1f152a" stroke="#a855f7" stroke-width="1.5"/>
+  </g>
+  <rect x="880" y="40" width="280" height="6" rx="3" fill="#a855f7"/>
+  <text x="908" y="74" fill="#e2e8f0" font-size="17" font-weight="700">HP Tuning Jobs</text>
+  <text x="908" y="96" fill="#94a3b8" font-size="14">Parallel trials via Vizier</text>
+  <rect x="908" y="108" width="60" height="20" rx="5" fill="#1c1228" stroke="#a855f7" stroke-width="0.7"/>
+  <text x="916" y="122" fill="#c084fc" font-size="11">Ep 6</text>
+
+  <!-- Gemini API (bottom-right) -->
+  <g filter="url(#cs4)">
+    <rect x="880" y="440" width="280" height="100" rx="12" fill="#2a1525" stroke="#ec4899" stroke-width="1.5"/>
+  </g>
+  <rect x="880" y="440" width="280" height="6" rx="3" fill="#ec4899"/>
+  <text x="908" y="474" fill="#e2e8f0" font-size="17" font-weight="700">Gemini API</text>
+  <text x="908" y="496" fill="#94a3b8" font-size="14">Embeddings, generation, RAG</text>
+  <rect x="908" y="508" width="60" height="20" rx="5" fill="#2a1228" stroke="#ec4899" stroke-width="0.7"/>
+  <text x="916" y="522" fill="#f472b6" font-size="11">Ep 7</text>
+
+  <!-- GCS (bottom-left) -->
+  <g filter="url(#cs4)">
+    <rect x="40" y="440" width="280" height="100" rx="12" fill="#0f2922" stroke="#10b981" stroke-width="1.5"/>
+  </g>
+  <rect x="40" y="440" width="280" height="6" rx="3" fill="#10b981"/>
+  <text x="68" y="474" fill="#e2e8f0" font-size="17" font-weight="700">Cloud Storage (GCS)</text>
+  <text x="68" y="496" fill="#94a3b8" font-size="14">Data, models, logs, results</text>
+  <rect x="68" y="508" width="60" height="20" rx="5" fill="#0d2119" stroke="#10b981" stroke-width="0.7"/>
+  <text x="76" y="522" fill="#34d399" font-size="11">Ep 3</text>
+
+  <!-- ==================== ARROWS from notebook to services ==================== -->
+
+  <!-- To Training (top-left) -->
+  <path d="M400,240 L330,140" stroke="#60a5fa" stroke-width="2.5" fill="none" marker-end="url(#aOut)" filter="url(#gl4)"/>
+
+  <!-- To HP Tuning (top-right) -->
+  <path d="M800,240 L870,140" stroke="#60a5fa" stroke-width="2.5" fill="none" marker-end="url(#aOut)" filter="url(#gl4)"/>
+
+  <!-- To GCS (bottom-left) -->
+  <path d="M400,380 L330,440" stroke="#60a5fa" stroke-width="2.5" fill="none" marker-end="url(#aOut)" filter="url(#gl4)"/>
+
+  <!-- To Gemini (bottom-right) -->
+  <path d="M800,380 L870,440" stroke="#60a5fa" stroke-width="2.5" fill="none" marker-end="url(#aOut)" filter="url(#gl4)"/>
+
+  <!-- "via SDK" labels on arrows -->
+  <rect x="330" y="176" width="64" height="22" rx="5" fill="#1e293b" stroke="#475569" stroke-width="0.7"/>
+  <text x="362" y="192" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="600">via SDK</text>
+
+  <rect x="808" y="176" width="64" height="22" rx="5" fill="#1e293b" stroke="#475569" stroke-width="0.7"/>
+  <text x="840" y="192" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="600">via SDK</text>
+
+  <rect x="330" y="398" width="64" height="22" rx="5" fill="#1e293b" stroke="#475569" stroke-width="0.7"/>
+  <text x="362" y="414" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="600">via SDK</text>
+
+  <rect x="808" y="398" width="64" height="22" rx="5" fill="#1e293b" stroke="#475569" stroke-width="0.7"/>
+  <text x="840" y="414" text-anchor="middle" fill="#94a3b8" font-size="11" font-weight="600">via SDK</text>
+
+</svg>
