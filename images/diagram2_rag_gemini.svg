@@ -1,0 +1,219 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 780" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <linearGradient id="gcpBg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="notebookGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="geminiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#db2777"/>
+    </linearGradient>
+    <linearGradient id="gcsGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="ragGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+    <filter id="cs2" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="5" stdDeviation="10" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <filter id="gl2">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="aPk" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#ec4899"/>
+    </marker>
+    <marker id="aCy" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#06b6d4"/>
+    </marker>
+    <marker id="aBl" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#3b82f6"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="780" rx="20" fill="url(#gcpBg2)"/>
+
+  <!-- Grid -->
+  <g opacity="0.03" stroke="#fff" stroke-width="0.5">
+    <line x1="60" y1="0" x2="60" y2="780"/><line x1="120" y1="0" x2="120" y2="780"/>
+    <line x1="180" y1="0" x2="180" y2="780"/><line x1="240" y1="0" x2="240" y2="780"/>
+    <line x1="300" y1="0" x2="300" y2="780"/><line x1="360" y1="0" x2="360" y2="780"/>
+    <line x1="420" y1="0" x2="420" y2="780"/><line x1="480" y1="0" x2="480" y2="780"/>
+    <line x1="540" y1="0" x2="540" y2="780"/><line x1="600" y1="0" x2="600" y2="780"/>
+    <line x1="660" y1="0" x2="660" y2="780"/><line x1="720" y1="0" x2="720" y2="780"/>
+    <line x1="780" y1="0" x2="780" y2="780"/><line x1="840" y1="0" x2="840" y2="780"/>
+    <line x1="900" y1="0" x2="900" y2="780"/><line x1="960" y1="0" x2="960" y2="780"/>
+    <line x1="1020" y1="0" x2="1020" y2="780"/><line x1="1080" y1="0" x2="1080" y2="780"/>
+    <line x1="1140" y1="0" x2="1140" y2="780"/>
+    <line x1="0" y1="60" x2="1200" y2="60"/><line x1="0" y1="120" x2="1200" y2="120"/>
+    <line x1="0" y1="180" x2="1200" y2="180"/><line x1="0" y1="240" x2="1200" y2="240"/>
+    <line x1="0" y1="300" x2="1200" y2="300"/><line x1="0" y1="360" x2="1200" y2="360"/>
+    <line x1="0" y1="420" x2="1200" y2="420"/><line x1="0" y1="480" x2="1200" y2="480"/>
+    <line x1="0" y1="540" x2="1200" y2="540"/><line x1="0" y1="600" x2="1200" y2="600"/>
+    <line x1="0" y1="660" x2="1200" y2="660"/><line x1="0" y1="720" x2="1200" y2="720"/>
+  </g>
+
+  <!-- GCP border -->
+  <rect x="30" y="30" width="1140" height="720" rx="14" fill="none" stroke="#475569" stroke-width="1.5" stroke-dasharray="8 4" opacity="0.5"/>
+
+  <!-- ==================== NOTEBOOK (left) ==================== -->
+  <g filter="url(#cs2)">
+    <rect x="60" y="100" width="400" height="340" rx="14" fill="#1a2744" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="60" y="100" width="400" height="7" rx="3" fill="url(#notebookGrad2)"/>
+
+  <g transform="translate(90, 128)">
+    <rect x="0" y="0" width="28" height="22" rx="4" fill="none" stroke="#60a5fa" stroke-width="1.8"/>
+    <line x1="7" y1="6" x2="21" y2="6" stroke="#60a5fa" stroke-width="1.4"/>
+    <line x1="7" y1="11" x2="19" y2="11" stroke="#60a5fa" stroke-width="1.4"/>
+    <line x1="7" y1="16" x2="16" y2="16" stroke="#60a5fa" stroke-width="1.4"/>
+  </g>
+  <text x="130" y="146" fill="#e2e8f0" font-size="20" font-weight="700">Workbench Notebook</text>
+  <text x="130" y="168" fill="#64748b" font-size="14" font-weight="500">Orchestrates RAG pipeline</text>
+
+  <g transform="translate(90, 194)">
+    <circle cx="7" cy="8" r="4" fill="#3b82f6" opacity="0.6"/>
+    <text x="22" y="14" fill="#94a3b8" font-size="16">Loads &amp; chunks documents</text>
+  </g>
+  <g transform="translate(90, 228)">
+    <circle cx="7" cy="8" r="4" fill="#3b82f6" opacity="0.6"/>
+    <text x="22" y="14" fill="#94a3b8" font-size="16">Builds embeddings index</text>
+  </g>
+  <g transform="translate(90, 262)">
+    <circle cx="7" cy="8" r="4" fill="#3b82f6" opacity="0.6"/>
+    <text x="22" y="14" fill="#94a3b8" font-size="16">Queries Gemini with context</text>
+  </g>
+  <g transform="translate(90, 296)">
+    <circle cx="7" cy="8" r="4" fill="#3b82f6" opacity="0.6"/>
+    <text x="22" y="14" fill="#94a3b8" font-size="16">Displays augmented answers</text>
+  </g>
+
+  <!-- Notebook badges -->
+  <rect x="90" y="338" width="130" height="26" rx="6" fill="#172540" stroke="#1e3a5f" stroke-width="0.8"/>
+  <text x="100" y="356" fill="#fbbf24" font-size="12" font-weight="700">$</text>
+  <text x="116" y="356" fill="#64748b" font-size="12">~$0.05–0.50/hr</text>
+
+  <rect x="230" y="338" width="126" height="26" rx="6" fill="#172540" stroke="#1e3a5f" stroke-width="0.8"/>
+  <text x="242" y="356" fill="#60a5fa" font-size="12">Ep 7  ·  CLI: Ep 8</text>
+
+  <!-- ==================== GEMINI API (top right) ==================== -->
+  <g filter="url(#cs2)">
+    <rect x="600" y="60" width="540" height="250" rx="14" fill="#2a1525" stroke="#ec4899" stroke-width="2"/>
+  </g>
+  <rect x="600" y="60" width="540" height="7" rx="3" fill="url(#geminiGrad)"/>
+
+  <g transform="translate(630, 88)">
+    <polygon points="14,0 16.5,10 28,11 18,18 20.5,28 14,22 7.5,28 10,18 0,11 11.5,10" fill="none" stroke="#f472b6" stroke-width="1.5" stroke-linejoin="round"/>
+  </g>
+  <text x="670" y="108" fill="#e2e8f0" font-size="20" font-weight="700">Gemini API</text>
+  <text x="670" y="130" fill="#64748b" font-size="14" font-weight="500">Vertex AI Generative Models</text>
+
+  <g transform="translate(630, 156)">
+    <circle cx="7" cy="8" r="4" fill="#ec4899" opacity="0.6"/>
+    <text x="22" y="14" fill="#94a3b8" font-size="16">Generates text embeddings</text>
+  </g>
+  <g transform="translate(630, 190)">
+    <circle cx="7" cy="8" r="4" fill="#ec4899" opacity="0.6"/>
+    <text x="22" y="14" fill="#94a3b8" font-size="16">Answers questions with context</text>
+  </g>
+  <g transform="translate(630, 224)">
+    <circle cx="7" cy="8" r="4" fill="#ec4899" opacity="0.6"/>
+    <text x="22" y="14" fill="#94a3b8" font-size="16">Managed, serverless inference</text>
+  </g>
+
+  <!-- Gemini badges -->
+  <rect x="630" y="262" width="148" height="26" rx="6" fill="#2a1228" stroke="#3d1230" stroke-width="0.8"/>
+  <text x="640" y="280" fill="#fbbf24" font-size="12" font-weight="700">$</text>
+  <text x="656" y="280" fill="#64748b" font-size="12">Pay per token only</text>
+
+  <rect x="790" y="262" width="114" height="26" rx="6" fill="#2a1228" stroke="#3d1230" stroke-width="0.8"/>
+  <text x="804" y="280" fill="#f472b6" font-size="12">SERVERLESS</text>
+
+  <!-- ==================== RAG PIPELINE (bottom right) ==================== -->
+  <g filter="url(#cs2)">
+    <rect x="600" y="360" width="540" height="260" rx="14" fill="#0f1f2a" stroke="#06b6d4" stroke-width="2"/>
+  </g>
+  <rect x="600" y="360" width="540" height="7" rx="3" fill="url(#ragGrad)"/>
+
+  <g transform="translate(630, 388)">
+    <circle cx="11" cy="11" r="9" fill="none" stroke="#22d3ee" stroke-width="1.8"/>
+    <line x1="17" y1="17" x2="24" y2="24" stroke="#22d3ee" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+  <text x="668" y="404" fill="#e2e8f0" font-size="20" font-weight="700">RAG Pipeline</text>
+  <text x="668" y="426" fill="#64748b" font-size="14" font-weight="500">Retrieval-Augmented Generation</text>
+
+  <g transform="translate(630, 452)">
+    <rect x="0" y="0" width="24" height="24" rx="12" fill="#164e63" stroke="#06b6d4" stroke-width="1.2"/>
+    <text x="12" y="17" text-anchor="middle" fill="#22d3ee" font-size="12" font-weight="700">1</text>
+    <text x="34" y="17" fill="#94a3b8" font-size="16">Retrieve relevant doc chunks</text>
+  </g>
+  <g transform="translate(630, 488)">
+    <rect x="0" y="0" width="24" height="24" rx="12" fill="#164e63" stroke="#06b6d4" stroke-width="1.2"/>
+    <text x="12" y="17" text-anchor="middle" fill="#22d3ee" font-size="12" font-weight="700">2</text>
+    <text x="34" y="17" fill="#94a3b8" font-size="16">Inject context into Gemini prompt</text>
+  </g>
+  <g transform="translate(630, 524)">
+    <rect x="0" y="0" width="24" height="24" rx="12" fill="#164e63" stroke="#06b6d4" stroke-width="1.2"/>
+    <text x="12" y="17" text-anchor="middle" fill="#22d3ee" font-size="12" font-weight="700">3</text>
+    <text x="34" y="17" fill="#94a3b8" font-size="16">Return grounded answer</text>
+  </g>
+
+  <!-- RAG badges -->
+  <rect x="630" y="568" width="190" height="26" rx="6" fill="#0d1f2a" stroke="#164e63" stroke-width="0.8"/>
+  <text x="642" y="586" fill="#3b7d8c" font-size="12">In-memory index (workshop)</text>
+
+  <rect x="830" y="568" width="260" height="26" rx="6" fill="#0d1f2a" stroke="#164e63" stroke-width="0.8"/>
+  <text x="842" y="586" fill="#3b7d8c" font-size="12">Prod alt: Vector Search / AlloyDB</text>
+
+  <!-- ==================== GCS BUCKET ==================== -->
+  <g filter="url(#cs2)">
+    <rect x="60" y="680" width="480" height="50" rx="12" fill="#0f2922" stroke="#10b981" stroke-width="2"/>
+  </g>
+  <rect x="60" y="680" width="480" height="6" rx="3" fill="url(#gcsGrad2)"/>
+
+  <g transform="translate(85, 698)">
+    <ellipse cx="10" cy="3" rx="10" ry="3" fill="none" stroke="#34d399" stroke-width="1.4"/>
+    <path d="M0,3 L0,14 Q0,17 10,17 Q20,17 20,14 L20,3" fill="none" stroke="#34d399" stroke-width="1.4"/>
+  </g>
+  <text x="118" y="715" fill="#e2e8f0" font-size="16" font-weight="700">GCS Bucket</text>
+
+  <g transform="translate(248, 700)">
+    <rect x="0" y="0" width="110" height="22" rx="5" fill="#134e3a" stroke="#10b981" stroke-width="0.6"/>
+    <text x="55" y="16" text-anchor="middle" fill="#6ee7b7" font-size="12" font-weight="500">Documents</text>
+    <rect x="120" y="0" width="118" height="22" rx="5" fill="#134e3a" stroke="#10b981" stroke-width="0.6"/>
+    <text x="179" y="16" text-anchor="middle" fill="#6ee7b7" font-size="12" font-weight="500">Embeddings</text>
+  </g>
+
+  <!-- ==================== ARROWS ==================== -->
+
+  <!-- Notebook → Gemini (API calls) -->
+  <path d="M460,210 L592,170" stroke="#ec4899" stroke-width="3" fill="none" marker-end="url(#aPk)" filter="url(#gl2)"/>
+  <rect x="480" y="172" width="90" height="26" rx="6" fill="#1e293b" stroke="#475569" stroke-width="0.8"/>
+  <text x="525" y="190" text-anchor="middle" fill="#cbd5e1" font-size="13" font-weight="600">API calls</text>
+
+  <!-- Gemini → Notebook (response) -->
+  <path d="M592,220 L460,260" stroke="#ec4899" stroke-width="2" fill="none" stroke-dasharray="8 4" opacity="0.6"/>
+  <rect x="484" y="242" width="90" height="24" rx="6" fill="#1e293b" stroke="#475569" stroke-width="0.8"/>
+  <text x="529" y="259" text-anchor="middle" fill="#cbd5e1" font-size="12" font-weight="500">responses</text>
+
+  <!-- Notebook → RAG (orchestrate) -->
+  <path d="M460,340 L592,460" stroke="#06b6d4" stroke-width="2.5" fill="none" marker-end="url(#aCy)" filter="url(#gl2)" opacity="0.8"/>
+  <rect x="472" y="385" width="100" height="26" rx="6" fill="#1e293b" stroke="#475569" stroke-width="0.8"/>
+  <text x="522" y="403" text-anchor="middle" fill="#cbd5e1" font-size="13" font-weight="600">orchestrate</text>
+
+  <!-- Gemini ↔ RAG -->
+  <line x1="870" y1="310" x2="870" y2="352" stroke="#64748b" stroke-width="2" stroke-dasharray="5 3"/>
+
+  <!-- GCS → Notebook (read docs) -->
+  <line x1="260" y1="680" x2="260" y2="447" stroke="#10b981" stroke-width="2.5" marker-end="url(#aBl)" filter="url(#gl2)"/>
+  <rect x="268" y="560" width="100" height="24" rx="6" fill="#1e293b" stroke="#475569" stroke-width="0.7"/>
+  <text x="318" y="577" text-anchor="middle" fill="#cbd5e1" font-size="12" font-weight="600">read docs</text>
+</svg>
