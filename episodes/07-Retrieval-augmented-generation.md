@@ -55,7 +55,9 @@ For larger or production workloads, consider a **managed vector store**:
 | **[Vertex AI RAG Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview)** | Managed end-to-end pipeline — handles ingestion, chunking, embedding, and retrieval for you | You want a turnkey RAG setup with less custom code |
 | **[AlloyDB for PostgreSQL](https://cloud.google.com/alloydb/docs/ai/work-with-embeddings)** | Fully managed PostgreSQL with built-in `pgvector` support | You want vector search alongside relational data in a single database |
 
-A good rule of thumb: **start with the in-memory approach** in this episode to understand the mechanics, then move to a managed store once your corpus outgrows notebook memory or you need persistence across sessions.
+**A word of caution about turnkey solutions.** RAG techniques are evolving fast — query planning, cross-encoder reranking, iterative retrieval with feedback, ensemble/voting strategies, and mixture-of-experts routing are all active areas of research. Managed services like RAG Engine trade flexibility for convenience: they handle the plumbing, but you may not be able to slot in a custom reranker or change how chunks are scored. If your use case demands fine-grained control over the retrieval strategy, a custom pipeline built on Vector Search (or even open-source tools like FAISS or LanceDB) will give you more room to experiment. This trade-off is shifting as managed offerings mature, so revisit it when you're ready to scale.
+
+A good rule of thumb: **start with the in-memory approach** in this episode to understand the mechanics — that understanding transfers directly whether you later adopt a managed service or build a custom production pipeline.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
