@@ -43,6 +43,24 @@ This approach is useful any time you need to ground an LLM's answers in a specif
 
 ::::::::::::::::::::::::::::::::::::: callout
 
+### When do you need a vector database?
+
+The pipeline in this episode stores embeddings **in memory** using scikit-learn's `NearestNeighbors`. That works well for small-to-medium corpora (up to a few thousand documents) and is perfect for prototyping. But as your knowledge base grows, an in-memory index becomes impractical — it's slow to rebuild, lost when the kernel restarts, and eventually exceeds available RAM.
+
+For larger or production workloads, consider a **managed vector store**:
+
+| Service | What it does | When to use it |
+|---------|-------------|----------------|
+| **[Vertex AI Vector Search](https://cloud.google.com/vertex-ai/docs/vector-search/overview)** | Managed, billion-scale nearest-neighbor index (the same technology behind Google Search and YouTube) | You need full control over the retrieval pipeline and are working with very large datasets |
+| **[Vertex AI RAG Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview)** | Managed end-to-end pipeline — handles ingestion, chunking, embedding, and retrieval for you | You want a turnkey RAG setup with less custom code |
+| **[AlloyDB for PostgreSQL](https://cloud.google.com/alloydb/docs/ai/work-with-embeddings)** | Fully managed PostgreSQL with built-in `pgvector` support | You want vector search alongside relational data in a single database |
+
+A good rule of thumb: **start with the in-memory approach** in this episode to understand the mechanics, then move to a managed store once your corpus outgrows notebook memory or you need persistence across sessions.
+
+::::::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::: callout
+
 ### Hugging Face / open-model alternatives
 
 You can replace the Google-managed APIs used in this episode with open-source models:
