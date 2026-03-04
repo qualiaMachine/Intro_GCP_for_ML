@@ -167,13 +167,15 @@ This pattern keeps costs low by running your notebook on a modest VM while only 
 
 #### You don't need a notebook to use Vertex AI
 
-We use Jupyter notebooks in this workshop because they're convenient for teaching — you can see code, output, and explanations in one place. But **notebooks are not required** for any of the workflows covered here. Everything we do through the Python SDK (submitting training jobs, running hyperparameter tuning, calling the Gemini API) can also be done from:
+We use **Vertex AI Workbench** notebooks rather than a plain local JupyterLab because Workbench comes pre-configured with ML frameworks, GPU drivers, and — most importantly — automatic GCP authentication through the VM's service account. You could run a self-managed Jupyter server on a Compute Engine VM, but you'd have to install libraries and configure credentials yourself.
+
+That said, **notebooks are not required** for any of the workflows covered here. Everything we do through the Python SDK (submitting training jobs, running hyperparameter tuning, calling the Gemini API) can also be done from:
 
 - A **plain Python script** run from your terminal or an HPC scheduler.
 - The **`gcloud` CLI** (e.g., `gcloud ai custom-jobs create ...`) for submitting and managing jobs directly from the command line.
 - A **CI/CD pipeline** (GitHub Actions, Cloud Build, etc.) that triggers training runs automatically.
 
-If you're more comfortable working from a terminal, SSH session, or shell script, the same Vertex AI SDK calls work identically outside of a notebook. The notebook is just a convenient wrapper — the real work happens in the training scripts and SDK calls.
+The real work happens in the training scripts and SDK calls — the notebook is just a convenient wrapper for orchestrating them.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
