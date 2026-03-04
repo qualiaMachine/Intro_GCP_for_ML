@@ -26,10 +26,10 @@ All pricing estimates are based on public rates for `us-central1` as of October 
 ### Key Concepts
 
 - **Machine type vs. GPU**: The `machine_type` defines CPU and RAM resources — it is not a GPU by itself. You can attach a GPU by adding `accelerator_type` and `accelerator_count` (for example, `NVIDIA_L4` or `NVIDIA_TESLA_T4`). Only specialized machine families like `A2` include GPUs automatically.  
-- **Full names and syntax**: Machine types follow the pattern `<family>-<series>-<vCPU count>`. For example:  
-  - `n2-standard-8`: 8 vCPUs, 32 GB RAM  
-  - `c2-standard-8`: 8 vCPUs, 32 GB RAM (CPU-optimized)  
-  - `a2-highgpu-1g`: 12 vCPUs, 85 GB RAM, and 1 attached A100 GPU  
+- **Full names and syntax**: Most machine types follow the pattern `<family>-<series>-<vCPU count>`. For example:
+  - `n2-standard-8`: N2 family, standard series, 8 vCPUs, 32 GB RAM
+  - `c2-standard-8`: C2 family, standard series, 8 vCPUs, 32 GB RAM (CPU-optimized)
+  - **Exception — GPU families (A2, A3, A4):** These use `<family>-<series>-<GPU count>g` instead. The trailing number is the **GPU count**, not the vCPU count. For example, `a2-highgpu-1g` means 1× A100 GPU (with 12 vCPUs and 85 GB RAM bundled automatically). Similarly, `a3-highgpu-8g` means 8× H100 GPUs. CPU and memory are fixed per configuration — you don't choose them independently.
 - **RAM requirements**: Minimum RAM should be at least 1.5× dataset size unless your workflow uses batching.  
 - **Free tier**: Some smaller instance types (for example, `e2-micro`) may qualify for the [GCP Free Tier](https://cloud.google.com/free). Check usage limits before running persistent notebooks.
 
