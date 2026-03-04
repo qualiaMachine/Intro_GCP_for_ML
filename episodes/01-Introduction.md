@@ -59,6 +59,24 @@ Not every model needs cloud hardware. Here's a rough guide:
 
 For smaller models (under ~500M parameters), a university HPC cluster with T4 or V100 GPUs is often sufficient. Cloud becomes the clear choice when your model or dataset outgrows local hardware, or when you need rapid iteration across many experiments.
 
+### A note on cloud costs
+
+Cloud computing is not free, but it's worth putting costs in context:
+
+- **Hardware is expensive and ages fast.** A single A100 GPU costs ~$15,000 and is outdated within a few years. Cloud lets you rent the latest hardware by the hour.
+- **You pay only for what you use.** Stop a VM and the meter stops — valuable for bursty research workloads.
+- **Budgets and alerts keep you safe.** GCP billing dashboards and budget alerts help prevent surprise bills. We cover cleanup in [Episode 9](09-Resource-management-cleanup.md).
+
+The key habit: choose the right machine size, stop resources when idle, and monitor spending. We'll reinforce this throughout.
+
+::::::::::::::::::::::::::::::::::::: callout
+
+### For UW-Madison researchers
+
+UW-Madison offers reduced-overhead cloud billing, NIH STRIDES discounts, Google Cloud research credits (up to $5,000), free on-campus GPUs via [CHTC](https://chtc.cs.wisc.edu/), and dedicated support from the [Public Cloud Team](mailto:cloud-services@cio.wisc.edu). See the [UW-Madison Cloud Resources](../uw-madison-cloud-resources.html) page for details.
+
+::::::::::::::::::::::::::::::::::::::::::::::::
+
 Google Cloud Platform (GCP) is one of several clouds that supports this. The rest of this episode explains what GCP offers for ML/AI and how the pieces fit together.
 
 ## What GCP provides for ML/AI
@@ -117,24 +135,6 @@ The same notebook can also orchestrate **Retrieval-Augmented Generation (RAG)** 
 This workshop uses the **GCP web console** and **Workbench notebooks** for most tasks because they're visual and easy to follow for beginners. But nearly everything we do can also be done from the **`gcloud` command-line tool** — submitting training jobs, managing buckets, checking quotas. [Episode 8](08-CLI-workflows.md) covers the CLI equivalents. If you prefer terminal-based workflows or need to automate jobs in scripts and CI/CD pipelines, that episode shows you how.
 
 **One important caveat:** whether you use the console, notebooks, or CLI, resources you create (VMs, training jobs, endpoints) keep running and billing until you explicitly stop them. There's no automatic shutdown. We cover cleanup habits in [Episode 9](09-Resource-management-cleanup.md), but the short version is: always check for running resources before you walk away.
-
-::::::::::::::::::::::::::::::::::::::::::::::::
-
-## A note on cloud costs
-
-Cloud computing is not free, but it's worth putting costs in context:
-
-- **Hardware is expensive and ages fast.** A single A100 GPU costs ~$15,000 and is outdated within a few years. Cloud lets you rent the latest hardware by the hour.
-- **You pay only for what you use.** Stop a VM and the meter stops — valuable for bursty research workloads.
-- **Budgets and alerts keep you safe.** GCP billing dashboards and budget alerts help prevent surprise bills. We cover cleanup in [Episode 9](09-Resource-management-cleanup.md).
-
-The key habit: choose the right machine size, stop resources when idle, and monitor spending. We'll reinforce this throughout.
-
-::::::::::::::::::::::::::::::::::::: callout
-
-### For UW-Madison researchers
-
-UW-Madison offers reduced-overhead cloud billing, NIH STRIDES discounts, Google Cloud research credits (up to $5,000), free on-campus GPUs via [CHTC](https://chtc.cs.wisc.edu/), and dedicated support from the [Public Cloud Team](mailto:cloud-services@cio.wisc.edu). See the [UW-Madison Cloud Resources](../uw-madison-cloud-resources.html) page for details.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
