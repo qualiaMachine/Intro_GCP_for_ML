@@ -604,6 +604,45 @@ thousands of dollars.</p>
 with T4 or V100 GPUs is often sufficient. Cloud becomes the clear choice
 when your model or dataset outgrows local hardware, or when you need
 rapid iteration across many experiments.</p>
+</div>
+<div class="section level3">
+<h3 id="a-note-on-cloud-costs">A note on cloud costs<a class="anchor" aria-label="anchor" href="#a-note-on-cloud-costs"></a>
+</h3>
+<p>Cloud computing is not free, but it’s worth putting costs in
+context:</p>
+<ul>
+<li>
+<strong>Hardware is expensive and ages fast.</strong> A single A100
+GPU costs ~$15,000 and is outdated within a few years. Cloud lets you
+rent the latest hardware by the hour.</li>
+<li>
+<strong>You pay only for what you use.</strong> Stop a VM and the
+meter stops — valuable for bursty research workloads.</li>
+<li>
+<strong>Budgets and alerts keep you safe.</strong> GCP billing
+dashboards and budget alerts help prevent surprise bills. We cover
+cleanup in <a href="09-Resource-management-cleanup.html">Episode
+9</a>.</li>
+</ul>
+<p>The key habit: choose the right machine size, stop resources when
+idle, and monitor spending. We’ll reinforce this throughout.</p>
+<div id="for-uw-madison-researchers" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="for-uw-madison-researchers" class="callout-inner">
+<h3 class="callout-title">For UW-Madison researchers</h3>
+<div class="callout-content">
+<p>UW-Madison offers reduced-overhead cloud billing, NIH STRIDES
+discounts, Google Cloud research credits (up to $5,000), free on-campus
+GPUs via <a href="https://chtc.cs.wisc.edu/" class="external-link">CHTC</a>, and dedicated
+support from the <a href="mailto:cloud-services@cio.wisc.edu">Public
+Cloud Team</a>. See the <a href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a>
+page for details.</p>
+</div>
+</div>
+</div>
 <p>Google Cloud Platform (GCP) is one of several clouds that supports
 this. The rest of this episode explains what GCP offers for ML/AI and
 how the pieces fit together.</p>
@@ -743,44 +782,6 @@ notebooks, or CLI, resources you create (VMs, training jobs, endpoints)
 keep running and billing until you explicitly stop them. There’s no
 automatic shutdown. We cover cleanup habits in <a href="09-Resource-management-cleanup.html">Episode 9</a>, but the short
 version is: always check for running resources before you walk away.</p>
-</div>
-</div>
-</div>
-</section><section><h2 class="section-heading" id="a-note-on-cloud-costs">A note on cloud costs<a class="anchor" aria-label="anchor" href="#a-note-on-cloud-costs"></a>
-</h2>
-<hr class="half-width">
-<p>Cloud computing is not free, but it’s worth putting costs in
-context:</p>
-<ul>
-<li>
-<strong>Hardware is expensive and ages fast.</strong> A single A100
-GPU costs ~$15,000 and is outdated within a few years. Cloud lets you
-rent the latest hardware by the hour.</li>
-<li>
-<strong>You pay only for what you use.</strong> Stop a VM and the
-meter stops — valuable for bursty research workloads.</li>
-<li>
-<strong>Budgets and alerts keep you safe.</strong> GCP billing
-dashboards and budget alerts help prevent surprise bills. We cover
-cleanup in <a href="09-Resource-management-cleanup.html">Episode
-9</a>.</li>
-</ul>
-<p>The key habit: choose the right machine size, stop resources when
-idle, and monitor spending. We’ll reinforce this throughout.</p>
-<div id="for-uw-madison-researchers" class="callout">
-<div class="callout-square">
-<i class="callout-icon" data-feather="bell"></i>
-</div>
-<span class="callout-header">Callout</span>
-<div id="for-uw-madison-researchers" class="callout-inner">
-<h3 class="callout-title">For UW-Madison researchers</h3>
-<div class="callout-content">
-<p>UW-Madison offers reduced-overhead cloud billing, NIH STRIDES
-discounts, Google Cloud research credits (up to $5,000), free on-campus
-GPUs via <a href="https://chtc.cs.wisc.edu/" class="external-link">CHTC</a>, and dedicated
-support from the <a href="mailto:cloud-services@cio.wisc.edu">Public
-Cloud Team</a>. See the <a href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a>
-page for details.</p>
 </div>
 </div>
 </div>
@@ -1122,7 +1123,7 @@ visualization) versus being launched to larger cloud resources?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>The notebook serves as a lightweight control plane. - Like an HPC
 login node, it is not meant for heavy computation. - Suitable for small
@@ -1157,7 +1158,7 @@ with idle shutdown enabled.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <ul>
 <li>
@@ -1667,7 +1668,7 @@ requests negligible at this scale.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -1862,7 +1863,7 @@ is missing from the test set, and why?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -1900,7 +1901,7 @@ class (<code>Pclass</code>) and upload the result as
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -3513,7 +3514,7 @@ between these configurations.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -4104,7 +4105,7 @@ configuration.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4152,7 +4153,7 @@ search:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6248,7 +6249,7 @@ a <strong>$10 budget</strong> with alert thresholds at 50% and
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li><p>In the Cloud Console, click the <strong>Navigation menu
@@ -6302,7 +6303,7 @@ are not actively using.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6338,7 +6339,7 @@ don’t need, and delete the endpoint.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6384,7 +6385,7 @@ objects. Apply it to your bucket.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
 <div class="accordion-body">
 <p>Save the following as <code>lifecycle.json</code>:</p>
 <div class="codewrapper sourceCode" id="cb14">
@@ -6440,7 +6441,7 @@ delete the bucket entirely.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution5" aria-expanded="false" aria-controls="collapseSolution5">
   <h4 class="accordion-header" id="headingSolution5"> Show me the solution </h4>
 </button>
-<div id="collapseSolution5" class="accordion-collapse collapse" data-bs-parent="#accordionSolution5" aria-labelledby="headingSolution5">
+<div id="collapseSolution5" class="accordion-collapse collapse" aria-labelledby="headingSolution5" data-bs-parent="#accordionSolution5">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>

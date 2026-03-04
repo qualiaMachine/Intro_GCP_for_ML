@@ -221,7 +221,6 @@
 <li><a href="#what-gcp-provides-for-mlai">What GCP provides for ML/AI</a></li>
 <li><a href="#how-the-pieces-fit-together-vertex-ai">How the pieces fit together: Vertex AI</a></li>
 <li><a href="#the-notebook-as-controller-pattern">The notebook-as-controller pattern</a></li>
-<li><a href="#a-note-on-cloud-costs">A note on cloud costs</a></li>
         </ul></div><!--/div.accordion-body-->
     </div><!--/div.accordion-collapse-->
 
@@ -497,6 +496,42 @@ thousands of dollars.</p>
 with T4 or V100 GPUs is often sufficient. Cloud becomes the clear choice
 when your model or dataset outgrows local hardware, or when you need
 rapid iteration across many experiments.</p>
+</div>
+<div class="section level3">
+<h3 id="a-note-on-cloud-costs">A note on cloud costs<a class="anchor" aria-label="anchor" href="#a-note-on-cloud-costs"></a></h3>
+<p>Cloud computing is not free, but it’s worth putting costs in
+context:</p>
+<ul><li>
+<strong>Hardware is expensive and ages fast.</strong> A single A100
+GPU costs ~$15,000 and is outdated within a few years. Cloud lets you
+rent the latest hardware by the hour.</li>
+<li>
+<strong>You pay only for what you use.</strong> Stop a VM and the
+meter stops — valuable for bursty research workloads.</li>
+<li>
+<strong>Budgets and alerts keep you safe.</strong> GCP billing
+dashboards and budget alerts help prevent surprise bills. We cover
+cleanup in <a href="09-Resource-management-cleanup.html">Episode
+9</a>.</li>
+</ul><p>The key habit: choose the right machine size, stop resources when
+idle, and monitor spending. We’ll reinforce this throughout.</p>
+<div id="for-uw-madison-researchers" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="for-uw-madison-researchers" class="callout-inner">
+<h3 class="callout-title">For UW-Madison researchers</h3>
+<div class="callout-content">
+<p>UW-Madison offers reduced-overhead cloud billing, NIH STRIDES
+discounts, Google Cloud research credits (up to $5,000), free on-campus
+GPUs via <a href="https://chtc.cs.wisc.edu/" class="external-link">CHTC</a>, and dedicated
+support from the <a href="mailto:cloud-services@cio.wisc.edu">Public
+Cloud Team</a>. See the <a href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a>
+page for details.</p>
+</div>
+</div>
+</div>
 <p>Google Cloud Platform (GCP) is one of several clouds that supports
 this. The rest of this episode explains what GCP offers for ML/AI and
 how the pieces fit together.</p>
@@ -602,40 +637,6 @@ notebooks, or CLI, resources you create (VMs, training jobs, endpoints)
 keep running and billing until you explicitly stop them. There’s no
 automatic shutdown. We cover cleanup habits in <a href="09-Resource-management-cleanup.html">Episode 9</a>, but the short
 version is: always check for running resources before you walk away.</p>
-</div>
-</div>
-</div>
-</section><section><h2 class="section-heading" id="a-note-on-cloud-costs">A note on cloud costs<a class="anchor" aria-label="anchor" href="#a-note-on-cloud-costs"></a></h2>
-<hr class="half-width"><p>Cloud computing is not free, but it’s worth putting costs in
-context:</p>
-<ul><li>
-<strong>Hardware is expensive and ages fast.</strong> A single A100
-GPU costs ~$15,000 and is outdated within a few years. Cloud lets you
-rent the latest hardware by the hour.</li>
-<li>
-<strong>You pay only for what you use.</strong> Stop a VM and the
-meter stops — valuable for bursty research workloads.</li>
-<li>
-<strong>Budgets and alerts keep you safe.</strong> GCP billing
-dashboards and budget alerts help prevent surprise bills. We cover
-cleanup in <a href="09-Resource-management-cleanup.html">Episode
-9</a>.</li>
-</ul><p>The key habit: choose the right machine size, stop resources when
-idle, and monitor spending. We’ll reinforce this throughout.</p>
-<div id="for-uw-madison-researchers" class="callout">
-<div class="callout-square">
-<i class="callout-icon" data-feather="bell"></i>
-</div>
-<span class="callout-header">Callout</span>
-<div id="for-uw-madison-researchers" class="callout-inner">
-<h3 class="callout-title">For UW-Madison researchers</h3>
-<div class="callout-content">
-<p>UW-Madison offers reduced-overhead cloud billing, NIH STRIDES
-discounts, Google Cloud research credits (up to $5,000), free on-campus
-GPUs via <a href="https://chtc.cs.wisc.edu/" class="external-link">CHTC</a>, and dedicated
-support from the <a href="mailto:cloud-services@cio.wisc.edu">Public
-Cloud Team</a>. See the <a href="uw-madison-cloud-resources.html">UW-Madison Cloud Resources</a>
-page for details.</p>
 </div>
 </div>
 </div>
