@@ -21,6 +21,8 @@ code_block_pattern = re.compile(r"```(\w+)?\n(.*?)\n```", re.DOTALL)
 
 # Languages that should stay as formatted markdown, not become code cells
 SHELL_LANGS = {"sh", "bash", "shell", "zsh"}
+# Languages that represent plain output/text — keep as markdown without any prefix
+TEXT_LANGS = {"text", "output"}
 
 def strip_solutions(md_content):
     """Remove Carpentries solution blocks so learners don't see answers in notebooks.
@@ -62,6 +64,10 @@ def split_markdown(md_content):
                 # Keep shell blocks as readable markdown so learners
                 # don't accidentally run them inside the notebook.
                 md = f"**Run in Cloud Shell / terminal:**\n```{lang}\n{code_content}\n```"
+                cells.append(new_markdown_cell(md))
+            elif lang in TEXT_LANGS:
+                # Plain text/output blocks stay as formatted markdown
+                md = f"```{lang}\n{code_content}\n```"
                 cells.append(new_markdown_cell(md))
             else:
                 cells.append(new_code_cell(code_content))
