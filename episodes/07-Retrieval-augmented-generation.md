@@ -66,6 +66,8 @@ This requires a GPU VM (e.g., `n1-standard-8` + `T4`) and manual model managemen
 
 ## Step 1: Set up the environment
 
+Navigate to `/Intro_GCP_for_ML/notebooks/07-Retrieval-augmented-generation.ipynb` to begin this notebook. **Select the *Python 3 (ipykernel)* kernel** — this episode uses only the `google-genai` client library and scikit-learn, so no PyTorch or TensorFlow kernel is needed.
+
 We need the `pypdf` library to extract text from PDF files.
 
 ```python
