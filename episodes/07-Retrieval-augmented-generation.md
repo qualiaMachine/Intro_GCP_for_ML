@@ -41,27 +41,6 @@ This approach is useful any time you need to ground an LLM's answers in a specif
 
 ![RAG pipeline with Gemini API](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram2_rag_gemini.svg){alt="Architecture diagram showing the RAG pipeline: a Workbench notebook orchestrates document chunking, embedding via the Gemini API, and retrieval-augmented generation, with documents and embeddings stored in a GCS bucket."}
 
-::::::::::::::::::::::::::::::::::::: callout
-
-### Scaling beyond in-memory search
-
-This episode stores embeddings **in memory** with scikit-learn's `NearestNeighbors` — fine for prototyping with up to a few thousand chunks. For larger or production corpora, swap in a managed vector store such as [Vertex AI Vector Search](https://cloud.google.com/vertex-ai/docs/vector-search/overview). The core pipeline (chunk → embed → retrieve → generate) stays the same; only the index backend changes. See the **What's next?** section at the end for more options.
-
-::::::::::::::::::::::::::::::::::::::::::::::::
-
-::::::::::::::::::::::::::::::::::::: callout
-
-### Hugging Face / open-model alternatives
-
-You can replace the Google-managed APIs used in this episode with open-source models:
-
-- **Embeddings:** `sentence-transformers/all-MiniLM-L6-v2`, `BAAI/bge-large-en-v1.5`
-- **Generators:** `google/gemma-2b-it`, `mistralai/Mistral-7B-Instruct`, or `tiiuae/falcon-7b-instruct`
-
-This requires a GPU VM (e.g., `n1-standard-8` + `T4`) and manual model management. Rather than running a large GPU in Workbench, you can launch Vertex AI custom jobs that perform the embedding and generation steps — start with a PyTorch container image and add the HuggingFace libraries as requirements.
-
-::::::::::::::::::::::::::::::::::::::::::::::::
-
 
 
 ## Step 1: Set up the environment
@@ -412,6 +391,27 @@ The embeddings and nearest-neighbors index in this episode are held **in memory*
 - **Cache embeddings** — computing them once and reusing them saves the most cost.
 - **Prompt engineering matters** — how you instruct the LLM to use (or refuse to use) the context directly affects answer quality and hallucination risk.
 - This workflow generalizes to any retrieval task — research papers, policy documents, lab notebooks, etc.
+
+::::::::::::::::::::::::::::::::::::: callout
+
+### Scaling beyond in-memory search
+
+This episode stores embeddings **in memory** with scikit-learn's `NearestNeighbors` — fine for prototyping with up to a few thousand chunks. For larger or production corpora, swap in a managed vector store such as [Vertex AI Vector Search](https://cloud.google.com/vertex-ai/docs/vector-search/overview). The core pipeline (chunk → embed → retrieve → generate) stays the same; only the index backend changes.
+
+::::::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::: callout
+
+### Hugging Face / open-model alternatives
+
+You can replace the Google-managed APIs used in this episode with open-source models:
+
+- **Embeddings:** `sentence-transformers/all-MiniLM-L6-v2`, `BAAI/bge-large-en-v1.5`
+- **Generators:** `google/gemma-2b-it`, `mistralai/Mistral-7B-Instruct`, or `tiiuae/falcon-7b-instruct`
+
+This requires a GPU VM (e.g., `n1-standard-8` + `T4`) and manual model management. Rather than running a large GPU in Workbench, you can launch Vertex AI custom jobs that perform the embedding and generation steps — start with a PyTorch container image and add the HuggingFace libraries as requirements.
+
+::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## What's next?
 
