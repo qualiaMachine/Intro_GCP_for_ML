@@ -86,9 +86,9 @@ This "write once, run anywhere" approach means you can **debug locally first** (
 
 ::::::::::::::::::::::::::::::::::::::: challenge
 
-### Understanding the XGBoost Training Script (GCP version)
+### Understanding the XGBoost Training Script
 
-Take a moment to review the `train_xgboost.py` script we're using on GCP found in `Intro_GCP_for_ML/scripts/train_xgboost.py`. This script handles preprocessing, training, and saving an XGBoost model, while supporting local paths and GCS (`gs://`) paths, and it adapts to Vertex AI conventions (e.g., `AIP_MODEL_DIR`).
+Take a moment to review `Intro_GCP_for_ML/scripts/train_xgboost.py`. This is a standard XGBoost training script — it handles preprocessing, training, and saving a model. What makes it cloud-ready is that it also supports GCS (`gs://`) paths and adapts to Vertex AI conventions (e.g., `AIP_MODEL_DIR`), so the same script runs locally or as a managed training job without changes.
 
 Try answering the following questions:
 
