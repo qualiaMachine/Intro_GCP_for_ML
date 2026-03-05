@@ -86,9 +86,9 @@ This "write once, run anywhere" approach means you can **debug locally first** (
 
 ::::::::::::::::::::::::::::::::::::::: challenge
 
-### Understanding the XGBoost Training Script (GCP version)
+### Understanding the XGBoost Training Script
 
-Take a moment to review the `train_xgboost.py` script we're using on GCP found in `Intro_GCP_for_ML/scripts/train_xgboost.py`. This script handles preprocessing, training, and saving an XGBoost model, while supporting local paths and GCS (`gs://`) paths, and it adapts to Vertex AI conventions (e.g., `AIP_MODEL_DIR`).
+Take a moment to review `Intro_GCP_for_ML/scripts/train_xgboost.py`. This is a standard XGBoost training script — it handles preprocessing, training, and saving a model. What makes it cloud-ready is that it also supports GCS (`gs://`) paths and adapts to Vertex AI conventions (e.g., `AIP_MODEL_DIR`), so the same script runs locally or as a managed training job without changes.
 
 Try answering the following questions:
 
@@ -297,7 +297,9 @@ aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCK
 >
 > You only need to call `aiplatform.init()` once per notebook or script session. If you ever need to override a default for a single call (e.g., run a job in a different region), you can pass the argument directly to that method and it will take precedence.
 
-This next section defines a custom training job in Vertex AI, specifying how and where the training code will run. It points to your training script (`train_xgboost.py`), uses Google's prebuilt XGBoost training container image (which already includes common dependencies like `google-cloud-storage`), and sets a `display_name` for tracking the job in the Vertex AI console.
+A [`CustomTrainingJob`](https://cloud.google.com/python/docs/reference/aiplatform/latest/google.cloud.aiplatform.CustomTrainingJob) is the Vertex AI SDK object that ties together three things: **your training script**, a **container image** to run it in, and **metadata** such as a display name. Think of it as a reusable job definition — it doesn't start any compute by itself. Only when you call `job.run()` (next step) does Vertex AI actually provision a VM, ship your code to it, and execute the script.
+
+The code below creates a `CustomTrainingJob` that points to `train_xgboost.py`, uses Google's prebuilt XGBoost training container (which already includes common dependencies like `google-cloud-storage`), and sets a `display_name` for tracking the job in the Vertex AI console.
 
 > **Tip:** If your script needs packages not included in the prebuilt container, you can pass a `requirements` list to `CustomTrainingJob` (e.g., `requirements=["scikit-learn>=1.3"]`).
 
