@@ -29,7 +29,7 @@ ML/AI projects rely on data, making efficient storage and management essential. 
 
 ## Options for storage: VM Disks or GCS
 
-### What is a VM  disk?
+### What is a VM disk?
 A VM disk is the storage volume attached to a Compute Engine VM or a Vertex AI Workbench notebook. It can store datasets and intermediate results, but it is tied to the lifecycle of the VM.
 
 #### When to store data directly on a VM disk

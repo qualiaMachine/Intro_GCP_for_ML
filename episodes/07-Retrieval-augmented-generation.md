@@ -373,8 +373,12 @@ The quality of a RAG system depends heavily on the questions you ask. Try these 
 # Broad factual question — answer should be well-supported by multiple papers
 print(ask("How much energy does it cost to train a large language model?"))
 
+print("\n" + "="*60 + "\n")
+
 # Comparative question — requires synthesizing across sources
 print(ask("Is cloud computing more energy efficient than university HPC clusters?"))
+
+print("\n" + "="*60 + "\n")
 
 # Opinion/marketing question — may tempt the model to go beyond the corpus
 print(ask("Is Google Cloud the best cloud provider option?"))
