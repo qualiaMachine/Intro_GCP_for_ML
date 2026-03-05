@@ -41,7 +41,9 @@ This approach is useful any time you need to ground an LLM's answers in a specif
 
 ![RAG pipeline with Gemini API](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram2_rag_gemini.svg){alt="Architecture diagram showing the RAG pipeline: a Workbench notebook orchestrates document chunking, embedding via the Gemini API, and retrieval-augmented generation, with documents and embeddings stored in a GCS bucket."}
 
+### About the corpus
 
+Our corpus is a curated bundle of **32 research papers** on the environmental and economic costs of AI — topics like training energy, inference power consumption, water footprint, and carbon emissions. The papers span 2019–2025 and include titles such as *"Green AI"*, *"Making AI Less Thirsty"*, and *"The ML.ENERGY Benchmark"*. They're shipped as `data/pdfs_bundle.zip` in the lesson repository so that everyone works with the same documents. You could swap in your own PDFs — the pipeline is corpus-agnostic.
 
 ## Step 1: Set up the environment
 
@@ -131,7 +133,7 @@ Chunk size is a key tuning knob: smaller chunks give more precise retrieval but 
 
 ## Step 3: Embed the corpus with Vertex AI
 
-Now we convert each text chunk into a numerical vector (an "embedding") so we can search by meaning rather than keywords. We use Google's **`gemini-embedding-001`** model, which supports configurable output dimensions (768, 1,536, or 3,072).
+Now we convert each text chunk into a numerical vector (an "embedding") so we can search by meaning rather than keywords. We use Google's **`gemini-embedding-001`** model — currently the top-ranked Google embedding model on the [MTEB leaderboard](https://huggingface.co/spaces/mteb/leaderboard). It accepts up to **2,048 input tokens** per text (~1,500 words), supports **100+ languages**, and uses [Matryoshka Representation Learning](https://huggingface.co/blog/matryoshka) so you can choose your output dimensions (768, 1,536, or 3,072) without retraining — smaller dimensions save memory and speed up search, while larger ones preserve more semantic detail. See the [Choosing an embedding model](#choosing-an-embedding-model) callout later in this episode for alternatives.
 
 ### Initialize the Gen AI client
 
@@ -183,7 +185,12 @@ def embed_texts(text_list, batch_size=32, dims=EMBED_DIM, task_type="RETRIEVAL_D
 
 ### Embed all chunks and build the retrieval index
 
-We embed the full corpus, then build a nearest-neighbors index using scikit-learn. Cosine similarity is the standard metric for comparing semantic embeddings. The `n_neighbors=5` default means each query returns the 5 most relevant chunks — enough to give the LLM good context without overwhelming it with noise. You can tune this: fewer neighbors (3) gives more focused answers; more (10) gives broader coverage at the cost of including less-relevant text.
+We embed the full corpus, then build a **nearest-neighbors index** so that future queries are fast. Think of this as two separate stages:
+
+1. **Embed & index (now)** — We convert every chunk into a vector and hand the matrix to scikit-learn's `NearestNeighbors`. Calling `.fit()` here doesn't train a model — it organizes the vectors into a data structure optimized for similarity search (like building a phone book before anyone looks up a number).
+2. **Query (later, in Step 4)** — When a user question arrives, we embed *that* question and call `.kneighbors()` to find the corpus vectors closest to it by cosine similarity.
+
+We set `metric="cosine"` so the index knows *how* to measure closeness when queries arrive. The `n_neighbors=5` default means each query returns the 5 most relevant chunks — enough to give the LLM good context without overwhelming it with noise. You can tune this: fewer neighbors (3) gives more focused answers; more (10) gives broader coverage at the cost of including less-relevant text.
 
 ```python
 from sklearn.neighbors import NearestNeighbors
@@ -262,13 +269,7 @@ def ask(query, top_k=5, temperature=0.2):
 ### Test the pipeline end-to-end
 
 ```python
-print(
-    ask(
-        "What is the name of the benchmark suite presented in a recent paper "
-        "for measuring inference energy consumption?"
-    )
-)
-# Expected answer should reference: "ML.ENERGY Benchmark"
+print(ask("How much energy does it cost to train a large language model?"))
 ```
 
 ::::::::::::::::::::::::::::::::::::: challenge
@@ -317,6 +318,12 @@ Without the guardrail prompt, Gemini may produce a plausible-sounding answer fro
 
 Change `GENERATION_MODEL_ID` to `"gemini-2.5-flash"` and ask the same question.
 
+```python
+# Change the generation model and re-run a query
+GENERATION_MODEL_ID = "gemini-2.5-flash"
+print(ask("How much energy does it cost to train a large language model?"))
+```
+
 - Is the answer quality noticeably different?
 - How does response time compare?
 - Check the [Vertex AI pricing page](https://cloud.google.com/vertex-ai/generative-ai/pricing) — what's the cost difference per million tokens?
@@ -335,6 +342,15 @@ For well-grounded RAG queries (where the answer is clearly in the context), Flas
 
 Call `ask()` with `top_k=2` and then with `top_k=10`. Compare the answers.
 
+```python
+# Try different retrieval depths
+print("--- top_k=2 ---")
+print(ask("How much energy does it cost to train a large language model?", top_k=2))
+
+print("\n--- top_k=10 ---")
+print(ask("How much energy does it cost to train a large language model?", top_k=10))
+```
+
 - With `top_k=2`, does Gemini miss relevant information?
 - With `top_k=10`, does the extra context help or introduce noise?
 - What value of `top_k` seems to work best for your question?
@@ -342,6 +358,36 @@ Call `ask()` with `top_k=2` and then with `top_k=10`. Compare the answers.
 :::::::::::::::::::::::: solution
 
 Lower `top_k` gives Gemini a tighter, more focused context — good when the answer is localized in one or two chunks. Higher `top_k` provides broader coverage but risks including irrelevant passages that can confuse the model or dilute the answer. A good default is 3–5 for most research-paper RAG tasks. For questions that span multiple sections of a paper, higher values help.
+
+:::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::: challenge
+
+### Challenge 5: Try different questions
+
+The quality of a RAG system depends heavily on the questions you ask. Try these queries — each tests a different aspect of retrieval and generation:
+
+```python
+# Broad factual question — answer should be well-supported by multiple papers
+print(ask("How much energy does it cost to train a large language model?"))
+
+# Comparative question — requires synthesizing across sources
+print(ask("Is cloud computing more energy efficient than university HPC clusters?"))
+
+# Opinion/marketing question — may tempt the model to go beyond the corpus
+print(ask("Is Google Cloud the best cloud provider option?"))
+```
+
+For each question, consider:
+- Does the answer cite specific numbers or papers from the corpus?
+- Does Gemini stay grounded in the retrieved context, or does it add outside knowledge?
+- Which question produces the most useful, well-supported answer?
+
+:::::::::::::::::::::::: solution
+
+The energy-cost question should produce a strong answer because the corpus contains multiple papers with concrete training-energy figures. The cloud-vs-HPC question requires the model to compare across sources — look for whether it hedges appropriately when papers disagree. The "best cloud provider" question is deliberately tricky: the corpus is about environmental costs of AI, not cloud provider rankings, so a well-behaved RAG system should indicate that the context doesn't support a definitive answer rather than generating marketing-style claims.
 
 :::::::::::::::::::::::::::::::::
 
@@ -428,6 +474,7 @@ This episode built a minimal RAG pipeline from scratch. Here's where to go from 
 - **[Vertex AI Agent Builder](https://cloud.google.com/products/agent-builder)** — Build managed RAG applications with built-in grounding, chunking, and retrieval — less code, more guardrails.
 - **Evaluation and iteration** — Measure retrieval quality (precision\@k, recall\@k) and generation quality (faithfulness, relevance) to systematically improve your pipeline.
 - **Advanced chunking** — Explore sentence-level splitting (with `spaCy` or `nltk`), recursive chunking, or document-structure-aware chunking for better retrieval on complex papers.
+- **[Deploying RAG in Bedrock vs. Local: WattBot 2025 Case Study](https://uw-madison-datascience.github.io/ML-X-Nexus/Applications/Videos/Forums/mlx_2026-02-17.html)** — See how the same sustainability-paper corpus powers a production RAG system deployed on AWS Bedrock and local hardware, with comparisons of cost, latency, and model choice.
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
