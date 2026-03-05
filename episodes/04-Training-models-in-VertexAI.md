@@ -404,8 +404,17 @@ It contains everything your training script explicitly writes. In our case, this
 - **`{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/model/xgboost-model`** — Serialized XGBoost model (Booster) saved via `joblib`; reload later with `joblib.load()` for reuse or deployment.  
 
 
-#### System-Generated Files
-Additional system-generated files (e.g., Vertex's `.tar.gz` code package or `executor_output.json`) will appear under `.vertex_staging/` and can be safely ignored or auto-deleted via lifecycle rules.
+#### System-Generated Staging Files
+
+You'll also notice files under `.vertex_staging/` — one timestamped tarball per job submission:
+
+```
+.vertex_staging/aiplatform-2026-03-04-05:51:20.248-aiplatform_custom_trainer_script-0.1.tar.gz
+.vertex_staging/aiplatform-2026-03-04-05:53:28.009-aiplatform_custom_trainer_script-0.1.tar.gz
+...
+```
+
+Each time you call `job.run(...)`, the SDK packages your training script into a `.tar.gz`, uploads it here, and the training VM downloads it at startup. These accumulate quickly — the example above shows 19 archives from a single day of iteration. They are safe to delete once the job finishes, and you can automate cleanup with [Object Lifecycle Management](https://cloud.google.com/storage/docs/lifecycle) rules (e.g., auto-delete objects in `.vertex_staging/` after 7 days).
 
 ## Evaluate the trained model stored on GCS
 
