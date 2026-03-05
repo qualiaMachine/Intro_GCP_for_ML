@@ -41,7 +41,9 @@ This approach is useful any time you need to ground an LLM's answers in a specif
 
 ![RAG pipeline with Gemini API](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram2_rag_gemini.svg){alt="Architecture diagram showing the RAG pipeline: a Workbench notebook orchestrates document chunking, embedding via the Gemini API, and retrieval-augmented generation, with documents and embeddings stored in a GCS bucket."}
 
+### About the corpus
 
+Our corpus is a curated bundle of **32 research papers** on the environmental and economic costs of AI — topics like training energy, inference power consumption, water footprint, and carbon emissions. The papers span 2019–2025 and include titles such as *"Green AI"*, *"Making AI Less Thirsty"*, and *"The ML.ENERGY Benchmark"*. They're shipped as `data/pdfs_bundle.zip` in the lesson repository so that everyone works with the same documents. You could swap in your own PDFs — the pipeline is corpus-agnostic.
 
 ## Step 1: Set up the environment
 
