@@ -410,7 +410,7 @@ It contains everything your training script explicitly writes. In our case, this
 
 You'll also notice files under `.vertex_staging/` — one timestamped tarball per job submission:
 
-```
+```text
 .vertex_staging/aiplatform-2026-03-04-05:51:20.248-aiplatform_custom_trainer_script-0.1.tar.gz
 .vertex_staging/aiplatform-2026-03-04-05:53:28.009-aiplatform_custom_trainer_script-0.1.tar.gz
 ...
