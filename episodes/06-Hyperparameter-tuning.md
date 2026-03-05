@@ -255,7 +255,8 @@ def list_metrics_from_gcs(ARTIFACT_DIR: str):
     records = []
     for blob in blobs:
         if blob.name.endswith("metrics.json"):
-            trial_id = blob.name.split("/")[-2]
+            # Path: …/{RUN_ID}/{trial_number}/model/metrics.json → [-3] = trial number
+            trial_id = blob.name.split("/")[-3]
             data = json.loads(blob.download_as_text())
             data["trial_id"] = trial_id
             records.append(data)
