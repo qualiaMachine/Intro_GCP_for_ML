@@ -360,7 +360,7 @@ test</a></li>
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Training Models in Vertex AI: PyTorch Example</h1>
-        <p>Last updated on 2026-03-04 |
+        <p>Last updated on 2026-03-05 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_for_ML/edit/main/episodes/05-Training-models-in-VertexAI-GPUs.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -530,10 +530,16 @@ Episode 3):</p>
 </div>
 </section><section><h2 class="section-heading" id="minimal-pytorch-training-script-train_nn-py---local-test">Minimal PyTorch training script (<code>train_nn.py</code>) - local
 test<a class="anchor" aria-label="anchor" href="#minimal-pytorch-training-script-train_nn-py---local-test"></a></h2>
-<hr class="half-width"><p><strong>Outside of this workshop, you should run these kinds of tests
-on your local laptop or lab PC when possible.</strong> We’re using the
-Workbench VM here only for convenience in this workshop setting, but
-this does incur a small fee for our running VM.</p>
+<hr class="half-width"><p>Running a quick test on the Workbench notebook VM is cheap — it’s a
+lightweight machine that costs only ~$0.19/hr. The real cost comes later
+when you launch managed training jobs with larger machines or GPUs.
+Think of your notebook as a low-cost controller: use it to catch bugs
+and verify logic before spending on cloud compute.</p>
+<p>As you gain confidence, you can skip the notebook VM entirely and run
+these tests on your own laptop or lab machine — then submit jobs to
+Vertex AI via the <code>gcloud</code> CLI or Python SDK from anywhere
+(see <a href="08-CLI-workflows.html">Episode 8</a>). That eliminates the
+VM cost altogether.</p>
 <ul><li>For large datasets, use a small representative sample of the total
 dataset when testing locally (i.e., just to verify that code is working
 and model overfits nearly perfectly after training enough epochs)</li>
@@ -776,6 +782,16 @@ containers for training</a> and update the version number.</p>
 </div>
 <div class="section level4">
 <h4 id="monitoring-training-jobs-in-the-console">Monitoring training jobs in the Console<a class="anchor" aria-label="anchor" href="#monitoring-training-jobs-in-the-console"></a></h4>
+<blockquote>
+<p><strong>Why do I see both a Training Pipeline and a Custom
+Job?</strong> Under the hood, <code>CustomTrainingJob.run()</code>
+creates a <strong>TrainingPipeline</strong> resource, which in turn
+launches a <strong>CustomJob</strong> to do the actual compute work.
+This is normal — the pipeline is a thin wrapper that manages job
+lifecycle. You can monitor progress from either view, but <strong>Custom
+Jobs</strong> shows the most useful details (logs, machine type,
+status).</p>
+</blockquote>
 <ol style="list-style-type: decimal"><li>Go to the <a href="https://console.cloud.google.com/vertex-ai/training/custom-jobs" class="external-link">Google
 Cloud Console</a>.</li>
 <li>Navigate to <strong>Vertex AI &gt; Training &gt; Custom
@@ -784,9 +800,7 @@ Jobs</strong>.</li>
 artifacts.</li>
 <li>Cancel jobs from the console if needed (be careful not to stop jobs
 you don’t own in shared projects).</li>
-</ol><p><strong>Quick link</strong> (replace <code>YOUR_PROJECT_ID</code>):
-<code>https://console.cloud.google.com/vertex-ai/training/training-pipelines?project=YOUR_PROJECT_ID</code></p>
-<p>After the job completes, your training script writes several output
+</ol><p>After the job completes, your training script writes several output
 files to the GCS artifact directory. Here’s what you’ll find in
 <code>gs://…/artifacts/pytorch/&lt;RUN_ID&gt;/</code>:</p>
 <ul><li>
@@ -1174,8 +1188,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_for_ML/05-Training-models-in-VertexAI-GPUs.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_for_ML/05-Training-models-in-VertexAI-GPUs.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-03-04",
-  "datePublished": "2026-03-04"
+  "dateModified": "2026-03-05",
+  "datePublished": "2026-03-05"
 }
 
   </script><script>

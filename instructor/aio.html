@@ -2063,7 +2063,7 @@ any links that you are not going to use.
  -->
 </section></section><section id="aio-04-Training-models-in-VertexAI"><p>Content from <a href="04-Training-models-in-VertexAI.html">Training Models in Vertex AI: Intro</a></p>
 <hr>
-<p>Last updated on 2026-03-04 |
+<p>Last updated on 2026-03-05 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_for_ML/edit/main/episodes/04-Training-models-in-VertexAI.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 40 minutes</p>
@@ -2287,7 +2287,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -2395,10 +2395,16 @@ read directly from GCS.</p>
 </section><section><h2 class="section-heading" id="local-test-run-of-train_xgboost-py">Local test run of train_xgboost.py<a class="anchor" aria-label="anchor" href="#local-test-run-of-train_xgboost-py"></a>
 </h2>
 <hr class="half-width">
-<p><strong>Outside of this workshop, you should run these kinds of tests
-on your local laptop or lab PC when possible.</strong> We’re using the
-Workbench VM here only for convenience in this workshop setting, but
-this does incur a small fee for our running VM.</p>
+<p>Running a quick test on the Workbench notebook VM is cheap — it’s a
+lightweight machine that costs only ~$0.19/hr. The real cost comes later
+when you launch managed training jobs with larger machines or GPUs.
+Think of your notebook as a low-cost controller: use it to catch bugs
+and verify logic before spending on cloud compute.</p>
+<p>As you gain confidence, you can skip the notebook VM entirely and run
+these tests on your own laptop or lab machine — then submit jobs to
+Vertex AI via the <code>gcloud</code> CLI or Python SDK from anywhere
+(see <a href="08-CLI-workflows.html">Episode 8</a>). That eliminates the
+VM cost altogether.</p>
 <ul>
 <li>For large datasets, use a small representative sample of the total
 dataset when testing locally (i.e., just to verify that code is working
@@ -2409,8 +2415,9 @@ params) when testing locally</li>
 <div class="codewrapper sourceCode" id="cb4">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># We need to add xgboost to our VM before running the script</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="op">!</span>pip install xgboost</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Pin the same XGBoost version used by the Vertex AI prebuilt container</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co"># (xgboost-cpu.2-1) so local and cloud results are identical.</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="op">!</span>pip install xgboost<span class="op">==</span><span class="fl">2.1.0</span></span></code></pre>
 </div>
 <div class="codewrapper sourceCode" id="cb5">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -2531,7 +2538,7 @@ improve, or does it start overfitting?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <p>Increasing <code>NUM_ROUND</code> from 100 to 200 may marginally
 improve accuracy but roughly doubles runtime. Increasing
@@ -2589,6 +2596,51 @@ variables. We’ll also set a <code>RUN_ID</code> and
 <span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co"># Staging bucket is only for the SDK's temp code tarball (aiplatform-*.tar.gz)</span></span>
 <span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a>aiplatform.init(project<span class="op">=</span>PROJECT_ID, location<span class="op">=</span>REGION, staging_bucket<span class="op">=</span><span class="ss">f"gs://</span><span class="sc">{</span>BUCKET_NAME<span class="sc">}</span><span class="ss">/.vertex_staging"</span>)</span></code></pre>
 </div>
+<blockquote>
+<h3 id="what-does-aiplatform.init-do">What does
+<code>aiplatform.init()</code> do?</h3>
+<p><code>aiplatform.init()</code> sets <strong>session-wide
+defaults</strong> for the Vertex AI Python SDK. Every SDK call you make
+afterward (creating jobs, uploading models, querying metadata, etc.)
+will inherit these values so you don’t have to repeat them each time.
+The three arguments we pass here are:</p>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Argument</th>
+<th>Purpose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>project</code></td>
+<td>The Google Cloud project that owns (and is billed for) all Vertex AI
+resources you create.</td>
+</tr>
+<tr class="even">
+<td><code>location</code></td>
+<td>The region where jobs run and artifacts are stored (e.g.,
+<code>us-central1</code>). Must match the region of any buckets or
+endpoints you reference.</td>
+</tr>
+<tr class="odd">
+<td><code>staging_bucket</code></td>
+<td>A Cloud Storage path where the SDK <strong>automatically packages
+and uploads your training code</strong> as a tarball (e.g.,
+<code>aiplatform-2025-01-15-…-.tar.gz</code>). The training VM downloads
+this tarball at startup to run your script. We point it to a
+<code>.vertex_staging</code> subfolder to keep these temporary archives
+separate from your real data and model artifacts.</td>
+</tr>
+</tbody>
+</table>
+<p>You only need to call <code>aiplatform.init()</code> once per
+notebook or script session. If you ever need to override a default for a
+single call (e.g., run a job in a different region), you can pass the
+argument directly to that method and it will take precedence.</p>
+</blockquote>
 <p>This next section defines a custom training job in Vertex AI,
 specifying how and where the training code will run. It points to your
 training script (<code>train_xgboost.py</code>), uses Google’s prebuilt
@@ -2621,6 +2673,13 @@ containers for custom training</a>.</p>
 <span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>    container_uri<span class="op">=</span><span class="st">"us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest"</span>,</span>
 <span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>)</span></code></pre>
 </div>
+<blockquote>
+<p><strong>Version alignment:</strong> Notice that the container tag
+<code>xgboost-cpu.2-1</code> matches the <code>xgboost==2.1.0</code> we
+installed locally. This is intentional — pinning the same library
+version in both environments ensures that local and cloud training
+produce identical results given the same data and random seed.</p>
+</blockquote>
 <p>Finally, this next block launches the custom training job on Vertex
 AI using the configuration defined earlier. <strong>We won’t be charged
 for our selected <code>MACHINE</code> until we run the below code using
@@ -2694,21 +2753,32 @@ control training and save models/logs to Cloud Storage via
 <code>AIP_MODEL_DIR</code>. This is ideal for experimentation and cost
 control.</li>
 <li>
-<strong>TrainingPipeline (for deployment)</strong> – You include
+<strong>CustomTrainingJob with model registration (for
+deployment)</strong> – You include
 <code>model_serving_container_image_uri</code> and
 <code>model_display_name</code>, and Vertex automatically registers a
 <em>Managed Model</em> in the Model Registry for deployment to an
 endpoint.</li>
 </ul>
 <p>In our setup, we’re intentionally using the simpler
-<strong>CustomTrainingJob</strong> path. Your trained model is safely
-stored under your specified artifact directory (e.g.,
-<code>gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/</code>), and you can
-later register or deploy it manually when ready.</p>
+<strong>CustomTrainingJob</strong> path without model registration. Your
+trained model is safely stored under your specified artifact directory
+(e.g., <code>gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/</code>), and you
+can later register or deploy it manually when ready.</p>
 </div>
 </section><section><h2 class="section-heading" id="monitoring-training-jobs-in-the-console">Monitoring training jobs in the Console<a class="anchor" aria-label="anchor" href="#monitoring-training-jobs-in-the-console"></a>
 </h2>
 <hr class="half-width">
+<blockquote>
+<p><strong>Why do I see both a Training Pipeline and a Custom
+Job?</strong> Under the hood, <code>CustomTrainingJob.run()</code>
+creates a <strong>TrainingPipeline</strong> resource, which in turn
+launches a <strong>CustomJob</strong> to do the actual compute work.
+This is normal — the pipeline is a thin wrapper that manages job
+lifecycle and (optionally) model registration. You can monitor progress
+from either view, but <strong>Custom Jobs</strong> shows the most useful
+details (logs, machine type, status).</p>
+</blockquote>
 <ol style="list-style-type: decimal">
 <li>Go to the <a href="https://console.cloud.google.com/vertex-ai/training/custom-jobs" class="external-link">Google
 Cloud Console</a>.</li>
@@ -2805,11 +2875,10 @@ ignored or auto-deleted via lifecycle rules.</p>
 </section><section><h2 class="section-heading" id="evaluate-the-trained-model-stored-on-gcs">Evaluate the trained model stored on GCS<a class="anchor" aria-label="anchor" href="#evaluate-the-trained-model-stored-on-gcs"></a>
 </h2>
 <hr class="half-width">
-<p>Now let’s verify that the model produced by our Vertex AI job
-performs identically to the one we trained locally. This time, instead
-of loading from the local disk, we’ll load both the test data and model
-artifact directly from GCS into memory — the recommended approach for
-production workflows.</p>
+<p>Now let’s compare the model produced by our Vertex AI job to the one
+we trained locally. This time, instead of loading from the local disk,
+we’ll load both the test data and model artifact directly from GCS into
+memory — the recommended approach for production workflows.</p>
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -2855,15 +2924,22 @@ accuracy from the Vertex AI job. Are they the same? Why or why not?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
-<p>The two accuracy values should be very close or identical. Both runs
-execute the same <code>train_xgboost.py</code> script with the same
-hyperparameters and the same data. XGBoost’s
-<code>binary:logistic</code> objective is deterministic given the same
-input, so the models should produce matching predictions. If they
-differ, check that you used the same hyperparameter values in both runs
-and that the data in GCS matches the local copy.</p>
+<p>The two accuracy values should be <strong>identical</strong>. Both
+runs execute the same script with the same hyperparameters, the same
+data, and the same random seed (<code>seed=42</code>). Because we pinned
+<code>xgboost==2.1.0</code> locally — matching the
+<code>xgboost-cpu.2-1</code> prebuilt container — the algorithm behaves
+identically in both environments.</p>
+<p>If the values differ, the most likely cause is a <strong>library
+version mismatch</strong>. A random seed only guarantees determinism
+within the same library version, hardware, and numerical backend. If you
+had installed XGBoost without pinning (e.g.,
+<code>pip install xgboost</code>), you might get a different version
+than the container uses, and even small version differences can change
+tree-building heuristics or numerical precision enough to shift
+results.</p>
 </div>
 </div>
 </div>
@@ -2894,7 +2970,7 @@ locate:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>Click your job name, then select the <strong>Logs</strong> tab (or
@@ -2967,7 +3043,7 @@ any links that you are not going to use.
 </div>
 </section></section><section id="aio-05-Training-models-in-VertexAI-GPUs"><p>Content from <a href="05-Training-models-in-VertexAI-GPUs.html">Training Models in Vertex AI: PyTorch Example</a></p>
 <hr>
-<p>Last updated on 2026-03-04 |
+<p>Last updated on 2026-03-05 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_for_ML/edit/main/episodes/05-Training-models-in-VertexAI-GPUs.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <p>Estimated time: <i aria-hidden="true" data-feather="clock"></i> 30 minutes</p>
@@ -3147,10 +3223,16 @@ Episode 3):</p>
 test<a class="anchor" aria-label="anchor" href="#minimal-pytorch-training-script-train_nn-py---local-test"></a>
 </h2>
 <hr class="half-width">
-<p><strong>Outside of this workshop, you should run these kinds of tests
-on your local laptop or lab PC when possible.</strong> We’re using the
-Workbench VM here only for convenience in this workshop setting, but
-this does incur a small fee for our running VM.</p>
+<p>Running a quick test on the Workbench notebook VM is cheap — it’s a
+lightweight machine that costs only ~$0.19/hr. The real cost comes later
+when you launch managed training jobs with larger machines or GPUs.
+Think of your notebook as a low-cost controller: use it to catch bugs
+and verify logic before spending on cloud compute.</p>
+<p>As you gain confidence, you can skip the notebook VM entirely and run
+these tests on your own laptop or lab machine — then submit jobs to
+Vertex AI via the <code>gcloud</code> CLI or Python SDK from anywhere
+(see <a href="08-CLI-workflows.html">Episode 8</a>). That eliminates the
+VM cost altogether.</p>
 <ul>
 <li>For large datasets, use a small representative sample of the total
 dataset when testing locally (i.e., just to verify that code is working
@@ -3407,6 +3489,16 @@ containers for training</a> and update the version number.</p>
 <div class="section level4">
 <h4 id="monitoring-training-jobs-in-the-console">Monitoring training jobs in the Console<a class="anchor" aria-label="anchor" href="#monitoring-training-jobs-in-the-console"></a>
 </h4>
+<blockquote>
+<p><strong>Why do I see both a Training Pipeline and a Custom
+Job?</strong> Under the hood, <code>CustomTrainingJob.run()</code>
+creates a <strong>TrainingPipeline</strong> resource, which in turn
+launches a <strong>CustomJob</strong> to do the actual compute work.
+This is normal — the pipeline is a thin wrapper that manages job
+lifecycle. You can monitor progress from either view, but <strong>Custom
+Jobs</strong> shows the most useful details (logs, machine type,
+status).</p>
+</blockquote>
 <ol style="list-style-type: decimal">
 <li>Go to the <a href="https://console.cloud.google.com/vertex-ai/training/custom-jobs" class="external-link">Google
 Cloud Console</a>.</li>
@@ -3417,8 +3509,6 @@ artifacts.</li>
 <li>Cancel jobs from the console if needed (be careful not to stop jobs
 you don’t own in shared projects).</li>
 </ol>
-<p><strong>Quick link</strong> (replace <code>YOUR_PROJECT_ID</code>):
-<code>https://console.cloud.google.com/vertex-ai/training/training-pipelines?project=YOUR_PROJECT_ID</code></p>
 <p>After the job completes, your training script writes several output
 files to the GCS artifact directory. Here’s what you’ll find in
 <code>gs://…/artifacts/pytorch/&lt;RUN_ID&gt;/</code>:</p>
@@ -4287,7 +4377,7 @@ configuration.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4339,7 +4429,7 @@ how much would 12 trials cost?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4956,7 +5046,7 @@ context?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <p>Smaller chunks (500 chars) produce more precise retrieval hits but
 each chunk has less context, so Gemini may struggle to synthesize a
@@ -4999,7 +5089,7 @@ for example:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <p>Without the guardrail prompt, Gemini may produce a plausible-sounding
 answer from its training data, ignoring the “use only the following
@@ -5038,7 +5128,7 @@ tokens?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <p>For well-grounded RAG queries (where the answer is clearly in the
 context), Flash often produces comparable answers at significantly lower
@@ -5077,7 +5167,7 @@ question?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
 <div class="accordion-body">
 <p>Lower <code>top_k</code> gives Gemini a tighter, more focused context
 — good when the answer is localized in one or two chunks. Higher
@@ -5746,7 +5836,7 @@ Custom Jobs</strong>.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -5780,7 +5870,7 @@ notebook.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb17">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -5815,7 +5905,7 @@ the accuracy value.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb18">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6725,8 +6815,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/aio.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/aio.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-03-04",
-  "datePublished": "2026-03-04"
+  "dateModified": "2026-03-05",
+  "datePublished": "2026-03-05"
 }
 
   </script><script>
