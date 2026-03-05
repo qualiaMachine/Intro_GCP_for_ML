@@ -47,6 +47,13 @@ This approach is useful any time you need to ground an LLM's answers in a specif
 
 Navigate to `/Intro_GCP_for_ML/notebooks/07-Retrieval-augmented-generation.ipynb` to begin this notebook. **Select the *Python 3 (ipykernel)* kernel** — this episode uses only the `google-genai` client library and scikit-learn, so no PyTorch or TensorFlow kernel is needed.
 
+#### CD to instance home directory
+To ensure we're all in the same starting spot, change directory to your Jupyter home directory.
+
+```python
+%cd /home/jupyter/
+```
+
 We need the `pypdf` library to extract text from PDF files.
 
 ```python
