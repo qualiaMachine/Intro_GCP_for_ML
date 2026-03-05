@@ -38,7 +38,7 @@ The overall process involves these steps:
 ## Initial setup
 
 #### 1. Open pre-filled notebook
-Navigate to `/Intro_GCP_for_ML/notebooks/06-Hyperparameter-tuning.ipynb` to begin this notebook. **Select the *PyTorch* environment (kernel).** Local PyTorch is only needed for local tests — your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-gpu.2-4.py310`), so it brings its own framework at run time.
+Navigate to `/Intro_GCP_for_ML/notebooks/06-Hyperparameter-tuning.ipynb` to begin this notebook. **Select the *PyTorch* environment (kernel).** Local PyTorch is only needed for local tests — your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-xla.2-4.py310`), so it brings its own framework at run time.
 
 #### 2. CD to instance home directory
 Change to your Jupyter home folder to keep paths consistent.
@@ -133,13 +133,13 @@ Create a unique run ID and set the container, machine type, and base output dire
 - **`ARTIFACT_DIR`** — the GCS folder where all trial outputs (models, metrics, logs) will be written.
 - **`IMAGE`** — the prebuilt Docker container that includes PyTorch and its dependencies.
 - **`MACHINE`** — the VM shape (CPU/RAM) for each trial. Start small for testing.
-- **`ACCELERATOR_TYPE` / `ACCELERATOR_COUNT`** — set to unspecified/0 for CPU-only runs. Change these to attach a GPU when needed.
+- **`ACCELERATOR_TYPE` / `ACCELERATOR_COUNT`** — set to unspecified/0 for CPU-only runs. As we saw in Episode 5, GPU overhead isn't worth it for a dataset this small, and HP tuning launches *multiple* trials, so unnecessary GPUs multiply cost quickly. Change these to attach a GPU when your model or data genuinely benefits from one.
 
 ```python
 RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
 ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch_hpt/{RUN_ID}"
 
-IMAGE = "us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-6.py310:latest"  # XLA container includes cloudml-hypertune
+IMAGE = "us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest"  # XLA container includes cloudml-hypertune
 MACHINE = "n1-standard-4"
 ACCELERATOR_TYPE = "ACCELERATOR_TYPE_UNSPECIFIED"
 ACCELERATOR_COUNT = 0
