@@ -206,7 +206,10 @@ from train_nn import TitanicNet
 d = np.load("/home/jupyter/val_data.npz")
 X_val, y_val = d["X_val"], d["y_val"]
 
-# tensors
+# Convert to PyTorch tensors with the dtypes the model expects:
+#   - Features → float32: neural-network layers (Linear, BatchNorm) operate on floats.
+#   - Labels   → long (int64): nn.BCEWithLogitsLoss (and most classification losses)
+#     expect integer class labels, not floats.
 X_val_t = torch.tensor(X_val, dtype=torch.float32)
 y_val_t = torch.tensor(y_val, dtype=torch.long)
 
@@ -341,8 +344,8 @@ val_blob = bucket.blob(VAL_PATH)
 val_bytes = val_blob.download_as_bytes()
 d = np.load(io.BytesIO(val_bytes))
 X_val, y_val = d["X_val"], d["y_val"]
-X_val_t = torch.tensor(X_val, dtype=torch.float32)
-y_val_t = torch.tensor(y_val, dtype=torch.long)
+X_val_t = torch.tensor(X_val, dtype=torch.float32)   # features → float for network layers
+y_val_t = torch.tensor(y_val, dtype=torch.long)       # labels → int64 for loss function
 
 with torch.no_grad():
     probs = m(X_val_t).squeeze(1)
