@@ -1,7 +1,7 @@
 ---
 title: "Notebooks as Controllers"
 teaching: 20
-exercises: 15
+exercises: 10
 ---
 
 :::::::::::::::::::::::::::::::::::::: questions 
