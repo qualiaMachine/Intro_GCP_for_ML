@@ -1,11 +1,10 @@
 # This CITATION.cff file was generated with cffinit.
-# Visit https://bit.ly/cffinit to replace its contents
-# with information about your lesson.
-# Remember to update this file periodically,
-# ensuring that the author list and other fields remain accurate.
+# Visit https://bit.ly/cffinit to generate yours today!
 
 cff-version: 1.2.0
-title: 'Intro to Google Cloud Platform (GCP) for Machine Learning'
+title: >-
+  Intro to Google Cloud Platform (GCP) for Machine Learning
+  and AI
 message: >-
   Please cite this lesson using the information in this file
   when you refer to it in publications, and/or if you
@@ -13,18 +12,23 @@ message: >-
   training material.
 type: dataset
 authors:
-  - given-names: Chris
+  - given-names: Christopher
     family-names: Endemann
     email: endemann@wisc.edu
     affiliation: University of Wisconsin-Madison
+    orcid: 'https://orcid.org/0000-0002-7357-6129'
+repository-code: 'https://qualiamachine.github.io/Intro_GCP_for_ML/'
+url: 'https://qualiamachine.github.io/Intro_GCP_for_ML/'
 abstract: >-
-  This workshop teaches core workflows for building, training,
-  and tuning ML/AI models in Google Cloud's Vertex AI platform.
-  Participants learn to set up data storage, configure Vertex AI
-  Workbench notebooks as lightweight controllers, launch training
-  and hyperparameter tuning jobs, and optimize resource costs
-  effectively within GCP. The workshop also covers building
-  retrieval-augmented generation (RAG) pipelines using Gemini models.
-  Target audience: researchers and data scientists with basic Python
-  and ML knowledge who want to run ML experiments on cloud infrastructure.
+  This workshop teaches core workflows for building,
+  training, and tuning ML/AI models in Google Cloud's Vertex
+  AI platform. Participants learn to set up data storage,
+  configure Vertex AI Workbench notebooks as lightweight
+  controllers, launch training and hyperparameter tuning
+  jobs, and optimize resource costs effectively within GCP.
+  The workshop also covers building retrieval-augmented
+  generation (RAG) pipelines using Gemini models. Target
+  audience: researchers and data scientists with basic
+  Python and ML knowledge who want to run ML experiments on
+  cloud infrastructure.
 license: CC-BY-4.0
