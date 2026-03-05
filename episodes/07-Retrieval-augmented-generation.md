@@ -370,8 +370,8 @@ Lower `top_k` gives Gemini a tighter, more focused context — good when the ans
 The quality of a RAG system depends heavily on the questions you ask. Try these queries — each tests a different aspect of retrieval and generation:
 
 ```python
-# Broad factual question — answer should be well-supported by multiple papers
-print(ask("How much energy does it cost to train a large language model?"))
+# Off-topic question — not covered by the corpus at all
+print(ask("How much does an elephant weight?"))
 
 print("\n" + "="*60 + "\n")
 
@@ -391,7 +391,7 @@ For each question, consider:
 
 :::::::::::::::::::::::: solution
 
-The energy-cost question should produce a strong answer because the corpus contains multiple papers with concrete training-energy figures. The cloud-vs-HPC question requires the model to compare across sources — look for whether it hedges appropriately when papers disagree. The "best cloud provider" question is deliberately tricky: the corpus is about environmental costs of AI, not cloud provider rankings, so a well-behaved RAG system should indicate that the context doesn't support a definitive answer rather than generating marketing-style claims.
+The elephant-weight question is deliberately off-topic — the corpus is about environmental costs of AI, not zoology, so a well-behaved RAG system should indicate that the context doesn't contain relevant information rather than answering from general knowledge. The cloud-vs-HPC question requires the model to compare across sources — look for whether it hedges appropriately when papers disagree. The "best cloud provider" question is deliberately tricky: the corpus is about environmental costs of AI, not cloud provider rankings, so a well-behaved RAG system should indicate that the context doesn't support a definitive answer rather than generating marketing-style claims.
 
 :::::::::::::::::::::::::::::::::
 
