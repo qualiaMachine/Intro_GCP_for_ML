@@ -527,11 +527,11 @@ script to Vertex AI (scalable, managed) with confidence.</p>
 </div>
 </div>
 </div>
-<div id="understanding-the-xgboost-training-script" class="callout discussion">
+<div id="understanding-the-xgboost-training-script" class="callout challenge">
 <div class="callout-square">
-<i class="callout-icon" data-feather="message-circle"></i>
+<i class="callout-icon" data-feather="zap"></i>
 </div>
-<span class="callout-header">Discussion</span>
+<span class="callout-header">Challenge</span>
 <div id="understanding-the-xgboost-training-script" class="callout-inner">
 <h3 class="callout-title">Understanding the XGBoost Training Script</h3>
 <div class="callout-content">
@@ -601,7 +601,7 @@ you set hyperparameters and file paths without editing code (e.g.,
 local path (<code>train.csv</code>) or a GCS URI
 (<code>gs://bucket/path.csv</code>). The script automatically detects
 <code>gs://</code> and reads the file directly from Cloud Storage using
-the Python client.<br></li>
+the Python client.</li>
 <li>
 <strong>Output</strong>: If the environment variable
 <code>AIP_MODEL_DIR</code> is set (as it is in Vertex AI CustomJobs),
@@ -610,14 +610,13 @@ Otherwise, the model is saved in the current working directory, which
 works seamlessly in both local and Workbench environments.</li>
 </ul></li>
 <li>
-<strong>Training and saving the model</strong>:<br>
-The training data is converted into an <strong>XGBoost
-<code>DMatrix</code></strong>, an optimized format that speeds up
-training and reduces memory use. The trained model is serialized with
-<code>joblib</code>. When saving locally, the file is written directly
-to disk. If saving to a Cloud Storage path (<code>gs://...</code>), the
-model is first saved to a temporary file and then uploaded to the
-specified bucket.</li>
+<strong>Training and saving the model</strong>: The training data is
+converted into an <strong>XGBoost <code>DMatrix</code></strong>, an
+optimized format that speeds up training and reduces memory use. The
+trained model is serialized with <code>joblib</code>. When saving
+locally, the file is written directly to disk. If saving to a Cloud
+Storage path (<code>gs://...</code>), the model is first saved to a
+temporary file and then uploaded to the specified bucket.</li>
 </ol></div>
 </div>
 </div>
@@ -786,11 +785,11 @@ of model performance.</p>
 <strong>0.78–0.82</strong>. If accuracy is significantly lower,
 double-check that the test data downloaded correctly and that the
 preprocessing matches the training script.</p>
-<div id="experiment-with-hyperparameters" class="callout discussion">
+<div id="experiment-with-hyperparameters" class="callout challenge">
 <div class="callout-square">
-<i class="callout-icon" data-feather="message-circle"></i>
+<i class="callout-icon" data-feather="zap"></i>
 </div>
-<span class="callout-header">Discussion</span>
+<span class="callout-header">Challenge</span>
 <div id="experiment-with-hyperparameters" class="callout-inner">
 <h3 class="callout-title">Experiment with hyperparameters</h3>
 <div class="callout-content">
@@ -1154,11 +1153,11 @@ memory — the recommended approach for production workflows.</p>
 <span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a>acc <span class="op">=</span> accuracy_score(y_test, y_pred)</span>
 <span id="cb15-23"><a href="#cb15-23" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test accuracy (model from Vertex job): </span><span class="sc">{</span>acc<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
-<div id="compare-local-vs.-vertex-ai-accuracy" class="callout discussion">
+<div id="compare-local-vs.-vertex-ai-accuracy" class="callout challenge">
 <div class="callout-square">
-<i class="callout-icon" data-feather="message-circle"></i>
+<i class="callout-icon" data-feather="zap"></i>
 </div>
-<span class="callout-header">Discussion</span>
+<span class="callout-header">Challenge</span>
 <div id="compare-local-vs.-vertex-ai-accuracy" class="callout-inner">
 <h3 class="callout-title">Compare local vs. Vertex AI accuracy</h3>
 <div class="callout-content">
@@ -1195,11 +1194,11 @@ practice.</p>
 </div>
 </div>
 </div>
-<div id="explore-job-logs-in-the-console" class="callout discussion">
+<div id="explore-job-logs-in-the-console" class="callout challenge">
 <div class="callout-square">
-<i class="callout-icon" data-feather="message-circle"></i>
+<i class="callout-icon" data-feather="zap"></i>
 </div>
-<span class="callout-header">Discussion</span>
+<span class="callout-header">Challenge</span>
 <div id="explore-job-logs-in-the-console" class="callout-inner">
 <h3 class="callout-title">Explore job logs in the Console</h3>
 <div class="callout-content">

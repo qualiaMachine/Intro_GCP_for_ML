@@ -1313,7 +1313,7 @@ any links that you are not going to use.
 </div>
 </section></section><section id="aio-03-Data-storage-and-access"><p>Content from <a href="03-Data-storage-and-access.html">Data Storage and Access</a></p>
 <hr>
-<p>Last updated on 2026-03-04 |
+<p>Last updated on 2026-03-05 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_for_ML/edit/main/episodes/03-Data-storage-and-access.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 <div class="text-end">
@@ -2237,11 +2237,11 @@ script to Vertex AI (scalable, managed) with confidence.</p>
 </div>
 </div>
 </div>
-<div id="understanding-the-xgboost-training-script" class="callout discussion">
+<div id="understanding-the-xgboost-training-script" class="callout challenge">
 <div class="callout-square">
-<i class="callout-icon" data-feather="message-circle"></i>
+<i class="callout-icon" data-feather="zap"></i>
 </div>
-<span class="callout-header">Discussion</span>
+<span class="callout-header">Challenge</span>
 <div id="understanding-the-xgboost-training-script" class="callout-inner">
 <h3 class="callout-title">Understanding the XGBoost Training Script</h3>
 <div class="callout-content">
@@ -2315,8 +2315,7 @@ you set hyperparameters and file paths without editing code (e.g.,
 local path (<code>train.csv</code>) or a GCS URI
 (<code>gs://bucket/path.csv</code>). The script automatically detects
 <code>gs://</code> and reads the file directly from Cloud Storage using
-the Python client.<br>
-</li>
+the Python client.</li>
 <li>
 <strong>Output</strong>: If the environment variable
 <code>AIP_MODEL_DIR</code> is set (as it is in Vertex AI CustomJobs),
@@ -2326,14 +2325,13 @@ works seamlessly in both local and Workbench environments.</li>
 </ul>
 </li>
 <li>
-<strong>Training and saving the model</strong>:<br>
-The training data is converted into an <strong>XGBoost
-<code>DMatrix</code></strong>, an optimized format that speeds up
-training and reduces memory use. The trained model is serialized with
-<code>joblib</code>. When saving locally, the file is written directly
-to disk. If saving to a Cloud Storage path (<code>gs://...</code>), the
-model is first saved to a temporary file and then uploaded to the
-specified bucket.</li>
+<strong>Training and saving the model</strong>: The training data is
+converted into an <strong>XGBoost <code>DMatrix</code></strong>, an
+optimized format that speeds up training and reduces memory use. The
+trained model is serialized with <code>joblib</code>. When saving
+locally, the file is written directly to disk. If saving to a Cloud
+Storage path (<code>gs://...</code>), the model is first saved to a
+temporary file and then uploaded to the specified bucket.</li>
 </ol>
 </div>
 </div>
@@ -2515,11 +2513,11 @@ of model performance.</p>
 <strong>0.78–0.82</strong>. If accuracy is significantly lower,
 double-check that the test data downloaded correctly and that the
 preprocessing matches the training script.</p>
-<div id="experiment-with-hyperparameters" class="callout discussion">
+<div id="experiment-with-hyperparameters" class="callout challenge">
 <div class="callout-square">
-<i class="callout-icon" data-feather="message-circle"></i>
+<i class="callout-icon" data-feather="zap"></i>
 </div>
-<span class="callout-header">Discussion</span>
+<span class="callout-header">Challenge</span>
 <div id="experiment-with-hyperparameters" class="callout-inner">
 <h3 class="callout-title">Experiment with hyperparameters</h3>
 <div class="callout-content">
@@ -2927,11 +2925,11 @@ memory — the recommended approach for production workflows.</p>
 <span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a>acc <span class="op">=</span> accuracy_score(y_test, y_pred)</span>
 <span id="cb15-23"><a href="#cb15-23" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test accuracy (model from Vertex job): </span><span class="sc">{</span>acc<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
-<div id="compare-local-vs.-vertex-ai-accuracy" class="callout discussion">
+<div id="compare-local-vs.-vertex-ai-accuracy" class="callout challenge">
 <div class="callout-square">
-<i class="callout-icon" data-feather="message-circle"></i>
+<i class="callout-icon" data-feather="zap"></i>
 </div>
-<span class="callout-header">Discussion</span>
+<span class="callout-header">Challenge</span>
 <div id="compare-local-vs.-vertex-ai-accuracy" class="callout-inner">
 <h3 class="callout-title">Compare local vs. Vertex AI accuracy</h3>
 <div class="callout-content">
@@ -2968,11 +2966,11 @@ practice.</p>
 </div>
 </div>
 </div>
-<div id="explore-job-logs-in-the-console" class="callout discussion">
+<div id="explore-job-logs-in-the-console" class="callout challenge">
 <div class="callout-square">
-<i class="callout-icon" data-feather="message-circle"></i>
+<i class="callout-icon" data-feather="zap"></i>
 </div>
-<span class="callout-header">Discussion</span>
+<span class="callout-header">Challenge</span>
 <div id="explore-job-logs-in-the-console" class="callout-inner">
 <h3 class="callout-title">Explore job logs in the Console</h3>
 <div class="callout-content">
@@ -3762,11 +3760,11 @@ because we set random seeds in <code>train_nn.py</code>.</p>
 <span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a></span>
 <span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"GPU model val accuracy: </span><span class="sc">{</span>acc<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
-<div id="cloud-workflow-review" class="callout discussion">
+<div id="cloud-workflow-review" class="callout challenge">
 <div class="callout-square">
-<i class="callout-icon" data-feather="message-circle"></i>
+<i class="callout-icon" data-feather="zap"></i>
 </div>
-<span class="callout-header">Discussion</span>
+<span class="callout-header">Challenge</span>
 <div id="cloud-workflow-review" class="callout-inner">
 <h3 class="callout-title">Cloud workflow review</h3>
 <div class="callout-content">
@@ -4417,7 +4415,7 @@ configuration.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -4469,7 +4467,7 @@ how much would 12 trials cost?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -5095,7 +5093,7 @@ context?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <p>Smaller chunks (500 chars) produce more precise retrieval hits but
 each chunk has less context, so Gemini may struggle to synthesize a
@@ -5138,7 +5136,7 @@ for example:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Without the guardrail prompt, Gemini may produce a plausible-sounding
 answer from its training data, ignoring the “use only the following
@@ -5184,7 +5182,7 @@ tokens?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p>For well-grounded RAG queries (where the answer is clearly in the
 context), Flash often produces comparable answers at significantly lower
@@ -5233,7 +5231,7 @@ question?</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
 <div class="accordion-body">
 <p>Lower <code>top_k</code> gives Gemini a tighter, more focused context
 — good when the answer is localized in one or two chunks. Higher
@@ -5262,11 +5260,15 @@ generation:</p>
 <pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Broad factual question — answer should be well-supported by multiple papers</span></span>
 <span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="bu">print</span>(ask(<span class="st">"How much energy does it cost to train a large language model?"</span>))</span>
 <span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="co"># Comparative question — requires synthesizing across sources</span></span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="bu">print</span>(ask(<span class="st">"Is cloud computing more energy efficient than university HPC clusters?"</span>))</span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co"># Opinion/marketing question — may tempt the model to go beyond the corpus</span></span>
-<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="bu">print</span>(ask(<span class="st">"Is Google Cloud the best cloud provider option?"</span>))</span></code></pre>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span> <span class="op">+</span> <span class="st">"="</span><span class="op">*</span><span class="dv">60</span> <span class="op">+</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="co"># Comparative question — requires synthesizing across sources</span></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="bu">print</span>(ask(<span class="st">"Is cloud computing more energy efficient than university HPC clusters?"</span>))</span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">"</span> <span class="op">+</span> <span class="st">"="</span><span class="op">*</span><span class="dv">60</span> <span class="op">+</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co"># Opinion/marketing question — may tempt the model to go beyond the corpus</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a><span class="bu">print</span>(ask(<span class="st">"Is Google Cloud the best cloud provider option?"</span>))</span></code></pre>
 </div>
 <p>For each question, consider: - Does the answer cite specific numbers
 or papers from the corpus? - Does Gemini stay grounded in the retrieved
@@ -5280,7 +5282,7 @@ most useful, well-supported answer?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution5" aria-expanded="false" aria-controls="collapseSolution5">
   <h4 class="accordion-header" id="headingSolution5"> Show me the solution </h4>
 </button>
-<div id="collapseSolution5" class="accordion-collapse collapse" data-bs-parent="#accordionSolution5" aria-labelledby="headingSolution5">
+<div id="collapseSolution5" class="accordion-collapse collapse" aria-labelledby="headingSolution5" data-bs-parent="#accordionSolution5">
 <div class="accordion-body">
 <p>The energy-cost question should produce a strong answer because the
 corpus contains multiple papers with concrete training-energy figures.
@@ -6004,7 +6006,7 @@ Custom Jobs</strong>.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6038,7 +6040,7 @@ notebook.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb17">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6073,7 +6075,7 @@ the accuracy value.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb18">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
