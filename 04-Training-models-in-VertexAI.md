@@ -30,6 +30,10 @@ Training jobs bill per VM-hour while the job is running. An `n1-standard-4` (CPU
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
+Here's the architecture we introduced in [Episode 2](02-Notebooks-as-controllers.md) — your lightweight notebook orchestrates training jobs that run on separate, more powerful VMs, with all artifacts stored in GCS:
+
+![Training and tuning workflow](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram1_training_and_tuning.svg){alt="Architecture diagram showing how a lightweight Workbench notebook uses the Vertex AI SDK to launch training jobs and HP tuning jobs on powerful GPUs, with all artifacts stored in GCS."}
+
 ## Initial setup
 
 #### 1. Open pre-filled notebook
@@ -418,6 +422,14 @@ You'll also notice files under `.vertex_staging/` — one timestamped tarball pe
 
 Each time you call `job.run(...)`, the SDK packages your training script into a `.tar.gz`, uploads it here, and the training VM downloads it at startup. These accumulate quickly — the example above shows 19 archives from a single day of iteration. They are safe to delete once the job finishes, and you can automate cleanup with [Object Lifecycle Management](https://cloud.google.com/storage/docs/lifecycle) rules (e.g., auto-delete objects in `.vertex_staging/` after 7 days).
 
+To delete all staging files now, run:
+
+```python
+!gsutil -m rm -r gs://{BUCKET_NAME}/.vertex_staging/
+```
+
+This won't affect your model artifacts under `artifacts/`.
+
 ## Evaluate the trained model stored on GCS
 
 Now let's compare the model produced by our Vertex AI job to the one we trained locally. This time, instead of loading from the local disk, we'll load both the test data and model artifact directly from GCS into memory — the recommended approach for production workflows.
@@ -460,9 +472,11 @@ Compare the test accuracy from your local training run with the accuracy from th
 
 ### Solution
 
-The two accuracy values should be **identical**. Both runs execute the same script with the same hyperparameters, the same data, and the same random seed (`seed=42`). Because we pinned `xgboost==2.1.0` locally — matching the `xgboost-cpu.2-1` prebuilt container — the algorithm behaves identically in both environments.
+The two accuracy values should be **very close** (within ~1–2 percentage points) but may not be byte-for-byte identical, even though both runs use the same script, hyperparameters, data, and random seed (`seed=42`).
 
-If the values differ, the most likely cause is a **library version mismatch**. A random seed only guarantees determinism within the same library version, hardware, and numerical backend. If you had installed XGBoost without pinning (e.g., `pip install xgboost`), you might get a different version than the container uses, and even small version differences can change tree-building heuristics or numerical precision enough to shift results.
+Why? The `subsample=0.8` and `colsample_bytree=0.8` settings randomly sample rows and columns each boosting round. A seed guarantees determinism only within the **exact same** library version, NumPy build, and BLAS/LAPACK backend. The Workbench notebook VM and the prebuilt training container ship different underlying numerical libraries (e.g., OpenBLAS vs. MKL), so even with identical XGBoost versions the random sampling sequence can diverge slightly — producing a different model and therefore a small accuracy difference.
+
+If you want exact reproducibility, set `subsample=1.0` and `colsample_bytree=1.0` (no random sampling) or accept that minor variation across environments is normal and expected in practice.
 
 :::::::::::::::::::::::::::::::::::::::
 
