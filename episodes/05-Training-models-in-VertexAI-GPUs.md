@@ -114,7 +114,9 @@ for blob in client.list_blobs(BUCKET_NAME):
 
 ## Minimal PyTorch training script (`train_nn.py`) - local test
 
-**Outside of this workshop, you should run these kinds of tests on your local laptop or lab PC when possible.** We're using the Workbench VM here only for convenience in this workshop setting, but this does incur a small fee for our running VM. 
+Running a quick test on the Workbench notebook VM is cheap — it's a lightweight machine that costs only ~$0.19/hr. The real cost comes later when you launch managed training jobs with larger machines or GPUs. Think of your notebook as a low-cost controller: use it to catch bugs and verify logic before spending on cloud compute.
+
+As you gain confidence, you can skip the notebook VM entirely and run these tests on your own laptop or lab machine — then submit jobs to Vertex AI via the `gcloud` CLI or Python SDK from anywhere (see [Episode 8](08-CLI-workflows.md)). That eliminates the VM cost altogether.
 
 - For large datasets, use a small representative sample of the total dataset when testing locally (i.e., just to verify that code is working and model overfits nearly perfectly after training enough epochs)
 - For larger models, use smaller model equivalents (e.g., 100M vs 7B params) when testing locally
@@ -283,12 +285,14 @@ job.run(
 print("Artifacts folder:", ARTIFACT_DIR)
 ```
 #### Monitoring training jobs in the Console
+
+> **Why do I see both a Training Pipeline and a Custom Job?**
+> Under the hood, `CustomTrainingJob.run()` creates a **TrainingPipeline** resource, which in turn launches a **CustomJob** to do the actual compute work. This is normal — the pipeline is a thin wrapper that manages job lifecycle. You can monitor progress from either view, but **Custom Jobs** shows the most useful details (logs, machine type, status).
+
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/vertex-ai/training/custom-jobs).
 2. Navigate to **Vertex AI > Training > Custom Jobs**.
 3. Click on your job name to see status, logs, and output model artifacts.
 4. Cancel jobs from the console if needed (be careful not to stop jobs you don't own in shared projects).
-
-**Quick link** (replace `YOUR_PROJECT_ID`): `https://console.cloud.google.com/vertex-ai/training/training-pipelines?project=YOUR_PROJECT_ID`
 
 After the job completes, your training script writes several output files to the GCS artifact directory. Here's what you'll find in `gs://…/artifacts/pytorch/<RUN_ID>/`:
 

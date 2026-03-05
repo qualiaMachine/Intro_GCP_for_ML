@@ -146,14 +146,17 @@ print("Downloaded titanic_train.csv")
 
 ## Local test run of train_xgboost.py
 
-**Outside of this workshop, you should run these kinds of tests on your local laptop or lab PC when possible.** We're using the Workbench VM here only for convenience in this workshop setting, but this does incur a small fee for our running VM. 
+Running a quick test on the Workbench notebook VM is cheap — it's a lightweight machine that costs only ~$0.19/hr. The real cost comes later when you launch managed training jobs with larger machines or GPUs. Think of your notebook as a low-cost controller: use it to catch bugs and verify logic before spending on cloud compute.
+
+As you gain confidence, you can skip the notebook VM entirely and run these tests on your own laptop or lab machine — then submit jobs to Vertex AI via the `gcloud` CLI or Python SDK from anywhere (see [Episode 8](08-CLI-workflows.md)). That eliminates the VM cost altogether.
 
 - For large datasets, use a small representative sample of the total dataset when testing locally (i.e., just to verify that code is working and model overfits nearly perfectly after training enough epochs)
 - For larger models, use smaller model equivalents (e.g., 100M vs 7B params) when testing locally
 
 ```python
-# We need to add xgboost to our VM before running the script
-!pip install xgboost
+# Pin the same XGBoost version used by the Vertex AI prebuilt container
+# (xgboost-cpu.2-1) so local and cloud results are identical.
+!pip install xgboost==2.1.0
 ```
 
 ```python
@@ -282,6 +285,18 @@ print(f"project = {PROJECT_ID}\nregion = {REGION}\nbucket = {BUCKET_NAME}\nartif
 aiplatform.init(project=PROJECT_ID, location=REGION, staging_bucket=f"gs://{BUCKET_NAME}/.vertex_staging")
 ```
 
+> ### What does `aiplatform.init()` do?
+>
+> `aiplatform.init()` sets **session-wide defaults** for the Vertex AI Python SDK. Every SDK call you make afterward (creating jobs, uploading models, querying metadata, etc.) will inherit these values so you don't have to repeat them each time. The three arguments we pass here are:
+>
+> | Argument | Purpose |
+> |---|---|
+> | `project` | The Google Cloud project that owns (and is billed for) all Vertex AI resources you create. |
+> | `location` | The region where jobs run and artifacts are stored (e.g., `us-central1`). Must match the region of any buckets or endpoints you reference. |
+> | `staging_bucket` | A Cloud Storage path where the SDK **automatically packages and uploads your training code** as a tarball (e.g., `aiplatform-2025-01-15-…-.tar.gz`). The training VM downloads this tarball at startup to run your script. We point it to a `.vertex_staging` subfolder to keep these temporary archives separate from your real data and model artifacts. |
+>
+> You only need to call `aiplatform.init()` once per notebook or script session. If you ever need to override a default for a single call (e.g., run a job in a different region), you can pass the argument directly to that method and it will take precedence.
+
 This next section defines a custom training job in Vertex AI, specifying how and where the training code will run. It points to your training script (`train_xgboost.py`), uses Google's prebuilt XGBoost training container image (which already includes common dependencies like `google-cloud-storage`), and sets a `display_name` for tracking the job in the Vertex AI console.
 
 > **Tip:** If your script needs packages not included in the prebuilt container, you can pass a `requirements` list to `CustomTrainingJob` (e.g., `requirements=["scikit-learn>=1.3"]`).
@@ -297,6 +312,8 @@ job = aiplatform.CustomTrainingJob(
     container_uri="us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest",
 )
 ```
+
+> **Version alignment:** Notice that the container tag `xgboost-cpu.2-1` matches the `xgboost==2.1.0` we installed locally. This is intentional — pinning the same library version in both environments ensures that local and cloud training produce identical results given the same data and random seed.
 
 Finally, this next block launches the custom training job on Vertex AI using the configuration defined earlier. **We won't be charged for our selected `MACHINE` until we run the below code using `job.run()`.** For an `n1-standard-4` running 2–5 minutes, expect a cost of roughly **`$0.01`–`$0.02`** — negligible, but good to be aware of as you scale to larger machines. This marks the point when our script actually begins executing remotely on the Vertex training infrastructure. Once `job.run()` is called, Vertex handles packaging your training script, transferring it to the managed training environment, provisioning the requested compute instance, and monitoring the run. The job's status and logs can be viewed directly in the Vertex AI Console under Training → Custom jobs.
 
@@ -334,12 +351,16 @@ This launches a managed training job with Vertex AI. It should take 2-5 minutes 
 After your job finishes, you may see a message like: `Training did not produce a Managed Model returning None.` This is expected when running a `CustomTrainingJob` without specifying deployment parameters.  Vertex AI supports two modes:
 
 - **CustomTrainingJob (research/development)** – You control training and save models/logs to Cloud Storage via `AIP_MODEL_DIR`. This is ideal for experimentation and cost control.
-- **TrainingPipeline (for deployment)** – You include `model_serving_container_image_uri` and `model_display_name`, and Vertex automatically registers a *Managed Model* in the Model Registry for deployment to an endpoint.
+- **CustomTrainingJob with model registration (for deployment)** – You include `model_serving_container_image_uri` and `model_display_name`, and Vertex automatically registers a *Managed Model* in the Model Registry for deployment to an endpoint.
 
-In our setup, we're intentionally using the simpler **CustomTrainingJob** path. Your trained model is safely stored under your specified artifact directory (e.g., `gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/`), and you can later register or deploy it manually when ready.
+In our setup, we're intentionally using the simpler **CustomTrainingJob** path without model registration. Your trained model is safely stored under your specified artifact directory (e.g., `gs://{BUCKET_NAME}/artifacts/xgb/{RUN_ID}/`), and you can later register or deploy it manually when ready.
 
 
 ## Monitoring training jobs in the Console
+
+> **Why do I see both a Training Pipeline and a Custom Job?**
+> Under the hood, `CustomTrainingJob.run()` creates a **TrainingPipeline** resource, which in turn launches a **CustomJob** to do the actual compute work. This is normal — the pipeline is a thin wrapper that manages job lifecycle and (optionally) model registration. You can monitor progress from either view, but **Custom Jobs** shows the most useful details (logs, machine type, status).
+
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/vertex-ai/training/custom-jobs).
 2. Navigate to **Vertex AI > Training > Custom Jobs**.
 3. Click on your job name to see status, logs, and output model artifacts.
@@ -388,7 +409,7 @@ Additional system-generated files (e.g., Vertex's `.tar.gz` code package or `exe
 
 ## Evaluate the trained model stored on GCS
 
-Now let's verify that the model produced by our Vertex AI job performs identically to the one we trained locally. This time, instead of loading from the local disk, we'll load both the test data and model artifact directly from GCS into memory — the recommended approach for production workflows.
+Now let's compare the model produced by our Vertex AI job to the one we trained locally. This time, instead of loading from the local disk, we'll load both the test data and model artifact directly from GCS into memory — the recommended approach for production workflows.
 
 ```python
 import io
@@ -428,7 +449,9 @@ Compare the test accuracy from your local training run with the accuracy from th
 
 ### Solution
 
-The two accuracy values should be very close or identical. Both runs execute the same `train_xgboost.py` script with the same hyperparameters and the same data. XGBoost's `binary:logistic` objective is deterministic given the same input, so the models should produce matching predictions. If they differ, check that you used the same hyperparameter values in both runs and that the data in GCS matches the local copy.
+The two accuracy values should be **identical**. Both runs execute the same script with the same hyperparameters, the same data, and the same random seed (`seed=42`). Because we pinned `xgboost==2.1.0` locally — matching the `xgboost-cpu.2-1` prebuilt container — the algorithm behaves identically in both environments.
+
+If the values differ, the most likely cause is a **library version mismatch**. A random seed only guarantees determinism within the same library version, hardware, and numerical backend. If you had installed XGBoost without pinning (e.g., `pip install xgboost`), you might get a different version than the container uses, and even small version differences can change tree-building heuristics or numerical precision enough to shift results.
 
 :::::::::::::::::::::::::::::::::::::::
 
