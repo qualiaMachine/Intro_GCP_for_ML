@@ -43,6 +43,9 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
+# Python
+__pycache__/
+
 # pkgdown site
 docs/
 
