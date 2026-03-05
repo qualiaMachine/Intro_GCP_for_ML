@@ -490,9 +490,6 @@ Now that you've run both a CPU and GPU training job, answer the following:
 3. **Container choice**: We used `pytorch-xla.2-4.py310` for the CPU job and `pytorch-gpu.2-4.py310` for the GPU job. What would happen if you used the CPU container but still passed `accelerator_type` and `accelerator_count`?
 4. **Cost awareness**: You used `n1-standard-4` for CPU and `n1-standard-8` + T4 for GPU. Using the [Compute for ML](https://qualiamachine.github.io/Intro_GCP_for_ML/compute-for-ML.html) resource, estimate the relative hourly cost difference between these configurations.
 
-:::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
 :::::::::::::::::::::::::::::::::::::::: solution
 
 ### Solution
@@ -503,6 +500,8 @@ Now that you've run both a CPU and GPU training job, answer the following:
 4. Approximate on-demand rates (us-central1): `n1-standard-4` is ~ `$0.19`/hr; `n1-standard-8` + 1x T4 is ~ `$0.54`/hr (VM) + ~ `$0.35`/hr (T4) = ~ `$0.89`/hr total. The GPU configuration is roughly 4–5x more expensive per hour — worth it only when training speedup exceeds that cost ratio.
 
 :::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ### GPU and scaling considerations
 

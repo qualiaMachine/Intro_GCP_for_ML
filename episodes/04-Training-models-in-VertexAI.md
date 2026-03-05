@@ -104,9 +104,6 @@ Try answering the following questions:
 
 After reviewing, discuss any questions or observations with your group.
 
-:::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
 ::::::::::::::::::::::::::::::::::::::: solution
 
 ### Solution
@@ -114,13 +111,15 @@ After reviewing, discuss any questions or observations with your group.
 1. **Data preprocessing**: The script fills missing values (`Age` with median, `Embarked` with mode), maps categorical fields to numeric (`Sex` → {male:1, female:0}, `Embarked` → {S:0, C:1, Q:2}), and drops non-predictive columns (`PassengerId`, `Name`, `Ticket`, `Cabin`).
 2. **Training function**: `train_model()` constructs and fits an XGBoost model with the provided parameters and prints wall-clock training time. Timing helps compare runs and make sensible scaling choices.
 3. **Command-line arguments**: `argparse` lets you set hyperparameters and file paths without editing code (e.g., `--max_depth`, `--eta`, `--num_round`, `--train`). To change rounds:  `python train_xgboost.py --num_round 200`
-4. **Handling local vs. GCP runs**:  
-   - **Input**: You pass `--train` as either a local path (`train.csv`) or a GCS URI (`gs://bucket/path.csv`). The script automatically detects `gs://` and reads the file directly from Cloud Storage using the Python client.  
+4. **Handling local vs. GCP runs**:
+   - **Input**: You pass `--train` as either a local path (`train.csv`) or a GCS URI (`gs://bucket/path.csv`). The script automatically detects `gs://` and reads the file directly from Cloud Storage using the Python client.
    - **Output**: If the environment variable `AIP_MODEL_DIR` is set (as it is in Vertex AI CustomJobs), the trained model is written there—often a `gs://` path. Otherwise, the model is saved in the current working directory, which works seamlessly in both local and Workbench environments.
-5. **Training and saving the model**:  
+5. **Training and saving the model**:
    The training data is converted into an **XGBoost `DMatrix`**, an optimized format that speeds up training and reduces memory use. The trained model is serialized with `joblib`. When saving locally, the file is written directly to disk. If saving to a Cloud Storage path (`gs://...`), the model is first saved to a temporary file and then uploaded to the specified bucket.
 
 :::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::::::::::::
 
 
 Before scaling training jobs onto managed resources, it's essential to test your training script locally. This prevents wasting GPU/TPU time on bugs or misconfigured code. Skipping these checks can lead to silent data bugs, runtime blowups at scale, inefficient experiments, or broken model artifacts.
@@ -252,8 +251,6 @@ You should see test accuracy in the range of **0.78–0.82**. If accuracy is sig
 
 Try changing `NUM_ROUND` to `200` and re-running the local training and evaluation cells above. Does accuracy improve? How does the runtime change? Then try `MAX_DEPTH = 6`. What happens to accuracy — does the model improve, or does it start overfitting?
 
-:::::::::::::::::::::::::::::::::::::::::::::::::::::
-
 ::::::::::::::::::::::::::::::::::::::: solution
 
 ### Solution
@@ -261,6 +258,8 @@ Try changing `NUM_ROUND` to `200` and re-running the local training and evaluati
 Increasing `NUM_ROUND` from 100 to 200 may marginally improve accuracy but roughly doubles runtime. Increasing `MAX_DEPTH` from 3 to 6 lets trees capture more complex patterns but can lead to overfitting on a small dataset like Titanic — you may see training accuracy increase while test accuracy stays flat or drops. This is why testing hyperparameters locally before scaling is important.
 
 :::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## Training via Vertex AI custom training job
 Unlike "local" training using our notebook's VM, this next approach launches a **managed training job** that runs on scalable compute. Vertex AI handles provisioning, scaling, logging, and saving outputs to GCS.  
@@ -466,8 +465,6 @@ print(f"Test accuracy (model from Vertex job): {acc:.3f}")
 
 Compare the test accuracy from your local training run with the accuracy from the Vertex AI job. Are they the same? Why or why not?
 
-:::::::::::::::::::::::::::::::::::::::::::::::::::::
-
 ::::::::::::::::::::::::::::::::::::::: solution
 
 ### Solution
@@ -480,6 +477,8 @@ If you want exact reproducibility, set `subsample=1.0` and `colsample_bytree=1.0
 
 :::::::::::::::::::::::::::::::::::::::
 
+:::::::::::::::::::::::::::::::::::::::::::::::::
+
 ::::::::::::::::::::::::::::::::::::::: challenge
 
 ### Explore job logs in the Console
@@ -490,8 +489,6 @@ Navigate to **Vertex AI > Training > Custom Jobs** in the [Google Cloud Console]
 2. The training time printed by `train_model()`?
 3. The output artifact path?
 
-:::::::::::::::::::::::::::::::::::::::::::::::::::::
-
 ::::::::::::::::::::::::::::::::::::::: solution
 
 ### Solution
@@ -501,6 +498,8 @@ Navigate to **Vertex AI > Training > Custom Jobs** in the [Google Cloud Console]
 3. The artifact path is shown in the log line `Model saved to gs://...` and also appears in the job details panel under output configuration.
 
 :::::::::::::::::::::::::::::::::::::::
+
+:::::::::::::::::::::::::::::::::::::::::::::::::
 
 ### Looking ahead: when training takes too long
 
