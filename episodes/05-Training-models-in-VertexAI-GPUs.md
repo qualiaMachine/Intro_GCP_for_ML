@@ -506,6 +506,14 @@ Now that you've run both a CPU and GPU training job, answer the following:
 - On small problems, GPU startup/transfer overhead can erase speedups — benchmark before you scale.
 - Stick to a single GPU unless your workload genuinely saturates it. Multi-GPU (data parallelism / DDP) and model parallelism exist for large-scale training but add significant complexity and cost — well beyond this workshop's scope.
 
+## Clean up staging files
+
+As in Episode 4, each `job.run()` call leaves a tarball under `.vertex_staging/`. Delete them to keep your bucket tidy:
+
+```python
+!gsutil -m rm -r gs://{BUCKET_NAME}/.vertex_staging/
+```
+
 ## Additional resources
 To learn more about PyTorch and Vertex AI integrations, visit the docs: [docs.cloud.google.com/vertex-ai/docs/start/pytorch](https://docs.cloud.google.com/vertex-ai/docs/start/pytorch)
 

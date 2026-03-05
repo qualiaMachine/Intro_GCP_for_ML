@@ -418,6 +418,14 @@ You'll also notice files under `.vertex_staging/` — one timestamped tarball pe
 
 Each time you call `job.run(...)`, the SDK packages your training script into a `.tar.gz`, uploads it here, and the training VM downloads it at startup. These accumulate quickly — the example above shows 19 archives from a single day of iteration. They are safe to delete once the job finishes, and you can automate cleanup with [Object Lifecycle Management](https://cloud.google.com/storage/docs/lifecycle) rules (e.g., auto-delete objects in `.vertex_staging/` after 7 days).
 
+To delete all staging files now, run:
+
+```python
+!gsutil -m rm -r gs://{BUCKET_NAME}/.vertex_staging/
+```
+
+This won't affect your model artifacts under `artifacts/`.
+
 ## Evaluate the trained model stored on GCS
 
 Now let's compare the model produced by our Vertex AI job to the one we trained locally. This time, instead of loading from the local disk, we'll load both the test data and model artifact directly from GCS into memory — the recommended approach for production workflows.

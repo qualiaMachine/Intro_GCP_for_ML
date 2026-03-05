@@ -393,6 +393,14 @@ tuning_job = aiplatform.HyperparameterTuningJob(
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 
+## Clean up staging files
+
+HP tuning launches multiple trials, so staging tarballs accumulate even faster. Delete them when you're done:
+
+```python
+!gsutil -m rm -r gs://{BUCKET_NAME}/.vertex_staging/
+```
+
 ## What's next: using your tuned model
 
 After tuning, your best model's weights sit in GCS under the best trial's artifact directory. The most common next steps are:
