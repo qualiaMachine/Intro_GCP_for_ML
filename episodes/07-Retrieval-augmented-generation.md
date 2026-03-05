@@ -430,6 +430,7 @@ This episode built a minimal RAG pipeline from scratch. Here's where to go from 
 - **[Vertex AI Agent Builder](https://cloud.google.com/products/agent-builder)** — Build managed RAG applications with built-in grounding, chunking, and retrieval — less code, more guardrails.
 - **Evaluation and iteration** — Measure retrieval quality (precision\@k, recall\@k) and generation quality (faithfulness, relevance) to systematically improve your pipeline.
 - **Advanced chunking** — Explore sentence-level splitting (with `spaCy` or `nltk`), recursive chunking, or document-structure-aware chunking for better retrieval on complex papers.
+- **[Deploying RAG in Bedrock vs. Local: WattBot 2025 Case Study](https://uw-madison-datascience.github.io/ML-X-Nexus/Applications/Videos/Forums/mlx_2026-02-17.html)** — See how the same sustainability-paper corpus powers a production RAG system deployed on AWS Bedrock and local hardware, with comparisons of cost, latency, and model choice.
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
