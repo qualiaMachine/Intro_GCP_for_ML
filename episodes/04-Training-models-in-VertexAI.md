@@ -473,7 +473,27 @@ The two accuracy values should be **very close** (within ~1–2 percentage point
 
 Why? The `subsample=0.8` and `colsample_bytree=0.8` settings randomly sample rows and columns each boosting round. A seed guarantees determinism only within the **exact same** library version, NumPy build, and BLAS/LAPACK backend. The Workbench notebook VM and the prebuilt training container ship different underlying numerical libraries (e.g., OpenBLAS vs. MKL), so even with identical XGBoost versions the random sampling sequence can diverge slightly — producing a different model and therefore a small accuracy difference.
 
-If you want exact reproducibility, set `subsample=1.0` and `colsample_bytree=1.0` (no random sampling) or accept that minor variation across environments is normal and expected in practice.
+If you want exact reproducibility you can:
+
+1. **Pin all numerical library versions** in both environments. First, check what the container ships:
+
+   ```python
+   # In your notebook, match the container's NumPy/SciPy stack:
+   !pip install xgboost==2.1.0 numpy==1.26.4 scikit-learn==1.5.1 scipy==1.13.1
+   ```
+
+   And pass the same pins to the training job so the container installs identical versions:
+
+   ```python
+   job = aiplatform.CustomTrainingJob(
+       ...,
+       requirements=["numpy==1.26.4", "scikit-learn==1.5.1", "scipy==1.13.1"],
+   )
+   ```
+
+2. **Remove stochastic sampling** by setting `subsample=1.0` and `colsample_bytree=1.0` (no random row/column selection per round).
+
+Even with pinned versions, tiny BLAS/LAPACK differences (e.g., OpenBLAS vs. MKL) can still cause minor floating-point variation, so in practice it is normal to accept small differences across environments.
 
 :::::::::::::::::::::::::::::::::::::::
 
