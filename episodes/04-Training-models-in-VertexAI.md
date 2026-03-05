@@ -30,6 +30,10 @@ Training jobs bill per VM-hour while the job is running. An `n1-standard-4` (CPU
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
+Here's the architecture we introduced in [Episode 2](02-Notebooks-as-controllers.md) — your lightweight notebook orchestrates training jobs that run on separate, more powerful VMs, with all artifacts stored in GCS:
+
+![Training and tuning workflow](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram1_training_and_tuning.svg){alt="Architecture diagram showing how a lightweight Workbench notebook uses the Vertex AI SDK to launch training jobs and HP tuning jobs on powerful GPUs, with all artifacts stored in GCS."}
+
 ## Initial setup
 
 #### 1. Open pre-filled notebook
