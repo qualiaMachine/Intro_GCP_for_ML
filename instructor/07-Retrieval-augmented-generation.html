@@ -447,7 +447,19 @@ etc. For example, a sustainability research team could use this pipeline
 to extract AI water and energy metrics from published papers, getting
 cited answers instead of generic LLM summaries.</p>
 <figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram2_rag_gemini.svg" alt="Architecture diagram showing the RAG pipeline: a Workbench notebook orchestrates document chunking, embedding via the Gemini API, and retrieval-augmented generation, with documents and embeddings stored in a GCS bucket." class="figure mx-auto d-block"><div class="figcaption">RAG pipeline with Gemini API</div>
-</figure></section><section><h2 class="section-heading" id="step-1-set-up-the-environment">Step 1: Set up the environment<a class="anchor" aria-label="anchor" href="#step-1-set-up-the-environment"></a></h2>
+</figure><div class="section level3">
+<h3 id="about-the-corpus">About the corpus<a class="anchor" aria-label="anchor" href="#about-the-corpus"></a></h3>
+<p>Our corpus is a curated bundle of <strong>32 research papers</strong>
+on the environmental and economic costs of AI — topics like training
+energy, inference power consumption, water footprint, and carbon
+emissions. The papers span 2019–2025 and include titles such as
+<em>“Green AI”</em>, <em>“Making AI Less Thirsty”</em>, and <em>“The
+ML.ENERGY Benchmark”</em>. They’re shipped as
+<code>data/pdfs_bundle.zip</code> in the lesson repository so that
+everyone works with the same documents. You could swap in your own PDFs
+— the pipeline is corpus-agnostic.</p>
+</div>
+</section><section><h2 class="section-heading" id="step-1-set-up-the-environment">Step 1: Set up the environment<a class="anchor" aria-label="anchor" href="#step-1-set-up-the-environment"></a></h2>
 <hr class="half-width"><p>Navigate to
 <code>/Intro_GCP_for_ML/notebooks/07-Retrieval-augmented-generation.ipynb</code>
 to begin this notebook. <strong>Select the <em>Python 3 (ipykernel)</em>
@@ -561,8 +573,16 @@ best answer — experiment with your own corpus.</p>
 </section><section><h2 class="section-heading" id="step-3-embed-the-corpus-with-vertex-ai">Step 3: Embed the corpus with Vertex AI<a class="anchor" aria-label="anchor" href="#step-3-embed-the-corpus-with-vertex-ai"></a></h2>
 <hr class="half-width"><p>Now we convert each text chunk into a numerical vector (an
 “embedding”) so we can search by meaning rather than keywords. We use
-Google’s <strong><code>gemini-embedding-001</code></strong> model, which
-supports configurable output dimensions (768, 1,536, or 3,072).</p>
+Google’s <strong><code>gemini-embedding-001</code></strong> model —
+currently the top-ranked Google embedding model on the <a href="https://huggingface.co/spaces/mteb/leaderboard" class="external-link">MTEB
+leaderboard</a>. It accepts up to <strong>2,048 input tokens</strong>
+per text (~1,500 words), supports <strong>100+ languages</strong>, and
+uses <a href="https://huggingface.co/blog/matryoshka" class="external-link">Matryoshka
+Representation Learning</a> so you can choose your output dimensions
+(768, 1,536, or 3,072) without retraining — smaller dimensions save
+memory and speed up search, while larger ones preserve more semantic
+detail. See the <a href="#choosing-an-embedding-model">Choosing an
+embedding model</a> callout later in this episode for alternatives.</p>
 <div class="section level3">
 <h3 id="initialize-the-gen-ai-client">Initialize the Gen AI client<a class="anchor" aria-label="anchor" href="#initialize-the-gen-ai-client"></a></h3>
 <div class="codewrapper sourceCode" id="cb5">
@@ -623,13 +643,27 @@ retrieval accuracy than using a single task type for both.</p>
 </div>
 <div class="section level3">
 <h3 id="embed-all-chunks-and-build-the-retrieval-index">Embed all chunks and build the retrieval index<a class="anchor" aria-label="anchor" href="#embed-all-chunks-and-build-the-retrieval-index"></a></h3>
-<p>We embed the full corpus, then build a nearest-neighbors index using
-scikit-learn. Cosine similarity is the standard metric for comparing
-semantic embeddings. The <code>n_neighbors=5</code> default means each
-query returns the 5 most relevant chunks — enough to give the LLM good
-context without overwhelming it with noise. You can tune this: fewer
-neighbors (3) gives more focused answers; more (10) gives broader
-coverage at the cost of including less-relevant text.</p>
+<p>We embed the full corpus, then build a <strong>nearest-neighbors
+index</strong> so that future queries are fast. Think of this as two
+separate stages:</p>
+<ol style="list-style-type: decimal"><li>
+<strong>Embed &amp; index (now)</strong> — We convert every chunk
+into a vector and hand the matrix to scikit-learn’s
+<code>NearestNeighbors</code>. Calling <code>.fit()</code> here doesn’t
+train a model — it organizes the vectors into a data structure optimized
+for similarity search (like building a phone book before anyone looks up
+a number).</li>
+<li>
+<strong>Query (later, in Step 4)</strong> — When a user question
+arrives, we embed <em>that</em> question and call
+<code>.kneighbors()</code> to find the corpus vectors closest to it by
+cosine similarity.</li>
+</ol><p>We set <code>metric="cosine"</code> so the index knows <em>how</em>
+to measure closeness when queries arrive. The <code>n_neighbors=5</code>
+default means each query returns the 5 most relevant chunks — enough to
+give the LLM good context without overwhelming it with noise. You can
+tune this: fewer neighbors (3) gives more focused answers; more (10)
+gives broader coverage at the cost of including less-relevant text.</p>
 <div class="codewrapper sourceCode" id="cb7">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
@@ -717,13 +751,7 @@ source chunks.</p>
 <div class="codewrapper sourceCode" id="cb10">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="bu">print</span>(</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>    ask(</span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>        <span class="st">"What is the name of the benchmark suite presented in a recent paper "</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>        <span class="st">"for measuring inference energy consumption?"</span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>    )</span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>)</span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co"># Expected answer should reference: "ML.ENERGY Benchmark"</span></span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="bu">print</span>(ask(<span class="st">"How much energy does it cost to train a large language model?"</span>))</span></code></pre>
 </div>
 <div id="challenge-1-explore-chunk-size-tradeoffs" class="callout challenge">
 <div class="callout-square">
@@ -814,6 +842,13 @@ just model selection.</p>
 <div class="callout-content">
 <p>Change <code>GENERATION_MODEL_ID</code> to
 <code>"gemini-2.5-flash"</code> and ask the same question.</p>
+<div class="codewrapper sourceCode" id="cb12">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Change the generation model and re-run a query</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>GENERATION_MODEL_ID <span class="op">=</span> <span class="st">"gemini-2.5-flash"</span></span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="bu">print</span>(ask(<span class="st">"How much energy does it cost to train a large language model?"</span>))</span></code></pre>
+</div>
 <ul><li>Is the answer quality noticeably different?</li>
 <li>How does response time compare?</li>
 <li>Check the <a href="https://cloud.google.com/vertex-ai/generative-ai/pricing" class="external-link">Vertex
@@ -850,6 +885,16 @@ usually sufficient and much cheaper.</p>
 <div class="callout-content">
 <p>Call <code>ask()</code> with <code>top_k=2</code> and then with
 <code>top_k=10</code>. Compare the answers.</p>
+<div class="codewrapper sourceCode" id="cb13">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Try different retrieval depths</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"--- top_k=2 ---"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="bu">print</span>(ask(<span class="st">"How much energy does it cost to train a large language model?"</span>, top_k<span class="op">=</span><span class="dv">2</span>))</span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">--- top_k=10 ---"</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="bu">print</span>(ask(<span class="st">"How much energy does it cost to train a large language model?"</span>, top_k<span class="op">=</span><span class="dv">10</span>))</span></code></pre>
+</div>
 <ul><li>With <code>top_k=2</code>, does Gemini miss relevant
 information?</li>
 <li>With <code>top_k=10</code>, does the extra context help or introduce
@@ -872,6 +917,55 @@ question?</li>
 irrelevant passages that can confuse the model or dilute the answer. A
 good default is 3–5 for most research-paper RAG tasks. For questions
 that span multiple sections of a paper, higher values help.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="challenge-5-try-different-questions" class="callout challenge">
+<div class="callout-square">
+<i class="callout-icon" data-feather="zap"></i>
+</div>
+<span class="callout-header">Challenge</span>
+<div id="challenge-5-try-different-questions" class="callout-inner">
+<h3 class="callout-title">Challenge 5: Try different questions</h3>
+<div class="callout-content">
+<p>The quality of a RAG system depends heavily on the questions you ask.
+Try these queries — each tests a different aspect of retrieval and
+generation:</p>
+<div class="codewrapper sourceCode" id="cb14">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Broad factual question — answer should be well-supported by multiple papers</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="bu">print</span>(ask(<span class="st">"How much energy does it cost to train a large language model?"</span>))</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="co"># Comparative question — requires synthesizing across sources</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="bu">print</span>(ask(<span class="st">"Is cloud computing more energy efficient than university HPC clusters?"</span>))</span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co"># Opinion/marketing question — may tempt the model to go beyond the corpus</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="bu">print</span>(ask(<span class="st">"Is Google Cloud the best cloud provider option?"</span>))</span></code></pre>
+</div>
+<p>For each question, consider: - Does the answer cite specific numbers
+or papers from the corpus? - Does Gemini stay grounded in the retrieved
+context, or does it add outside knowledge? - Which question produces the
+most useful, well-supported answer?</p>
+</div>
+</div>
+</div>
+<div id="accordionSolution5" class="accordion challenge-accordion accordion-flush">
+<div class="accordion-item">
+<button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution5" aria-expanded="false" aria-controls="collapseSolution5">
+  <h4 class="accordion-header" id="headingSolution5"> Show me the solution </h4>
+</button>
+<div id="collapseSolution5" class="accordion-collapse collapse" data-bs-parent="#accordionSolution5" aria-labelledby="headingSolution5">
+<div class="accordion-body">
+<p>The energy-cost question should produce a strong answer because the
+corpus contains multiple papers with concrete training-energy figures.
+The cloud-vs-HPC question requires the model to compare across sources —
+look for whether it hedges appropriately when papers disagree. The “best
+cloud provider” question is deliberately tricky: the corpus is about
+environmental costs of AI, not cloud provider rankings, so a
+well-behaved RAG system should indicate that the context doesn’t support
+a definitive answer rather than generating marketing-style claims.</p>
 </div>
 </div>
 </div>
@@ -1058,6 +1152,12 @@ relevance) to systematically improve your pipeline.</li>
 splitting (with <code>spaCy</code> or <code>nltk</code>), recursive
 chunking, or document-structure-aware chunking for better retrieval on
 complex papers.</li>
+<li>
+<strong><a href="https://uw-madison-datascience.github.io/ML-X-Nexus/Applications/Videos/Forums/mlx_2026-02-17.html" class="external-link">Deploying
+RAG in Bedrock vs. Local: WattBot 2025 Case Study</a></strong> — See how
+the same sustainability-paper corpus powers a production RAG system
+deployed on AWS Bedrock and local hardware, with comparisons of cost,
+latency, and model choice.</li>
 </ul><div id="keypoints1" class="callout keypoints">
 <div class="callout-square">
 <i class="callout-icon" data-feather="key"></i>
