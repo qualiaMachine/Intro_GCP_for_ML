@@ -425,7 +425,11 @@ and the cost table in <a href="09-Resource-management-cleanup.html">Episode 9</a
 </div>
 </div>
 </div>
-<section><h2 class="section-heading" id="initial-setup">Initial setup<a class="anchor" aria-label="anchor" href="#initial-setup"></a></h2>
+<p>Here’s the architecture we introduced in <a href="02-Notebooks-as-controllers.html">Episode 2</a> — your lightweight
+notebook orchestrates training jobs that run on separate, more powerful
+VMs, with all artifacts stored in GCS:</p>
+<figure><img src="https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/images/diagram1_training_and_tuning.svg" alt="Architecture diagram showing how a lightweight Workbench notebook uses the Vertex AI SDK to launch training jobs and HP tuning jobs on powerful GPUs, with all artifacts stored in GCS." class="figure mx-auto d-block"><div class="figcaption">Training and tuning workflow</div>
+</figure><section><h2 class="section-heading" id="initial-setup">Initial setup<a class="anchor" aria-label="anchor" href="#initial-setup"></a></h2>
 <hr class="half-width"><div class="section level4">
 <h4 id="open-pre-filled-notebook">1. Open pre-filled notebook<a class="anchor" aria-label="anchor" href="#open-pre-filled-notebook"></a></h4>
 <p>Navigate to
@@ -567,7 +571,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <strong>Data preprocessing</strong>: The script fills missing values
@@ -801,7 +805,7 @@ improve, or does it start overfitting?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <p>Increasing <code>NUM_ROUND</code> from 100 to 200 may marginally
 improve accuracy but roughly doubles runtime. Increasing
@@ -1107,38 +1111,46 @@ safe to delete once the job finishes, and you can automate cleanup with
 <a href="https://cloud.google.com/storage/docs/lifecycle" class="external-link">Object
 Lifecycle Management</a> rules (e.g., auto-delete objects in
 <code>.vertex_staging/</code> after 7 days).</p>
+<p>To delete all staging files now, run:</p>
+<div class="codewrapper sourceCode" id="cb14">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="op">!</span>gsutil <span class="op">-</span>m rm <span class="op">-</span>r gs:<span class="op">//</span>{BUCKET_NAME}<span class="op">/</span>.vertex_staging<span class="op">/</span></span></code></pre>
+</div>
+<p>This won’t affect your model artifacts under
+<code>artifacts/</code>.</p>
 </div>
 </section><section><h2 class="section-heading" id="evaluate-the-trained-model-stored-on-gcs">Evaluate the trained model stored on GCS<a class="anchor" aria-label="anchor" href="#evaluate-the-trained-model-stored-on-gcs"></a></h2>
 <hr class="half-width"><p>Now let’s compare the model produced by our Vertex AI job to the one
 we trained locally. This time, instead of loading from the local disk,
 we’ll load both the test data and model artifact directly from GCS into
 memory — the recommended approach for production workflows.</p>
-<div class="codewrapper sourceCode" id="cb14">
+<div class="codewrapper sourceCode" id="cb15">
 <h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="im">import</span> io</span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="co"># Load test data directly from GCS into memory</span></span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(BUCKET_NAME)</span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_test.csv"</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>test_df <span class="op">=</span> pd.read_csv(io.BytesIO(blob.download_as_bytes()))</span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a><span class="co"># Apply same preprocessing logic used during training</span></span>
-<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>X_test, y_test <span class="op">=</span> preprocess_data(test_df)</span>
-<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a></span>
-<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a><span class="co"># Load the model artifact from GCS</span></span>
-<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>MODEL_BLOB_PATH <span class="op">=</span> <span class="ss">f"artifacts/xgb/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">/model/xgboost-model"</span></span>
-<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>model_blob <span class="op">=</span> bucket.blob(MODEL_BLOB_PATH)</span>
-<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>model_bytes <span class="op">=</span> model_blob.download_as_bytes()</span>
-<span id="cb14-15"><a href="#cb14-15" tabindex="-1"></a>model <span class="op">=</span> joblib.load(io.BytesIO(model_bytes))</span>
-<span id="cb14-16"><a href="#cb14-16" tabindex="-1"></a></span>
-<span id="cb14-17"><a href="#cb14-17" tabindex="-1"></a><span class="co"># Run predictions and compute accuracy</span></span>
-<span id="cb14-18"><a href="#cb14-18" tabindex="-1"></a>dtest <span class="op">=</span> xgb.DMatrix(X_test)</span>
-<span id="cb14-19"><a href="#cb14-19" tabindex="-1"></a>y_pred_prob <span class="op">=</span> model.predict(dtest)</span>
-<span id="cb14-20"><a href="#cb14-20" tabindex="-1"></a>y_pred <span class="op">=</span> (y_pred_prob <span class="op">&gt;=</span> <span class="fl">0.5</span>).astype(<span class="bu">int</span>)</span>
-<span id="cb14-21"><a href="#cb14-21" tabindex="-1"></a></span>
-<span id="cb14-22"><a href="#cb14-22" tabindex="-1"></a>acc <span class="op">=</span> accuracy_score(y_test, y_pred)</span>
-<span id="cb14-23"><a href="#cb14-23" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test accuracy (model from Vertex job): </span><span class="sc">{</span>acc<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="im">import</span> io</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co"># Load test data directly from GCS into memory</span></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>bucket <span class="op">=</span> client.bucket(BUCKET_NAME)</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>blob <span class="op">=</span> bucket.blob(<span class="st">"titanic_test.csv"</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>test_df <span class="op">=</span> pd.read_csv(io.BytesIO(blob.download_as_bytes()))</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co"># Apply same preprocessing logic used during training</span></span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>X_test, y_test <span class="op">=</span> preprocess_data(test_df)</span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="co"># Load the model artifact from GCS</span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>MODEL_BLOB_PATH <span class="op">=</span> <span class="ss">f"artifacts/xgb/</span><span class="sc">{</span>RUN_ID<span class="sc">}</span><span class="ss">/model/xgboost-model"</span></span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>model_blob <span class="op">=</span> bucket.blob(MODEL_BLOB_PATH)</span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>model_bytes <span class="op">=</span> model_blob.download_as_bytes()</span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a>model <span class="op">=</span> joblib.load(io.BytesIO(model_bytes))</span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co"># Run predictions and compute accuracy</span></span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a>dtest <span class="op">=</span> xgb.DMatrix(X_test)</span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a>y_pred_prob <span class="op">=</span> model.predict(dtest)</span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a>y_pred <span class="op">=</span> (y_pred_prob <span class="op">&gt;=</span> <span class="fl">0.5</span>).astype(<span class="bu">int</span>)</span>
+<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a></span>
+<span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a>acc <span class="op">=</span> accuracy_score(y_test, y_pred)</span>
+<span id="cb15-23"><a href="#cb15-23" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Test accuracy (model from Vertex job): </span><span class="sc">{</span>acc<span class="sc">:.3f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
 <div id="compare-local-vs.-vertex-ai-accuracy" class="callout discussion">
 <div class="callout-square">
@@ -1158,22 +1170,25 @@ accuracy from the Vertex AI job. Are they the same? Why or why not?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
-<p>The two accuracy values should be <strong>identical</strong>. Both
-runs execute the same script with the same hyperparameters, the same
-data, and the same random seed (<code>seed=42</code>). Because we pinned
-<code>xgboost==2.1.0</code> locally — matching the
-<code>xgboost-cpu.2-1</code> prebuilt container — the algorithm behaves
-identically in both environments.</p>
-<p>If the values differ, the most likely cause is a <strong>library
-version mismatch</strong>. A random seed only guarantees determinism
-within the same library version, hardware, and numerical backend. If you
-had installed XGBoost without pinning (e.g.,
-<code>pip install xgboost</code>), you might get a different version
-than the container uses, and even small version differences can change
-tree-building heuristics or numerical precision enough to shift
-results.</p>
+<p>The two accuracy values should be <strong>very close</strong> (within
+~1–2 percentage points) but may not be byte-for-byte identical, even
+though both runs use the same script, hyperparameters, data, and random
+seed (<code>seed=42</code>).</p>
+<p>Why? The <code>subsample=0.8</code> and
+<code>colsample_bytree=0.8</code> settings randomly sample rows and
+columns each boosting round. A seed guarantees determinism only within
+the <strong>exact same</strong> library version, NumPy build, and
+BLAS/LAPACK backend. The Workbench notebook VM and the prebuilt training
+container ship different underlying numerical libraries (e.g., OpenBLAS
+vs. MKL), so even with identical XGBoost versions the random sampling
+sequence can diverge slightly — producing a different model and
+therefore a small accuracy difference.</p>
+<p>If you want exact reproducibility, set <code>subsample=1.0</code> and
+<code>colsample_bytree=1.0</code> (no random sampling) or accept that
+minor variation across environments is normal and expected in
+practice.</p>
 </div>
 </div>
 </div>
@@ -1202,7 +1217,7 @@ locate:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>Click your job name, then select the <strong>Logs</strong> tab (or
 <strong>View logs</strong> link). Your script’s <code>print()</code>

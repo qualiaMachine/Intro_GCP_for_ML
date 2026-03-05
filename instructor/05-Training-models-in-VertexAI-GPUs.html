@@ -259,6 +259,7 @@
 test</a></li>
 <li><a href="#launch-the-training-job">Launch the training job</a></li>
 <li><a href="#gpu-accelerated-training-on-vertex-ai">GPU-Accelerated Training on Vertex AI</a></li>
+<li><a href="#clean-up-staging-files">Clean up staging files</a></li>
 <li><a href="#additional-resources">Additional resources</a></li>
         </ul></div><!--/div.accordion-body-->
     </div><!--/div.accordion-collapse-->
@@ -679,23 +680,26 @@ accuracy before we move to cloud training.</p>
 <span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>d <span class="op">=</span> np.load(<span class="st">"/home/jupyter/val_data.npz"</span>)</span>
 <span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a>X_val, y_val <span class="op">=</span> d[<span class="st">"X_val"</span>], d[<span class="st">"y_val"</span>]</span>
 <span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a></span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co"># tensors</span></span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a>X_val_t <span class="op">=</span> torch.tensor(X_val, dtype<span class="op">=</span>torch.float32)</span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a>y_val_t <span class="op">=</span> torch.tensor(y_val, dtype<span class="op">=</span>torch.<span class="bu">long</span>)</span>
-<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="co"># rebuild model and load weights</span></span>
-<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>m <span class="op">=</span> TitanicNet()</span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a>state <span class="op">=</span> torch.load(<span class="st">"/home/jupyter/model.pt"</span>, map_location<span class="op">=</span><span class="st">"cpu"</span>, weights_only<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a>m.load_state_dict(state)</span>
-<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>m.<span class="bu">eval</span>()</span>
-<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a></span>
-<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
-<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>    probs <span class="op">=</span> m(X_val_t).squeeze(<span class="dv">1</span>)                <span class="co"># [N], sigmoid outputs in (0,1)</span></span>
-<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a>    preds_t <span class="op">=</span> (probs <span class="op">&gt;=</span> <span class="fl">0.5</span>).<span class="bu">long</span>()              <span class="co"># [N] int64</span></span>
-<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a>    correct <span class="op">=</span> (preds_t <span class="op">==</span> y_val_t).<span class="bu">sum</span>().item()</span>
-<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a>    acc <span class="op">=</span> correct <span class="op">/</span> y_val_t.shape[<span class="dv">0</span>]</span>
-<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a></span>
-<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Local model val accuracy: </span><span class="sc">{</span>acc<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co"># Convert to PyTorch tensors with the dtypes the model expects:</span></span>
+<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#   - Features → float32: neural-network layers (Linear, BatchNorm) operate on floats.</span></span>
+<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#   - Labels   → long (int64): nn.BCEWithLogitsLoss (and most classification losses)</span></span>
+<span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a><span class="co">#     expect integer class labels, not floats.</span></span>
+<span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a>X_val_t <span class="op">=</span> torch.tensor(X_val, dtype<span class="op">=</span>torch.float32)</span>
+<span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a>y_val_t <span class="op">=</span> torch.tensor(y_val, dtype<span class="op">=</span>torch.<span class="bu">long</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co"># rebuild model and load weights</span></span>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a>m <span class="op">=</span> TitanicNet()</span>
+<span id="cb9-18"><a href="#cb9-18" tabindex="-1"></a>state <span class="op">=</span> torch.load(<span class="st">"/home/jupyter/model.pt"</span>, map_location<span class="op">=</span><span class="st">"cpu"</span>, weights_only<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-19"><a href="#cb9-19" tabindex="-1"></a>m.load_state_dict(state)</span>
+<span id="cb9-20"><a href="#cb9-20" tabindex="-1"></a>m.<span class="bu">eval</span>()</span>
+<span id="cb9-21"><a href="#cb9-21" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
+<span id="cb9-23"><a href="#cb9-23" tabindex="-1"></a>    probs <span class="op">=</span> m(X_val_t).squeeze(<span class="dv">1</span>)                <span class="co"># [N], sigmoid outputs in (0,1)</span></span>
+<span id="cb9-24"><a href="#cb9-24" tabindex="-1"></a>    preds_t <span class="op">=</span> (probs <span class="op">&gt;=</span> <span class="fl">0.5</span>).<span class="bu">long</span>()              <span class="co"># [N] int64</span></span>
+<span id="cb9-25"><a href="#cb9-25" tabindex="-1"></a>    correct <span class="op">=</span> (preds_t <span class="op">==</span> y_val_t).<span class="bu">sum</span>().item()</span>
+<span id="cb9-26"><a href="#cb9-26" tabindex="-1"></a>    acc <span class="op">=</span> correct <span class="op">/</span> y_val_t.shape[<span class="dv">0</span>]</span>
+<span id="cb9-27"><a href="#cb9-27" tabindex="-1"></a></span>
+<span id="cb9-28"><a href="#cb9-28" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Local model val accuracy: </span><span class="sc">{</span>acc<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre>
 </div>
 <p>We should see an accuracy that matches our best epoch in the local
 training run. Note that in our setup, early stopping is based on
@@ -863,8 +867,8 @@ The results should match the CPU job since we set random seeds.</p>
 <span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>val_bytes <span class="op">=</span> val_blob.download_as_bytes()</span>
 <span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>d <span class="op">=</span> np.load(io.BytesIO(val_bytes))</span>
 <span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>X_val, y_val <span class="op">=</span> d[<span class="st">"X_val"</span>], d[<span class="st">"y_val"</span>]</span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>X_val_t <span class="op">=</span> torch.tensor(X_val, dtype<span class="op">=</span>torch.float32)</span>
-<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>y_val_t <span class="op">=</span> torch.tensor(y_val, dtype<span class="op">=</span>torch.<span class="bu">long</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>X_val_t <span class="op">=</span> torch.tensor(X_val, dtype<span class="op">=</span>torch.float32)   <span class="co"># features → float for network layers</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>y_val_t <span class="op">=</span> torch.tensor(y_val, dtype<span class="op">=</span>torch.<span class="bu">long</span>)       <span class="co"># labels → int64 for loss function</span></span>
 <span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a></span>
 <span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
 <span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>    probs <span class="op">=</span> m(X_val_t).squeeze(<span class="dv">1</span>)</span>
@@ -1061,7 +1065,7 @@ between these configurations.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li>
 <code>base_output_dir</code> tells the Vertex AI SDK to set the
@@ -1098,6 +1102,15 @@ Multi-GPU (data parallelism / DDP) and model parallelism exist for
 large-scale training but add significant complexity and cost — well
 beyond this workshop’s scope.</li>
 </ul></div>
+</section><section><h2 class="section-heading" id="clean-up-staging-files">Clean up staging files<a class="anchor" aria-label="anchor" href="#clean-up-staging-files"></a></h2>
+<hr class="half-width"><p>As in Episode 4, each <code>job.run()</code> call leaves a tarball
+under <code>.vertex_staging/</code>. Delete them to keep your bucket
+tidy:</p>
+<div class="codewrapper sourceCode" id="cb18">
+<h3 class="code-label">PYTHON<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
+</h3>
+<pre class="sourceCode python" tabindex="0"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="op">!</span>gsutil <span class="op">-</span>m rm <span class="op">-</span>r gs:<span class="op">//</span>{BUCKET_NAME}<span class="op">/</span>.vertex_staging<span class="op">/</span></span></code></pre>
+</div>
 </section><section><h2 class="section-heading" id="additional-resources">Additional resources<a class="anchor" aria-label="anchor" href="#additional-resources"></a></h2>
 <hr class="half-width"><p>To learn more about PyTorch and Vertex AI integrations, visit the
 docs: <a href="https://docs.cloud.google.com/vertex-ai/docs/start/pytorch" class="external-link">docs.cloud.google.com/vertex-ai/docs/start/pytorch</a></p>
