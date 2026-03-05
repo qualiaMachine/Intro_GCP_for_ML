@@ -269,13 +269,7 @@ def ask(query, top_k=5, temperature=0.2):
 ### Test the pipeline end-to-end
 
 ```python
-print(
-    ask(
-        "What is the name of the benchmark suite presented in a recent paper "
-        "for measuring inference energy consumption?"
-    )
-)
-# Expected answer should reference: "ML.ENERGY Benchmark"
+print(ask("How much energy does it cost to train a large language model?"))
 ```
 
 ::::::::::::::::::::::::::::::::::::: challenge
@@ -349,6 +343,36 @@ Call `ask()` with `top_k=2` and then with `top_k=10`. Compare the answers.
 :::::::::::::::::::::::: solution
 
 Lower `top_k` gives Gemini a tighter, more focused context — good when the answer is localized in one or two chunks. Higher `top_k` provides broader coverage but risks including irrelevant passages that can confuse the model or dilute the answer. A good default is 3–5 for most research-paper RAG tasks. For questions that span multiple sections of a paper, higher values help.
+
+:::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::: challenge
+
+### Challenge 5: Try different questions
+
+The quality of a RAG system depends heavily on the questions you ask. Try these queries — each tests a different aspect of retrieval and generation:
+
+```python
+# Broad factual question — answer should be well-supported by multiple papers
+print(ask("How much energy does it cost to train a large language model?"))
+
+# Comparative question — requires synthesizing across sources
+print(ask("Is cloud computing more energy efficient than university HPC clusters?"))
+
+# Opinion/marketing question — may tempt the model to go beyond the corpus
+print(ask("Is Google Cloud the best cloud provider option?"))
+```
+
+For each question, consider:
+- Does the answer cite specific numbers or papers from the corpus?
+- Does Gemini stay grounded in the retrieved context, or does it add outside knowledge?
+- Which question produces the most useful, well-supported answer?
+
+:::::::::::::::::::::::: solution
+
+The energy-cost question should produce a strong answer because the corpus contains multiple papers with concrete training-energy figures. The cloud-vs-HPC question requires the model to compare across sources — look for whether it hedges appropriately when papers disagree. The "best cloud provider" question is deliberately tricky: the corpus is about environmental costs of AI, not cloud provider rankings, so a well-behaved RAG system should indicate that the context doesn't support a definitive answer rather than generating marketing-style claims.
 
 :::::::::::::::::::::::::::::::::
 
