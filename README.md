@@ -1,4 +1,4 @@
-# Intro to Google Cloud Platform (GCP) for Machine Learning
+# Intro to Google Cloud Platform (GCP) for Machine Learning and AI
 
 This lesson teaches core workflows for building, training, and tuning ML/AI models using Google Cloud's Vertex AI platform. Participants learn to set up data storage, configure Vertex AI Workbench notebooks as lightweight controllers, launch training and hyperparameter tuning jobs, and optimize resource costs effectively within GCP. The workshop also includes a section on building retrieval-augmented generation (RAG) pipelines using Gemini models.
 
