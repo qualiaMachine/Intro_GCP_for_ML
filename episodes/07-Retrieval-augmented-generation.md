@@ -318,6 +318,12 @@ Without the guardrail prompt, Gemini may produce a plausible-sounding answer fro
 
 Change `GENERATION_MODEL_ID` to `"gemini-2.5-flash"` and ask the same question.
 
+```python
+# Change the generation model and re-run a query
+GENERATION_MODEL_ID = "gemini-2.5-flash"
+print(ask("How much energy does it cost to train a large language model?"))
+```
+
 - Is the answer quality noticeably different?
 - How does response time compare?
 - Check the [Vertex AI pricing page](https://cloud.google.com/vertex-ai/generative-ai/pricing) — what's the cost difference per million tokens?
@@ -335,6 +341,15 @@ For well-grounded RAG queries (where the answer is clearly in the context), Flas
 ### Challenge 4: Tune retrieval depth with `top_k`
 
 Call `ask()` with `top_k=2` and then with `top_k=10`. Compare the answers.
+
+```python
+# Try different retrieval depths
+print("--- top_k=2 ---")
+print(ask("How much energy does it cost to train a large language model?", top_k=2))
+
+print("\n--- top_k=10 ---")
+print(ask("How much energy does it cost to train a large language model?", top_k=10))
+```
 
 - With `top_k=2`, does Gemini miss relevant information?
 - With `top_k=10`, does the extra context help or introduce noise?
