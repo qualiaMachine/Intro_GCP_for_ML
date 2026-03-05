@@ -116,6 +116,8 @@ for blob in client.list_blobs(BUCKET_NAME):
 
 Running a quick test on the Workbench notebook VM is cheap — it's a lightweight machine that costs only ~$0.19/hr. The real cost comes later when you launch managed training jobs with larger machines or GPUs. Think of your notebook as a low-cost controller: use it to catch bugs and verify logic before spending on cloud compute.
 
+As you gain confidence, you can skip the notebook VM entirely and run these tests on your own laptop or lab machine — then submit jobs to Vertex AI via the `gcloud` CLI or Python SDK from anywhere (see [Episode 8](08-CLI-workflows.md)). That eliminates the VM cost altogether.
+
 - For large datasets, use a small representative sample of the total dataset when testing locally (i.e., just to verify that code is working and model overfits nearly perfectly after training enough epochs)
 - For larger models, use smaller model equivalents (e.g., 100M vs 7B params) when testing locally
   
