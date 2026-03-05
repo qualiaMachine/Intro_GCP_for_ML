@@ -185,7 +185,12 @@ def embed_texts(text_list, batch_size=32, dims=EMBED_DIM, task_type="RETRIEVAL_D
 
 ### Embed all chunks and build the retrieval index
 
-We embed the full corpus, then build a nearest-neighbors index using scikit-learn. Cosine similarity is the standard metric for comparing semantic embeddings. The `n_neighbors=5` default means each query returns the 5 most relevant chunks — enough to give the LLM good context without overwhelming it with noise. You can tune this: fewer neighbors (3) gives more focused answers; more (10) gives broader coverage at the cost of including less-relevant text.
+We embed the full corpus, then build a **nearest-neighbors index** so that future queries are fast. Think of this as two separate stages:
+
+1. **Embed & index (now)** — We convert every chunk into a vector and hand the matrix to scikit-learn's `NearestNeighbors`. Calling `.fit()` here doesn't train a model — it organizes the vectors into a data structure optimized for similarity search (like building a phone book before anyone looks up a number).
+2. **Query (later, in Step 4)** — When a user question arrives, we embed *that* question and call `.kneighbors()` to find the corpus vectors closest to it by cosine similarity.
+
+We set `metric="cosine"` so the index knows *how* to measure closeness when queries arrive. The `n_neighbors=5` default means each query returns the 5 most relevant chunks — enough to give the LLM good context without overwhelming it with noise. You can tune this: fewer neighbors (3) gives more focused answers; more (10) gives broader coverage at the cost of including less-relevant text.
 
 ```python
 from sklearn.neighbors import NearestNeighbors
