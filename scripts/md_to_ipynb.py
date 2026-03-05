@@ -41,6 +41,25 @@ def strip_solutions(md_content):
         _replace_solution, md_content, flags=re.MULTILINE | re.DOTALL
     )
 
+def strip_yaml_frontmatter(md_content):
+    """Replace YAML front matter with a clean markdown title.
+
+    Converts the full front matter block (title, teaching, exercises, etc.)
+    into just a horizontal-rule-wrapped title so notebooks look clean.
+    """
+    m = re.match(r'^---\s*\n(.*?\n)---\s*\n', md_content, re.DOTALL)
+    if not m:
+        return md_content
+    frontmatter = m.group(1)
+    title_match = re.search(r'^title:\s*["\']?(.*?)["\']?\s*$', frontmatter, re.MULTILINE)
+    if title_match:
+        title = title_match.group(1)
+        header = f"---\n{title}\n---"
+    else:
+        header = ""
+    return header + "\n" + md_content[m.end():]
+
+
 def strip_fenced_divs(text):
     """Remove Carpentries fenced-div markers (:::+ lines) from markdown."""
     return re.sub(r'^:{3,}.*$', '', text, flags=re.MULTILINE)
@@ -92,6 +111,7 @@ for filename in os.listdir(episodes_dir):
             md_content = f.read()
 
         # Clean up Carpentries formatting before converting
+        md_content = strip_yaml_frontmatter(md_content)
         md_content = strip_solutions(md_content)
         md_content = strip_fenced_divs(md_content)
         notebook_cells = split_markdown(md_content)
