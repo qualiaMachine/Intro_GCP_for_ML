@@ -133,7 +133,7 @@ Chunk size is a key tuning knob: smaller chunks give more precise retrieval but 
 
 ## Step 3: Embed the corpus with Vertex AI
 
-Now we convert each text chunk into a numerical vector (an "embedding") so we can search by meaning rather than keywords. We use Google's **`gemini-embedding-001`** model, which supports configurable output dimensions (768, 1,536, or 3,072).
+Now we convert each text chunk into a numerical vector (an "embedding") so we can search by meaning rather than keywords. We use Google's **`gemini-embedding-001`** model — currently the top-ranked Google embedding model on the [MTEB leaderboard](https://huggingface.co/spaces/mteb/leaderboard). It accepts up to **2,048 input tokens** per text (~1,500 words), supports **100+ languages**, and uses [Matryoshka Representation Learning](https://huggingface.co/blog/matryoshka) so you can choose your output dimensions (768, 1,536, or 3,072) without retraining — smaller dimensions save memory and speed up search, while larger ones preserve more semantic detail. See the [Choosing an embedding model](#choosing-an-embedding-model) callout later in this episode for alternatives.
 
 ### Initialize the Gen AI client
 
