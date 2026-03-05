@@ -472,9 +472,11 @@ Compare the test accuracy from your local training run with the accuracy from th
 
 ### Solution
 
-The two accuracy values should be **identical**. Both runs execute the same script with the same hyperparameters, the same data, and the same random seed (`seed=42`). Because we pinned `xgboost==2.1.0` locally — matching the `xgboost-cpu.2-1` prebuilt container — the algorithm behaves identically in both environments.
+The two accuracy values should be **very close** (within ~1–2 percentage points) but may not be byte-for-byte identical, even though both runs use the same script, hyperparameters, data, and random seed (`seed=42`).
 
-If the values differ, the most likely cause is a **library version mismatch**. A random seed only guarantees determinism within the same library version, hardware, and numerical backend. If you had installed XGBoost without pinning (e.g., `pip install xgboost`), you might get a different version than the container uses, and even small version differences can change tree-building heuristics or numerical precision enough to shift results.
+Why? The `subsample=0.8` and `colsample_bytree=0.8` settings randomly sample rows and columns each boosting round. A seed guarantees determinism only within the **exact same** library version, NumPy build, and BLAS/LAPACK backend. The Workbench notebook VM and the prebuilt training container ship different underlying numerical libraries (e.g., OpenBLAS vs. MKL), so even with identical XGBoost versions the random sampling sequence can diverge slightly — producing a different model and therefore a small accuracy difference.
+
+If you want exact reproducibility, set `subsample=1.0` and `colsample_bytree=1.0` (no random sampling) or accept that minor variation across environments is normal and expected in practice.
 
 :::::::::::::::::::::::::::::::::::::::
 
