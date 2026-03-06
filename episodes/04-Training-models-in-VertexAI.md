@@ -26,7 +26,7 @@ exercises: 15
 
 ### Cost awareness: training jobs
 
-Training jobs bill per VM-hour while the job is running. An `n1-standard-4` (CPU) costs ~ `$0.19`/hr; adding a T4 GPU brings the total to ~ `$0.54`/hr. Jobs automatically stop (and stop billing) when the script finishes. For a complete cost reference, see the [Compute for ML](../compute-for-ML.html) page and the cost table in [Episode 9](09-Resource-management-cleanup.md).
+Training jobs bill per VM-hour while the job is running. An `n1-standard-4` (CPU) costs ~ `$0.19`/hr; adding a T4 GPU brings the total to ~ `$0.54`/hr. Jobs automatically stop (and stop billing) when the script finishes. For a complete cost reference, see the [Compute for ML](compute-for-ML.html) page and the cost table in [Episode 9](09-Resource-management-cleanup.md).
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 

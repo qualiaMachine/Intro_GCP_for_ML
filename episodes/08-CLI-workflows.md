@@ -189,7 +189,7 @@ Vertex AI provisions a VM, runs your training container, and writes outputs to t
 
 ### GPU example (PyTorch)
 
-For the PyTorch GPU job from Episode 5, the config includes an `acceleratorType` and `acceleratorCount`. Note that the argument names must match exactly what `train_nn.py` expects (`--train`, `--val`, `--learning_rate`, etc.):
+For the PyTorch GPU job from Episode 5, the config includes an `accelerator_type` and `accelerator_count`. Note that the argument names must match exactly what `train_nn.py` expects (`--train`, `--val`, `--learning_rate`, etc.):
 
 ```yaml
 # pytorch_gpu_job.yaml

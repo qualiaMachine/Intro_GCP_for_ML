@@ -72,7 +72,7 @@ Leave environment settings at their defaults for this workshop. Workbench uses J
 
 - **Machine type**: Select a small machine (e.g., `n2-standard-2`, ~ `$0.07`/hr) to act as the controller.
   - This keeps costs low while you delegate heavy lifting to training jobs.
-  - For guidance on common machine types and their costs, see [Compute for ML](../compute-for-ML.html). For help deciding when you need cloud hardware at all, see [When does model size justify cloud compute?](01-Introduction.md#when-does-model-size-justify-cloud-compute) in Episode 1.
+  - For guidance on common machine types and their costs, see [Compute for ML](compute-for-ML.html). For help deciding when you need cloud hardware at all, see [When does model size justify cloud compute?](01-Introduction.md#when-does-model-size-justify-cloud-compute) in Episode 1.
 
 - **Set idle shutdown**: To save on costs when you aren't doing anything in your notebook, lower the default idle shutdown time to **60 (minutes)**.
 
@@ -129,7 +129,7 @@ The notebook serves as a lightweight control plane.
 
 ### Challenge 2: Controller Cost Estimate
 
-Your controller notebook uses an `n2-standard-2` instance (~ `$0.07`/hr — see [Compute for ML](../compute-for-ML.html) for other common machine types and costs).
+Your controller notebook uses an `n2-standard-2` instance (~ `$0.07`/hr — see [Compute for ML](compute-for-ML.html) for other common machine types and costs).
 
 - Estimate the monthly cost if you use it 8 hours/day, 5 days/week, with idle shutdown enabled.
 - Compare that to leaving it running 24/7 for the same month.
