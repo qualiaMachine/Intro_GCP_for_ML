@@ -61,6 +61,14 @@ sudo apt-get install google-cloud-cli
 
 ### Authenticate
 
+> **Heads-up — avoid `gcloud init` with a new configuration.**
+> If you already have the SDK installed, you may be tempted to run `gcloud init`
+> and create a new named configuration. New configurations start with **no
+> credentials**, so gcloud will ask you to log in even though your default
+> configuration is already authenticated. The simplest path is to skip
+> `gcloud init` and run the commands below directly, which update your existing
+> (default) configuration.
+
 ```bash
 # Interactive browser-based login (laptop / desktop)
 gcloud auth login
