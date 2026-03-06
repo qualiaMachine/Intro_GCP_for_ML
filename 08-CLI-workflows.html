@@ -362,7 +362,7 @@
       </div>
       <hr></nav><main id="main-content" class="main-content"><div class="container lesson-content">
         <h1>Bonus: CLI Workflows Without Notebooks</h1>
-        <p>Last updated on 2026-03-04 |
+        <p>Last updated on 2026-03-06 |
 
         <a href="https://github.com/qualiaMachine/Intro_GCP_for_ML/edit/main/episodes/08-CLI-workflows.md" class="external-link">Edit this page <i aria-hidden="true" data-feather="edit"></i></a></p>
 
@@ -545,23 +545,23 @@ config file that describes the job.</p>
 <h3 class="code-label">YAML<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
 <pre class="sourceCode yaml" tabindex="0"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># xgb_job.yaml — Vertex AI custom training job config</span></span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">displayName</span><span class="kw">:</span><span class="at"> cli-xgb-titanic</span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">jobSpec</span><span class="kw">:</span></span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="at">  </span><span class="fu">workerPoolSpecs</span><span class="kw">:</span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">machineSpec</span><span class="kw">:</span></span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="at">        </span><span class="fu">machineType</span><span class="kw">:</span><span class="at"> n1-standard-4</span></span>
-<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="at">      </span><span class="fu">replicaCount</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
-<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="at">      </span><span class="fu">containerSpec</span><span class="kw">:</span></span>
-<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="at">        </span><span class="fu">imageUri</span><span class="kw">:</span><span class="at"> us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest</span></span>
-<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="at">        </span><span class="fu">args</span><span class="kw">:</span></span>
-<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--train=gs://doe-titanic/titanic_train.csv"</span></span>
-<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--max_depth=6"</span></span>
-<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--eta=0.3"</span></span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--subsample=0.8"</span></span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--colsample_bytree=0.8"</span></span>
-<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--num_round=100"</span></span>
-<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="at">  </span><span class="fu">baseOutputDirectory</span><span class="kw">:</span></span>
-<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="at">    </span><span class="fu">outputUriPrefix</span><span class="kw">:</span><span class="at"> gs://doe-titanic/artifacts/xgb/cli-run/</span></span></code></pre>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co"># Note: display_name goes on the command line (--display-name), not in this file.</span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># The --config file describes the job *spec* only, using snake_case field names.</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="fu">worker_pool_specs</span><span class="kw">:</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">machine_spec</span><span class="kw">:</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="at">      </span><span class="fu">machine_type</span><span class="kw">:</span><span class="at"> n1-standard-4</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="at">    </span><span class="fu">replica_count</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="at">    </span><span class="fu">container_spec</span><span class="kw">:</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="at">      </span><span class="fu">image_uri</span><span class="kw">:</span><span class="at"> us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="at">      </span><span class="fu">args</span><span class="kw">:</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">"--train=gs://doe-titanic/titanic_train.csv"</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">"--max_depth=6"</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">"--eta=0.3"</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">"--subsample=0.8"</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">"--colsample_bytree=0.8"</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">"--num_round=100"</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="fu">base_output_directory</span><span class="kw">:</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="at">  </span><span class="fu">output_uri_prefix</span><span class="kw">:</span><span class="at"> gs://doe-titanic/artifacts/xgb/cli-run/</span></span></code></pre>
 </div>
 <p>Replace the bucket name and hyperparameters to match your setup.</p>
 </div>
@@ -572,10 +572,47 @@ config file that describes the job.</p>
 </h3>
 <pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs create <span class="dt">\</span></span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>    <span class="at">--region</span><span class="op">=</span>us-central1 <span class="dt">\</span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">--config</span><span class="op">=</span>xgb_job.yaml</span></code></pre>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>    <span class="at">--display-name</span><span class="op">=</span>cli-xgb-titanic <span class="dt">\</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>    <span class="at">--config</span><span class="op">=</span>xgb_job.yaml</span></code></pre>
+</div>
+<div id="windows-users-line-continuation-syntax" class="callout">
+<div class="callout-square">
+<i class="callout-icon" data-feather="bell"></i>
+</div>
+<span class="callout-header">Callout</span>
+<div id="windows-users-line-continuation-syntax" class="callout-inner">
+<h3 class="callout-title">Windows users — line continuation syntax</h3>
+<div class="callout-content">
+<p>The <code>\</code> at the end of each line is a <strong>Linux /
+macOS</strong> line continuation character. It does <strong>not</strong>
+work in the Windows Command Prompt. You have three options:</p>
+<ol style="list-style-type: decimal"><li>
+<p><strong>Put the command on one line</strong> (easiest):</p>
+<pre><code>gcloud ai custom-jobs create --region=us-central1 --display-name=cli-xgb-titanic --config=xgb_job.yaml</code></pre>
+</li>
+<li>
+<p><strong>Use the <code>^</code> continuation character</strong>
+(Windows CMD):</p>
+<pre><code>gcloud ai custom-jobs create ^
+    --region=us-central1 ^
+    --display-name=cli-xgb-titanic ^
+    --config=xgb_job.yaml</code></pre>
+</li>
+<li>
+<p><strong>Use the backtick continuation character</strong>
+(PowerShell):</p>
+<pre><code>gcloud ai custom-jobs create `
+    --region=us-central1 `
+    --display-name=cli-xgb-titanic `
+    --config=xgb_job.yaml</code></pre>
+</li>
+</ol><p>This applies to <strong>all</strong> multi-line commands in this
+episode, not just this one.</p>
+</div>
+</div>
 </div>
 <p>Vertex AI provisions a VM, runs your training container, and writes
-outputs to the <code>baseOutputDirectory</code>. The job runs on GCP’s
+outputs to the <code>base_output_directory</code>. The job runs on GCP’s
 infrastructure, not on your machine — you can close your terminal and it
 keeps going.</p>
 </div>
@@ -586,45 +623,44 @@ keeps going.</p>
 that the argument names must match exactly what <code>train_nn.py</code>
 expects (<code>--train</code>, <code>--val</code>,
 <code>--learning_rate</code>, etc.):</p>
-<div class="codewrapper sourceCode" id="cb7">
+<div class="codewrapper sourceCode" id="cb10">
 <h3 class="code-label">YAML<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode yaml" tabindex="0"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># pytorch_gpu_job.yaml</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a><span class="fu">displayName</span><span class="kw">:</span><span class="at"> cli-pytorch-titanic-gpu</span></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="fu">jobSpec</span><span class="kw">:</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="at">  </span><span class="fu">workerPoolSpecs</span><span class="kw">:</span></span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="at">    </span><span class="kw">-</span><span class="at"> </span><span class="fu">machineSpec</span><span class="kw">:</span></span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="at">        </span><span class="fu">machineType</span><span class="kw">:</span><span class="at"> n1-standard-8</span></span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="at">        </span><span class="fu">acceleratorType</span><span class="kw">:</span><span class="at"> NVIDIA_TESLA_T4</span></span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="at">        </span><span class="fu">acceleratorCount</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="at">      </span><span class="fu">replicaCount</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="at">      </span><span class="fu">containerSpec</span><span class="kw">:</span></span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="at">        </span><span class="fu">imageUri</span><span class="kw">:</span><span class="at"> us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest</span></span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="at">        </span><span class="fu">args</span><span class="kw">:</span></span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--train=gs://doe-titanic/data/train_data.npz"</span></span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--val=gs://doe-titanic/data/val_data.npz"</span></span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--epochs=500"</span></span>
-<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--learning_rate=0.001"</span></span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="st">"--patience=50"</span></span>
-<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="at">  </span><span class="fu">baseOutputDirectory</span><span class="kw">:</span></span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="at">    </span><span class="fu">outputUriPrefix</span><span class="kw">:</span><span class="at"> gs://doe-titanic/artifacts/pytorch/cli-gpu-run/</span></span></code></pre>
+<pre class="sourceCode yaml" tabindex="0"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co"># pytorch_gpu_job.yaml</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="fu">worker_pool_specs</span><span class="kw">:</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">machine_spec</span><span class="kw">:</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="at">      </span><span class="fu">machine_type</span><span class="kw">:</span><span class="at"> n1-standard-8</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="at">      </span><span class="fu">accelerator_type</span><span class="kw">:</span><span class="at"> NVIDIA_TESLA_T4</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="at">      </span><span class="fu">accelerator_count</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="at">    </span><span class="fu">replica_count</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="at">    </span><span class="fu">container_spec</span><span class="kw">:</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="at">      </span><span class="fu">image_uri</span><span class="kw">:</span><span class="at"> us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest</span></span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a><span class="at">      </span><span class="fu">args</span><span class="kw">:</span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">"--train=gs://doe-titanic/data/train_data.npz"</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">"--val=gs://doe-titanic/data/val_data.npz"</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">"--epochs=500"</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">"--learning_rate=0.001"</span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="st">"--patience=50"</span></span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="fu">base_output_directory</span><span class="kw">:</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="at">  </span><span class="fu">output_uri_prefix</span><span class="kw">:</span><span class="at"> gs://doe-titanic/artifacts/pytorch/cli-gpu-run/</span></span></code></pre>
 </div>
 <p>Submit the same way:</p>
-<div class="codewrapper sourceCode" id="cb8">
+<div class="codewrapper sourceCode" id="cb11">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs create <span class="dt">\</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>    <span class="at">--region</span><span class="op">=</span>us-central1 <span class="dt">\</span></span>
-<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    <span class="at">--config</span><span class="op">=</span>pytorch_gpu_job.yaml</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs create <span class="dt">\</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>    <span class="at">--region</span><span class="op">=</span>us-central1 <span class="dt">\</span></span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    <span class="at">--display-name</span><span class="op">=</span>cli-pytorch-titanic-gpu <span class="dt">\</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    <span class="at">--config</span><span class="op">=</span>pytorch_gpu_job.yaml</span></code></pre>
 </div>
 </div>
 </section><section><h2 class="section-heading" id="step-4-monitor-jobs">Step 4: Monitor jobs<a class="anchor" aria-label="anchor" href="#step-4-monitor-jobs"></a></h2>
 <hr class="half-width"><div class="section level3">
 <h3 id="list-jobs">List jobs<a class="anchor" aria-label="anchor" href="#list-jobs"></a></h3>
-<div class="codewrapper sourceCode" id="cb9">
+<div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
 </div>
 <p>This prints a table with job ID, display name, state
 (<code>JOB_STATE_RUNNING</code>, <code>JOB_STATE_SUCCEEDED</code>,
@@ -632,10 +668,10 @@ etc.), and creation time.</p>
 </div>
 <div class="section level3">
 <h3 id="stream-logs">Stream logs<a class="anchor" aria-label="anchor" href="#stream-logs"></a></h3>
-<div class="codewrapper sourceCode" id="cb10">
+<div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs stream-logs JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs stream-logs JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
 </div>
 <p>This is the CLI equivalent of watching the log panel in a notebook —
 output streams to your terminal in real time.</p>
@@ -644,11 +680,11 @@ output streams to your terminal in real time.</p>
 <h3 id="hyperparameter-tuning-jobs">Hyperparameter tuning jobs<a class="anchor" aria-label="anchor" href="#hyperparameter-tuning-jobs"></a></h3>
 <p>The <code>gcloud ai hp-tuning-jobs</code> family works the same
 way:</p>
-<div class="codewrapper sourceCode" id="cb11">
+<div class="codewrapper sourceCode" id="cb14">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs stream-logs JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs stream-logs JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
 </div>
 <p>Creating HP tuning jobs via YAML is more verbose — for complex tuning
 configs, the Python SDK (<a href="06-Hyperparameter-tuning.html">Episode
@@ -662,35 +698,35 @@ no visual reminder that something is still billing you. Jobs and VMs
 keep running whether or not your terminal is open.</p>
 <p><strong>Get in the habit of checking before you walk
 away:</strong></p>
-<div class="codewrapper sourceCode" id="cb12">
+<div class="codewrapper sourceCode" id="cb15">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co"># Training jobs still running</span></span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1 <span class="at">--filter</span><span class="op">=</span><span class="st">"state=JOB_STATE_RUNNING"</span></span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co"># HP tuning jobs still running</span></span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs list <span class="at">--region</span><span class="op">=</span>us-central1 <span class="at">--filter</span><span class="op">=</span><span class="st">"state=JOB_STATE_RUNNING"</span></span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co"># Endpoints still deployed (these bill 24/7, even when idle)</span></span>
-<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints list <span class="at">--region</span><span class="op">=</span>us-central1</span>
-<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a></span>
-<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co"># Workbench notebook VMs still running</span></span>
-<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances list <span class="at">--location</span><span class="op">=</span>us-central1-a</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Training jobs still running</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1 <span class="at">--filter</span><span class="op">=</span><span class="st">"state=JOB_STATE_RUNNING"</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co"># HP tuning jobs still running</span></span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="ex">gcloud</span> ai hp-tuning-jobs list <span class="at">--region</span><span class="op">=</span>us-central1 <span class="at">--filter</span><span class="op">=</span><span class="st">"state=JOB_STATE_RUNNING"</span></span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co"># Endpoints still deployed (these bill 24/7, even when idle)</span></span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="co"># Workbench notebook VMs still running</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances list <span class="at">--location</span><span class="op">=</span>us-central1-a</span></code></pre>
 </div>
 <p>If anything shows up that you don’t need, shut it down:</p>
-<div class="codewrapper sourceCode" id="cb13">
+<div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="co"># Cancel a running training job</span></span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs cancel JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co"># Undeploy a model from an endpoint (stops the per-hour charge)</span></span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints undeploy-model ENDPOINT_ID <span class="dt">\</span></span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>    <span class="at">--region</span><span class="op">=</span>us-central1 <span class="dt">\</span></span>
-<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>    <span class="at">--deployed-model-id</span><span class="op">=</span>DEPLOYED_MODEL_ID</span>
-<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co"># Stop a Workbench notebook VM</span></span>
-<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances stop INSTANCE_NAME <span class="at">--location</span><span class="op">=</span>us-central1-a</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># Cancel a running training job</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs cancel JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co"># Undeploy a model from an endpoint (stops the per-hour charge)</span></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="ex">gcloud</span> ai endpoints undeploy-model ENDPOINT_ID <span class="dt">\</span></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>    <span class="at">--region</span><span class="op">=</span>us-central1 <span class="dt">\</span></span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>    <span class="at">--deployed-model-id</span><span class="op">=</span>DEPLOYED_MODEL_ID</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="co"># Stop a Workbench notebook VM</span></span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a><span class="ex">gcloud</span> workbench instances stop INSTANCE_NAME <span class="at">--location</span><span class="op">=</span>us-central1-a</span></code></pre>
 </div>
 <div id="cost-leaks-are-silent" class="callout">
 <div class="callout-square">
@@ -714,14 +750,14 @@ see <a href="09-Resource-management-cleanup.html">Episode 9</a>.</p>
 </div>
 </section><section><h2 class="section-heading" id="step-6-download-results">Step 6: Download results<a class="anchor" aria-label="anchor" href="#step-6-download-results"></a></h2>
 <hr class="half-width"><p>After a job succeeds, download artifacts from GCS:</p>
-<div class="codewrapper sourceCode" id="cb14">
+<div class="codewrapper sourceCode" id="cb17">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># List what the job wrote</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="ex">gcloud</span> storage ls gs://doe-titanic/artifacts/xgb/cli-run/</span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="co"># Download everything locally</span></span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="ex">gcloud</span> storage cp <span class="at">-r</span> gs://doe-titanic/artifacts/xgb/cli-run/ ./local_results/</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># List what the job wrote</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="ex">gcloud</span> storage ls gs://doe-titanic/artifacts/xgb/cli-run/</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="co"># Download everything locally</span></span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a><span class="ex">gcloud</span> storage cp <span class="at">-r</span> gs://doe-titanic/artifacts/xgb/cli-run/ ./local_results/</span></code></pre>
 </div>
 <p>You can then load the model and metrics in a local Python session for
 evaluation — no Workbench VM required.</p>
@@ -729,30 +765,30 @@ evaluation — no Workbench VM required.</p>
 <hr class="half-width"><p>Here is a minimal end-to-end script that submits a training job and
 waits for it to finish. You could check this into your repository or
 trigger it from CI.</p>
-<div class="codewrapper sourceCode" id="cb15">
+<div class="codewrapper sourceCode" id="cb18">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co">#!/usr/bin/env bash</span></span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="bu">set</span> <span class="at">-euo</span> pipefail</span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="va">PROJECT_ID</span><span class="op">=</span><span class="st">"your-project-id"</span></span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="va">REGION</span><span class="op">=</span><span class="st">"us-central1"</span></span>
-<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="va">BUCKET</span><span class="op">=</span><span class="st">"doe-titanic"</span></span>
-<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="va">RUN_ID</span><span class="op">=</span><span class="va">$(</span><span class="fu">date</span> +%Y%m%d-%H%M%S<span class="va">)</span></span>
-<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a></span>
-<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co"># Upload latest training data</span></span>
-<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a><span class="ex">gcloud</span> storage cp ./data/titanic_train.csv gs://<span class="va">${BUCKET}</span>/</span>
-<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a></span>
-<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a><span class="co"># Submit the job</span></span>
-<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs create <span class="dt">\</span></span>
-<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>    <span class="at">--region</span><span class="op">=</span><span class="va">${REGION}</span> <span class="dt">\</span></span>
-<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a>    <span class="at">--display-name</span><span class="op">=</span><span class="st">"xgb-</span><span class="va">${RUN_ID}</span><span class="st">"</span> <span class="dt">\</span></span>
-<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a>    <span class="at">--worker-pool-spec</span><span class="op">=</span>machine-type=n1-standard-4,replica-count=1,container-image-uri=us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest <span class="dt">\</span></span>
-<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a>    <span class="at">--args</span><span class="op">=</span><span class="st">"--train=gs://</span><span class="va">${BUCKET}</span><span class="st">/titanic_train.csv,--max_depth=6,--eta=0.3,--num_round=100"</span> <span class="dt">\</span></span>
-<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a>    <span class="at">--base-output-dir</span><span class="op">=</span>gs://<span class="va">${BUCKET}</span>/artifacts/xgb/<span class="va">${RUN_ID}</span>/</span>
-<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a></span>
-<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Job submitted. Check status with:"</span></span>
-<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"  gcloud ai custom-jobs list --region=</span><span class="va">${REGION}</span><span class="st">"</span></span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co">#!/usr/bin/env bash</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="bu">set</span> <span class="at">-euo</span> pipefail</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="va">PROJECT_ID</span><span class="op">=</span><span class="st">"your-project-id"</span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="va">REGION</span><span class="op">=</span><span class="st">"us-central1"</span></span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="va">BUCKET</span><span class="op">=</span><span class="st">"doe-titanic"</span></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="va">RUN_ID</span><span class="op">=</span><span class="va">$(</span><span class="fu">date</span> +%Y%m%d-%H%M%S<span class="va">)</span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a><span class="co"># Upload latest training data</span></span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a><span class="ex">gcloud</span> storage cp ./data/titanic_train.csv gs://<span class="va">${BUCKET}</span>/</span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a><span class="co"># Submit the job</span></span>
+<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs create <span class="dt">\</span></span>
+<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a>    <span class="at">--region</span><span class="op">=</span><span class="va">${REGION}</span> <span class="dt">\</span></span>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a>    <span class="at">--display-name</span><span class="op">=</span><span class="st">"xgb-</span><span class="va">${RUN_ID}</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a>    <span class="at">--worker-pool-spec</span><span class="op">=</span>machine-type=n1-standard-4,replica-count=1,container-image-uri=us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest <span class="dt">\</span></span>
+<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a>    <span class="at">--args</span><span class="op">=</span><span class="st">"--train=gs://</span><span class="va">${BUCKET}</span><span class="st">/titanic_train.csv,--max_depth=6,--eta=0.3,--num_round=100"</span> <span class="dt">\</span></span>
+<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a>    <span class="at">--base-output-dir</span><span class="op">=</span>gs://<span class="va">${BUCKET}</span>/artifacts/xgb/<span class="va">${RUN_ID}</span>/</span>
+<span id="cb18-19"><a href="#cb18-19" tabindex="-1"></a></span>
+<span id="cb18-20"><a href="#cb18-20" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Job submitted. Check status with:"</span></span>
+<span id="cb18-21"><a href="#cb18-21" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"  gcloud ai custom-jobs list --region=</span><span class="va">${REGION}</span><span class="st">"</span></span></code></pre>
 </div>
 <div id="cloud-shell-free-cli-access" class="callout">
 <div class="callout-square">
@@ -792,16 +828,16 @@ Custom Jobs</strong>.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
-<div class="codewrapper sourceCode" id="cb16">
+<div class="codewrapper sourceCode" id="cb19">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># Edit xgb_job.yaml with your bucket name, then:</span></span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs create <span class="at">--region</span><span class="op">=</span>us-central1 <span class="at">--config</span><span class="op">=</span>xgb_job.yaml</span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co"># Confirm it's running:</span></span>
-<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="co"># Edit xgb_job.yaml with your bucket name, then:</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs create <span class="at">--region</span><span class="op">=</span>us-central1 <span class="at">--display-name</span><span class="op">=</span>cli-xgb-titanic <span class="at">--config</span><span class="op">=</span>xgb_job.yaml</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a><span class="co"># Confirm it's running:</span></span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
 </div>
 </div>
 </div>
@@ -826,16 +862,16 @@ notebook.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
-<div class="codewrapper sourceCode" id="cb17">
+<div class="codewrapper sourceCode" id="cb20">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="co"># Get the job ID from the list output</span></span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="co"># Stream logs (replace JOB_ID with the actual ID)</span></span>
-<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs stream-logs JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a><span class="co"># Get the job ID from the list output</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs list <span class="at">--region</span><span class="op">=</span>us-central1</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a><span class="co"># Stream logs (replace JOB_ID with the actual ID)</span></span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a><span class="ex">gcloud</span> ai custom-jobs stream-logs JOB_ID <span class="at">--region</span><span class="op">=</span>us-central1</span></code></pre>
 </div>
 </div>
 </div>
@@ -861,13 +897,13 @@ the accuracy value.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
-<div class="codewrapper sourceCode" id="cb18">
+<div class="codewrapper sourceCode" id="cb21">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
 </h3>
-<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="ex">gcloud</span> storage cp <span class="at">-r</span> gs://YOUR_BUCKET/artifacts/xgb/cli-run/ ./results/</span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-c</span> <span class="st">"import json; print(json.load(open('./results/model/metrics.json')))"</span></span></code></pre>
+<pre class="sourceCode bash" tabindex="0"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="ex">gcloud</span> storage cp <span class="at">-r</span> gs://YOUR_BUCKET/artifacts/xgb/cli-run/ ./results/</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-c</span> <span class="st">"import json; print(json.load(open('./results/model/metrics.json')))"</span></span></code></pre>
 </div>
 </div>
 </div>
@@ -984,8 +1020,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_for_ML/08-CLI-workflows.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_for_ML/08-CLI-workflows.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-03-04",
-  "datePublished": "2026-03-05"
+  "dateModified": "2026-03-06",
+  "datePublished": "2026-03-06"
 }
 
   </script><script>
