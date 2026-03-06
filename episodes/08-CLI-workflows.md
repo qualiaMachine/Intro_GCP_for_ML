@@ -150,6 +150,38 @@ gcloud ai custom-jobs create \
     --config=xgb_job.yaml
 ```
 
+::::::::::::::::::::::::::::::::::::: callout
+
+### Windows users — line continuation syntax
+
+The `\` at the end of each line is a **Linux / macOS** line continuation character. It does **not** work in the Windows Command Prompt. You have three options:
+
+1. **Put the command on one line** (easiest):
+
+   ```
+   gcloud ai custom-jobs create --region=us-central1 --config=xgb_job.yaml
+   ```
+
+2. **Use the `^` continuation character** (Windows CMD):
+
+   ```
+   gcloud ai custom-jobs create ^
+       --region=us-central1 ^
+       --config=xgb_job.yaml
+   ```
+
+3. **Use the backtick continuation character** (PowerShell):
+
+   ```
+   gcloud ai custom-jobs create `
+       --region=us-central1 `
+       --config=xgb_job.yaml
+   ```
+
+This applies to **all** multi-line commands in this episode, not just this one.
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
+
 Vertex AI provisions a VM, runs your training container, and writes outputs to the `baseOutputDirectory`. The job runs on GCP's infrastructure, not on your machine — you can close your terminal and it keeps going.
 
 ### GPU example (PyTorch)
