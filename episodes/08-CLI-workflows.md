@@ -121,23 +121,23 @@ Create a file called `xgb_job.yaml`:
 
 ```yaml
 # xgb_job.yaml — Vertex AI custom training job config
-displayName: cli-xgb-titanic
-jobSpec:
-  workerPoolSpecs:
-    - machineSpec:
-        machineType: n1-standard-4
-      replicaCount: 1
-      containerSpec:
-        imageUri: us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest
-        args:
-          - "--train=gs://doe-titanic/titanic_train.csv"
-          - "--max_depth=6"
-          - "--eta=0.3"
-          - "--subsample=0.8"
-          - "--colsample_bytree=0.8"
-          - "--num_round=100"
-  baseOutputDirectory:
-    outputUriPrefix: gs://doe-titanic/artifacts/xgb/cli-run/
+# Note: display_name goes on the command line (--display-name), not in this file.
+# The --config file describes the job *spec* only, using snake_case field names.
+worker_pool_specs:
+  - machine_spec:
+      machine_type: n1-standard-4
+    replica_count: 1
+    container_spec:
+      image_uri: us-docker.pkg.dev/vertex-ai/training/xgboost-cpu.2-1:latest
+      args:
+        - "--train=gs://doe-titanic/titanic_train.csv"
+        - "--max_depth=6"
+        - "--eta=0.3"
+        - "--subsample=0.8"
+        - "--colsample_bytree=0.8"
+        - "--num_round=100"
+base_output_directory:
+  output_uri_prefix: gs://doe-titanic/artifacts/xgb/cli-run/
 ```
 
 Replace the bucket name and hyperparameters to match your setup.
@@ -147,6 +147,7 @@ Replace the bucket name and hyperparameters to match your setup.
 ```bash
 gcloud ai custom-jobs create \
     --region=us-central1 \
+    --display-name=cli-xgb-titanic \
     --config=xgb_job.yaml
 ```
 
@@ -159,7 +160,7 @@ The `\` at the end of each line is a **Linux / macOS** line continuation charact
 1. **Put the command on one line** (easiest):
 
    ```
-   gcloud ai custom-jobs create --region=us-central1 --config=xgb_job.yaml
+   gcloud ai custom-jobs create --region=us-central1 --display-name=cli-xgb-titanic --config=xgb_job.yaml
    ```
 
 2. **Use the `^` continuation character** (Windows CMD):
@@ -167,6 +168,7 @@ The `\` at the end of each line is a **Linux / macOS** line continuation charact
    ```
    gcloud ai custom-jobs create ^
        --region=us-central1 ^
+       --display-name=cli-xgb-titanic ^
        --config=xgb_job.yaml
    ```
 
@@ -175,6 +177,7 @@ The `\` at the end of each line is a **Linux / macOS** line continuation charact
    ```
    gcloud ai custom-jobs create `
        --region=us-central1 `
+       --display-name=cli-xgb-titanic `
        --config=xgb_job.yaml
    ```
 
@@ -182,7 +185,7 @@ This applies to **all** multi-line commands in this episode, not just this one.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
-Vertex AI provisions a VM, runs your training container, and writes outputs to the `baseOutputDirectory`. The job runs on GCP's infrastructure, not on your machine — you can close your terminal and it keeps going.
+Vertex AI provisions a VM, runs your training container, and writes outputs to the `base_output_directory`. The job runs on GCP's infrastructure, not on your machine — you can close your terminal and it keeps going.
 
 ### GPU example (PyTorch)
 
@@ -190,24 +193,22 @@ For the PyTorch GPU job from Episode 5, the config includes an `acceleratorType`
 
 ```yaml
 # pytorch_gpu_job.yaml
-displayName: cli-pytorch-titanic-gpu
-jobSpec:
-  workerPoolSpecs:
-    - machineSpec:
-        machineType: n1-standard-8
-        acceleratorType: NVIDIA_TESLA_T4
-        acceleratorCount: 1
-      replicaCount: 1
-      containerSpec:
-        imageUri: us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest
-        args:
-          - "--train=gs://doe-titanic/data/train_data.npz"
-          - "--val=gs://doe-titanic/data/val_data.npz"
-          - "--epochs=500"
-          - "--learning_rate=0.001"
-          - "--patience=50"
-  baseOutputDirectory:
-    outputUriPrefix: gs://doe-titanic/artifacts/pytorch/cli-gpu-run/
+worker_pool_specs:
+  - machine_spec:
+      machine_type: n1-standard-8
+      accelerator_type: NVIDIA_TESLA_T4
+      accelerator_count: 1
+    replica_count: 1
+    container_spec:
+      image_uri: us-docker.pkg.dev/vertex-ai/training/pytorch-gpu.2-4.py310:latest
+      args:
+        - "--train=gs://doe-titanic/data/train_data.npz"
+        - "--val=gs://doe-titanic/data/val_data.npz"
+        - "--epochs=500"
+        - "--learning_rate=0.001"
+        - "--patience=50"
+base_output_directory:
+  output_uri_prefix: gs://doe-titanic/artifacts/pytorch/cli-gpu-run/
 ```
 
 Submit the same way:
@@ -215,6 +216,7 @@ Submit the same way:
 ```bash
 gcloud ai custom-jobs create \
     --region=us-central1 \
+    --display-name=cli-pytorch-titanic-gpu \
     --config=pytorch_gpu_job.yaml
 ```
 
@@ -359,7 +361,7 @@ Using the XGBoost YAML config shown above (adjusted for your bucket name), submi
 
 ```bash
 # Edit xgb_job.yaml with your bucket name, then:
-gcloud ai custom-jobs create --region=us-central1 --config=xgb_job.yaml
+gcloud ai custom-jobs create --region=us-central1 --display-name=cli-xgb-titanic --config=xgb_job.yaml
 
 # Confirm it's running:
 gcloud ai custom-jobs list --region=us-central1
