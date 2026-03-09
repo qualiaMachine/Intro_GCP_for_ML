@@ -1,0 +1,16 @@
+Bootstrap: docker
+From: pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime
+
+%post
+    # Install additional dependencies for Titanic training
+    pip install --no-cache-dir \
+        scikit-learn==1.5.1 \
+        pandas==2.2.2 \
+        numpy==1.26.4
+
+%runscript
+    exec python3 "$@"
+
+%labels
+    Author CHTC ML Workshop
+    Description PyTorch GPU training container for CHTC workshop

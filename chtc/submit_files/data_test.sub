@@ -1,0 +1,19 @@
+# data_test.sub — test data transfer with the Titanic dataset
+
+universe     = vanilla
+executable   = ../scripts/data_check.py
+
+log          = data_test_$(Cluster).log
+output       = data_test_$(Cluster).out
+error        = data_test_$(Cluster).err
+
+request_cpus   = 1
+request_memory = 1GB
+request_disk   = 1GB
+
+transfer_input_files = ../scripts/data_check.py, ../../data/titanic_train.csv
+transfer_output_files = data_summary.txt
+
+container_image = docker://continuumio/miniconda3:latest
+
+queue 1

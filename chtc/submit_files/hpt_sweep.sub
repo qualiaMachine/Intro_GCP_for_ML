@@ -1,0 +1,38 @@
+# hpt_sweep.sub — Hyperparameter sweep using HTCondor's queue-from syntax
+#
+# Each row in params.csv defines one trial: learning_rate, patience, min_delta.
+# HTCondor launches one job per row — all trials run in parallel.
+#
+# This is the CHTC equivalent of Vertex AI's HyperparameterTuningJob, but:
+# - No per-trial cost ($0 vs ~$0.02/trial on Vertex AI)
+# - No limit on number of trials
+# - Simpler configuration (CSV + submit file vs Python SDK)
+# - Grid/random search (no built-in Bayesian optimization)
+
+universe     = vanilla
+executable   = ../scripts/run_nn.sh
+
+# Each trial gets its own output directory
+log          = trial_$(Process)/nn_$(Cluster)_$(Process).log
+output       = trial_$(Process)/nn_$(Cluster)_$(Process).out
+error        = trial_$(Process)/nn_$(Cluster)_$(Process).err
+
+# Create the output directory for each trial
+initialdir   = trial_$(Process)
+
+request_cpus   = 1
+request_memory = 2GB
+request_disk   = 2GB
+
+# Transfer scripts and data
+transfer_input_files = ../scripts/train_nn.py, ../scripts/run_nn.sh, train_data.npz, val_data.npz
+
+# Bring back model and metrics from each trial
+transfer_output_files = model.pt, metrics.json, eval_history.csv
+
+container_image = docker://pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime
+
+# Hyperparameters from CSV: each row = (learning_rate, patience, min_delta)
+arguments = --epochs 500 --learning_rate $(learning_rate) --patience $(patience) --min_delta $(min_delta)
+
+queue learning_rate, patience, min_delta from ../data/params.csv

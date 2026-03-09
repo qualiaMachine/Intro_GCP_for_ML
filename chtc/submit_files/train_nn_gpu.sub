@@ -1,0 +1,35 @@
+# train_nn_gpu.sub — PyTorch neural network training on GPU
+#
+# Trains TitanicNet on .npz data using a GPU.
+# Compare with train_nn_cpu.sub to see the difference: just add request_gpus!
+
+universe     = vanilla
+executable   = ../scripts/run_nn.sh
+
+log          = nn_gpu_$(Cluster).log
+output       = nn_gpu_$(Cluster).out
+error        = nn_gpu_$(Cluster).err
+
+# GPU request — this is the key difference from the CPU version
+request_gpus   = 1
+request_cpus   = 1
+request_memory = 4GB
+request_disk   = 2GB
+
+# Optional: require specific GPU capabilities
+# Uncomment to request a GPU with at least 40 GB memory (e.g., A100)
+# require_gpus = (GlobalMemoryMb >= 40000)
+
+# Transfer training script, wrapper, and pre-split data
+transfer_input_files = ../scripts/train_nn.py, ../scripts/run_nn.sh, train_data.npz, val_data.npz
+
+# Bring back model, metrics, and training history
+transfer_output_files = model.pt, metrics.json, eval_history.csv
+
+# PyTorch GPU container (includes CUDA and cuDNN)
+container_image = docker://pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime
+
+# Training arguments
+arguments = --epochs 500 --learning_rate 0.001 --patience 20
+
+queue 1

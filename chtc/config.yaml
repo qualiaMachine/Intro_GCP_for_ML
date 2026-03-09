@@ -1,0 +1,61 @@
+#------------------------------------------------------------
+# Values for this lesson.
+#------------------------------------------------------------
+
+# Which carpentry is this (swc, dc, lc, or cp)?
+# incubator: The Carpentries Incubator
+carpentry: 'incubator'
+
+# Alt-text description of the lesson.
+carpentry_description: 'Lesson Description'
+
+# Overall title for pages.
+title: 'Intro to CHTC for Machine Learning'
+
+# Date the lesson was created (YYYY-MM-DD, this is empty by default)
+created: 2025-08-26
+
+# Comma-separated list of keywords for the lesson
+keywords: 'CHTC, HTCondor, lesson, The Carpentries, ML, AI, GPU, HTC'
+
+# Life cycle stage of the lesson
+# possible values: pre-alpha, alpha, beta, stable
+life_cycle: 'pre-alpha'
+
+# License of the lesson
+license: 'CC-BY 4.0'
+
+# Link to the source repository for this lesson
+source: 'https://github.com/qualiaMachine/Intro_GCP_for_ML'
+
+# Default branch of your lesson
+branch: 'main'
+
+# Who to contact if there are any issues
+contact: 'endemann@wisc.edu'
+
+# Navigation ------------------------------------------------
+
+# Order of episodes in your lesson
+episodes:
+- 01-Introduction.md
+- 02-Submit-node-and-first-job.md
+- 03-Data-storage-and-transfer.md
+- 04-Training-XGBoost-CPU.md
+- 05-Training-PyTorch-GPU.md
+- 06-Hyperparameter-tuning.md
+- 07-RAG-on-CHTC.md
+- 08-CLI-workflows-automation.md
+- 09-Resource-management.md
+
+# Information for Learners
+learners:
+- setup.md
+- chtc-resources.md
+- reference.md
+
+# Information for Instructors
+instructors:
+
+# Learner Profiles
+profiles:

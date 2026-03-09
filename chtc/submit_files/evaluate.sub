@@ -1,0 +1,23 @@
+# evaluate.sub — Evaluate a trained model on validation data
+#
+# Used as the final step in a DAGMan workflow (Episode 8).
+
+universe     = vanilla
+executable   = ../scripts/evaluate_model.py
+
+log          = evaluate_$(Cluster).log
+output       = evaluate_$(Cluster).out
+error        = evaluate_$(Cluster).err
+
+request_cpus   = 1
+request_memory = 2GB
+request_disk   = 1GB
+
+transfer_input_files = ../scripts/evaluate_model.py, model.pt, val_data.npz
+transfer_output_files = evaluation.json
+
+container_image = docker://pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime
+
+arguments = --model model.pt --data val_data.npz --output evaluation.json
+
+queue 1

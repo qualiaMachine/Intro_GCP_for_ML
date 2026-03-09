@@ -1,0 +1,18 @@
+Bootstrap: docker
+From: continuumio/miniconda3:latest
+
+%post
+    # Install XGBoost and dependencies for Titanic training
+    pip install --no-cache-dir \
+        xgboost==2.1.0 \
+        scikit-learn==1.5.1 \
+        pandas==2.2.2 \
+        joblib==1.4.2 \
+        numpy==1.26.4
+
+%runscript
+    exec python3 "$@"
+
+%labels
+    Author CHTC ML Workshop
+    Description XGBoost training container for CHTC workshop

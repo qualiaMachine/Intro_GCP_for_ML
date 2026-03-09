@@ -1,0 +1,21 @@
+# workflow.dag — DAGMan workflow: data prep → train → evaluate
+#
+# This DAG chains three jobs in sequence:
+# 1. Prepare .npz data from raw CSV
+# 2. Train the neural network
+# 3. Evaluate the trained model
+#
+# Submit with: condor_submit_dag workflow.dag
+
+# Job definitions
+JOB PREP   prep_data.sub
+JOB TRAIN  train_nn_cpu.sub
+JOB EVAL   evaluate.sub
+
+# Dependencies (arrows show execution order)
+PARENT PREP  CHILD TRAIN
+PARENT TRAIN CHILD EVAL
+
+# Optional: retry failed jobs up to 2 times
+RETRY TRAIN 2
+RETRY EVAL  1

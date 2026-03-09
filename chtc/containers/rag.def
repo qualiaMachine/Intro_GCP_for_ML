@@ -1,0 +1,19 @@
+Bootstrap: docker
+From: pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime
+
+%post
+    # Install dependencies for RAG pipeline with open-source models
+    pip install --no-cache-dir \
+        sentence-transformers==3.0.1 \
+        transformers==4.44.0 \
+        accelerate==0.33.0 \
+        pypdf==4.3.1 \
+        numpy==1.26.4 \
+        scikit-learn==1.5.1
+
+%runscript
+    exec python3 "$@"
+
+%labels
+    Author CHTC ML Workshop
+    Description RAG pipeline container with sentence-transformers and LLM support

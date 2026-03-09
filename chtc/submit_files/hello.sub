@@ -1,0 +1,18 @@
+# hello.sub — a minimal HTCondor submit file
+
+universe     = vanilla
+executable   = ../scripts/hello.py
+
+log          = hello_$(Cluster).log
+output       = hello_$(Cluster).out
+error        = hello_$(Cluster).err
+
+request_cpus   = 1
+request_memory = 512MB
+request_disk   = 512MB
+
+transfer_input_files = ../scripts/hello.py
+
+container_image = docker://python:3.11-slim
+
+queue 1

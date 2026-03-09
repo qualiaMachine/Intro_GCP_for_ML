@@ -1,0 +1,30 @@
+# train_xgboost.sub — XGBoost CPU training job on CHTC
+#
+# Trains an XGBoost model on the Titanic dataset inside a container.
+# HTCondor transfers input files to the worker and retrieves outputs.
+
+universe     = vanilla
+executable   = ../scripts/run_xgboost.sh
+
+log          = xgboost_$(Cluster).log
+output       = xgboost_$(Cluster).out
+error        = xgboost_$(Cluster).err
+
+# Resource requests — XGBoost on Titanic is lightweight
+request_cpus   = 1
+request_memory = 2GB
+request_disk   = 2GB
+
+# Transfer training script, wrapper, and data to the worker
+transfer_input_files = ../scripts/train_xgboost.py, ../scripts/run_xgboost.sh, ../../data/titanic_train.csv
+
+# Bring back the model artifact
+transfer_output_files = xgboost-model
+
+# Container with XGBoost and scikit-learn pre-installed
+container_image = docker://continuumio/miniconda3:latest
+
+# Arguments passed to run_xgboost.sh (and forwarded to train_xgboost.py)
+arguments = --max_depth 5 --eta 0.1 --num_round 100
+
+queue 1

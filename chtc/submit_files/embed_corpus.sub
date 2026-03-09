@@ -1,0 +1,30 @@
+# embed_corpus.sub — Batch embedding job for RAG pipeline
+#
+# Embeds PDF/text chunks using sentence-transformers (no internet needed).
+# This is the CHTC equivalent of calling the Gemini embedding API.
+
+universe     = vanilla
+executable   = ../scripts/embed_corpus.py
+
+log          = embed_$(Cluster).log
+output       = embed_$(Cluster).out
+error        = embed_$(Cluster).err
+
+# Embedding with sentence-transformers is CPU-intensive but doesn't need a GPU
+# For large corpora, consider requesting a GPU for faster embedding
+request_cpus   = 4
+request_memory = 4GB
+request_disk   = 4GB
+
+# Transfer the embedding script and the document to embed
+# Replace 'document.pdf' with your actual document
+transfer_input_files = ../scripts/embed_corpus.py, document.pdf
+
+# Bring back embeddings and chunks
+transfer_output_files = embeddings.npz, embeddings_chunks.json
+
+container_image = docker://pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime
+
+arguments = --input document.pdf --output embeddings.npz --chunk_size 500
+
+queue 1
