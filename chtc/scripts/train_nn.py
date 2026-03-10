@@ -5,11 +5,21 @@ PyTorch trainer for the Titanic dataset.
 Trains a small neural network (TitanicNet) with early stopping and optional
 best-weight restore. All file I/O uses plain local paths — HTCondor handles
 file transfer to/from workers.
+
+Supports HTCondor self-checkpointing via --checkpoint_every and
+--checkpoint_exit_code flags. When a checkpoint is due, the script saves
+full training state (model, optimizer, epoch, best weights, history) and
+exits with the specified code (default 85). HTCondor transfers the checkpoint
+file back to the submit node, then restarts the job on the same or a different
+machine. On restart, the script detects the checkpoint and resumes training
+from where it left off.
 """
 
 import os
 import json
 import argparse
+import sys
+import time
 from pathlib import Path
 import numpy as np
 import torch
@@ -25,6 +35,8 @@ torch.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
+
+CHECKPOINT_FILE = "checkpoint.pt"
 
 
 class TitanicNet(nn.Module):
@@ -42,6 +54,37 @@ class TitanicNet(nn.Module):
 
 def accuracy_binary(preds: torch.Tensor, labels: torch.Tensor) -> float:
     return (preds.round() == labels).float().mean().item()
+
+
+def save_checkpoint(path, model, optimizer, epoch, hist, best_val, best_epoch,
+                    epochs_no_improve, best_state_dict):
+    """Save full training state for resumption."""
+    torch.save({
+        "model_state_dict": model.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+        "epoch": epoch,
+        "hist": hist,
+        "best_val": best_val,
+        "best_epoch": best_epoch,
+        "epochs_no_improve": epochs_no_improve,
+        "best_state_dict": best_state_dict,
+    }, path)
+    print(f"[CHECKPOINT] Saved training state at epoch {epoch} to {path}")
+
+
+def load_checkpoint(path, model, optimizer, device):
+    """Load training state from a checkpoint file."""
+    ckpt = torch.load(path, map_location=device, weights_only=False)
+    model.load_state_dict(ckpt["model_state_dict"])
+    optimizer.load_state_dict(ckpt["optimizer_state_dict"])
+    return (
+        ckpt["epoch"],
+        ckpt["hist"],
+        ckpt["best_val"],
+        ckpt["best_epoch"],
+        ckpt["epochs_no_improve"],
+        ckpt["best_state_dict"],
+    )
 
 
 def main():
@@ -62,6 +105,12 @@ def main():
                     default=True, help="Restore best weights before saving (default True)")
     ap.add_argument("--combine_train_val", action="store_true",
                     help="Combine train+val data for final retraining (uses fixed epoch count, no early stopping)")
+    # Checkpointing arguments
+    ap.add_argument("--checkpoint_every", type=int, default=0,
+                    help="Save checkpoint and exit every N seconds (0=disabled). "
+                         "For CHTC, set to 3600 for hourly checkpoints.")
+    ap.add_argument("--checkpoint_exit_code", type=int, default=85,
+                    help="Exit code to signal HTCondor to restart from checkpoint (default 85)")
     args = ap.parse_args()
 
     # Output paths
@@ -70,6 +119,7 @@ def main():
     model_path = os.path.join(output_dir, "model.pt")
     metrics_path = os.path.join(output_dir, "metrics.json")
     history_path = os.path.join(output_dir, "eval_history.csv")
+    checkpoint_path = os.path.join(output_dir, CHECKPOINT_FILE)
 
     # Load pre-split .npz datasets
     tr = np.load(args.train)
@@ -103,9 +153,22 @@ def main():
     best_epoch = 0
     epochs_no_improve = 0
     best_state_dict = None
+    start_epoch = 1
+
+    # Resume from checkpoint if available
+    if os.path.exists(checkpoint_path):
+        print(f"[CHECKPOINT] Found {checkpoint_path}, resuming training...")
+        start_epoch_prev, hist, best_val, best_epoch, epochs_no_improve, best_state_dict = \
+            load_checkpoint(checkpoint_path, model, opt, device)
+        start_epoch = start_epoch_prev + 1
+        print(f"[CHECKPOINT] Resuming from epoch {start_epoch} "
+              f"(best_val={best_val:.6f} at epoch {best_epoch})")
+
+    # Track wall-clock time for checkpointing
+    wall_start = time.monotonic()
 
     # Training loop with early stopping
-    for ep in range(1, args.epochs + 1):
+    for ep in range(start_epoch, args.epochs + 1):
         model.train()
         opt.zero_grad()
         pred = model(Xtr_t)
@@ -131,7 +194,7 @@ def main():
         else:
             epochs_no_improve += 1
 
-        if ep == 1 or ep % 10 == 0 or ep == args.epochs or improved:
+        if ep == start_epoch or ep % 10 == 0 or ep == args.epochs or improved:
             print(f"epoch={ep} loss={loss.item():.4f} val_loss={val_loss:.4f} "
                   f"val_acc={val_acc:.4f}", flush=True)
 
@@ -139,6 +202,17 @@ def main():
             print(f"[EARLY STOP] No improvement in val_loss for {args.patience} "
                   f"epochs (best at epoch {best_epoch}).", flush=True)
             break
+
+        # Checkpoint if wall-clock timeout is approaching
+        if args.checkpoint_every > 0:
+            elapsed = time.monotonic() - wall_start
+            if elapsed >= args.checkpoint_every:
+                save_checkpoint(checkpoint_path, model, opt, ep, hist,
+                                best_val, best_epoch, epochs_no_improve,
+                                best_state_dict)
+                print(f"[CHECKPOINT] Exiting with code {args.checkpoint_exit_code} "
+                      f"after {elapsed:.0f}s for HTCondor restart.")
+                sys.exit(args.checkpoint_exit_code)
 
     final_epoch = ep
 
@@ -184,6 +258,11 @@ def main():
     csv = "iter,val_loss\n" + "\n".join(f"{i+1},{v}" for i, v in enumerate(hist))
     with open(history_path, "w") as f:
         f.write(csv)
+
+    # Clean up checkpoint file — training is complete
+    if os.path.exists(checkpoint_path):
+        os.remove(checkpoint_path)
+        print("[CHECKPOINT] Removed checkpoint file (training complete)")
 
     # Optional: evaluate on held-out test set
     if args.test:

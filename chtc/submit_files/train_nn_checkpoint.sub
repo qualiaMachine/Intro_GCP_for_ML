@@ -1,0 +1,46 @@
+# train_nn_checkpoint.sub — PyTorch training with HTCondor self-checkpointing
+#
+# For long-running training jobs that may exceed slot time limits.
+# The training script saves a checkpoint every hour, exits with code 85,
+# and HTCondor restarts it. On restart, training resumes from the checkpoint.
+#
+# How it works:
+# 1. train_nn.py trains for up to --checkpoint_every seconds (3600 = 1 hour)
+# 2. It saves checkpoint.pt with full training state and exits with code 85
+# 3. HTCondor transfers checkpoint.pt back to the submit node
+# 4. HTCondor restarts the job on the same or a different machine
+# 5. The script detects checkpoint.pt and resumes training from where it left off
+# 6. When training finishes normally (early stop or max epochs), it exits 0
+
+universe     = vanilla
+executable   = ../scripts/run_nn_checkpoint.sh
+
+log          = train_ckpt_$(Cluster).log
+output       = train_ckpt_$(Cluster).out
+error        = train_ckpt_$(Cluster).err
+
+request_cpus   = 1
+request_memory = 2GB
+request_disk   = 2GB
+request_gpus   = 1
+
+# Transfer scripts, data, and (if it exists) the checkpoint file
+transfer_input_files = ../scripts/train_nn.py, ../scripts/run_nn_checkpoint.sh, train_data.npz, val_data.npz
+
+# Transfer back model artifacts AND checkpoint file
+transfer_output_files = model.pt, metrics.json, eval_history.csv, checkpoint.pt
+
+# Tell HTCondor: exit code 85 means "checkpoint taken, please restart"
+checkpoint_exit_code = 85
+
+# Transfer outputs on normal exit only (checkpoints are handled by checkpoint_exit_code)
+when_to_transfer_output = ON_EXIT
+
+# Also transfer checkpoint files when evicted (belt + suspenders)
+transfer_checkpoint_files = checkpoint.pt
+
+container_image = docker://pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime
+
+arguments = --epochs 10000 --learning_rate 0.0005 --patience 50
+
+queue 1
