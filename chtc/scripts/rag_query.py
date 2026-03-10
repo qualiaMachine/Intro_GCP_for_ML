@@ -2,9 +2,8 @@
 """
 rag_query.py — RAG query pipeline using local open-source models.
 
-This is the CHTC equivalent of the GCP workshop's Gemini-based RAG pipeline.
-Instead of calling the Gemini API, we use:
-- sentence-transformers for query embedding
+Uses local open-source models for RAG:
+- sentence-transformers for query embedding (no API key needed)
 - A local LLM (e.g., Gemma-2B, Mistral-7B) for generation
 
 Usage (interactive):

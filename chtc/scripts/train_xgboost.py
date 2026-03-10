@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """
-CHTC-simplified XGBoost trainer for the Titanic dataset.
+XGBoost trainer for the Titanic dataset.
 
-This is a streamlined version of the GCP workshop's train_xgboost.py with
-cloud-specific code (GCS, Vertex AI) removed. All file I/O is plain local
-paths — HTCondor handles file transfer to/from worker machines.
+Trains an XGBoost classifier on the Titanic dataset. All file I/O uses plain
+local paths — HTCondor handles file transfer to/from worker machines.
 """
 
 import argparse

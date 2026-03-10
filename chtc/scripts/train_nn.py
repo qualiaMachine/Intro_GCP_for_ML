@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """
-CHTC-simplified PyTorch trainer for the Titanic dataset.
+PyTorch trainer for the Titanic dataset.
 
-This is a streamlined version of the GCP workshop's train_nn.py with
-cloud-specific code (GCS, Vertex AI, hypertune) removed. All file I/O
-is plain local paths — HTCondor handles file transfer to/from workers.
-Includes early stopping with optional best-weight restore.
+Trains a small neural network (TitanicNet) with early stopping and optional
+best-weight restore. All file I/O uses plain local paths — HTCondor handles
+file transfer to/from workers.
 """
 
 import os

@@ -22,7 +22,7 @@ exercises: 10
 
 ## CHTC storage hierarchy
 
-Unlike cloud platforms where you have a single bucket (e.g., GCS `gs://`), CHTC provides three storage tiers, each designed for different use cases:
+CHTC provides three storage tiers, each designed for different use cases:
 
 | Storage | Location | Size limit | Backed up? | Auto-purge? | Best for |
 |---------|----------|-----------|------------|-------------|----------|
@@ -41,9 +41,9 @@ Unlike cloud platforms where you have a single bucket (e.g., GCS `gs://`), CHTC 
 
 ::::::::::::::::::::::::::::::::::::: callout
 
-### Cost comparison with cloud storage
+### CHTC storage is free
 
-On GCP, Cloud Storage costs ~$0.02/GB/month for Standard class, plus ~$0.12/GB for egress (downloading). On CHTC, all storage is **free**. The tradeoff: CHTC storage has size limits and `/scratch` auto-purges after 30 days, so you need to manage your files actively.
+All CHTC storage is **free** — no per-GB charges. The tradeoff: storage has size limits and `/scratch` auto-purges files older than 30 days, so you need to manage your files actively. For comparison, commercial cloud storage typically costs $0.02–$0.10/GB/month.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -86,7 +86,7 @@ transfer_output_remaps = "metrics.json = results/trial_$(Process)/metrics.json"
 4. When the job finishes, output files are transferred back.
 5. The temporary directory is cleaned up.
 
-This means **your script can simply read and write local files** — no special file transfer code needed. This is simpler than the GCS helpers needed in the GCP version.
+This means **your script can simply read and write local files** — no special file transfer code or cloud storage SDK needed.
 
 ## Uploading the Titanic dataset
 
@@ -225,13 +225,13 @@ cat data_summary.txt    # Should show the summary
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
-### Challenge 3: Cloud cost comparison
+### Challenge 3: Storage cost comparison
 
-The Titanic dataset is tiny, but imagine you had a 50 GB dataset. Estimate the monthly storage cost on GCP Cloud Storage (Standard class, ~$0.02/GB/month) versus CHTC.
+The Titanic dataset is tiny, but imagine you had a 50 GB dataset. Estimate the monthly storage cost on a commercial cloud platform (~$0.02/GB/month) versus CHTC.
 
 :::::::::::::::: solution
 
-- **GCP Cloud Storage:** 50 GB × $0.02/GB/month = **$1.00/month** (plus egress charges if downloading)
+- **Commercial cloud storage:** 50 GB × $0.02/GB/month = **$1.00/month** (plus egress charges if downloading)
 - **CHTC `/staging`:** **$0.00/month** (free, within the 100 GB quota)
 
 For this small size the difference is minimal, but for larger datasets (500 GB+) or long-running projects, the savings add up significantly.
@@ -245,6 +245,6 @@ For this small size the difference is minimal, but for larger datasets (500 GB+)
 - CHTC has three storage tiers: `/home` (30 GB, backed up), `/scratch` (100 GB, auto-purged), and `/staging` (100 GB, for large files).
 - HTCondor automatically transfers input files to workers and output files back — your script just reads and writes local files.
 - Use `transfer_input_files` to send data to jobs and `transfer_output_files` to control what comes back.
-- All CHTC storage is free — no per-GB charges like cloud storage.
+- All CHTC storage is free — no per-GB charges.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::

@@ -23,7 +23,7 @@ exercises: 10
 
 ## Connecting to the submit node
 
-The submit node is your "controller" — the equivalent of a Workbench notebook in the GCP version of this workshop. It's a shared Linux machine where you write code, prepare data, write submit files, and launch jobs. **Do not run heavy computation directly on the submit node** — it's shared with other users.
+The **submit node** is your home base on CHTC. It's a shared Linux machine where you write code, prepare data, write submit files, and launch jobs. Think of it as a lightweight control center — **do not run heavy computation directly on the submit node**, as it's shared with other users.
 
 Connect via SSH:
 
@@ -45,7 +45,7 @@ Replace `<username>` with your CHTC username. You'll land in your home directory
 
 ## Exploring the filesystem
 
-Once logged in, take a look at the storage hierarchy:
+Once logged in, take a look at the storage hierarchy introduced in Episode 1:
 
 ```bash
 # Your home directory (30 GB, backed up)
@@ -197,7 +197,7 @@ The first time a container image is used on a worker, it must be pulled (downloa
 
 ## Interactive jobs
 
-Sometimes you need to debug interactively on a worker machine (like working in a notebook). HTCondor supports interactive jobs:
+Sometimes you need to debug interactively on a worker machine. HTCondor supports interactive jobs:
 
 ```bash
 condor_submit -i hello.sub
@@ -210,20 +210,22 @@ This gives you a shell session on a worker machine with your requested resources
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
-### Challenge 1: Submit Node vs. Worker
+### Challenge 1: What belongs on the submit node?
 
-Think about the GCP "notebook as controller" pattern from the companion workshop:
+Which of these tasks should you do on the submit node, and which should be submitted as HTCondor jobs?
 
-- What role does the CHTC submit node play compared to a Vertex AI Workbench notebook?
-- Which tasks should stay on the submit node versus being submitted as HTCondor jobs?
+1. Editing a Python script
+2. Training an XGBoost model on a 10 GB dataset
+3. Running `condor_q` to check job status
+4. A hyperparameter sweep with 50 trials
+5. Inspecting a 100-line CSV output file
+6. Generating embeddings for 10,000 documents
 
 :::::::::::::::: solution
 
-The submit node is the CHTC equivalent of the Workbench notebook:
+**Submit node:** 1, 3, 5 — lightweight editing, job management, and inspection.
 
-- Both are lightweight shared resources, **not** meant for heavy computation.
-- Use the submit node for: writing code, preparing data (small operations), writing submit files, submitting jobs, inspecting results, visualization.
-- Submit as HTCondor jobs: model training, hyperparameter sweeps, batch data processing, embedding computation — anything that needs significant CPU, GPU, memory, or time.
+**HTCondor jobs:** 2, 4, 6 — compute-heavy tasks that need dedicated hardware. The submit node is shared with other users and shouldn't be used for heavy processing.
 
 :::::::::::::::::::::::::
 
@@ -273,7 +275,7 @@ In the `.log` file, look for lines like:
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
-- The submit node is your controller — use it for lightweight tasks and job management, not heavy compute.
+- The submit node is your control center — use it for lightweight tasks and job management, not heavy compute.
 - HTCondor submit files specify what to run, what files to transfer, and what resources to request.
 - Use `condor_submit` to launch jobs, `condor_q` to monitor them, and inspect `.out`/`.err`/`.log` files for results.
 - Containers (`container_image`) provide reproducible software environments on CHTC workers.

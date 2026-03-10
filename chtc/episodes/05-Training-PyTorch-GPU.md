@@ -8,7 +8,7 @@ exercises: 15
 
 - How do I request GPUs for an HTCondor job?
 - How does a GPU training job differ from a CPU job in HTCondor?
-- How does CHTC's GPU Lab compare to Vertex AI GPU instances?
+- What GPU hardware is available on CHTC?
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -23,14 +23,7 @@ exercises: 15
 
 ## Overview
 
-In the GCP workshop, you train a PyTorch neural network by submitting a `CustomTrainingJob` with `machine_type="n1-standard-4"` and `accelerator_type="NVIDIA_TESLA_T4"`. On CHTC, the equivalent is adding `request_gpus = 1` to your submit file. That's it.
-
-| GCP (Vertex AI) | CHTC (HTCondor) |
-|---|---|
-| `accelerator_type="NVIDIA_TESLA_T4"` | `request_gpus = 1` |
-| `machine_type="n1-standard-4"` | `request_cpus = 1`, `request_memory = 4GB` |
-| Container: `pytorch-gpu.2-4:latest` | `container_image = docker://pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime` |
-| Cost: ~$0.35/hr (T4) | Cost: **$0** |
+Requesting a GPU on CHTC is simple: add `request_gpus = 1` to your submit file. HTCondor finds a machine with a GPU, runs your job inside a container with CUDA support, and transfers the results back. PyTorch's `torch.cuda.is_available()` automatically detects the GPU — no manual CUDA configuration needed.
 
 ## Step 1: Prepare the data
 
@@ -51,19 +44,12 @@ This is a lightweight operation (the Titanic dataset is small), so running it on
 
 ## Step 2: The training script
 
-The CHTC version of `train_nn.py` is a simplified version of the GCP workshop's script with cloud-specific code removed:
+The `train_nn.py` script defines a small neural network (`TitanicNet`) and trains it with early stopping. Key features:
 
-**What was removed:**
-- `google.cloud.storage` imports and GCS helper functions
-- `hypertune` metric reporting (used by Vertex AI for HP tuning — not needed on CHTC)
-- `AIP_MODEL_DIR` environment variable (replaced with `--output_dir` argument)
-- Tee/logging class (simplified for CHTC)
-
-**What stayed the same:**
-- `TitanicNet` model architecture (identical)
-- Training loop with early stopping (identical)
-- Metrics saved to `metrics.json` (we'll use this in Episode 6 for HP tuning)
-- Seed setting for reproducibility (identical)
+- **`TitanicNet`** — 3-layer network (64 → 32 → 1) with ReLU and Sigmoid
+- **Early stopping** — stops training when validation loss stops improving
+- **Metrics output** — saves `metrics.json` with final accuracy, loss, and hyperparameters (we'll use this in Episode 6 for HP tuning)
+- **Reproducibility** — fixed random seeds for consistent results
 
 Key code that makes GPU detection automatic:
 
@@ -254,7 +240,7 @@ This matches A100-80GB, H100, and H200 GPUs. Note that being more specific about
 - Adding `request_gpus = 1` to your submit file is all it takes to request GPU hardware on CHTC.
 - PyTorch's `torch.cuda.is_available()` automatically detects CHTC GPUs — no manual CUDA configuration needed.
 - Use `require_gpus` to request specific GPU capabilities (memory, compute capability).
-- CHTC GPUs (A100, H100, H200) are free to use — the same hardware costs $1–$5+/hr on cloud platforms.
+- CHTC GPUs (A100, H100, H200) are free to UW-Madison researchers.
 - Always test on CPU first for debugging, then switch to GPU for production training.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::

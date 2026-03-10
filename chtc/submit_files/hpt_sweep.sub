@@ -3,11 +3,11 @@
 # Each row in params.csv defines one trial: learning_rate, patience, min_delta.
 # HTCondor launches one job per row — all trials run in parallel.
 #
-# This is the CHTC equivalent of Vertex AI's HyperparameterTuningJob, but:
-# - No per-trial cost ($0 vs ~$0.02/trial on Vertex AI)
-# - No limit on number of trials
-# - Simpler configuration (CSV + submit file vs Python SDK)
-# - Grid/random search (no built-in Bayesian optimization)
+# Advantages of this approach:
+# - No per-trial cost ($0)
+# - No limit on number of parallel trials
+# - Simple configuration (CSV + submit file)
+# - Grid or random search (define your own parameter space)
 
 universe     = vanilla
 executable   = ../scripts/run_nn.sh

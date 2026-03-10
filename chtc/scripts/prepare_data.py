@@ -2,9 +2,8 @@
 """
 prepare_data.py — Prepare Titanic CSV data into train/val .npz files for PyTorch training.
 
-This script performs the same preprocessing as the GCP workshop notebooks,
-but as a standalone script suitable for running on the submit node or as
-an HTCondor job.
+Preprocesses the Titanic CSV and splits into train/val sets saved as .npz files.
+Can be run on the submit node or as an HTCondor job.
 """
 
 import argparse

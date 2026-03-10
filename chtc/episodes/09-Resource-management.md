@@ -26,12 +26,12 @@ Unlike cloud platforms where bad resource management costs you money, CHTC's cos
 
 ### No billing risk, but good citizenship matters
 
-| GCP Risk | CHTC Equivalent |
+| What can go wrong | Impact |
 |----------|----------------|
-| Surprise bill from forgotten resources | No bill, but wasted resources slow other users |
-| Over-provisioned VM costs extra per hour | Over-requested CPUs/memory/GPUs sit idle on the worker |
-| Quota exceeded → jobs can't start | Low fair-share priority → jobs wait longer in queue |
-| Forgotten storage incurs monthly charges | `/scratch` auto-purges, but `/staging` and `/home` fill up |
+| Over-requesting CPUs/memory/GPUs | Resources sit idle, unavailable to other users |
+| Running too many jobs at once | Your fair-share priority drops, future jobs wait longer |
+| Not cleaning up old files | `/home` and `/staging` fill up, blocking new work |
+| Under-requesting resources | Jobs get held or evicted mid-run |
 
 ## Fair-share priority
 
@@ -47,7 +47,7 @@ condor_userprio -all
 
 A **lower number = higher priority**. New users start with priority 0.5. Running many jobs increases your number (lowers priority), but it recovers over time as you use fewer resources.
 
-This is very different from cloud: on GCP, priority is determined by your budget. On CHTC, it's determined by fair use.
+Priority recovers over time as you use fewer resources — it's a temporary adjustment, not a permanent penalty.
 
 ## Diagnosing common job failures
 

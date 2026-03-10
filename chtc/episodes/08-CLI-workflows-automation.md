@@ -8,7 +8,7 @@ exercises: 10
 
 - How do I chain multiple jobs into a multi-step workflow on CHTC?
 - What is DAGMan and when should I use it?
-- How do CHTC CLI commands compare to GCP's `gcloud` CLI?
+- How can I automate and reproduce my experiments?
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -16,17 +16,11 @@ exercises: 10
 
 - Write a DAGMan file to chain dependent jobs (data prep → train → evaluate).
 - Use advanced HTCondor monitoring commands.
-- Compare CHTC and GCP CLI workflows side by side.
+- Set up automation patterns for reproducible experiments.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-## CLI is the primary interface
-
-In the GCP workshop, [Episode 8](https://qualiamachine.github.io/Intro_GCP_for_ML/) introduces the `gcloud` CLI as an alternative to the web console. On CHTC, **the CLI is the only interface** — everything you've done in this workshop has been via SSH and command-line tools.
-
-This episode covers more advanced patterns: multi-step workflows with DAGMan, monitoring strategies, and automation.
-
-## DAGMan: multi-step workflows
+## Beyond single jobs
 
 So far, each episode has submitted individual jobs. Real ML workflows often have dependencies:
 
@@ -34,7 +28,11 @@ So far, each episode has submitted individual jobs. Real ML workflows often have
 2. **Model training** → reads `.npz`, produces `model.pt`
 3. **Model evaluation** → reads `model.pt`, produces `evaluation.json`
 
-You could submit these manually one after another, but **DAGMan** (Directed Acyclic Graph Manager) automates the sequencing. Create a `.dag` file:
+You could submit these manually one after another, but **DAGMan** (Directed Acyclic Graph Manager) automates the sequencing.
+
+## DAGMan: multi-step workflows
+
+Create a `.dag` file that defines jobs and their dependencies:
 
 ```
 # workflow.dag — data prep → train → evaluate
@@ -105,18 +103,19 @@ condor_status -compact -constraint 'TotalGpus > 0'
 condor_userprio -all
 ```
 
-## CHTC vs. GCP CLI comparison
+## HTCondor command quick reference
 
-| Task | GCP (`gcloud`) | CHTC (HTCondor) |
-|------|---------------|-----------------|
-| Submit a job | `gcloud ai custom-jobs create --config=job.yaml` | `condor_submit job.sub` |
-| List running jobs | `gcloud ai custom-jobs list --filter=state=RUNNING` | `condor_q` |
-| Check job details | `gcloud ai custom-jobs describe JOB_ID` | `condor_q -l <cluster_id>` |
-| Cancel a job | `gcloud ai custom-jobs cancel JOB_ID` | `condor_rm <cluster_id>` |
-| List storage | `gcloud storage ls gs://bucket/` | `ls /staging/$USER/` |
-| Copy data | `gcloud storage cp local gs://bucket/` | `cp local /staging/$USER/` |
-| Check GPU machines | `gcloud compute accelerator-types list` | `condor_status -compact -constraint 'TotalGpus > 0'` |
-| Multi-step workflow | Cloud Build YAML or Vertex Pipelines | `condor_submit_dag workflow.dag` |
+| Task | Command |
+|------|---------|
+| Submit a job | `condor_submit job.sub` |
+| Submit a DAG workflow | `condor_submit_dag workflow.dag` |
+| List your jobs | `condor_q` |
+| Check job details | `condor_q -l <cluster_id>` |
+| Cancel a job | `condor_rm <cluster_id>` |
+| Cancel all your jobs | `condor_rm $USER` |
+| List storage | `ls /staging/$USER/` |
+| Copy data to staging | `cp local_file /staging/$USER/` |
+| Check GPU machines | `condor_status -compact -constraint 'TotalGpus > 0'` |
 
 ## Automation patterns
 
@@ -183,27 +182,38 @@ After completion, you should have:
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
-### Challenge 2: Command translation
+### Challenge 2: Automate a full experiment
 
-Translate this GCP workflow to CHTC commands:
-
-```bash
-# GCP version
-gcloud ai custom-jobs create --config=train_config.yaml --region=us-central1
-gcloud ai custom-jobs list --filter=state=RUNNING
-gcloud ai custom-jobs describe JOB_123
-```
+Write a shell script that:
+1. Generates 20 random hyperparameter combinations
+2. Prepares the data
+3. Submits the HP sweep
+4. Prints monitoring instructions
 
 :::::::::::::::: solution
 
 ```bash
-# CHTC equivalent
-condor_submit train_nn_gpu.sub
-condor_q
-condor_q -l <cluster_id>
-```
+#!/bin/bash
+# full_experiment.sh
 
-The CHTC commands are shorter and don't require specifying region or authentication — you're already logged into the submit node.
+set -e
+
+echo "Step 1: Generate hyperparameters"
+python3 generate_params.py --output params.csv --mode random --n_trials 20
+
+echo "Step 2: Prepare data"
+python3 prepare_data.py --input titanic_train.csv
+
+echo "Step 3: Create trial directories"
+for i in $(seq 0 19); do mkdir -p trial_$i; done
+
+echo "Step 4: Submit sweep"
+condor_submit hpt_sweep.sub
+
+echo ""
+echo "Done! Monitor with: condor_watch_q"
+echo "After completion: python3 aggregate_results.py --results_dir . --output_csv summary.csv"
+```
 
 :::::::::::::::::::::::::
 
@@ -213,7 +223,7 @@ The CHTC commands are shorter and don't require specifying region or authenticat
 
 - DAGMan chains dependent jobs automatically: define jobs and parent-child relationships in a `.dag` file.
 - Use `condor_watch_q` for live monitoring, `condor_q -better-analyze` for debugging idle jobs.
-- CHTC CLI commands are simpler than `gcloud` equivalents — no region, project, or auth flags needed.
-- Version control your experiments on the submit node with `git` for reproducibility.
+- Shell scripts and version control help make experiments reproducible.
+- HTCondor commands are simple and don't require region, project, or auth configuration.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::

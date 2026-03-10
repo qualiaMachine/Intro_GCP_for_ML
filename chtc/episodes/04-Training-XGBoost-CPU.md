@@ -8,7 +8,7 @@ exercises: 15
 
 - How do I run an XGBoost training job on CHTC using containers?
 - How do I set up a submit file for a real ML training workflow?
-- How does CHTC training compare to the GCP Vertex AI approach?
+- How do I retrieve model artifacts after training completes?
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -22,15 +22,14 @@ exercises: 15
 
 ## Overview
 
-In the [GCP version](https://qualiamachine.github.io/Intro_GCP_for_ML/) of this workshop, you train an XGBoost model by submitting a `CustomTrainingJob` to Vertex AI with a few SDK calls. On CHTC, the workflow is similar in spirit but uses HTCondor:
+In this episode, you'll train an XGBoost model on the Titanic dataset by submitting a training job to CHTC's HTCondor pool. The workflow:
 
-| GCP (Vertex AI) | CHTC (HTCondor) |
-|---|---|
-| `CustomTrainingJob(script="train_xgboost.py", container_uri="xgboost-cpu")` | `submit_files/train_xgboost.sub` with `container_image = docker://...` |
-| `job.run(args=[...], machine_type="n1-standard-4")` | `condor_submit train_xgboost.sub` with `request_cpus`, `request_memory` |
-| Model saved to `gs://bucket/model/` | Model saved to current directory, transferred back by HTCondor |
+1. Write a Python training script that reads a CSV and saves a model
+2. Test it quickly on the submit node
+3. Write a submit file specifying the container, resources, and files
+4. Submit the job, monitor it, and retrieve the trained model
 
-The key insight: **your training script is almost identical.** The main difference is that CHTC uses local file I/O (HTCondor handles file transfer), so the GCS helper code isn't needed.
+Because HTCondor handles file transfer, your training script uses plain local file I/O — just `pd.read_csv()` and `joblib.dump()`. No special infrastructure code needed.
 
 ## The training script
 
@@ -38,7 +37,7 @@ Here's the CHTC version of `train_xgboost.py` — a simplified version with clou
 
 ```python
 #!/usr/bin/env python3
-"""train_xgboost.py — CHTC version (no GCS, no Vertex AI)."""
+"""train_xgboost.py — Train XGBoost on Titanic data."""
 
 import argparse
 import os
@@ -98,7 +97,7 @@ if __name__ == "__main__":
     print(f"Model saved to {output_path}")
 ```
 
-Compare this to the GCP version: no `google.cloud.storage` imports, no `_is_gcs()` helpers, no `AIP_MODEL_DIR` environment variable. Just plain `pd.read_csv()` and `joblib.dump()`.
+The script is straightforward: plain `pd.read_csv()` and `joblib.dump()`. No cloud SDKs or special infrastructure code — HTCondor transfers files to and from the worker automatically.
 
 ## Test locally first
 
@@ -215,23 +214,19 @@ ls -la xgboost-model # The saved model artifact
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
-### Challenge 1: Review the script differences
+### Challenge 1: Understand the script
 
-Compare `chtc/scripts/train_xgboost.py` with the GCP version at `scripts/train_xgboost.py`. What was removed and why?
+Review `train_xgboost.py`. Identify:
+
+1. Where does the training data come from?
+2. Where does the trained model get saved?
+3. How does HTCondor get the data to the worker and the model back?
 
 :::::::::::::::: solution
 
-Removed from the CHTC version:
-- `google.cloud.storage` import and `_HAS_GCS` flag
-- `_is_gcs()`, `_gcs_client()`, `read_csv_any()`, `save_model_any()` helper functions
-- `AIP_MODEL_DIR` environment variable check
-
-Why: On CHTC, HTCondor handles file transfer. Your script reads and writes local files in the job's working directory. No cloud storage SDK is needed.
-
-Replaced with:
-- `--output_dir` argument (default `.`) instead of `AIP_MODEL_DIR`
-- Plain `pd.read_csv()` instead of `read_csv_any()`
-- Plain `joblib.dump()` instead of `save_model_any()`
+1. The data comes from a local CSV file (`--train titanic_train.csv`). HTCondor copies it to the worker via `transfer_input_files`.
+2. The model is saved to the current working directory (`.`) as `xgboost-model` using `joblib.dump()`.
+3. `transfer_input_files` sends the CSV to the worker before the job starts. `transfer_output_files` brings the model back to the submit node after the job completes. The script itself has no file transfer logic — it just reads and writes local files.
 
 :::::::::::::::::::::::::
 
@@ -267,7 +262,7 @@ Check validation accuracy in each `.out` file. The best configuration depends on
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
-- CHTC training scripts use plain local file I/O — HTCondor handles file transfer, so no cloud SDK code is needed.
+- Training scripts use plain local file I/O — HTCondor handles file transfer automatically.
 - Always test your script locally on the submit node (with minimal settings) before submitting to HTCondor.
 - Containers provide reproducible environments: use Docker Hub images or build custom Apptainer `.sif` files.
 - The submit file specifies resources, files, container, and arguments — then `condor_submit` launches the job.

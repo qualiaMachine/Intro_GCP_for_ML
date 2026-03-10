@@ -2,9 +2,8 @@
 """
 embed_corpus.py — Embed PDF text chunks using sentence-transformers.
 
-This is the CHTC equivalent of the GCP workshop's Gemini embedding API calls.
-Instead of calling a cloud API, we run a local open-source model
-(sentence-transformers/all-MiniLM-L6-v2) that works without internet access.
+Uses a local open-source model (sentence-transformers/all-MiniLM-L6-v2) to
+embed document chunks. Works without internet access on CHTC workers.
 
 Usage:
     python3 embed_corpus.py --input document.pdf --output embeddings.npz

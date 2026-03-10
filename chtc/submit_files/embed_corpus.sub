@@ -1,7 +1,7 @@
 # embed_corpus.sub — Batch embedding job for RAG pipeline
 #
 # Embeds PDF/text chunks using sentence-transformers (no internet needed).
-# This is the CHTC equivalent of calling the Gemini embedding API.
+# Uses a local model — no API keys or cloud services required.
 
 universe     = vanilla
 executable   = ../scripts/embed_corpus.py

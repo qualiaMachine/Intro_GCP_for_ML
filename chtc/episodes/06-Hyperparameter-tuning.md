@@ -7,7 +7,7 @@ exercises: 15
 ::::::::::::::::::::::::::::::::::::: questions
 
 - How do I run a hyperparameter sweep on CHTC?
-- How does HTCondor's `queue from` syntax compare to Vertex AI's HyperparameterTuningJob?
+- What is HTCondor's `queue from` syntax and how does it enable parallel sweeps?
 - How do I collect and analyze results from parallel trials?
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
@@ -22,18 +22,16 @@ exercises: 15
 
 ## Why CHTC excels at hyperparameter tuning
 
-This is where CHTC genuinely shines compared to cloud platforms. Hyperparameter tuning is *embarrassingly parallel* — each trial is completely independent. HTCondor is purpose-built for this pattern.
+Hyperparameter tuning is *embarrassingly parallel* — each trial is completely independent. HTCondor is purpose-built for this pattern: define your parameter grid in a CSV file, and `queue from` launches one job per row. All trials run in parallel, and every trial is free.
 
-| Feature | Vertex AI HP Tuning | CHTC HP Tuning |
-|---------|-------------------|----------------|
-| **Cost per trial** | ~$0.02 (CPU) to $0.35+ (GPU) | **$0** |
-| **Max parallel trials** | Limited by quota | Hundreds+ (pool capacity) |
-| **Search strategy** | Bayesian, grid, random | Grid, random (you write the CSV) |
-| **Configuration** | Python SDK + metric spec | CSV file + submit file |
-| **12 trials on CPU** | ~$0.19 | **$0** |
-| **100 trials on CPU** | ~$1.60 | **$0** |
+| Feature | CHTC HP Tuning |
+|---------|----------------|
+| **Cost per trial** | **$0** |
+| **Max parallel trials** | Hundreds+ (pool capacity) |
+| **Search strategy** | Grid or random (you define the CSV) |
+| **Configuration** | CSV file + submit file |
 
-The tradeoff: Vertex AI offers built-in Bayesian optimization (smarter trial selection). CHTC uses brute-force grid or random search. But with free compute, you can run **far more trials** than you could afford on cloud — and more trials often compensates for less-efficient search.
+Cloud platforms offer managed HP tuning services with Bayesian optimization (smarter trial selection), but they charge per trial and limit parallelism. On CHTC, you can run **far more trials** for free — and more trials often compensates for less-efficient search strategies.
 
 ## Step 1: Generate parameter combinations
 
@@ -164,7 +162,7 @@ python3 generate_params.py --output params.csv --mode random --n_trials 100
 condor_submit hpt_sweep.sub
 ```
 
-On Vertex AI, 100 CPU trials would cost ~$1.60. On CHTC, it costs $0.
+On commercial cloud platforms, 100 CPU trials might cost $1–$2. On CHTC, it costs $0.
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
@@ -224,11 +222,11 @@ If the pool has capacity, 50 trials may complete in roughly the same wall-clock 
 
 ### Challenge 3: Cost comparison
 
-Estimate the cost of running 100 GPU trials on Vertex AI using `n1-standard-4` + T4 GPU at ~$0.35/hr, assuming each trial takes 5 minutes. Compare to CHTC.
+Estimate the cost of running 100 GPU trials on a commercial cloud platform using a T4 GPU at ~$0.35/hr, assuming each trial takes 5 minutes. Compare to CHTC.
 
 :::::::::::::::: solution
 
-- **Vertex AI:** 100 trials × 5 min × ($0.35/60 min) ≈ **$2.92**
+- **Commercial cloud:** 100 trials × 5 min × ($0.35/60 min) ≈ **$2.92**
 - **CHTC:** 100 trials × $0 = **$0.00**
 
 For a one-time experiment the cloud cost is modest, but for iterative experimentation (running sweeps daily as you develop your model), the savings compound quickly.
@@ -242,6 +240,6 @@ For a one-time experiment the cloud cost is modest, but for iterative experiment
 - HTCondor's `queue from params.csv` syntax makes hyperparameter sweeps trivial — one job per CSV row, all in parallel.
 - Each trial writes `metrics.json`; an aggregation script collects results and finds the best configuration.
 - CHTC sweeps are free and unlimited — scale from 12 to 1000+ trials without cost or quota concerns.
-- The tradeoff vs. Vertex AI: no built-in Bayesian optimization, but unlimited free trials often compensates.
+- No built-in Bayesian optimization, but unlimited free trials often compensates for simpler search strategies.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::

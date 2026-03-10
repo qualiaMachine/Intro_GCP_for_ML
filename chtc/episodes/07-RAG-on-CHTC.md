@@ -6,8 +6,8 @@ exercises: 15
 
 ::::::::::::::::::::::::::::::::::::: questions
 
-- How can I build a RAG pipeline without cloud APIs?
-- What open-source models can replace Gemini for embeddings and generation?
+- How can I build a RAG pipeline using open-source models on CHTC?
+- What models work for embeddings and generation without internet access?
 - How do I run embedding jobs on CHTC and LLM generation interactively?
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
@@ -20,20 +20,17 @@ exercises: 15
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-## RAG without cloud APIs
+## RAG with open-source models
 
-In the [GCP version](https://qualiamachine.github.io/Intro_GCP_for_ML/) of this workshop, the RAG (Retrieval-Augmented Generation) pipeline uses Google's **Gemini API** for both embedding and generation. This requires internet access and API keys.
+Retrieval-Augmented Generation (RAG) is a pattern for grounding LLM answers in your own documents. Many RAG tutorials use cloud APIs (OpenAI, Gemini) for embedding and generation. On CHTC, worker machines typically **do not have internet access**, so we use **open-source models** that run entirely locally:
 
-CHTC worker machines typically **do not have internet access**, so we use **open-source models** instead:
-
-| RAG Component | GCP Approach | CHTC Approach |
+| RAG Component | What we use | Why |
 |---|---|---|
-| **Embeddings** | Gemini `text-embedding-004` API | `sentence-transformers/all-MiniLM-L6-v2` (local, no API) |
-| **Generation** | Gemini `gemini-1.5-flash` API | Local LLM (Gemma-2B, Mistral-7B) via HuggingFace |
-| **Execution** | Runs on Workbench notebook | Embedding as batch job; generation in interactive GPU session |
-| **Internet needed?** | Yes (API calls) | No (all models run locally) |
+| **Embeddings** | `sentence-transformers/all-MiniLM-L6-v2` | Small (~80 MB), CPU-friendly, no API key needed |
+| **Generation** | `google/gemma-2b-it` or `mistralai/Mistral-7B-Instruct` | Runs on CHTC GPUs, no internet required |
+| **Execution** | Embedding as batch job; generation in interactive GPU session | Separates compute-heavy and interactive steps |
 
-This approach actually teaches something the GCP version doesn't — running open-source LLMs on local hardware, a valuable skill for research computing.
+Running open-source LLMs on local hardware is a valuable skill — and CHTC's free GPUs make it accessible.
 
 ## The RAG pipeline
 
@@ -171,9 +168,9 @@ python3 rag_query.py --embeddings embeddings.npz --model google/gemma-2b-it
 # Enters interactive mode — type questions, get answers grounded in your document
 ```
 
-## Comparison with GCP approach
+## Why separate embedding and generation?
 
-The GCP RAG pipeline runs entirely in a notebook with API calls. The CHTC approach separates the pipeline:
+Many RAG tutorials run the entire pipeline in one script. Our CHTC approach separates it:
 
 - **Embedding** → batch job (efficient, scales to large corpora)
 - **Generation** → interactive session (see results immediately)
@@ -237,7 +234,7 @@ The retrieval step uses cosine similarity between the query embedding and all ch
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
-- CHTC workers lack internet access, so cloud APIs (Gemini) are replaced with open-source models.
+- CHTC workers lack internet access, so we use open-source models that run entirely locally.
 - `sentence-transformers/all-MiniLM-L6-v2` provides high-quality embeddings locally without an API key.
 - The embedding step runs efficiently as a batch HTCondor job; generation uses an interactive GPU session.
 - This approach teaches a complementary skill: running open-source LLMs on local hardware, which is valuable beyond this workshop.
