@@ -39,6 +39,9 @@ when_to_transfer_output = ON_EXIT
 # Also transfer checkpoint files when evicted (belt + suspenders)
 transfer_checkpoint_files = checkpoint.pt
 
+# Opt in to backfill GPUs (more GPUs available, but can be preempted)
++is_resumable = true
+
 container_image = docker://pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime
 
 arguments = --epochs 10000 --learning_rate 0.0005 --patience 50

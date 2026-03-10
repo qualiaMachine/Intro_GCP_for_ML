@@ -95,21 +95,25 @@ grep "Memory (MB)" <job>.log
 
 ### Wall-time limits and eviction
 
-CHTC jobs can be interrupted for two reasons:
+All CHTC jobs have a **72-hour default runtime limit**. GPU jobs have additional constraints:
 
-1. **Runtime limits** — GPU slots enforce time limits:
-   - **12 hours (short):** default for GPU jobs
-   - **24 hours (medium):** request with `+WantMediumGpuJobs = true`
-   - **7 days (long):** request with `+WantLongGpuJobs = true`
+| GPU tier | Time limit | Submit file directive |
+|----------|-----------|----------------------|
+| GPU Lab (shared) | **4 hours** (interactive) | Interactive sessions only |
+| CHTC-owned GPUs | **72 hours** | (default) |
+| Research group backfill GPUs | **No guarantee** | `+is_resumable = true` |
+| Longer GPU slots | **24 hours** | `+WantMediumGpuJobs = true` |
+| Longest GPU slots | **7 days** | `+WantLongGpuJobs = true` |
 
-2. **Eviction** — HTCondor may preempt your job if a higher-priority user needs the machine.
+**Backfill GPUs** are GPUs owned by specific research groups. Your job can run on them when the group isn't using them, but it can be **preempted at any time** when the owning group reclaims the resource. To opt in:
 
-Add to your submit file to request a longer time slot:
 ```
-+WantMediumGpuJobs = true
++is_resumable = true
 ```
 
-But even with longer time slots, **your job can still be evicted**. This is where checkpointing becomes essential.
+This gets you access to more GPUs but with no runtime guarantees — making checkpointing essential.
+
+Even on CHTC-owned hardware, jobs can be evicted if the machine needs maintenance or a higher-priority user needs resources. **Any job that runs for more than a few hours should implement checkpointing.**
 
 ## Checkpointing for long-running jobs
 
@@ -189,6 +193,9 @@ when_to_transfer_output = ON_EXIT
 # Also save checkpoint files if evicted mid-run
 transfer_checkpoint_files = checkpoint.pt
 
+# Opt in to backfill GPUs (more GPUs available, but can be preempted)
++is_resumable = true
+
 container_image = docker://pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime
 
 arguments = --epochs 10000 --learning_rate 0.0005 --patience 50
@@ -203,6 +210,7 @@ queue 1
 | `checkpoint_exit_code = 85` | Tells HTCondor that exit code 85 means "checkpoint taken, restart job" |
 | `when_to_transfer_output = ON_EXIT` | Only transfer final outputs on normal completion (exit 0) |
 | `transfer_checkpoint_files = checkpoint.pt` | Also save checkpoint if job is evicted (not just on voluntary exit) |
+| `+is_resumable = true` | Opt in to backfill GPUs — more capacity, but preemption possible |
 
 ### What happens at each stage
 
@@ -210,6 +218,28 @@ queue 1
 2. **Restart:** HTCondor transfers `checkpoint.pt` to new machine → script resumes from saved epoch. Trains for another hour, saves checkpoint, exits 85.
 3. **Repeat** until training finishes (early stop or max epochs).
 4. **Final run:** Training completes → script removes `checkpoint.pt`, saves final `model.pt` and `metrics.json`, exits 0.
+
+::::::::::::::::::::::::::::::::::::: callout
+
+### Wrapper-based timeout fallback
+
+If your training script doesn't have built-in checkpoint timing (unlike our `train_nn.py`), you can use a shell wrapper with `timeout`:
+
+```bash
+#!/bin/bash
+# Timeout after 4 hours, leaving time for checkpoint transfer
+timeout 4h python3 train.py "$@"
+status=$?
+if [ $status -eq 124 ]; then
+    # timeout killed the process — checkpoint should exist from periodic saves
+    exit 85
+fi
+exit $status
+```
+
+The `timeout` command sends SIGTERM after the specified duration (4h). Your Python script should catch SIGTERM and save a checkpoint before exiting. This approach works for any training script, not just ours.
+
+::::::::::::::::::::::::::::::::::::::::::::::::
 
 ### When you need checkpointing
 
