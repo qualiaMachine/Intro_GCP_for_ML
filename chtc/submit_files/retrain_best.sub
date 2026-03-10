@@ -1,0 +1,23 @@
+# retrain_best.sub — Retrain best model on train+val, evaluate on held-out test set
+#
+# Run this after the HP sweep and aggregation steps.
+# Reads best_config.json to get the winning hyperparameters,
+# trains on combined train+val data, and evaluates on the test set.
+
+universe     = vanilla
+executable   = ../scripts/run_retrain.sh
+
+log          = retrain_$(Cluster).log
+output       = retrain_$(Cluster).out
+error        = retrain_$(Cluster).err
+
+request_cpus   = 1
+request_memory = 2GB
+request_disk   = 2GB
+
+transfer_input_files = ../scripts/retrain_best.py, ../scripts/train_nn.py, ../scripts/run_retrain.sh, best_config.json, train_data.npz, val_data.npz, test_data.npz
+transfer_output_files = model.pt, metrics.json, eval_history.csv
+
+container_image = docker://pytorch/pytorch:2.4.0-cuda12.1-cudnn9-runtime
+
+queue 1

@@ -35,11 +35,10 @@ def main():
                         help="Output evaluation results")
     args = parser.parse_args()
 
-    # Load data
+    # Load data — handle train, val, or test key names
     data = np.load(args.data)
-    # Handle both train and val key names
-    X = data.get("X_val", data.get("X_train")).astype("float32")
-    y = data.get("y_val", data.get("y_train")).astype("float32")
+    X = data.get("X_test", data.get("X_val", data.get("X_train"))).astype("float32")
+    y = data.get("y_test", data.get("y_val", data.get("y_train"))).astype("float32")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

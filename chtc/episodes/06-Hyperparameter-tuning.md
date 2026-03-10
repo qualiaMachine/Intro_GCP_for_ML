@@ -1,6 +1,6 @@
 ---
 title: "Hyperparameter Tuning with HTCondor"
-teaching: 20
+teaching: 25
 exercises: 15
 ---
 
@@ -8,7 +8,8 @@ exercises: 15
 
 - How do I run a hyperparameter sweep on CHTC?
 - What is HTCondor's `queue from` syntax and how does it enable parallel sweeps?
-- How do I collect and analyze results from parallel trials?
+- How do I properly evaluate models using train/val/test splits?
+- How do I retrain the best model and get a final unbiased performance estimate?
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -17,6 +18,7 @@ exercises: 15
 - Use HTCondor's `queue from` syntax to launch parallel hyperparameter trials.
 - Generate parameter combinations using a script or manual CSV.
 - Aggregate trial results and identify the best configuration.
+- Retrain the best model on combined train+val data and evaluate on a held-out test set.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -33,7 +35,46 @@ Hyperparameter tuning is *embarrassingly parallel* — each trial is completely 
 
 Cloud platforms offer managed HP tuning services with Bayesian optimization (smarter trial selection), but they charge per trial and limit parallelism. On CHTC, you can run **far more trials** for free — and more trials often compensates for less-efficient search strategies.
 
-## Step 1: Generate parameter combinations
+## The proper ML workflow
+
+Before diving into the mechanics, let's establish the correct methodology. A common mistake is tuning hyperparameters on a validation set and then reporting that same validation accuracy as your final result. This is **optimistic** — you've already selected the model that performed best on that data.
+
+The proper workflow uses **three splits**:
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                    Full Dataset (891 rows)                │
+│                                                          │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
+│  │   Training    │  │  Validation   │  │     Test     │   │
+│  │   60% (534)   │  │  20% (178)    │  │  20% (179)   │   │
+│  │              │  │              │  │              │   │
+│  │  Fit model   │  │  Early stop  │  │  Final eval  │   │
+│  │  weights     │  │  + HP select │  │  (touch once)│   │
+│  └──────────────┘  └──────────────┘  └──────────────┘   │
+└──────────────────────────────────────────────────────────┘
+```
+
+| Split | Purpose | When used |
+|-------|---------|-----------|
+| **Train** (60%) | Fit model weights (gradient updates) | Every epoch of every trial |
+| **Validation** (20%) | Early stopping + hyperparameter selection | End of each epoch; used to pick best trial |
+| **Test** (20%) | Final unbiased performance estimate | Once, at the very end |
+
+**Key rule:** Never use the test set to make decisions. It exists only to give you an honest estimate of how your model will perform on unseen data.
+
+## Step 1: Prepare train/val/test splits
+
+```bash
+python3 prepare_data.py --input titanic_train.csv --val_size 0.2 --test_size 0.2
+```
+
+This produces three files:
+- `train_data.npz` — 60% of the data (for model fitting)
+- `val_data.npz` — 20% (for early stopping and HP selection)
+- `test_data.npz` — 20% (held out until the final step)
+
+## Step 2: Generate parameter combinations
 
 Create a CSV where each row defines one trial's hyperparameters:
 
@@ -59,7 +100,7 @@ Each row: `learning_rate, patience, min_delta`. The grid search produces 24 comb
 python3 generate_params.py --output params.csv --mode random --n_trials 50
 ```
 
-## Step 2: The sweep submit file
+## Step 3: The sweep submit file
 
 This is the key file — it uses HTCondor's `queue from` syntax:
 
@@ -96,7 +137,9 @@ queue learning_rate, patience, min_delta from params.csv
 4. `$(Process)` is 0, 1, 2, ... for each row, creating separate output directories.
 5. All trials are submitted as a single job cluster and run in parallel.
 
-## Step 3: Submit the sweep
+Notice that only `train_data.npz` and `val_data.npz` are transferred — the test set is **not** available to any sweep trial.
+
+## Step 4: Submit the sweep
 
 ```bash
 # Create output directories for each trial
@@ -125,12 +168,12 @@ condor_watch_q
 condor_q -batch
 ```
 
-## Step 4: Aggregate results
+## Step 5: Aggregate results and select the best
 
-After all trials complete, each `trial_N/` directory contains a `metrics.json` file. The aggregation script collects them:
+After all trials complete, each `trial_N/` directory contains a `metrics.json` file. The aggregation script collects them and saves the best configuration:
 
 ```bash
-python3 aggregate_results.py --results_dir . --output_csv hp_summary.csv
+python3 aggregate_results.py --results_dir . --output_csv hp_summary.csv --output_best best_config.json
 ```
 
 Output:
@@ -148,7 +191,81 @@ Output:
   Min delta:     0.001
   Val loss:      0.421234
   Val accuracy:  0.815642
+
+Best config saved to: best_config.json
 ```
+
+The `best_config.json` file captures the winning hyperparameters for the next step.
+
+::::::::::::::::::::::::::::::::::::: callout
+
+### Validation accuracy is not your final result
+
+At this point you might be tempted to report 81.6% accuracy and call it done. But this number is **optimistically biased**: you selected this configuration *because* it had the best validation score out of 24 trials. The more trials you run, the more likely you are to find one that got lucky on the validation set.
+
+The test set gives you an honest, unbiased estimate of real-world performance.
+
+::::::::::::::::::::::::::::::::::::::::::::::::
+
+## Step 6: Retrain on train+val and evaluate on test
+
+Now that you've selected the best hyperparameters, you want to:
+
+1. **Retrain** using the winning configuration on the **combined train+val data** — this gives the model more training examples, which typically improves performance.
+2. **Evaluate** on the **held-out test set** — this gives you an unbiased performance estimate.
+
+The `retrain_best.py` script handles both steps:
+
+```bash
+# Run locally on the submit node (quick for Titanic-sized data)
+python3 retrain_best.py --config best_config.json
+
+# Or submit as an HTCondor job
+condor_submit retrain_best.sub
+```
+
+What `retrain_best.py` does:
+1. Reads `best_config.json` to get the winning hyperparameters.
+2. Calls `train_nn.py` with `--combine_train_val` — this concatenates train+val into one training set (giving the model ~80% of the data instead of 60%).
+3. Trains for `best_epoch × 1.2` epochs (slightly more than the sweep, since there's more training data).
+4. Passes `--test test_data.npz` — after training, the script evaluates on the held-out test set.
+
+Output:
+
+```
+=== Retraining with Best Configuration ===
+  Learning rate: 0.001
+  Patience:      20
+  Min delta:     0.001
+  Best epoch:    87
+  Retrain epochs: 104 (best_epoch=87 × 1.2)
+
+[INFO] Combining train + val data for final retraining
+[INFO] Combined training set: 712 rows
+Using device: cpu
+...
+validation_accuracy: 0.820225
+validation_loss: 0.418234
+
+test_loss: 0.435123
+test_accuracy: 0.804469
+```
+
+The **test accuracy** (80.4%) is your final, honest performance number. Notice it's slightly lower than the validation accuracy — this is normal and expected. If the gap were very large, it would suggest overfitting to the validation set.
+
+## The complete workflow summary
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. prepare_data.py         → train.npz, val.npz, test.npz  │
+│ 2. generate_params.py      → params.csv                    │
+│ 3. condor_submit sweep.sub → trial_0/ trial_1/ ... trial_N/│
+│ 4. aggregate_results.py    → hp_summary.csv, best_config   │
+│ 5. retrain_best.py         → final model.pt + test metrics │
+└─────────────────────────────────────────────────────────────┘
+```
+
+In Episode 8 (CLI Workflows), we'll automate this entire pipeline as a single DAGMan workflow.
 
 ## Scaling up
 
@@ -166,31 +283,37 @@ On commercial cloud platforms, 100 CPU trials might cost $1–$2. On CHTC, it co
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
-### Challenge 1: Run a sweep
+### Challenge 1: Run the full workflow
 
-1. Generate a grid of 12 parameter combinations using `generate_params.py`.
-2. Prepare the `.npz` data files (if not done already).
-3. Submit the sweep with `condor_submit hpt_sweep.sub`.
-4. Watch the jobs with `condor_watch_q`.
-5. After completion, run `aggregate_results.py` and identify the best trial.
+1. Prepare data with train/val/test splits.
+2. Generate a grid of 12 parameter combinations.
+3. Submit the sweep.
+4. Aggregate results and identify the best trial.
+5. Retrain the best model on train+val and evaluate on the test set.
 
 :::::::::::::::: solution
 
 ```bash
-# Generate params
+# Step 1: Prepare data
+python3 prepare_data.py --input titanic_train.csv
+
+# Step 2: Generate params
 python3 generate_params.py --output params.csv --mode grid
 
-# Create trial directories
+# Step 3: Submit sweep
 for i in $(seq 0 $(($(wc -l < params.csv) - 1))); do
     mkdir -p trial_$i
 done
-
-# Submit
 condor_submit hpt_sweep.sub
 
-# Wait for completion, then aggregate
-python3 aggregate_results.py --results_dir . --output_csv hp_summary.csv
+# Step 4: After sweep completes, aggregate
+python3 aggregate_results.py --results_dir . --output_csv hp_summary.csv --output_best best_config.json
+
+# Step 5: Retrain best model on train+val, evaluate on test
+python3 retrain_best.py --config best_config.json
 ```
+
+Your final `metrics.json` will contain both `test_loss` and `test_accuracy` — the unbiased performance estimate.
 
 :::::::::::::::::::::::::
 
@@ -203,6 +326,7 @@ python3 aggregate_results.py --results_dir . --output_csv hp_summary.csv
 1. Generate 50 random parameter combinations.
 2. Submit the sweep.
 3. How long did 50 trials take compared to 12? (Check HTCondor logs.)
+4. Did the best configuration change compared to the 12-trial grid?
 
 :::::::::::::::: solution
 
@@ -214,13 +338,31 @@ condor_submit hpt_sweep.sub
 
 If the pool has capacity, 50 trials may complete in roughly the same wall-clock time as 12, because they all run in parallel. The total compute time is 50× one trial, but the wall-clock time depends on parallelism and queue wait times.
 
+With 50 random trials, you're more likely to find a configuration that lands in a good region of the hyperparameter space compared to a 12-point grid.
+
 :::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
-### Challenge 3: Cost comparison
+### Challenge 3: Why not use the test set during the sweep?
+
+A colleague suggests modifying the sweep to evaluate every trial on the test set, so you can pick the trial with the best test accuracy. Why is this a bad idea?
+
+:::::::::::::::: solution
+
+If you select the model with the best **test** accuracy, the test set is no longer independent — it's now a validation set. Your reported "test accuracy" becomes optimistically biased for the same reason the validation accuracy is: you picked the configuration that happened to do best on that specific data.
+
+The whole point of a held-out test set is that it's used **exactly once**, after all decisions have been made. This gives you an honest estimate of how the model will perform on truly unseen data.
+
+:::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::: challenge
+
+### Challenge 4: Cost comparison
 
 Estimate the cost of running 100 GPU trials on a commercial cloud platform using a T4 GPU at ~$0.35/hr, assuming each trial takes 5 minutes. Compare to CHTC.
 
@@ -238,8 +380,9 @@ For a one-time experiment the cloud cost is modest, but for iterative experiment
 ::::::::::::::::::::::::::::::::::::: keypoints
 
 - HTCondor's `queue from params.csv` syntax makes hyperparameter sweeps trivial — one job per CSV row, all in parallel.
-- Each trial writes `metrics.json`; an aggregation script collects results and finds the best configuration.
+- Use train/val/test splits: train for fitting, val for early stopping and HP selection, test for final unbiased evaluation.
+- After selecting the best HP config, retrain on combined train+val data for maximum training signal.
+- The test set should be used exactly once — after all model selection decisions are final.
 - CHTC sweeps are free and unlimited — scale from 12 to 1000+ trials without cost or quota concerns.
-- No built-in Bayesian optimization, but unlimited free trials often compensates for simpler search strategies.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::

@@ -1,0 +1,24 @@
+# aggregate.sub — Collect HP sweep results and identify best configuration
+#
+# Reads metrics.json from each trial directory, produces hp_summary.csv
+# and best_config.json (used by retrain_best.sub).
+
+universe     = vanilla
+executable   = ../scripts/aggregate_results.py
+
+log          = aggregate_$(Cluster).log
+output       = aggregate_$(Cluster).out
+error        = aggregate_$(Cluster).err
+
+request_cpus   = 1
+request_memory = 1GB
+request_disk   = 1GB
+
+transfer_input_files = ../scripts/aggregate_results.py, $(trial_dirs)
+transfer_output_files = hp_summary.csv, best_config.json
+
+container_image = docker://continuumio/miniconda3:latest
+
+arguments = --results_dir . --output_csv hp_summary.csv --output_best best_config.json
+
+queue 1

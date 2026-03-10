@@ -1,0 +1,21 @@
+# hpt_pipeline.dag — Full HP tuning pipeline as a DAGMan workflow
+#
+# Automates the complete workflow from Episode 6:
+#   1. PREP:    Prepare train/val/test splits from raw CSV
+#   2. SWEEP:   Run all HP trials in parallel
+#   3. AGG:     Aggregate results and identify best config
+#   4. RETRAIN: Retrain best model on train+val, evaluate on test
+#
+# Submit with: condor_submit_dag hpt_pipeline.dag
+
+JOB PREP    prep_data.sub
+JOB SWEEP   hpt_sweep.sub
+JOB AGG     aggregate.sub
+JOB RETRAIN retrain_best.sub
+
+PARENT PREP    CHILD SWEEP
+PARENT SWEEP   CHILD AGG
+PARENT AGG     CHILD RETRAIN
+
+RETRY SWEEP   2
+RETRY RETRAIN 1

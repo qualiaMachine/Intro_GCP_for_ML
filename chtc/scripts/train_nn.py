@@ -48,6 +48,8 @@ def main():
     ap = argparse.ArgumentParser(description="Train TitanicNet on .npz data (CHTC version)")
     ap.add_argument("--train", required=True, help="Path to training npz file")
     ap.add_argument("--val", required=True, help="Path to validation npz file")
+    ap.add_argument("--test", type=str, default=None,
+                    help="Path to test npz file (for final evaluation after training)")
     ap.add_argument("--output_dir", type=str, default=".",
                     help="Directory for output artifacts")
     ap.add_argument("--epochs", type=int, default=1000, help="Max number of epochs")
@@ -58,6 +60,8 @@ def main():
                     help="Minimum improvement in val_loss to reset patience")
     ap.add_argument("--restore_best", type=lambda s: s.lower() in {"1", "true", "yes", "y"},
                     default=True, help="Restore best weights before saving (default True)")
+    ap.add_argument("--combine_train_val", action="store_true",
+                    help="Combine train+val data for final retraining (uses fixed epoch count, no early stopping)")
     args = ap.parse_args()
 
     # Output paths
@@ -72,6 +76,14 @@ def main():
     va = np.load(args.val)
     Xtr, ytr = tr["X_train"].astype("float32"), tr["y_train"].astype("float32")
     Xva, yva = va["X_val"].astype("float32"), va["y_val"].astype("float32")
+
+    # For final retraining: combine train+val into one training set
+    if args.combine_train_val:
+        print("[INFO] Combining train + val data for final retraining")
+        Xtr = np.concatenate([Xtr, Xva], axis=0)
+        ytr = np.concatenate([ytr, yva], axis=0)
+        # Val set is still used for monitoring but NOT for early stopping
+        print(f"[INFO] Combined training set: {Xtr.shape[0]} rows")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
@@ -123,7 +135,7 @@ def main():
             print(f"epoch={ep} loss={loss.item():.4f} val_loss={val_loss:.4f} "
                   f"val_acc={val_acc:.4f}", flush=True)
 
-        if epochs_no_improve >= args.patience:
+        if not args.combine_train_val and epochs_no_improve >= args.patience:
             print(f"[EARLY STOP] No improvement in val_loss for {args.patience} "
                   f"epochs (best at epoch {best_epoch}).", flush=True)
             break
@@ -172,6 +184,31 @@ def main():
     csv = "iter,val_loss\n" + "\n".join(f"{i+1},{v}" for i, v in enumerate(hist))
     with open(history_path, "w") as f:
         f.write(csv)
+
+    # Optional: evaluate on held-out test set
+    if args.test:
+        te = np.load(args.test)
+        Xte = te["X_test"].astype("float32")
+        yte = te["y_test"].astype("float32")
+        Xte_t = torch.from_numpy(Xte).to(device)
+        yte_t = torch.from_numpy(yte).view(-1, 1).to(device)
+
+        model.eval()
+        with torch.no_grad():
+            test_pred = model(Xte_t)
+            test_loss = loss_fn(test_pred, yte_t).item()
+            test_acc = accuracy_binary(test_pred, yte_t)
+
+        metrics["test_loss"] = float(test_loss)
+        metrics["test_accuracy"] = float(test_acc)
+        metrics["test_rows"] = int(Xte.shape[0])
+
+        # Re-save metrics with test results
+        with open(metrics_path, "w") as f:
+            json.dump(metrics, f, indent=2)
+
+        print(f"\ntest_loss: {test_loss:.6f}")
+        print(f"test_accuracy: {test_acc:.6f}")
 
     print(f"\nArtifacts written to: {output_dir}")
     print(f"- model:   {model_path}")

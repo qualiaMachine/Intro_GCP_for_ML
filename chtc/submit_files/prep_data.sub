@@ -1,0 +1,24 @@
+# prep_data.sub — Prepare train/val/test .npz files from raw Titanic CSV
+#
+# Splits the dataset into train (60%), val (20%), test (20%).
+# Outputs: train_data.npz, val_data.npz, test_data.npz
+
+universe     = vanilla
+executable   = ../scripts/prepare_data.py
+
+log          = prep_$(Cluster).log
+output       = prep_$(Cluster).out
+error        = prep_$(Cluster).err
+
+request_cpus   = 1
+request_memory = 1GB
+request_disk   = 1GB
+
+transfer_input_files = ../scripts/prepare_data.py, titanic_train.csv
+transfer_output_files = train_data.npz, val_data.npz, test_data.npz
+
+container_image = docker://continuumio/miniconda3:latest
+
+arguments = --input titanic_train.csv
+
+queue 1

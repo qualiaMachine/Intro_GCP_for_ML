@@ -58,20 +58,42 @@ DAGMan handles:
 - Generating a `.dagman.log` file tracking the workflow's progress
 - Creating a rescue DAG if something fails partway through
 
-### DAGMan for hyperparameter sweeps
+### DAGMan for the full HP tuning pipeline
 
-You can also use DAGMan to chain a sweep with post-processing:
+In Episode 6, we ran the HP tuning workflow manually in five steps. DAGMan can automate the entire pipeline:
 
 ```
-# sweep_workflow.dag — sweep → aggregate
+# hpt_pipeline.dag — full HP tuning workflow
+#
+# PREP:    prepare_data.py → train.npz, val.npz, test.npz
+# SWEEP:   hpt_sweep.sub   → trial_0/, trial_1/, ... (parallel)
+# AGG:     aggregate.sub   → hp_summary.csv, best_config.json
+# RETRAIN: retrain.sub     → final model.pt + test metrics
+#
+# Dependency graph:
+#   PREP → SWEEP → AGG → RETRAIN
 
-JOB SWEEP  hpt_sweep.sub
-JOB AGG    aggregate.sub
+JOB PREP    prep_data.sub
+JOB SWEEP   hpt_sweep.sub
+JOB AGG     aggregate.sub
+JOB RETRAIN retrain_best.sub
 
-PARENT SWEEP CHILD AGG
+PARENT PREP    CHILD SWEEP
+PARENT SWEEP   CHILD AGG
+PARENT AGG     CHILD RETRAIN
+
+RETRY SWEEP 2
 ```
 
-Here, `SWEEP` submits all HP tuning trials, and `AGG` runs the aggregation script after every trial completes.
+Submit the entire pipeline with one command:
+
+```bash
+condor_submit_dag hpt_pipeline.dag
+```
+
+DAGMan handles the entire sequence: prepare data, run all sweep trials in parallel, aggregate results to find the best config, then retrain the best model on train+val and evaluate on the test set. If any sweep trial fails, it retries up to 2 times before giving up.
+
+This is the same workflow from Episode 6, but fully automated — no manual intervention between steps.
 
 ## Advanced monitoring
 
@@ -172,7 +194,7 @@ tail -f workflow.dag.dagman.log
 ```
 
 After completion, you should have:
-- `train_data.npz` and `val_data.npz` (from PREP)
+- `train_data.npz`, `val_data.npz`, and `test_data.npz` (from PREP)
 - `model.pt` and `metrics.json` (from TRAIN)
 - `evaluation.json` (from EVAL)
 

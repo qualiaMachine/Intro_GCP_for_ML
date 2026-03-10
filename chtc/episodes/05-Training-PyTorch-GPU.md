@@ -32,13 +32,14 @@ The PyTorch trainer expects `.npz` files (NumPy compressed arrays) rather than r
 ```bash
 cd /home/$USER/workshop/
 
-# Prepare train/val splits as .npz files
-python3 prepare_data.py --input titanic_train.csv --output_train train_data.npz --output_val val_data.npz
+# Prepare train/val/test splits as .npz files
+python3 prepare_data.py --input titanic_train.csv
 ```
 
-This creates two files:
-- `train_data.npz` — training features and labels
-- `val_data.npz` — validation features and labels
+This creates three files:
+- `train_data.npz` — training features and labels (60%)
+- `val_data.npz` — validation features and labels (20%)
+- `test_data.npz` — held-out test set (20%, used in Episode 6)
 
 This is a lightweight operation (the Titanic dataset is small), so running it on the submit node is fine.
 

@@ -24,6 +24,8 @@ def main():
                         help="Directory containing trial_*/metrics.json files")
     parser.add_argument("--output_csv", type=str, default="hp_summary.csv",
                         help="Output summary CSV")
+    parser.add_argument("--output_best", type=str, default="best_config.json",
+                        help="Output best hyperparameters as JSON (for retraining)")
     args = parser.parse_args()
 
     # Find all metrics.json files
@@ -84,6 +86,20 @@ def main():
     print(f"  Val accuracy:  {best.get('final_val_accuracy', 'N/A'):.6f}")
     print(f"  Best epoch:    {best.get('best_epoch', 'N/A')}")
     print(f"  Metrics file:  {best.get('metrics_file', 'N/A')}")
+
+    # Save best config as JSON for retraining
+    best_config = {
+        "learning_rate": float(best["learning_rate"]),
+        "patience": int(best["patience"]),
+        "min_delta": float(best["min_delta"]),
+        "best_epoch": int(best["best_epoch"]),
+        "final_val_loss": float(best["final_val_loss"]),
+        "final_val_accuracy": float(best["final_val_accuracy"]),
+    }
+    with open(args.output_best, "w") as f:
+        json.dump(best_config, f, indent=2)
+    print(f"\nBest config saved to: {args.output_best}")
+    print("Use this to retrain on train+val with: train_nn.py --combine_train_val --test test_data.npz")
 
 
 if __name__ == "__main__":
