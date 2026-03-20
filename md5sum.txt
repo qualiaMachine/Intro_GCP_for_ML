@@ -20,3 +20,4 @@
 "learners/github-pat.md" "bf87620c8b93ac44a432675fc3dfbed7" "site/built/github-pat.md" "2026-03-04"
 "learners/setup.md" "fa6ce48fca1a5265aa3b7a00bd66ec6d" "site/built/setup.md" "2026-03-04"
 "profiles/learner-profiles.md" "5ef1ca0a8d29a12a2dea61f9624684b3" "site/built/learner-profiles.md" "2026-03-02"
+"reviews/episode-01-review.md" "97b6d35814fb3ce5ba56e02db2a29a63" "site/built/episode-01-review.md" "2026-03-20"
