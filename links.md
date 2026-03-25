@@ -4,10 +4,9 @@ any links that you are not going to use.
  -->
 
 [carpentries-workbench]: https://carpentries.github.io/sandpaper-docs/
-[vertex-ai-docs]: https://cloud.google.com/vertex-ai/docs
-[gcs-pricing]: https://cloud.google.com/storage/pricing
-[compute-pricing]: https://cloud.google.com/compute/vm-instance-pricing
-[vertex-training-containers]: https://cloud.google.com/vertex-ai/docs/training/pre-built-containers
-[vertex-model-garden]: https://cloud.google.com/vertex-ai/docs/start/explore-models
-[github-pat-docs]: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
-
+[chtc-home]: https://chtc.cs.wisc.edu/
+[chtc-gpu-lab]: https://chtc.cs.wisc.edu/uw-research-computing/gpu-lab
+[chtc-file-avail]: https://chtc.cs.wisc.edu/uw-research-computing/file-avail-largedata
+[chtc-docker]: https://chtc.cs.wisc.edu/uw-research-computing/docker-jobs
+[htcondor-manual]: https://htcondor.readthedocs.io/en/latest/
+[htcondor-dagman]: https://htcondor.readthedocs.io/en/latest/automated-workflows/index.html

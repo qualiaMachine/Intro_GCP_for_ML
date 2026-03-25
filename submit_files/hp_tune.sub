@@ -1,0 +1,34 @@
+# HTCondor submit file for hyperparameter tuning on CHTC
+# Episode 06: Hyperparameter Tuning with HTCondor
+#
+# This submit file launches one job per line in params.txt.
+# Each line should contain: learning_rate,patience,min_delta
+
+universe = docker
+docker_image = pytorch/pytorch:2.4.0-cuda12.4-cudnn9-runtime
+
+executable = run_nn.sh
+arguments = --train train_data.npz --val val_data.npz --epochs 500 --learning_rate $(lr) --patience $(pat) --min_delta $(delta)
+
+# Transfer input files to the execute node
+transfer_input_files = ../scripts/train_nn.py, run_nn.sh, train_data.npz, val_data.npz
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+# Remap output files to include job identifiers
+transfer_output_remaps = "model.pt = results/model_$(Cluster)_$(Process).pt; metrics.json = results/metrics_$(Cluster)_$(Process).json; eval_history.csv = results/history_$(Cluster)_$(Process).csv"
+
+# Output, error, and log files
+log    = logs/tune_$(Cluster)_$(Process).log
+output = logs/tune_$(Cluster)_$(Process).out
+error  = logs/tune_$(Cluster)_$(Process).err
+
+# Resource requests
+request_cpus   = 1
+request_memory = 4GB
+request_disk   = 2GB
+
+# Submit one job per line in params.txt
+# Format: learning_rate, patience, min_delta
+queue lr,pat,delta from params.txt

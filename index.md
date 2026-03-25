@@ -2,16 +2,16 @@
 site: sandpaper::sandpaper_site
 ---
 
-Already know how to train an ML model in Python but haven't used the cloud? This hands-on workshop gets you running ML/AI workloads on **Google Cloud Platform (GCP)** — no prior cloud experience required. By the end, you'll be able to move a local training workflow into GCP's **Vertex AI** platform and take advantage of cloud-scale hardware and managed services.
+Already know how to train an ML model in Python but haven't used high-throughput computing? This hands-on workshop gets you running ML/AI workloads on the **Center for High Throughput Computing (CHTC)** at UW-Madison — no prior HTC experience required. By the end, you'll be able to move a local training workflow onto CHTC's **HTCondor** system and take advantage of shared GPUs, scalable job submission, and containerized environments.
 
 **What you'll learn:**
 
-- **Cloud-based notebooks** — Set up a Vertex AI Workbench notebook as your development environment and cloud controller.
-- **Data in the cloud** — Upload datasets to Cloud Storage and connect them to your training code.
-- **Scalable model training** — Launch custom training jobs on cloud GPUs/CPUs with your own PyTorch (or other framework) code.
-- **Hyperparameter tuning** — Run parallel tuning jobs in Vertex AI to efficiently search for optimal model settings.
-- **RAG pipelines** — Build a retrieval-augmented generation pipeline using Google's Gemini models with grounding via Google Search.
-- **Cost management** — Monitor spending, set budget alerts, and clean up resources to avoid surprise bills.
+- **Connecting to CHTC** — Log in to a submit node and navigate the CHTC filesystem.
+- **Data management** — Stage datasets for HTCondor jobs using `/home`, `/staging`, and SQUID.
+- **Scalable model training** — Submit HTCondor jobs that run your PyTorch (or other framework) code on CPUs or GPUs.
+- **Hyperparameter tuning** — Use HTCondor's `queue` mechanisms and DAGMan to run parallel tuning sweeps.
+- **RAG pipelines** — Build a retrieval-augmented generation pipeline using open-source or API-based models on CHTC.
+- **Resource etiquette** — Follow best practices for shared infrastructure, manage disk usage, and monitor your jobs.
 
 #### Prerequisites
 
@@ -22,7 +22,6 @@ This workshop assumes you have a **fundamental ML/AI background**. Specifically,
 - **Training a model** — you've trained at least one model in any framework (scikit-learn, PyTorch, TensorFlow, XGBoost, etc.).
 - **Command line basics** — navigating directories, running commands in a terminal.
 
-No prior GCP or cloud experience is required — that's what this workshop teaches.
+No prior CHTC or HTCondor experience is required — that's what this workshop teaches.
 
 [workbench]: https://carpentries.github.io/sandpaper-docs
-
