@@ -1,6 +1,6 @@
-# Intro to Google Cloud Platform (GCP) for Machine Learning and AI
+# Intro to CHTC for Machine Learning and AI
 
-This lesson teaches core workflows for building, training, and tuning ML/AI models using Google Cloud's Vertex AI platform. Participants learn to set up data storage, configure Vertex AI Workbench notebooks as lightweight controllers, launch training and hyperparameter tuning jobs, and optimize resource costs effectively within GCP. The workshop also includes a section on building retrieval-augmented generation (RAG) pipelines using Gemini models.
+This lesson teaches core workflows for building, training, and tuning ML/AI models using UW-Madison's Center for High Throughput Computing (CHTC). Participants learn to manage data on CHTC filesystems, configure HTCondor submit files, launch training and hyperparameter tuning jobs on CPUs and GPUs, and follow best practices for shared research computing infrastructure. The workshop also includes a section on building retrieval-augmented generation (RAG) pipelines.
 
 ## Prerequisites
 
@@ -9,16 +9,15 @@ This lesson teaches core workflows for building, training, and tuning ML/AI mode
 
 ## Episodes
 
-1. Overview of Google Cloud for Machine Learning
-2. Data Storage: Setting up GCS
-3. Notebooks as Controllers
-4. Accessing and Managing Data in GCS
-5. Using GitHub PAT in Vertex AI Notebooks
-6. Training Models in Vertex AI: XGBoost (CPU)
-7. Training Models in Vertex AI: PyTorch (GPU)
-8. Hyperparameter Tuning in Vertex AI
-9. Resource Management & Cleanup
-10. Retrieval-Augmented Generation (RAG)
+1. Overview of CHTC for Machine Learning
+2. Connecting to CHTC
+3. Data Management on CHTC
+4. Training Models on CHTC (XGBoost, CPU)
+5. Training Models on CHTC (PyTorch, GPU)
+6. Hyperparameter Tuning with HTCondor
+7. Retrieval-Augmented Generation (RAG) on CHTC
+8. Advanced HTCondor Workflows
+9. Resource Management & Best Practices
 
 ## Setup
 

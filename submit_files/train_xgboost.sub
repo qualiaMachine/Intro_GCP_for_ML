@@ -1,0 +1,26 @@
+# HTCondor submit file for XGBoost training on CHTC
+# Episode 04: Training Models on CHTC
+
+universe = docker
+docker_image = python:3.10-slim
+
+executable = run_xgboost.sh
+arguments = --train titanic_train.csv --max_depth 3 --eta 0.1 --subsample 0.8 --colsample_bytree 0.8 --num_round 100
+
+# Transfer input files to the execute node
+transfer_input_files = ../scripts/train_xgboost.py, ../data/titanic_train.csv, run_xgboost.sh, requirements_xgboost.txt
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+# Output, error, and log files
+log    = logs/xgb_$(Cluster).log
+output = logs/xgb_$(Cluster).out
+error  = logs/xgb_$(Cluster).err
+
+# Resource requests — start small, scale up based on actual usage
+request_cpus   = 1
+request_memory = 2GB
+request_disk   = 1GB
+
+queue 1

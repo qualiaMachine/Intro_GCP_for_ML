@@ -4,81 +4,97 @@ title: Reference
 
 ## Glossary
 
-This glossary covers the GCP and ML terms used in this workshop. Refer back here whenever you hit an unfamiliar term during the episodes.
+This glossary covers the CHTC, HTCondor, and ML terms used in this workshop. Refer back here whenever you hit an unfamiliar term during the episodes.
 
-### Cloud Computing Basics
+### High-Throughput Computing Basics
 
-Virtual Machine (VM)
-: A software-based computer that runs on Google's Compute Engine infrastructure. Each Vertex AI Workbench notebook is backed by a Compute Engine VM.
+High-Throughput Computing (HTC)
+: A computing paradigm focused on running many independent tasks over time, maximizing total throughput rather than speed of a single task. CHTC is designed for this model.
 
-Instance
-: A running VM in the cloud. In GCP, instances are defined by machine families (e.g., N2, C2, A2, A3) and can be customized for CPU, memory, and GPU needs.
+HTCondor
+: A workload management system developed at UW-Madison that schedules and manages jobs across a pool of distributed computing resources. It matches job requirements to available machines automatically.
 
-Container
-: A lightweight, isolated environment that packages code and dependencies together. Vertex AI training jobs run inside containers built from prebuilt Docker images.
+Submit Node (Access Point)
+: The server you SSH into to write code, prepare data, and submit jobs. It is a shared resource and should not be used for heavy computation. Also called an "access point" in newer HTCondor documentation.
+
+Execute Node
+: A machine in the HTCondor pool where your job actually runs. HTCondor assigns one automatically based on your resource request.
+
+ClassAd
+: HTCondor's attribute-value system for describing jobs and machines. Job ClassAds specify requirements (CPUs, memory, GPUs); machine ClassAds advertise available resources. HTCondor matches them to schedule work.
+
+Job Universe
+: The execution environment for a job. Common universes include `docker` (runs in a container), `vanilla` (runs directly on the execute node), and `container` (newer container support).
+
+### CHTC Infrastructure
+
+CHTC (Center for High Throughput Computing)
+: A research computing center at UW-Madison that provides free, large-scale computing resources to the campus community using HTCondor.
+
+GPU Lab
+: CHTC's dedicated pool of GPU-equipped machines, including NVIDIA A100 (40/80 GB), H100 (80 GB), H200 (141 GB), L40, and T4 GPUs. Access requires `+WantGPULab = true` in your submit file.
+
+OSPool (Open Science Pool)
+: A national shared computing pool that CHTC users can access for additional capacity via `+WantFlocking = true` or `+WantGlidein = true`.
+
+### CHTC Storage
+
+/home
+: Your home directory on the submit node (~20 GB quota). Used for code, submit files, and small input/output files. Files here are available on the submit node but must be explicitly transferred to jobs.
+
+/staging
+: A larger storage area for datasets and outputs that are too big for /home. Files are transferred to/from jobs using HTCondor's file transfer mechanism or accessed via staging protocols.
+
+SQUID
+: A web proxy cache for distributing large, read-only files to many jobs efficiently. Files placed on SQUID are served via HTTP, avoiding repeated file transfers.
+
+### HTCondor Job Management
+
+Submit File (.sub)
+: A configuration file that tells HTCondor what to run, what resources to request, what files to transfer, and where to write output. Submitted with `condor_submit`.
+
+condor_submit
+: The command to submit a job (or batch of jobs) described by a submit file.
+
+condor_q
+: The command to check the status of your submitted jobs (Idle, Running, Held, Completed).
+
+condor_rm
+: The command to remove (cancel) one or more of your jobs from the queue.
+
+condor_status
+: The command to view available resources in the HTCondor pool (machines, GPUs, etc.).
+
+condor_history
+: The command to view information about your previously completed jobs.
+
+condor_watch_q
+: An interactive, auto-refreshing version of `condor_q` that updates in real time.
+
+DAGMan (Directed Acyclic Graph Manager)
+: HTCondor's built-in workflow manager for running multi-step jobs with dependencies. Defined in `.dag` files and submitted with `condor_submit_dag`.
+
+### Container and Environment Terms
 
 Docker
-: The most common container platform. Many GCP ML environments (like TensorFlow or PyTorch training images) are Docker containers hosted on Artifact Registry.
+: A container platform for packaging code and dependencies together. CHTC's HTCondor supports running jobs inside Docker containers pulled from Docker Hub or other registries.
 
-### GCP Services
+Apptainer (formerly Singularity)
+: An alternative container runtime commonly used in HPC environments. CHTC supports Apptainer containers as well.
 
-Google Cloud Console
-: The web-based interface for managing GCP resources, available at [console.cloud.google.com](https://console.cloud.google.com/). This is where you create buckets, launch notebooks, monitor training jobs, check billing, and manage permissions.
+Container Image
+: A pre-built package containing an operating system, libraries, and tools. Specified in your submit file (e.g., `docker_image = pytorch/pytorch:2.4.0-cuda12.4-cudnn9-runtime`).
 
-Compute Engine (GCE)
-: The core infrastructure service that provides customizable VMs. Workbench notebooks and training jobs run on Compute Engine under the hood.
+### ML/AI Workflow Terms
 
-Vertex AI
-: Google's unified ML platform — training jobs, tuning, notebooks, deployment, and more. The main service used throughout this workshop.
+Training Job
+: A compute task that fits a model to data. On CHTC, this is an HTCondor job that runs your training script inside a container on an execute node.
 
-Cloud Storage (GCS)
-: GCP's object storage service for datasets, models, and artifacts. The direct counterpart to AWS S3.
+Hyperparameter Tuning
+: The process of searching for optimal model configuration by running multiple training jobs with different settings. On CHTC, this leverages HTCondor's `queue` mechanism to submit many jobs in parallel.
 
-Bucket
-: A top-level container in Cloud Storage that holds files (objects). Accessed via URIs like `gs://your-bucket-name/path/to/file.csv`.
-
-GCS URI
-: The unique path referencing an object in a Cloud Storage bucket. Example: `gs://ml-project-dataset/train.csv`.
-
-Persistent Disk (PD)
-: Block storage attached to VMs, including Workbench notebooks. Retains data between VM reboots — used for local datasets, checkpoints, or outputs.
-
-Cloud Shell
-: A browser-based terminal built into the Google Cloud Console (click the **>\_** icon in the top-right toolbar). It comes with `gcloud` pre-installed and already authenticated to your project.
-
-### Access and Billing
-
-IAM (Identity and Access Management)
-: GCP's permission system. Defines who (user, service account, or group) can access which resources and at what privilege level.
-
-Service Account
-: A special Google identity used by applications to access GCP resources. Your Workbench notebook uses a service account to read from Cloud Storage and launch training jobs.
-
-Quotas and Limits
-: Default usage caps (e.g., max GPUs per region). Quotas can be increased through the console — understanding them helps prevent job failures.
-
-Billing Alerts
-: GCP's Budgets & Alerts feature tracks project spending and sends notifications when costs exceed thresholds.
-
-### Vertex AI Workbench and ML/AI Workflows
-
-Vertex AI Workbench
-: A managed Jupyter notebook environment on Compute Engine. Used to run experiments and coordinate ML/AI workflows interactively.
-
-Controller
-: In this workshop, the notebook acts as the controller — it configures and submits training, tuning, and evaluation jobs via the Vertex AI SDK rather than running heavy computation locally.
-
-Vertex AI Custom Job
-: A managed training job that runs your code on dedicated Compute Engine instances. Equivalent to an AWS SageMaker Training Job.
-
-Hyperparameter Tuning Job
-: A Vertex AI service that searches for the best model configuration by running multiple trials with different hyperparameter sets.
-
-Model Registry
-: Stores trained models for versioning, deployment, and comparison across experiments.
-
-Endpoint
-: A deployed model that serves predictions through Vertex AI Prediction.
+Checkpointing
+: Saving model state periodically during training so that a job can be resumed if interrupted. Important for long-running jobs on CHTC where runtime limits apply.
 
 ### Retrieval-Augmented Generation (RAG)
 
@@ -86,25 +102,18 @@ Retrieval-Augmented Generation (RAG)
 : A pattern where an LLM answers questions by first retrieving relevant passages from a corpus, then generating a response grounded in those passages. This reduces hallucination and allows citation of sources.
 
 Chunking
-: The process of breaking a large document into smaller, overlapping text segments so that each segment can be independently embedded and retrieved. Common strategies include fixed-character, sentence-level, and paragraph-level chunking.
+: The process of breaking a large document into smaller, overlapping text segments so that each segment can be independently embedded and retrieved.
 
 Embedding
-: A dense numerical vector (array of floats) that represents the semantic meaning of a piece of text. Texts with similar meanings produce vectors that are close together in the embedding space, enabling search by meaning rather than exact keywords.
+: A dense numerical vector (array of floats) that represents the semantic meaning of a piece of text. Texts with similar meanings produce vectors that are close together in the embedding space.
 
-Vector Similarity / Cosine Similarity
-: A measure of how similar two embedding vectors are. Cosine similarity ranges from -1 (opposite) to 1 (identical direction). In RAG, it's used to rank which corpus chunks are most relevant to a user's query.
-
-Nearest Neighbors
-: An algorithm that finds the data points (embeddings) closest to a given query point in vector space. Used in RAG to retrieve the top-k most relevant chunks for a user's question.
-
-Grounding
-: The practice of constraining an LLM's response to information present in the retrieved context, rather than allowing it to generate answers from its general training data. Grounding reduces hallucination and improves factual accuracy.
-
-Task Type (Embedding)
-: A parameter passed to embedding models like `gemini-embedding-001` that tells the model to optimize its output for a specific use case. Common values: `RETRIEVAL_DOCUMENT` (for corpus text being indexed) and `RETRIEVAL_QUERY` (for user questions being searched).
+Cosine Similarity
+: A measure of how similar two embedding vectors are. Ranges from -1 (opposite) to 1 (identical direction). Used to rank which corpus chunks are most relevant to a query.
 
 ## Additional Resources
 
-- [Compute for ML](compute-for-ML.html) — guide to choosing machine types and GPUs
-- [UW-Madison Cloud Resources](uw-madison-cloud-resources.html) — discounts, credits, and campus support for UW researchers
-- [Using a GitHub PAT in Vertex AI](github-pat.html) — pushing/pulling code from Workbench notebooks
+- [Compute for ML](compute-for-ML.html) — guide to choosing hardware and GPUs on CHTC
+- [UW-Madison CHTC Resources](uw-madison-chtc-resources.html) — CHTC support, GPU Lab, and campus computing options
+- [Using a GitHub PAT](github-pat.html) — pushing/pulling code from CHTC
+- [CHTC Guides](https://chtc.cs.wisc.edu/uw-research-computing/guides) — official CHTC documentation
+- [HTCondor Manual](https://htcondor.readthedocs.io/en/latest/) — complete HTCondor reference

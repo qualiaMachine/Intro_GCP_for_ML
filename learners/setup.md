@@ -6,58 +6,77 @@ title: Setup
 
 Before attending this workshop, you'll need to complete a few setup steps to ensure you can follow along smoothly. The main requirements are:
 
-1. **GCP Access** – Use the **shared Google Cloud project** provided by RCI and ML+X (standard for UW-Madison workshops) or sign up for a personal GCP Free Tier account.
-2. **Titanic Dataset** – Download the required CSV files in advance.
-3. **(Optional) Google Cloud Skills Boost** — For a broader overview of GCP, visit the [Getting Started with Google Cloud Fundamentals](https://www.cloudskillsboost.google/paths/8) course.
+1. **CHTC Account** — Request a CHTC account if you don't already have one.
+2. **SSH Access** — Ensure you can SSH into a CHTC submit node.
+3. **Titanic Dataset** — The required CSV files are included in the workshop repository.
 4. **(Optional) GitHub Account** — Only needed if you want to push your work back to a fork. See the [GitHub PAT guide](github-pat.html) for details.
 
 Details on each step are outlined below.
 
-### 2. GCP Access
+### 1. CHTC Account
 
-There are two ways to get access to GCP for this lesson. Please wait for a pre-workshop email from the instructor to confirm which option to choose.
+You need an active CHTC account to participate in this workshop. There are two scenarios:
 
-#### Option 1) Shared Google Cloud Project (UW-Madison workshops)
+#### Option A) You already have a CHTC account
 
-When this workshop is taught at UW-Madison (e.g., Machine Learning Marathon, Research Bazaar), the instructors provide access to a shared GCP project courtesy of **RCI (Research Cyberinfrastructure)** and **ML+X**. You do not need to set up your own account or billing.
+If you've used CHTC before, you're all set. Verify you can log in by running:
 
-**How access works:** The instructors will add your Google account to a **Google Group** that has the necessary permissions on the shared project. Once you're added, GCP will recognize your membership and grant access — this can take **5–15 minutes** to propagate. If possible, the instructors will add you the day before the workshop so everything is ready at start time.
+```bash
+ssh YOUR_NETID@ap2002.chtc.wisc.edu
+```
 
-What to expect:
+If you can't connect, contact [chtc@cs.wisc.edu](mailto:chtc@cs.wisc.edu) for help.
 
-* During the lesson, you will log in with your Google account credentials and select the shared GCP project.
-* If you can't see the project right away, wait a few minutes for permissions to propagate. Try refreshing the page or opening an **incognito/private browser window**. Make sure you're logged into the correct Google account (the one the instructors added to the group).
-* This setup ensures that all participants have a consistent environment and avoids unexpected billing for attendees.
-* Please use shared credits responsibly — they are limited and reused for future training events.
-  * Stay within the provided exercises and avoid launching additional compute-heavy workloads (e.g., training large language models).
-  * Do not enable additional APIs or services unless instructed.
+#### Option B) You need a new account
 
-#### Option 2) GCP Free Tier — Skip If Using Shared Project
+1. Visit the [CHTC account request page](https://chtc.cs.wisc.edu/uw-research-computing/form).
+2. Fill out the request form. Mention that you're attending an ML workshop if asked about your use case.
+3. **Submit your request at least 1 week before the workshop** — account creation requires manual review by CHTC staff.
+4. Once approved, you'll receive an email with login instructions.
 
-If the instructors aren't providing a shared account environment, please follow these instructions:
+::::::::::::::::::::::::::::::::::::: callout
 
-1. Go to the [GCP Free Tier page](https://cloud.google.com/free) and click **Get started for free**.  
-2. Complete the signup process. The Free Tier includes a `$300` credit valid for 90 days and ongoing free usage for some smaller services.  
-3. Once your account is ready, log in to the [Google Cloud Console](https://console.cloud.google.com/).  
-4. During the lesson, we will enable only a few APIs (Compute Engine, Cloud Storage, and Notebooks).  
+### Workshop-specific accounts
 
-Following the lesson should cost well under `$15` total if you are using your own credits.
+When this workshop is taught at UW-Madison (e.g., Machine Learning Marathon, Research Bazaar), the instructors may provide temporary shared accounts or coordinate bulk account creation with CHTC. Wait for a pre-workshop email from the instructor to confirm the setup process.
 
-### 3. Download the Data
+::::::::::::::::::::::::::::::::::::::::::::::::
 
-For this workshop, you will need the **Titanic dataset**, which can be used to train a classifier predicting survival.
+### 2. SSH Access
 
-1. Please download the following zip file (Right-click → Save as):  
-   [data.zip](https://raw.githubusercontent.com/qualiaMachine/Intro_GCP_for_ML/main/data/data.zip)  
+You'll need an SSH client to connect to CHTC:
 
-2. Extract the zip folder contents (Right-click → Extract all on Windows; double-click on macOS).  
+- **macOS/Linux**: Use the built-in Terminal app. SSH is pre-installed.
+- **Windows**: Use [Windows Terminal](https://aka.ms/terminal) (Windows 10+, SSH built-in), [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/), or [MobaXterm](https://mobaxterm.mobatek.net/).
 
-3. Save the two data files (train and test) somewhere easy to access, for example:  
-   - `~/Downloads/data/titanic_train.csv`  
-   - `~/Downloads/data/titanic_test.csv`  
+Test your connection before the workshop:
 
-In Episode 3, you will create a Cloud Storage bucket and upload this data to use with your notebook.
+```bash
+ssh YOUR_NETID@ap2002.chtc.wisc.edu
+```
 
-### 4. (Optional) Google Cloud Skills Boost — Getting Started with Google Cloud Fundamentals
+You'll need to authenticate with your UW-Madison NetID and password. If you're off-campus, you may need to use the [UW-Madison VPN](https://it.wisc.edu/services/wiscvpn/) first.
 
-If you want a broader introduction to GCP before the workshop, consider exploring the [Getting Started with Google Cloud Fundamentals](https://www.cloudskillsboost.google/paths/8) self-paced learning path. It covers the basics of the Google Cloud environment, including project structure, billing, IAM (Identity and Access Management), and common services like Compute Engine, Cloud Storage, and BigQuery. This step is optional but recommended for those that want a broader overview of GCP before diving into ML/AI use-cases.
+### 3. Workshop Data
+
+The Titanic dataset and other workshop files are included in the lesson repository. During the workshop, you'll clone the repo directly on the CHTC submit node:
+
+```bash
+git clone https://github.com/qualiaMachine/Intro_GCP_for_ML.git
+```
+
+The repository contains:
+- `data/data.zip` — Titanic dataset (titanic_train.csv, titanic_test.csv)
+- `data/pdfs_bundle.zip` — Research papers for the RAG episode
+- `scripts/` — Training scripts (train_xgboost.py, train_nn.py)
+- `submit_files/` — HTCondor submit file examples
+
+### 4. (Optional) Familiarize Yourself with CHTC
+
+If you want a broader introduction to CHTC before the workshop, explore:
+
+- [CHTC Getting Started Guide](https://chtc.cs.wisc.edu/uw-research-computing/guides)
+- [HTCondor Quick Start Tutorial](https://htcondor.readthedocs.io/en/latest/getting-htcondor/using-htcondor-first-time.html)
+- [CHTC Hello World Example](https://chtc.cs.wisc.edu/uw-research-computing/helloworld)
+
+This is optional but recommended for those who want to get familiar with the command line and job submission before the workshop.

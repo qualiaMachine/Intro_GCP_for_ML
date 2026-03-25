@@ -1,0 +1,16 @@
+# DAGMan workflow: preprocess → train → evaluate
+# Episode 08: Advanced HTCondor Workflows
+#
+# Submit with: condor_submit_dag workflow.dag
+# Monitor with: condor_q -dag
+
+JOB preprocess preprocess.sub
+JOB train train_xgboost.sub
+JOB evaluate evaluate.sub
+
+# Define dependencies
+PARENT preprocess CHILD train
+PARENT train CHILD evaluate
+
+# Retry training up to 2 times if it fails
+RETRY train 2

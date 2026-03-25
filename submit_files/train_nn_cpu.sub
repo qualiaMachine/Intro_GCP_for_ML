@@ -1,0 +1,26 @@
+# HTCondor submit file for PyTorch CPU training on CHTC
+# Episode 05: Training Models on CHTC (CPU fallback)
+
+universe = docker
+docker_image = pytorch/pytorch:2.4.0-cuda12.4-cudnn9-runtime
+
+executable = run_nn.sh
+arguments = --train train_data.npz --val val_data.npz --epochs 500 --learning_rate 0.001 --patience 50
+
+# Transfer input files to the execute node
+transfer_input_files = ../scripts/train_nn.py, run_nn.sh, train_data.npz, val_data.npz
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+# Output, error, and log files
+log    = logs/nn_cpu_$(Cluster).log
+output = logs/nn_cpu_$(Cluster).out
+error  = logs/nn_cpu_$(Cluster).err
+
+# Resource requests (CPU only — no GPU)
+request_cpus   = 1
+request_memory = 4GB
+request_disk   = 2GB
+
+queue 1

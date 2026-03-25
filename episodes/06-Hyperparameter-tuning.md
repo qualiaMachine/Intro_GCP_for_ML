@@ -1,324 +1,403 @@
 ---
-title: "Hyperparameter Tuning in Vertex AI: Neural Network Example"
+title: "Hyperparameter Tuning on CHTC"
 teaching: 40
 exercises: 10
 ---
 
-:::::::::::::::::::::::::::::::::::::: questions 
+:::::::::::::::::::::::::::::::::::::: questions
 
-- How can we efficiently manage hyperparameter tuning in Vertex AI?  
-- How can we parallelize tuning jobs to optimize time without increasing costs?  
+- How can I use HTCondor to run many training jobs with different hyperparameters in parallel?
+- What are the different ways to parameterize and submit multiple jobs in a single submit file?
+- How do I collect and compare results from a hyperparameter sweep?
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::: objectives
 
-- Set up and run a hyperparameter tuning job in Vertex AI.  
-- Define search spaces using `DoubleParameterSpec` and `IntegerParameterSpec`.  
-- Log and capture objective metrics for evaluating tuning success.  
-- Optimize tuning setup to balance cost and efficiency, including parallelization.  
+- Write an HTCondor submit file that parameterizes hyperparameters using `$(variable)` syntax.
+- Use HTCondor's `queue` command with inline lists, external files, and variable substitution to launch parallel sweeps.
+- Collect `metrics.json` files from multiple jobs and identify the best trial.
+- Understand the trade-offs between grid/random search on CHTC and managed Bayesian optimization services.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
 
-In the previous episode (Episode 5) you submitted a single PyTorch training job to Vertex AI and inspected its artifacts. That gave you one model trained with one set of hyperparameters. In practice, choices like learning rate, early-stopping patience, and regularization thresholds can dramatically affect model quality — and the best combination is rarely obvious up front.
+In the previous episode (Episode 5) you submitted a single PyTorch training job to CHTC and inspected its artifacts. That gave you one model trained with one set of hyperparameters. In practice, choices like learning rate, early-stopping patience, and regularization thresholds can dramatically affect model quality — and the best combination is rarely obvious up front.
 
-In this episode we'll use Vertex AI's **Hyperparameter Tuning Jobs** to systematically search for better settings. The key is defining a clear search space, ensuring metrics are properly logged, and keeping costs manageable by controlling the number of trials and level of parallelization.
+In this episode we will use HTCondor's **`queue` command** to systematically search for better settings by launching many training jobs in parallel, each with a different combination of hyperparameters. The `train_nn.py` script from Episode 5 already saves a `metrics.json` file with final validation accuracy and loss — we just need to run it many times and compare the results.
 
-### Key steps for hyperparameter tuning
+### Why CHTC is great for hyperparameter tuning
 
-The overall process involves these steps:
+Hyperparameter tuning is an *embarrassingly parallel* problem: each trial is completely independent, so you can run them all at the same time. This is exactly the kind of workload CHTC is built for. Key advantages:
 
-1. Prepare the training script and ensure metrics are logged.  
-2. Define the hyperparameter search space.  
-3. Configure a hyperparameter tuning job in Vertex AI.  
-4. Set data paths and launch the tuning job.  
-5. Monitor progress in the Vertex AI Console.  
-6. Extract the best model and inspect recorded metrics.  
+- **Massive parallelism** — CHTC can run hundreds of independent jobs simultaneously across its shared pool. A sweep that would take hours sequentially can finish in the time of a single trial.
+- **No cost** — all of these jobs are free for UW-Madison researchers. There are no credits to burn, no billing surprises, and no reason to limit your search space to save money.
+- **Simple to set up** — HTCondor's `queue` syntax makes it straightforward to parameterize jobs without writing custom orchestration code.
 
-## Initial setup
+Unlike managed services that use Bayesian optimization to choose the next trial based on previous results, CHTC sweeps are essentially **grid search** or **random search** — every combination is decided up front and launched independently. This sounds less sophisticated, but CHTC's massive parallelism more than compensates: you can afford to explore a much larger space when each trial is free and runs in parallel.
 
-#### 1. Open pre-filled notebook
-Navigate to `/Intro_GCP_for_ML/notebooks/06-Hyperparameter-tuning.ipynb` to begin this notebook. **Select the *PyTorch* environment (kernel).** Local PyTorch is only needed for local tests — your *Vertex AI job* uses the container specified by `container_uri` (e.g., `pytorch-xla.2-4.py310`), so it brings its own framework at run time.
+### Key steps for hyperparameter tuning on CHTC
 
-#### 2. CD to instance home directory
-Change to your Jupyter home folder to keep paths consistent.
+1. Write a submit file that uses `$(variable)` placeholders for hyperparameters.
+2. Define the combinations to try (inline, in a file, or programmatically).
+3. Submit all trials with a single `condor_submit` command.
+4. Collect `metrics.json` from each job's output and find the best trial.
 
-```python
-%cd /home/jupyter/
+## Writing a parameterized submit file
+
+HTCondor submit files support **variable substitution** using the `$(variable)` syntax. When you combine this with the `queue ... from` syntax, HTCondor creates one job per line of input, substituting the variables into every field of the submit file.
+
+Here is a complete submit file for a hyperparameter sweep:
+
+```
+# File: tune_nn.sub
+universe = docker
+docker_image = pytorch/pytorch:2.4.0-cuda12.4-cudnn9-runtime
+
+executable = run_training.sh
+arguments = --train train_data.npz --val val_data.npz --learning_rate $(lr) --patience $(pat) --epochs 500
+
+transfer_input_files = train_nn.py, run_training.sh, train_data.npz, val_data.npz
+transfer_output_remaps = "model.pt = results/model_$(Cluster)_$(Process).pt; metrics.json = results/metrics_$(Cluster)_$(Process).json"
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+log    = logs/tune_$(Cluster)_$(Process).log
+output = logs/tune_$(Cluster)_$(Process).out
+error  = logs/tune_$(Cluster)_$(Process).err
+
+request_cpus = 1
+request_memory = 4GB
+request_disk = 2GB
+
+queue lr,pat from params.txt
 ```
 
-## Prepare and configure the tuning job
+Let's break down the key parts:
 
-#### 3. Understand how the training script reports metrics
-Your training script (`train_nn.py`) **already includes** hyperparameter tuning metric reporting — you don't need to modify it. Here's how it works:
-
-The script uses the `cloudml-hypertune` library (pre-installed on Vertex AI training workers) to report metrics so the tuner can compare trials. A `try/except` block lets the same script run locally without crashing:
-
-```python
-# Already in train_nn.py — initialization near the top:
-try:
-    from hypertune import HyperTune
-    _hpt = HyperTune()
-    _hpt_enabled = True
-except Exception:
-    _hpt = None
-    _hpt_enabled = False
-```
-
-Inside the training loop, after computing validation metrics each epoch:
-
-```python
-# Already in train_nn.py — inside the epoch loop:
-if _hpt_enabled:
-    _hpt.report_hyperparameter_tuning_metric(
-        hyperparameter_metric_tag="validation_accuracy",
-        metric_value=val_acc,
-        global_step=ep,
-    )
-```
-
-The critical detail: the `hyperparameter_metric_tag` string **must exactly match** the key you use in `metric_spec` when configuring the tuning job (e.g., `"validation_accuracy"`). If they don't match, trials will show as **INFEASIBLE**.
-
-#### 4. Define hyperparameter search space
-This step defines which parameters Vertex AI will vary across trials and their allowed ranges. The number of total settings tested is determined later using `max_trial_count`.
-
-Vertex AI uses **Bayesian optimization** by default (internally listed as `"ALGORITHM_UNSPECIFIED"` in the API).  That means if you don’t explicitly specify a search algorithm, Vertex AI automatically applies an adaptive Bayesian strategy to balance exploration (trying new areas of the parameter space) and exploitation (focusing near the best results so far).  Each completed trial helps the tuner model how your objective metric (for example, `validation_accuracy`) changes across parameter values. Subsequent trials then sample new parameter combinations that are statistically more likely to improve performance, which usually yields better results than random or grid search—especially when `max_trial_count` is limited.
-
-Vertex AI supports four parameter spec types. This episode uses the first two:
-
-| Spec type | Use case | Example |
-|---|---|---|
-| `DoubleParameterSpec` | Continuous floats | Learning rate 1e-4 to 1e-2 |
-| `IntegerParameterSpec` | Whole numbers | Patience 5 to 20 |
-| `DiscreteParameterSpec` | Specific numeric values | Batch size [32, 64, 128] |
-| `CategoricalParameterSpec` | Named options (strings) | Optimizer ["adam", "sgd"] |
-
-Include early-stopping parameters so the tuner can learn good stopping behavior for your dataset:
-
-```python
-from google.cloud import aiplatform
-from google.cloud.aiplatform import hyperparameter_tuning as hpt
-
-parameter_spec = {
-    "learning_rate": hpt.DoubleParameterSpec(min=1e-4, max=1e-2, scale="log"),
-    "patience": hpt.IntegerParameterSpec(min=5, max=20, scale="linear"),
-    "min_delta": hpt.DoubleParameterSpec(min=1e-6, max=1e-3, scale="log"),
-}
-```
-
-#### 5. Initialize Vertex AI, project, and bucket
-Initialize the Vertex AI SDK and set your staging and artifact locations in GCS.
-
-```python
-from google.cloud import aiplatform, storage
-import datetime as dt
-
-client = storage.Client()
-PROJECT_ID = client.project
-REGION = "us-central1"
-LAST_NAME = "DOE"  # change to your name or unique ID
-BUCKET_NAME = "doe-titanic"  # replace with your bucket name
-
-aiplatform.init(
-    project=PROJECT_ID,
-    location=REGION,
-    staging_bucket=f"gs://{BUCKET_NAME}/.vertex_staging",
-)
-```
-
-#### 6. Define runtime configuration
-Create a unique run ID and set the container, machine type, and base output directory for artifacts. Each variable controls a different aspect of the training environment:
-
-- **`RUN_ID`** — a timestamp that uniquely identifies this tuning session, used to organize artifacts in GCS.
-- **`ARTIFACT_DIR`** — the GCS folder where all trial outputs (models, metrics, logs) will be written.
-- **`IMAGE`** — the prebuilt Docker container that includes PyTorch and its dependencies.
-- **`MACHINE`** — the VM shape (CPU/RAM) for each trial. Start small for testing.
-- **`ACCELERATOR_TYPE` / `ACCELERATOR_COUNT`** — set to unspecified/0 for CPU-only runs. As we saw in Episode 5, GPU overhead isn't worth it for a dataset this small, and HP tuning launches *multiple* trials, so unnecessary GPUs multiply cost quickly. Change these to attach a GPU when your model or data genuinely benefits from one.
-
-```python
-RUN_ID = dt.datetime.now().strftime("%Y%m%d-%H%M%S")
-ARTIFACT_DIR = f"gs://{BUCKET_NAME}/artifacts/pytorch_hpt/{RUN_ID}"
-
-IMAGE = "us-docker.pkg.dev/vertex-ai/training/pytorch-xla.2-4.py310:latest"  # XLA container includes cloudml-hypertune
-MACHINE = "n1-standard-4"
-ACCELERATOR_TYPE = "ACCELERATOR_TYPE_UNSPECIFIED"
-ACCELERATOR_COUNT = 0
-```
-
-#### 7. Configure hyperparameter tuning job
-When you use Vertex AI Hyperparameter Tuning Jobs, each trial needs a complete, runnable training configuration: the script, its arguments, the container image, and the compute environment.  
-Rather than defining these pieces inline each time, we create a **CustomJob** to hold that configuration.  
-
-The CustomJob acts as the blueprint for running a single training task — specifying exactly what to run and on what resources. The tuner then reuses that job definition across all trials, automatically substituting in new hyperparameter values for each run.  
-
-This approach has a few practical advantages:
-
-- You only define the environment once — machine type, accelerators, and output directories are all reused across trials.  
-- The tuner can safely inject trial-specific parameters (those declared in `parameter_spec`) while leaving other arguments unchanged.  
-- It provides a clean separation between *what a single job does* (`CustomJob`) and *how many times to repeat it with new settings* (`HyperparameterTuningJob`).  
-- It avoids the extra abstraction layers of higher-level wrappers like `CustomTrainingJob`, which automatically package code and environments. Using `CustomJob.from_local_script` keeps the workflow predictable and explicit.
-
-In short:  
-`CustomJob` defines how to run one training run.  
-`HyperparameterTuningJob` defines how to repeat it with different parameter sets and track results.  
-
-The number of total runs is set by `max_trial_count`, and the number of simultaneous runs is controlled by `parallel_trial_count`.  Each trial's output and metrics are logged under the GCS `base_output_dir`.
-
-For a first pass, we'll run **3 trials fully in parallel**. With only 3 trials the adaptive optimizer has almost nothing to learn from, so running them simultaneously costs no search quality. This still validates that the full pipeline works end-to-end (metrics are reported, artifacts land in GCS, the tuner picks a best trial) while giving you a quick look at how results vary across different parameter combinations.
-
-
-```python
-# metric_spec = {"validation_loss": "minimize"} - also stored by train_nn.py
-metric_spec = {"validation_accuracy": "maximize"}
-
-custom_job = aiplatform.CustomJob.from_local_script(
-    display_name=f"{LAST_NAME}_pytorch_hpt-trial_{RUN_ID}",
-    script_path="Intro_GCP_for_ML/scripts/train_nn.py",
-    container_uri=IMAGE,
-    requirements=["python-json-logger>=2.0.7"],  # resolves a dependency conflict in the prebuilt container
-    args=[
-        f"--train=gs://{BUCKET_NAME}/data/train_data.npz",
-        f"--val=gs://{BUCKET_NAME}/data/val_data.npz",
-        "--learning_rate=0.001",        # HPT will override when sampling
-        "--patience=10",                # HPT will override when sampling
-        "--min_delta=0.001",            # HPT will override when sampling
-    ],
-    base_output_dir=ARTIFACT_DIR,
-    machine_type=MACHINE,
-    accelerator_type=ACCELERATOR_TYPE,
-    accelerator_count=ACCELERATOR_COUNT,
-)
-
-DISPLAY_NAME = f"{LAST_NAME}_pytorch_hpt_{RUN_ID}"
-
-# Start with a small batch of 3 trials, all in parallel.
-# With so few trials the adaptive optimizer has nothing to learn from,
-# so full parallelism costs no search quality — and finishes faster.
-tuning_job = aiplatform.HyperparameterTuningJob(
-    display_name=DISPLAY_NAME,
-    custom_job=custom_job,                 # must be a CustomJob (not CustomTrainingJob)
-    metric_spec=metric_spec,
-    parameter_spec=parameter_spec,
-    max_trial_count=3,                     # small initial sweep
-    parallel_trial_count=3,                # all at once — adaptive search needs more data to help
-    # search_algorithm="ALGORITHM_UNSPECIFIED",  # default = adaptive search (Bayesian)
-    # search_algorithm="RANDOM_SEARCH",          # optional override
-    # search_algorithm="GRID_SEARCH",            # optional override
-)
-
-tuning_job.run(sync=True)
-print("HPT artifacts base:", ARTIFACT_DIR)
-```
-
-## Run and analyze results
-
-#### 8. Monitor tuning job
-Open **Vertex AI → Training → Hyperparameter tuning jobs** in the [Cloud Console](https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs) to track trials, parameters, and metrics. You can also stop jobs from the console if needed.
-
-> **Note:** Replace the project ID in the URL below with your own if you are not using the shared workshop project.
-
-For the MLM25 workshop: [Hyperparameter tuning jobs](https://console.cloud.google.com/vertex-ai/training/hyperparameter-tuning-jobs?hl=en&project=doit-rci-mlm25-4626).
+- **`$(lr)` and `$(pat)`** — these are variable placeholders. HTCondor replaces them with values from `params.txt` for each job.
+- **`$(Cluster)` and `$(Process)`** — built-in HTCondor variables. `$(Cluster)` is the job cluster ID (shared by all jobs from one submission), and `$(Process)` is the index within that cluster (0, 1, 2, ...). Together they create unique file names for each trial's outputs.
+- **`transfer_output_remaps`** — this is crucial for collecting results. Without it, every job would write to `model.pt` and `metrics.json` in the same directory, overwriting each other. The remap renames each job's outputs to include the cluster and process IDs, placing them in a `results/` directory.
+- **`queue lr,pat from params.txt`** — reads variable values from an external file (one combination per line).
 
 ::::::::::::::::::::::::::::::::::::::: callout
 
-### Troubleshooting common HPT issues
+### Create output directories before submitting
 
-- **All trials show INFEASIBLE:** The `hyperparameter_metric_tag` in your training script doesn't match the key in `metric_spec`. Double-check spelling and case — `"validation_accuracy"` is not `"val_accuracy"`.
-- **Quota errors on launch:** Your project may not have enough VM or GPU quota in the selected region. Check **IAM & Admin → Quotas** and request an increase or switch to a smaller `MACHINE` type.
-- **Trial succeeds but metrics are empty:** Make sure `cloudml-hypertune` is importable inside the container. The prebuilt PyTorch containers include it. If using a custom container, add `cloudml-hypertune` to your `requirements`.
-- **Job stuck in PENDING:** Another tuning or training job may be consuming your quota. Check **Vertex AI → Training** for running jobs.
+HTCondor will not create directories for you. Before running `condor_submit`, make sure the `results/` and `logs/` directories exist:
+
+```bash
+mkdir -p results logs
+```
+
+If these directories do not exist, your jobs will fail at output transfer time.
 
 :::::::::::::::::::::::::::::::::::::::::::::::
 
-#### 9. Inspect best trial results
-After completion, look up the best configuration and objective value from the SDK:
+## Three approaches to defining hyperparameter combinations
 
-```python
-best_trial = tuning_job.trials[0]  # best-first
-print("Best hyperparameters:", best_trial.parameters)
-print("Best validation_accuracy:", best_trial.final_measurement.metrics)
+HTCondor's `queue` command is flexible. Here are three ways to specify which combinations to try, from simplest to most powerful.
+
+### Approach 1: Queue with inline variable lists
+
+For a small number of combinations, you can list them directly in the submit file:
+
 ```
-
-#### 10. Review recorded metrics in GCS
-Your script writes a `metrics.json` (with keys such as `final_val_accuracy`, `final_val_loss`) to each trial's output directory (under `ARTIFACT_DIR`). The snippet below aggregates those into a dataframe for side-by-side comparison.
-
-```python
-from google.cloud import storage
-import json, pandas as pd
-
-def list_metrics_from_gcs(ARTIFACT_DIR: str):
-    client = storage.Client()
-    bucket_name = ARTIFACT_DIR.replace("gs://", "").split("/")[0]
-    prefix = "/".join(ARTIFACT_DIR.replace("gs://", "").split("/")[1:])
-    blobs = client.list_blobs(bucket_name, prefix=prefix)
-
-    records = []
-    for blob in blobs:
-        if blob.name.endswith("metrics.json"):
-            # Path: …/{RUN_ID}/{trial_number}/model/metrics.json → [-3] = trial number
-            trial_id = blob.name.split("/")[-3]
-            data = json.loads(blob.download_as_text())
-            data["trial_id"] = trial_id
-            records.append(data)
-    return pd.DataFrame(records)
-
-df = list_metrics_from_gcs(ARTIFACT_DIR)
-cols = ["trial_id","final_val_accuracy","final_val_loss","best_val_loss",
-        "best_epoch","patience","min_delta","learning_rate"]
-df_sorted = df[cols].sort_values("final_val_accuracy", ascending=False)
-print(df_sorted)
-```
-
-#### 11. Visualize trial comparison
-A quick chart makes it easier to see which trials performed best and how learning rate relates to accuracy:
-
-```python
-import matplotlib.pyplot as plt
-
-fig, axes = plt.subplots(1, 2, figsize=(12, 4))
-
-# Bar chart: accuracy per trial
-axes[0].barh(df_sorted["trial_id"].astype(str), df_sorted["final_val_accuracy"])
-axes[0].set_xlabel("Validation Accuracy")
-axes[0].set_ylabel("Trial")
-axes[0].set_title("Accuracy by Trial")
-
-# Scatter: learning rate vs accuracy (color = patience)
-sc = axes[1].scatter(
-    df_sorted["learning_rate"], df_sorted["final_val_accuracy"],
-    c=df_sorted["patience"], cmap="viridis", edgecolors="k", s=80,
+queue lr,pat from (
+    0.001, 10
+    0.01, 5
+    0.0001, 20
+    0.005, 15
+    0.001, 5
+    0.0005, 10
 )
-axes[1].set_xscale("log")
-axes[1].set_xlabel("Learning Rate (log scale)")
-axes[1].set_ylabel("Validation Accuracy")
-axes[1].set_title("LR vs. Accuracy (color = patience)")
-plt.colorbar(sc, ax=axes[1], label="patience")
+```
 
-plt.tight_layout()
-plt.show()
+This submits 6 jobs, one for each line inside the parentheses. Each line provides a value for `lr` and `pat`, separated by a comma.
+
+**When to use this:** quick experiments with a handful of combinations where you want everything in one file.
+
+### Approach 2: Queue from a file
+
+For larger sweeps, store the parameter combinations in a separate file:
+
+```
+# File: params.txt
+0.001, 10
+0.01, 5
+0.0001, 20
+0.005, 15
+0.001, 5
+0.0005, 10
+0.01, 10
+0.0001, 15
+0.005, 20
+```
+
+Then reference it in the submit file:
+
+```
+queue lr,pat from params.txt
+```
+
+This is cleaner for larger sweeps and lets you generate `params.txt` programmatically (e.g., with a Python script that creates a grid or random sample).
+
+**When to use this:** any sweep with more than a few combinations, or when you want to generate combinations with a script.
+
+### Generating params.txt programmatically
+
+You can use a simple Python script to generate a grid of hyperparameter combinations:
+
+```python
+# File: make_params.py
+import itertools
+
+learning_rates = [0.0001, 0.0005, 0.001, 0.005, 0.01]
+patience_values = [5, 10, 15, 20]
+
+with open("params.txt", "w") as f:
+    for lr, pat in itertools.product(learning_rates, patience_values):
+        f.write(f"{lr}, {pat}\n")
+
+print(f"Wrote {len(learning_rates) * len(patience_values)} combinations to params.txt")
+```
+
+Running `python make_params.py` produces a `params.txt` with 20 combinations (5 learning rates x 4 patience values). You could just as easily sample randomly:
+
+```python
+# Random search variant
+import random
+
+with open("params.txt", "w") as f:
+    for _ in range(20):
+        lr = 10 ** random.uniform(-4, -1)   # log-uniform between 0.0001 and 0.1
+        pat = random.randint(5, 20)
+        f.write(f"{lr:.6f}, {pat}\n")
+```
+
+### Approach 3: DAGMan for complex workflows
+
+When your hyperparameter sweep is part of a larger pipeline — for example, you want to preprocess data, run the sweep, and then aggregate results automatically — HTCondor's **DAGMan** (Directed Acyclic Graph Manager) can manage the workflow. DAGMan lets you define dependencies between jobs: job B only starts after job A finishes.
+
+A DAG file for a tune-then-aggregate workflow might look like:
+
+```
+# File: tune_pipeline.dag
+JOB SWEEP tune_nn.sub
+JOB AGGREGATE aggregate_results.sub
+
+PARENT SWEEP CHILD AGGREGATE
+```
+
+This ensures all sweep trials complete before the aggregation job runs. We will cover DAGMan in more detail in [Episode 8](08-CLI-workflows.md). For now, the key insight is that DAGMan gives you the ability to chain hyperparameter sweeps with post-processing steps automatically.
+
+## Submitting the sweep
+
+Once your submit file and parameter file are ready, submitting is a single command:
+
+```bash
+$ condor_submit tune_nn.sub
+Submitting job(s)......
+6 job(s) submitted to cluster 12345.
+```
+
+HTCondor queues all jobs at once. Depending on pool availability, some or all may start running immediately. You can monitor progress with:
+
+```bash
+# Check status of all your jobs
+condor_q
+
+# Watch a specific cluster
+condor_watch_q 12345
+
+# Check why jobs are idle (waiting for resources)
+condor_q -better-analyze 12345
+```
+
+::::::::::::::::::::::::::::::::::::::: callout
+
+### How many jobs should I submit?
+
+CHTC can handle hundreds of simultaneous jobs, but be a good citizen of the shared pool:
+
+- **Start small** — submit 5-10 trials first to verify the pipeline works end-to-end (correct outputs, no file transfer errors).
+- **Then scale up** — once everything works, submit the full sweep. HTCondor's fair-share scheduling ensures your jobs don't starve other users.
+- **Check resource requests** — over-requesting memory or disk means your jobs wait longer to match with available machines. Use `condor_q -better-analyze` to diagnose idle jobs.
+
+:::::::::::::::::::::::::::::::::::::::::::::::
+
+## Collecting and comparing results
+
+After all jobs complete, the `results/` directory will contain pairs of files for each trial:
+
+```bash
+$ ls results/
+metrics_12345_0.json  model_12345_0.pt
+metrics_12345_1.json  model_12345_1.pt
+metrics_12345_2.json  model_12345_2.pt
+metrics_12345_3.json  model_12345_3.pt
+metrics_12345_4.json  model_12345_4.pt
+metrics_12345_5.json  model_12345_5.pt
+```
+
+Each `metrics_<cluster>_<process>.json` file contains the metrics saved by `train_nn.py`, including `final_val_accuracy`, `final_val_loss`, `learning_rate`, `patience`, and other training details.
+
+### Aggregation script
+
+Here is a simple Python script that reads all metrics files, compares them, and reports the best trial:
+
+```python
+# File: find_best_trial.py
+import json
+import glob
+import sys
+
+def find_best_trial(results_dir="results"):
+    metrics_files = sorted(glob.glob(f"{results_dir}/metrics_*.json"))
+
+    if not metrics_files:
+        print(f"No metrics files found in {results_dir}/")
+        sys.exit(1)
+
+    trials = []
+    for path in metrics_files:
+        with open(path) as f:
+            data = json.load(f)
+        data["_file"] = path
+        trials.append(data)
+
+    # Sort by validation accuracy (descending)
+    trials.sort(key=lambda t: t.get("final_val_accuracy", 0), reverse=True)
+
+    print(f"{'File':<40} {'Val Acc':>8} {'Val Loss':>9} {'LR':>10} {'Patience':>9}")
+    print("-" * 80)
+    for t in trials:
+        print(f"{t['_file']:<40} {t.get('final_val_accuracy', 'N/A'):>8.4f} "
+              f"{t.get('final_val_loss', 'N/A'):>9.4f} "
+              f"{t.get('learning_rate', 'N/A'):>10.6f} "
+              f"{t.get('patience', 'N/A'):>9}")
+
+    best = trials[0]
+    print(f"\nBest trial: {best['_file']}")
+    print(f"  Validation accuracy: {best.get('final_val_accuracy', 'N/A'):.4f}")
+    print(f"  Validation loss:     {best.get('final_val_loss', 'N/A'):.4f}")
+    print(f"  Learning rate:       {best.get('learning_rate', 'N/A')}")
+    print(f"  Patience:            {best.get('patience', 'N/A')}")
+
+    # Identify the corresponding model file
+    model_file = best["_file"].replace("metrics_", "model_").replace(".json", ".pt")
+    print(f"  Model file:          {model_file}")
+
+if __name__ == "__main__":
+    results_dir = sys.argv[1] if len(sys.argv) > 1 else "results"
+    find_best_trial(results_dir)
+```
+
+Run it after all jobs complete:
+
+```bash
+$ python find_best_trial.py results/
+
+File                                     Val Acc  Val Loss         LR  Patience
+--------------------------------------------------------------------------------
+results/metrics_12345_2.json              0.8212    0.4015   0.000100        20
+results/metrics_12345_0.json              0.8101    0.4198   0.001000        10
+results/metrics_12345_4.json              0.8045    0.4301   0.001000         5
+results/metrics_12345_3.json              0.7989    0.4456   0.005000        15
+results/metrics_12345_1.json              0.7877    0.4612   0.010000         5
+results/metrics_12345_5.json              0.7821    0.4823   0.000500        10
+
+Best trial: results/metrics_12345_2.json
+  Validation accuracy: 0.8212
+  Validation loss:     0.4015
+  Learning rate:       0.0001
+  Patience:            20
+  Model file:          results/model_12345_2.pt
+```
+
+You can then use the best model file directly for inference or further fine-tuning.
+
+::::::::::::::::::::::::::::::::::::::: callout
+
+### Grid search vs. Bayesian optimization
+
+Managed cloud services like Vertex AI offer **Bayesian optimization**, where the system learns from completed trials to choose more promising hyperparameter combinations for future trials. This is sample-efficient — it finds good results with fewer trials.
+
+On CHTC, we use **grid search** (try every combination in a predefined grid) or **random search** (sample combinations randomly from defined ranges). These methods don't learn from previous results, but they have an important advantage: **every trial is independent**, so they all run in parallel with zero coordination overhead.
+
+When compute is free and plentiful — as it is on CHTC — the practical difference shrinks considerably. You can afford to run 50 or 100 trials instead of 12, covering the search space thoroughly through brute force rather than statistical cleverness.
+
+**Rule of thumb:** Bayesian optimization shines when each trial is expensive (cloud GPU billing by the minute). Grid/random search shines when you have abundant free compute and want simplicity.
+
+:::::::::::::::::::::::::::::::::::::::::::::::
+
+## Putting it all together
+
+Here is the complete workflow, from setup to results:
+
+```bash
+# 1. Create directories
+mkdir -p results logs
+
+# 2. Generate parameter combinations
+python make_params.py
+
+# 3. Verify the params file
+cat params.txt
+
+# 4. Submit the sweep
+condor_submit tune_nn.sub
+
+# 5. Monitor progress
+condor_q
+
+# 6. After all jobs complete, find the best trial
+python find_best_trial.py results/
 ```
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
-### Exercise 1: Widen the learning-rate search space
+### Exercise 1: Write a parameter file for a 3-variable sweep
 
-The current search space uses `min=1e-4, max=1e-2` for learning rate. Suppose you suspect that slightly larger learning rates (up to `0.1`) might converge faster with early stopping enabled.
+Extend the hyperparameter sweep to include a third variable: `min_delta` (the minimum improvement threshold for early stopping). Write a `params.txt` that includes combinations of:
 
-1. Update `parameter_spec` to widen the `learning_rate` range to `max=0.1`.
-2. Thinking question: Why does `scale="log"` make sense for learning rate but `scale="linear"` makes sense for patience?
-3. **Do not run the job yet** — just update the configuration.
+- `learning_rate`: 0.001, 0.0005, 0.0001
+- `patience`: 5, 10, 20
+- `min_delta`: 0.001, 0.0001
+
+You will also need to update the submit file to accept the third variable.
+
+1. How many total combinations are there?
+2. Write the `params.txt` file (or a script to generate it).
+3. Update the `queue` line and `arguments` line of `tune_nn.sub`.
 
 ::::::::::::::::::::::: solution
 
+There are 3 x 3 x 2 = **18 combinations**.
+
+A script to generate the file:
+
 ```python
-parameter_spec = {
-    "learning_rate": hpt.DoubleParameterSpec(min=1e-4, max=1e-1, scale="log"),
-    "patience": hpt.IntegerParameterSpec(min=5, max=20, scale="linear"),
-    "min_delta": hpt.DoubleParameterSpec(min=1e-6, max=1e-3, scale="log"),
-}
+import itertools
+
+lrs = [0.001, 0.0005, 0.0001]
+pats = [5, 10, 20]
+deltas = [0.001, 0.0001]
+
+with open("params.txt", "w") as f:
+    for lr, pat, md in itertools.product(lrs, pats, deltas):
+        f.write(f"{lr}, {pat}, {md}\n")
 ```
 
-**Why log vs. linear?** Learning rate values span several orders of magnitude (0.0001 to 0.1), so `scale="log"` ensures the tuner samples evenly across those orders rather than clustering near the high end. Patience is an integer (5–20) where each step is equally meaningful, so `scale="linear"` is appropriate.
+Updated submit file lines:
+
+```
+arguments = --train train_data.npz --val val_data.npz --learning_rate $(lr) --patience $(pat) --min_delta $(md) --epochs 500
+
+queue lr,pat,md from params.txt
+```
+
+The `transfer_output_remaps`, log/output/error lines, and everything else stays the same — only `arguments` and `queue` need to change.
 
 :::::::::::::::::::::::::::::::
 
@@ -326,97 +405,94 @@ parameter_spec = {
 
 ::::::::::::::::::::::::::::::::::::: challenge
 
-### Exercise 2: Scale up trials with adaptive search
+### Exercise 2: Diagnose a failed sweep
 
-Your initial 3-trial run validated the pipeline. Now scale up to a proper search where the adaptive optimizer can actually help — but keep parallelism **low** so the tuner learns between batches.
-
-1. Set `max_trial_count=12` and `parallel_trial_count=3`.
-2. Before running, estimate the approximate cost: if each trial takes ~5 minutes on an `n1-standard-4` (~ `$0.19`/hr), how much would 12 trials cost?
-3. Why does it make sense to keep `parallel_trial_count` at 3 instead of 12 now that we have more trials?
-4. Run the updated job and monitor it in the Vertex AI Console.
+You submitted a sweep of 20 jobs, but when you look at the results directory you only see 15 metrics files. What steps would you take to figure out what happened to the other 5 jobs?
 
 ::::::::::::::::::::::: solution
 
-```python
-tuning_job = aiplatform.HyperparameterTuningJob(
-    display_name=DISPLAY_NAME,
-    custom_job=custom_job,
-    metric_spec=metric_spec,
-    parameter_spec=parameter_spec,
-    max_trial_count=12,
-    parallel_trial_count=3,
-)
-```
+1. **Check job status** — run `condor_q` to see if any jobs are still running, idle, or held:
 
-**Cost estimate:** 12 trials x 5 min each = 60 minutes of compute. At ~ `$0.19`/hr for `n1-standard-4`, that's roughly `$0.19` total. With `parallel_trial_count=3`, wall-clock time would be approximately 20 minutes (4 batches of 3 trials).
+   ```bash
+   condor_q
+   ```
 
-**Why not run all 12 in parallel?** With 12 trials we have enough data for the adaptive optimizer to learn: after each batch of 3 completes, the tuner updates its model of which regions of the search space are promising and steers the next batch toward them. Running all 12 at once would turn the search into an expensive random sweep — every trial would be launched "blind" before any results come back.
+2. **Check for held jobs** — held jobs encountered an error. See why:
+
+   ```bash
+   condor_q -held
+   ```
+
+   Common reasons include: Docker image pull failures, file transfer errors (missing input files), or exceeding requested memory/disk.
+
+3. **Check log files** — each job writes to `logs/tune_<Cluster>_<Process>.log`. The log file records start time, completion, and any abnormal termination. The `.err` file contains stderr output from the job itself:
+
+   ```bash
+   # Find which process IDs are missing
+   ls results/metrics_*.json | sort
+
+   # Then check the corresponding logs
+   cat logs/tune_12345_7.err
+   cat logs/tune_12345_7.log
+   ```
+
+4. **Resubmit failed jobs** — once you fix the issue, you can resubmit just the failed combinations by creating a new params file with only those lines, or by using `condor_submit` with a specific process range.
 
 :::::::::::::::::::::::::::::::
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::
 
-::::::::::::::::::::::::::::::::::::: discussion
+::::::::::::::::::::::::::::::::::::: challenge
 
-### What is the effect of parallelism in tuning?
+### Exercise 3: Random search vs. grid search
 
-- How might running 10 trials in parallel differ from running 2 at a time in terms of cost, time, and result quality?
-- When would you want to prioritize speed over adaptive search benefits?
+Instead of a full grid, write a Python script that generates 15 random hyperparameter combinations with:
 
-| Factor | High parallelism (e.g., 10) | Low parallelism (e.g., 2) |
-|---|---|---|
-| **Wall-clock time** | Shorter | Longer |
-| **Total cost** | ~Same (slightly more overhead) | ~Same |
-| **Adaptive search quality** | Worse (tuner explores “blind”) | Better (tuner learns between batches) |
-| **Best for** | Cheap/short trials, deadlines | Expensive trials, small budgets |
+- `learning_rate`: log-uniform between 0.0001 and 0.01
+- `patience`: uniform integer between 5 and 25
 
-**Why does parallelism hurt result quality?** Vertex AI's adaptive search learns from completed trials to choose better parameter combinations. With many trials in flight simultaneously, the tuner can't incorporate results quickly — it explores “blind” for longer, often yielding slightly worse results for a fixed `max_trial_count`. With modest parallelism (2–4), the tuner can update beliefs and exploit promising regions between batches.
+Why might random search find a better result than a grid of the same size?
 
-**Guidelines:**
-- Keep `parallel_trial_count` to **≤ 25–33%** of `max_trial_count` when you care about adaptive quality.
-- Increase parallelism when trials are long and the search space is well-bounded.
-
-::::::::::::::::::::::::::::::::::::::: callout
-
-### When to prioritize speed vs. adaptive quality
-
-**Favor higher parallelism** when you have strict deadlines, very cheap/short trials where startup time dominates, a non-adaptive search, or unused quota/credits.
-
-**Favor lower parallelism** when trials are expensive or noisy, `max_trial_count` is small (≤ 10–20), early stopping is enabled, or you're exploring many dimensions at once.
-
-:::::::::::::::::::::::::::::::::::::::::::::::
-
-**Practical recipe:**
-- First run: `max_trial_count=3`, `parallel_trial_count=3` (pipeline sanity check — too few trials for adaptive search to help, so run them all at once).
-- Main run: `max_trial_count=10–20`, `parallel_trial_count=2–4` (enough trials for the optimizer to learn between batches).
-- Scale up parallelism only after the above completes cleanly and you confirm adaptive performance is acceptable.
-
-::::::::::::::::::::::::::::::::::::::::::::::::
-
-
-## Clean up staging files
-
-HP tuning launches multiple trials, so staging tarballs accumulate even faster. Delete them when you're done:
+::::::::::::::::::::::: solution
 
 ```python
-!gsutil -m rm -r gs://{BUCKET_NAME}/.vertex_staging/
+import random
+
+random.seed(42)  # for reproducibility
+
+with open("params_random.txt", "w") as f:
+    for _ in range(15):
+        lr = 10 ** random.uniform(-4, -2)   # log-uniform: 0.0001 to 0.01
+        pat = random.randint(5, 25)
+        f.write(f"{lr:.6f}, {pat}\n")
+
+print("Wrote 15 random combinations to params_random.txt")
 ```
+
+**Why random search can outperform grid search:** Grid search distributes trials evenly across every dimension, which means many trials differ in only one parameter at a time. If one parameter matters much more than the other (e.g., learning rate has a large effect but patience has a small effect), grid search wastes many trials exploring patience values that don't matter, while only testing a few learning rate values.
+
+Random search places trials throughout the full space, so it effectively tests more unique values of each individual parameter. Research by Bergstra and Bengio (2012) showed that random search is more efficient than grid search for the same number of trials when some hyperparameters matter more than others — which is almost always the case in practice.
+
+:::::::::::::::::::::::::::::::
+
+::::::::::::::::::::::::::::::::::::::::::::::::::
 
 ## What's next: using your tuned model
 
-After tuning, your best model's weights sit in GCS under the best trial's artifact directory. The most common next steps are:
+After tuning, the best model's weights sit in the `results/` directory. The most common next steps are:
 
-- **Batch prediction (most common):** Load the best model from GCS and run inference on a dataset — this is what we did in the evaluation sections of Episodes 4–5 when we loaded models from GCS into memory. For larger-scale batch prediction, Vertex AI offers [Batch Prediction Jobs](https://cloud.google.com/vertex-ai/docs/predictions/get-batch-predictions) that handle provisioning and scaling automatically.
-- **Experiment tracking:** Vertex AI [Experiments](https://cloud.google.com/vertex-ai/docs/experiments/intro-vertex-ai-experiments) can log metrics, parameters, and artifacts across runs for systematic comparison. Consider integrating this into your workflow as your projects grow.
-- **Online deployment:** If you need real-time predictions via an API, Vertex AI [Endpoints](https://cloud.google.com/vertex-ai/docs/predictions/get-online-predictions) let you deploy your model — but endpoints bill continuously (~ `$4.50`/day for an `n1-standard-4`), so only deploy when you genuinely need a live API.
-
+- **Load and evaluate** — load the best `model_*.pt` file in Python and run inference on a test set, just as you did in Episode 5.
+- **Move to production** — copy the best model to a shared location or deploy it as part of a larger application.
+- **Automate with DAGMan** — set up a DAG that runs the sweep and automatically aggregates results (see [Episode 8](08-CLI-workflows.md)).
+- **Iterate** — use the results to narrow your search space and run a more focused sweep around the most promising region.
 
 ::::::::::::::::::::::::::::::::::::: keypoints
 
-- Vertex AI Hyperparameter Tuning Jobs efficiently explore parameter spaces using adaptive strategies.
-- Define parameter ranges in `parameter_spec`; the number of settings tried is controlled later by `max_trial_count`.
-- The `hyperparameter_metric_tag` reported by `cloudml-hypertune` must exactly match the key in `metric_spec`.
-- Limit `parallel_trial_count` (2–4) to help adaptive search.
-- Use GCS for input/output and aggregate `metrics.json` across trials for detailed analysis.
+- HTCondor's `queue ... from` syntax lets you launch many jobs from a single submit file, each with different hyperparameter values substituted via `$(variable)` placeholders.
+- Three approaches to defining parameter combinations: inline lists in the submit file, an external parameter file, or DAGMan for multi-step pipelines.
+- Use `transfer_output_remaps` with `$(Cluster)` and `$(Process)` to give each trial's output files unique names and avoid overwriting.
+- After the sweep completes, a simple Python script can aggregate `metrics.json` files and identify the best trial.
+- CHTC's grid/random search trades statistical sophistication for massive free parallelism — run more trials instead of smarter trials.
+- All hyperparameter tuning jobs on CHTC are free, removing cost as a constraint on how thoroughly you explore the parameter space.
 
 ::::::::::::::::::::::::::::::::::::::::::::::::
