@@ -464,49 +464,49 @@ excellent resources — but they have tradeoffs worth understanding:</p>
 <col width="41%">
 <col width="36%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Factor</th>
 <th>University HPC</th>
 <th>Cloud (GCP)</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong>Cost</strong></td>
 <td>Free or subsidized</td>
 <td>Pay per hour</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>GPU availability</strong></td>
 <td>Shared queue; wait times during peak periods and per-job runtime
 limits (often 24–72 hrs) that may require checkpointing long training
 runs</td>
 <td>On-demand (subject to quota); jobs run as long as needed</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>Hardware variety</strong></td>
 <td>Fixed hardware refresh cycle (3–5 years)</td>
 <td>Latest GPUs available immediately (A100, H100, L4)</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>Scaling</strong></td>
 <td>Limited by cluster size</td>
 <td>Spin up hundreds of jobs in parallel</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>Multi-GPU / NVLink</strong></td>
 <td>Sometimes available, depends on cluster</td>
 <td>Available on demand (e.g., A2/A3 instances with NVLink-connected
 multi-GPU nodes) — essential for training, fine-tuning, or serving large
 LLMs that don’t fit in a single GPU’s memory</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>Job orchestration</strong></td>
 <td>Writing scheduler scripts, packaging environments, and wiring up
 parallel job arrays can take days of refactoring</td>
 <td>A few SDK calls: define a job, set hardware, call
 <code>.run()</code> — parallelism (e.g., tuning trials) is built in</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>Software environment</strong></td>
 <td>Module system; some clusters support Apptainer/Singularity
 containers — research computing staff can often help with setup</td>
@@ -515,7 +515,7 @@ containers</a> for common ML frameworks (PyTorch, XGBoost, TensorFlow);
 add extra packages via a <code>requirements</code> list, or bring your
 own Docker image for full control</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>Power &amp; cooling</strong></td>
 <td>Paid for by the university; campus data centers often spend nearly
 as much energy on cooling as on the computers themselves</td>
@@ -545,38 +545,38 @@ teaches the cloud side of that workflow.</p>
 <col width="29%">
 <col width="25%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Model scale</th>
 <th>Parameters</th>
 <th>Example models</th>
 <th>Where to run</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>Small</td>
 <td>&lt; 10M</td>
 <td>Logistic regression, small CNNs, XGBoost</td>
 <td>Laptop or HPC — cloud adds overhead without much benefit</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Medium</td>
 <td>10M–500M</td>
 <td>ResNets, BERT-base, mid-sized transformers</td>
 <td>HPC with a single GPU (RTX 2080 Ti, L40) or cloud (T4, L4)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Large</td>
 <td>500M–10B</td>
 <td>GPT-2, LLaMA-7B, fine-tuning large transformers</td>
 <td>HPC with A100 (40/80 GB) or cloud — both work well</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Very large</td>
 <td>10B–70B</td>
 <td>LLaMA-70B, Mixtral</td>
 <td>HPC with H100/H200 (80–141 GB) or cloud multi-GPU nodes</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Frontier</td>
 <td>70B+</td>
 <td>GPT-4-scale, multi-expert models</td>
@@ -683,27 +683,27 @@ you’ll use in this workshop and how they relate:</p>
 <col width="35%">
 <col width="64%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Term</th>
 <th>What it is</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong>GCP</strong></td>
 <td>Google Cloud Platform — the overall cloud: compute, storage,
 networking.</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>Vertex AI</strong></td>
 <td>Google’s ML platform — notebooks, training jobs, tuning, model
 hosting. Everything below lives under this umbrella.</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>Workbench</strong></td>
 <td>Managed Jupyter notebooks that run on a Compute Engine VM. Your
 interactive environment.</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>Training &amp; tuning jobs</strong></td>
 <td>How you run code on Vertex AI hardware. You submit a script and a
 machine spec; Vertex AI provisions the VM, runs it, and shuts it down.
@@ -711,16 +711,16 @@ The SDK offers several flavors — <code>CustomTrainingJob</code> (Ep
 4–5), <code>HyperparameterTuningJob</code> (Ep 6) — and the CLI
 equivalent is <code>gcloud ai custom-jobs</code> (Ep 8).</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>Cloud Storage (GCS)</strong></td>
 <td>Object storage for files. Similar to AWS S3.</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>Compute Engine</strong></td>
 <td>Virtual machines you configure with CPUs, GPUs, or TPUs. Workbench
 and training jobs run on Compute Engine under the hood.</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>Gemini</strong></td>
 <td>Google’s family of large language models, accessed through the
 Vertex AI API.</td>
@@ -2284,7 +2284,7 @@ group.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>
@@ -2533,7 +2533,7 @@ improve, or does it start overfitting?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
 <div class="accordion-body">
 <p>Increasing <code>NUM_ROUND</code> from 100 to 200 may marginally
 improve accuracy but roughly doubles runtime. Increasing
@@ -2604,23 +2604,23 @@ The three arguments we pass here are:</p>
 <col width="50%">
 <col width="50%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Argument</th>
 <th>Purpose</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>project</code></td>
 <td>The Google Cloud project that owns (and is billed for) all Vertex AI
 resources you create.</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>location</code></td>
 <td>The region where jobs run and artifacts are stored (e.g.,
 <code>us-central1</code>). Must match the region of any buckets or
 endpoints you reference.</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>staging_bucket</code></td>
 <td>A Cloud Storage path where the SDK <strong>automatically packages
 and uploads your training code</strong> as a tarball (e.g.,
@@ -2942,7 +2942,7 @@ accuracy from the Vertex AI job. Are they the same? Why or why not?</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
 <div class="accordion-body">
 <p>The two accuracy values should be <strong>very close</strong> (within
 ~1–2 percentage points) but may not be byte-for-byte identical, even
@@ -2991,7 +2991,7 @@ locate:</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li>Click your job name, then select the <strong>Logs</strong> tab (or
@@ -4060,28 +4060,28 @@ first two:</p>
 <col width="33%">
 <col width="33%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Spec type</th>
 <th>Use case</th>
 <th>Example</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><code>DoubleParameterSpec</code></td>
 <td>Continuous floats</td>
 <td>Learning rate 1e-4 to 1e-2</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>IntegerParameterSpec</code></td>
 <td>Whole numbers</td>
 <td>Patience 5 to 20</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>DiscreteParameterSpec</code></td>
 <td>Specific numeric values</td>
 <td>Batch size [32, 64, 128]</td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>CategoricalParameterSpec</code></td>
 <td>Named options (strings)</td>
 <td>Optimizer [“adam”, “sgd”]</td>
@@ -4519,28 +4519,28 @@ benefits?</li>
 <col width="33%">
 <col width="33%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Factor</th>
 <th>High parallelism (e.g., 10)</th>
 <th>Low parallelism (e.g., 2)</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong>Wall-clock time</strong></td>
 <td>Shorter</td>
 <td>Longer</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>Total cost</strong></td>
 <td>~Same (slightly more overhead)</td>
 <td>~Same</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>Adaptive search quality</strong></td>
 <td>Worse (tuner explores “blind”)</td>
 <td>Better (tuner learns between batches)</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>Best for</strong></td>
 <td>Cheap/short trials, deadlines</td>
 <td>Expensive trials, small budgets</td>
@@ -4835,7 +4835,7 @@ overlapping chunks of roughly 1,200 characters.</p>
 <span id="cb4-18"><a href="#cb4-18" tabindex="-1" aria-label="code-block-4-18"></a>    txt <span class="op">=</span> <span class="st">""</span></span>
 <span id="cb4-19"><a href="#cb4-19" tabindex="-1" aria-label="code-block-4-19"></a>    <span class="cf">for</span> page <span class="kw">in</span> PdfReader(<span class="bu">str</span>(pdf)).pages:</span>
 <span id="cb4-20"><a href="#cb4-20" tabindex="-1" aria-label="code-block-4-20"></a>        txt <span class="op">+=</span> page.extract_text() <span class="kw">or</span> <span class="st">""</span></span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1" aria-label="code-block-4-21"></a>    <span class="cf">for</span> i, chunk <span class="kw">in</span> <span class="bu">enumerate</span>(chunk_text(re.sub(<span class="vs">r"\s+"</span>, <span class="st">" "</span>, txt))):</span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1" aria-label="code-block-4-21"></a>    <span class="cf">for</span> i, chunk <span class="kw">in</span> <span class="bu">enumerate</span>(chunk_text(re.sub(<span class="vs">r"</span><span class="dv">\s</span><span class="op">+</span><span class="vs">"</span>, <span class="st">" "</span>, txt))):</span>
 <span id="cb4-22"><a href="#cb4-22" tabindex="-1" aria-label="code-block-4-22"></a>        rows.append({<span class="st">"doc"</span>: pdf.name, <span class="st">"chunk_id"</span>: i, <span class="st">"text"</span>: chunk})</span>
 <span id="cb4-23"><a href="#cb4-23" tabindex="-1" aria-label="code-block-4-23"></a></span>
 <span id="cb4-24"><a href="#cb4-24" tabindex="-1" aria-label="code-block-4-24"></a>corpus_df <span class="op">=</span> pd.DataFrame(rows)</span>
@@ -5314,39 +5314,39 @@ costs are typically well under <code>$1</code>.</p>
 <col width="28%">
 <col width="33%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Step</th>
 <th>Resource</th>
 <th>Cost Driver</th>
 <th>Typical Range</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>VM runtime</td>
 <td>Vertex AI Workbench (<code>n1-standard-4</code>)</td>
 <td>Uptime (hourly)</td>
 <td>~ <code>$0.20</code>/hr</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Embeddings</td>
 <td><code>gemini-embedding-001</code></td>
 <td>Tokens embedded (one-time)</td>
 <td>~ <code>$0.10</code> / 1M tokens</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Retrieval</td>
 <td>Local <code>NearestNeighbors</code>
 </td>
 <td>CPU only</td>
 <td>Free</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Generation</td>
 <td><code>gemini-2.5-pro</code></td>
 <td>Input + output tokens per query</td>
 <td>~ <code>$1.25</code>–<code>$10</code> / 1M tokens</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Generation (alt)</td>
 <td><code>gemini-2.5-flash</code></td>
 <td>Input + output tokens per query</td>
@@ -6139,33 +6139,33 @@ the accuracy value.</p>
 <col width="33%">
 <col width="33%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th></th>
 <th>Notebooks</th>
 <th>CLI / scripts</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong>Best for</strong></td>
 <td>Exploration, teaching, visualization</td>
 <td>Automation, CI/CD, reproducibility</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>Auth setup</strong></td>
 <td>Automatic on Workbench VMs</td>
 <td>Requires <code>gcloud auth login</code> or service account keys</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>Cost</strong></td>
 <td>Pay for VM uptime while notebook is open</td>
 <td>Free from Cloud Shell; zero cost from laptop</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>State management</strong></td>
 <td>Hidden state can cause issues</td>
 <td>Stateless scripts are easier to debug</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>Interactivity</strong></td>
 <td>Rich (plots, widgets, markdown)</td>
 <td>Terminal only (or pipe to other tools)</td>
@@ -6294,14 +6294,14 @@ encounter in this workshop, ordered from most to least dangerous:</p>
 <col width="29%">
 <col width="23%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Resource</th>
 <th>Billing model</th>
 <th>Ballpark cost</th>
 <th>Risk level</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong>Vertex AI endpoints</strong></td>
 <td>Per node‑hour, <strong>24/7 while deployed</strong>
 </td>
@@ -6310,7 +6310,7 @@ node</td>
 <td>
 <strong>High</strong> — bills even with zero traffic</td>
 </tr>
-<tr class="even">
+<tr>
 <td>
 <strong>Workbench Instances</strong> (running)</td>
 <td>Per VM‑hour + GPU</td>
@@ -6319,14 +6319,14 @@ node</td>
 <td>
 <strong>High</strong> — easy to forget overnight</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>Training / HPT jobs</strong></td>
 <td>Per VM/GPU‑hour while running</td>
 <td>Same VM rates; auto‑stops when done</td>
 <td>
 <strong>Medium</strong> — usually self‑limiting</td>
 </tr>
-<tr class="even">
+<tr>
 <td>
 <strong>Workbench disks</strong> (stopped VM)</td>
 <td>Per GB‑month for persistent disk</td>
@@ -6335,14 +6335,14 @@ GB)</td>
 <td>
 <strong>Low</strong> — small but adds up</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>GCS storage</strong></td>
 <td>Per GB‑month + operations + egress</td>
 <td>~ <code>$0.02</code>/GB/month (Standard)</td>
 <td>
 <strong>Low</strong> — cheap until multi‑TB</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>Network egress</strong></td>
 <td>Per GB downloaded out of GCP</td>
 <td>~ <code>$0.12</code>/GB</td>
@@ -6618,30 +6618,30 @@ export documentation</a> for setup instructions.</p>
 <col width="64%">
 <col width="35%">
 </colgroup>
-<thead><tr class="header">
+<thead><tr>
 <th>Pitfall</th>
 <th>Fix</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>Forgotten endpoint billing 24/7</td>
 <td>Undeploy models → delete endpoint</td>
 </tr>
-<tr class="even">
+<tr>
 <td>Notebook left running over weekend</td>
 <td>Enable <strong>idle shutdown</strong> (60–120 min)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Duplicate datasets across buckets</td>
 <td>Consolidate to one bucket; set lifecycle to purge
 <code>tmp/</code>
 </td>
 </tr>
-<tr class="even">
+<tr>
 <td>Too many parallel HPT trials</td>
 <td>Cap <code>parallel_trial_count</code> to 2–4</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>Don’t know what’s costing money</td>
 <td>Check <strong>Billing → Reports</strong>; add labels to all
 resources</td>
@@ -6699,7 +6699,7 @@ and 100%.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal">
 <li><p>In the <a href="https://console.cloud.google.com/billing/reports" class="external-link">Cloud
@@ -6755,7 +6755,7 @@ are not actively using.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6791,7 +6791,7 @@ don’t need, and delete the endpoint.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -6837,7 +6837,7 @@ objects. Apply it to your bucket.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
 <div class="accordion-body">
 <p>Save the following as <code>lifecycle.json</code>:</p>
 <div class="codewrapper sourceCode" id="cb14">
@@ -6893,7 +6893,7 @@ delete the bucket entirely.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution5" aria-expanded="false" aria-controls="collapseSolution5">
   <h4 class="accordion-header" id="headingSolution5"> Show me the solution </h4>
 </button>
-<div id="collapseSolution5" class="accordion-collapse collapse" aria-labelledby="headingSolution5" data-bs-parent="#accordionSolution5">
+<div id="collapseSolution5" class="accordion-collapse collapse" data-bs-parent="#accordionSolution5" aria-labelledby="headingSolution5">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -7028,8 +7028,8 @@ any links that you are not going to use.
   "url": "https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/aio.html",
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/aio.html",
   "dateCreated": "2025-08-26",
-  "dateModified": "2026-04-28",
-  "datePublished": "2026-04-28"
+  "dateModified": "2026-05-05",
+  "datePublished": "2026-05-05"
 }
 
   </script><script>

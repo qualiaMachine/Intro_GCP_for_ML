@@ -497,19 +497,19 @@ better results than random or grid search—especially when
 <code>max_trial_count</code> is limited.</p>
 <p>Vertex AI supports four parameter spec types. This episode uses the
 first two:</p>
-<table class="table"><colgroup><col width="33%"><col width="33%"><col width="33%"></colgroup><thead><tr class="header"><th>Spec type</th>
+<table class="table"><colgroup><col width="33%"><col width="33%"><col width="33%"></colgroup><thead><tr><th>Spec type</th>
 <th>Use case</th>
 <th>Example</th>
-</tr></thead><tbody><tr class="odd"><td><code>DoubleParameterSpec</code></td>
+</tr></thead><tbody><tr><td><code>DoubleParameterSpec</code></td>
 <td>Continuous floats</td>
 <td>Learning rate 1e-4 to 1e-2</td>
-</tr><tr class="even"><td><code>IntegerParameterSpec</code></td>
+</tr><tr><td><code>IntegerParameterSpec</code></td>
 <td>Whole numbers</td>
 <td>Patience 5 to 20</td>
-</tr><tr class="odd"><td><code>DiscreteParameterSpec</code></td>
+</tr><tr><td><code>DiscreteParameterSpec</code></td>
 <td>Specific numeric values</td>
 <td>Batch size [32, 64, 128]</td>
-</tr><tr class="even"><td><code>CategoricalParameterSpec</code></td>
+</tr><tr><td><code>CategoricalParameterSpec</code></td>
 <td>Named options (strings)</td>
 <td>Optimizer [“adam”, “sgd”]</td>
 </tr></tbody></table><p>Include early-stopping parameters so the tuner can learn good
@@ -913,19 +913,19 @@ tuning?</h3>
 time in terms of cost, time, and result quality?</li>
 <li>When would you want to prioritize speed over adaptive search
 benefits?</li>
-</ul><table class="table"><colgroup><col width="33%"><col width="33%"><col width="33%"></colgroup><thead><tr class="header"><th>Factor</th>
+</ul><table class="table"><colgroup><col width="33%"><col width="33%"><col width="33%"></colgroup><thead><tr><th>Factor</th>
 <th>High parallelism (e.g., 10)</th>
 <th>Low parallelism (e.g., 2)</th>
-</tr></thead><tbody><tr class="odd"><td><strong>Wall-clock time</strong></td>
+</tr></thead><tbody><tr><td><strong>Wall-clock time</strong></td>
 <td>Shorter</td>
 <td>Longer</td>
-</tr><tr class="even"><td><strong>Total cost</strong></td>
+</tr><tr><td><strong>Total cost</strong></td>
 <td>~Same (slightly more overhead)</td>
 <td>~Same</td>
-</tr><tr class="odd"><td><strong>Adaptive search quality</strong></td>
+</tr><tr><td><strong>Adaptive search quality</strong></td>
 <td>Worse (tuner explores “blind”)</td>
 <td>Better (tuner learns between batches)</td>
-</tr><tr class="even"><td><strong>Best for</strong></td>
+</tr><tr><td><strong>Best for</strong></td>
 <td>Cheap/short trials, deadlines</td>
 <td>Expensive trials, small budgets</td>
 </tr></tbody></table><p><strong>Why does parallelism hurt result quality?</strong> Vertex
@@ -1085,7 +1085,7 @@ any links that you are not going to use.
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_for_ML/06-Hyperparameter-tuning.html",
   "dateCreated": "2025-08-26",
   "dateModified": "2026-03-05",
-  "datePublished": "2026-04-28"
+  "datePublished": "2026-05-05"
 }
 
   </script><script>

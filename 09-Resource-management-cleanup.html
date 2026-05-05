@@ -432,42 +432,42 @@ learn one thing from this episode, it’s where to find this page.</p>
 </section><section><h2 class="section-heading" id="what-costs-you-money-on-gcp-and-how-much">What costs you money on GCP (and how much)<a class="anchor" aria-label="anchor" href="#what-costs-you-money-on-gcp-and-how-much"></a></h2>
 <hr class="half-width"><p>Not all resources cost equally. Here are the main cost drivers you’ll
 encounter in this workshop, ordered from most to least dangerous:</p>
-<table class="table"><colgroup><col width="19%"><col width="27%"><col width="29%"><col width="23%"></colgroup><thead><tr class="header"><th>Resource</th>
+<table class="table"><colgroup><col width="19%"><col width="27%"><col width="29%"><col width="23%"></colgroup><thead><tr><th>Resource</th>
 <th>Billing model</th>
 <th>Ballpark cost</th>
 <th>Risk level</th>
-</tr></thead><tbody><tr class="odd"><td><strong>Vertex AI endpoints</strong></td>
+</tr></thead><tbody><tr><td><strong>Vertex AI endpoints</strong></td>
 <td>Per node‑hour, <strong>24/7 while deployed</strong>
 </td>
 <td>~ <code>$4.50</code>/day for one <code>n1-standard-4</code>
 node</td>
 <td>
 <strong>High</strong> — bills even with zero traffic</td>
-</tr><tr class="even"><td>
+</tr><tr><td>
 <strong>Workbench Instances</strong> (running)</td>
 <td>Per VM‑hour + GPU</td>
 <td>~ <code>$0.19</code>/hr CPU‑only (<code>n1-standard-4</code>); add ~
 <code>$0.35</code>/hr per T4 GPU</td>
 <td>
 <strong>High</strong> — easy to forget overnight</td>
-</tr><tr class="odd"><td><strong>Training / HPT jobs</strong></td>
+</tr><tr><td><strong>Training / HPT jobs</strong></td>
 <td>Per VM/GPU‑hour while running</td>
 <td>Same VM rates; auto‑stops when done</td>
 <td>
 <strong>Medium</strong> — usually self‑limiting</td>
-</tr><tr class="even"><td>
+</tr><tr><td>
 <strong>Workbench disks</strong> (stopped VM)</td>
 <td>Per GB‑month for persistent disk</td>
 <td>~ <code>$0.04</code>/GB/month (~ <code>$4</code>/month for 100
 GB)</td>
 <td>
 <strong>Low</strong> — small but adds up</td>
-</tr><tr class="odd"><td><strong>GCS storage</strong></td>
+</tr><tr><td><strong>GCS storage</strong></td>
 <td>Per GB‑month + operations + egress</td>
 <td>~ <code>$0.02</code>/GB/month (Standard)</td>
 <td>
 <strong>Low</strong> — cheap until multi‑TB</td>
-</tr><tr class="even"><td><strong>Network egress</strong></td>
+</tr><tr><td><strong>Network egress</strong></td>
 <td>Per GB downloaded out of GCP</td>
 <td>~ <code>$0.12</code>/GB</td>
 <td>
@@ -701,19 +701,19 @@ export documentation</a> for setup instructions.</p>
 </blockquote>
 </div>
 </section><section><h2 class="section-heading" id="common-pitfalls-and-quick-fixes">Common pitfalls and quick fixes<a class="anchor" aria-label="anchor" href="#common-pitfalls-and-quick-fixes"></a></h2>
-<hr class="half-width"><table class="table"><colgroup><col width="64%"><col width="35%"></colgroup><thead><tr class="header"><th>Pitfall</th>
+<hr class="half-width"><table class="table"><colgroup><col width="64%"><col width="35%"></colgroup><thead><tr><th>Pitfall</th>
 <th>Fix</th>
-</tr></thead><tbody><tr class="odd"><td>Forgotten endpoint billing 24/7</td>
+</tr></thead><tbody><tr><td>Forgotten endpoint billing 24/7</td>
 <td>Undeploy models → delete endpoint</td>
-</tr><tr class="even"><td>Notebook left running over weekend</td>
+</tr><tr><td>Notebook left running over weekend</td>
 <td>Enable <strong>idle shutdown</strong> (60–120 min)</td>
-</tr><tr class="odd"><td>Duplicate datasets across buckets</td>
+</tr><tr><td>Duplicate datasets across buckets</td>
 <td>Consolidate to one bucket; set lifecycle to purge
 <code>tmp/</code>
 </td>
-</tr><tr class="even"><td>Too many parallel HPT trials</td>
+</tr><tr><td>Too many parallel HPT trials</td>
 <td>Cap <code>parallel_trial_count</code> to 2–4</td>
-</tr><tr class="odd"><td>Don’t know what’s costing money</td>
+</tr><tr><td>Don’t know what’s costing money</td>
 <td>Check <strong>Billing → Reports</strong>; add labels to all
 resources</td>
 </tr></tbody></table><div id="going-further-automating-cleanup" class="callout">
@@ -763,7 +763,7 @@ and 100%.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution1" aria-expanded="false" aria-controls="collapseSolution1">
   <h4 class="accordion-header" id="headingSolution1"> Show me the solution </h4>
 </button>
-<div id="collapseSolution1" class="accordion-collapse collapse" aria-labelledby="headingSolution1" data-bs-parent="#accordionSolution1">
+<div id="collapseSolution1" class="accordion-collapse collapse" data-bs-parent="#accordionSolution1" aria-labelledby="headingSolution1">
 <div class="accordion-body">
 <ol style="list-style-type: decimal"><li><p>In the <a href="https://console.cloud.google.com/billing/reports" class="external-link">Cloud
 Console</a>, click the <strong>Navigation menu (☰)</strong> →
@@ -815,7 +815,7 @@ are not actively using.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution2" aria-expanded="false" aria-controls="collapseSolution2">
   <h4 class="accordion-header" id="headingSolution2"> Show me the solution </h4>
 </button>
-<div id="collapseSolution2" class="accordion-collapse collapse" aria-labelledby="headingSolution2" data-bs-parent="#accordionSolution2">
+<div id="collapseSolution2" class="accordion-collapse collapse" data-bs-parent="#accordionSolution2" aria-labelledby="headingSolution2">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb12">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -851,7 +851,7 @@ don’t need, and delete the endpoint.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution3" aria-expanded="false" aria-controls="collapseSolution3">
   <h4 class="accordion-header" id="headingSolution3"> Show me the solution </h4>
 </button>
-<div id="collapseSolution3" class="accordion-collapse collapse" aria-labelledby="headingSolution3" data-bs-parent="#accordionSolution3">
+<div id="collapseSolution3" class="accordion-collapse collapse" data-bs-parent="#accordionSolution3" aria-labelledby="headingSolution3">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb13">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -897,7 +897,7 @@ objects. Apply it to your bucket.</p>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution4" aria-expanded="false" aria-controls="collapseSolution4">
   <h4 class="accordion-header" id="headingSolution4"> Show me the solution </h4>
 </button>
-<div id="collapseSolution4" class="accordion-collapse collapse" aria-labelledby="headingSolution4" data-bs-parent="#accordionSolution4">
+<div id="collapseSolution4" class="accordion-collapse collapse" data-bs-parent="#accordionSolution4" aria-labelledby="headingSolution4">
 <div class="accordion-body">
 <p>Save the following as <code>lifecycle.json</code>:</p>
 <div class="codewrapper sourceCode" id="cb14">
@@ -951,7 +951,7 @@ delete the bucket entirely.</li>
 <button class="accordion-button solution-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSolution5" aria-expanded="false" aria-controls="collapseSolution5">
   <h4 class="accordion-header" id="headingSolution5"> Show me the solution </h4>
 </button>
-<div id="collapseSolution5" class="accordion-collapse collapse" aria-labelledby="headingSolution5" data-bs-parent="#accordionSolution5">
+<div id="collapseSolution5" class="accordion-collapse collapse" data-bs-parent="#accordionSolution5" aria-labelledby="headingSolution5">
 <div class="accordion-body">
 <div class="codewrapper sourceCode" id="cb16">
 <h3 class="code-label">BASH<i aria-hidden="true" data-feather="chevron-left"></i><i aria-hidden="true" data-feather="chevron-right"></i>
@@ -1091,7 +1091,7 @@ any links that you are not going to use.
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_for_ML/09-Resource-management-cleanup.html",
   "dateCreated": "2025-08-26",
   "dateModified": "2026-03-04",
-  "datePublished": "2026-04-28"
+  "datePublished": "2026-05-05"
 }
 
   </script><script>

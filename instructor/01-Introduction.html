@@ -405,41 +405,41 @@ for exactly as long as you need it, and then shut it down.</p>
 <h3 id="cloud-vs--university-hpc-clusters">Cloud vs. university HPC clusters<a class="anchor" aria-label="anchor" href="#cloud-vs--university-hpc-clusters"></a></h3>
 <p>Most universities offer shared HPC clusters with GPUs. These are
 excellent resources — but they have tradeoffs worth understanding:</p>
-<table class="table"><colgroup><col width="22%"><col width="41%"><col width="36%"></colgroup><thead><tr class="header"><th>Factor</th>
+<table class="table"><colgroup><col width="22%"><col width="41%"><col width="36%"></colgroup><thead><tr><th>Factor</th>
 <th>University HPC</th>
 <th>Cloud (GCP)</th>
-</tr></thead><tbody><tr class="odd"><td><strong>Cost</strong></td>
+</tr></thead><tbody><tr><td><strong>Cost</strong></td>
 <td>Free or subsidized</td>
 <td>Pay per hour</td>
-</tr><tr class="even"><td><strong>GPU availability</strong></td>
+</tr><tr><td><strong>GPU availability</strong></td>
 <td>Shared queue; wait times during peak periods and per-job runtime
 limits (often 24–72 hrs) that may require checkpointing long training
 runs</td>
 <td>On-demand (subject to quota); jobs run as long as needed</td>
-</tr><tr class="odd"><td><strong>Hardware variety</strong></td>
+</tr><tr><td><strong>Hardware variety</strong></td>
 <td>Fixed hardware refresh cycle (3–5 years)</td>
 <td>Latest GPUs available immediately (A100, H100, L4)</td>
-</tr><tr class="even"><td><strong>Scaling</strong></td>
+</tr><tr><td><strong>Scaling</strong></td>
 <td>Limited by cluster size</td>
 <td>Spin up hundreds of jobs in parallel</td>
-</tr><tr class="odd"><td><strong>Multi-GPU / NVLink</strong></td>
+</tr><tr><td><strong>Multi-GPU / NVLink</strong></td>
 <td>Sometimes available, depends on cluster</td>
 <td>Available on demand (e.g., A2/A3 instances with NVLink-connected
 multi-GPU nodes) — essential for training, fine-tuning, or serving large
 LLMs that don’t fit in a single GPU’s memory</td>
-</tr><tr class="even"><td><strong>Job orchestration</strong></td>
+</tr><tr><td><strong>Job orchestration</strong></td>
 <td>Writing scheduler scripts, packaging environments, and wiring up
 parallel job arrays can take days of refactoring</td>
 <td>A few SDK calls: define a job, set hardware, call
 <code>.run()</code> — parallelism (e.g., tuning trials) is built in</td>
-</tr><tr class="odd"><td><strong>Software environment</strong></td>
+</tr><tr><td><strong>Software environment</strong></td>
 <td>Module system; some clusters support Apptainer/Singularity
 containers — research computing staff can often help with setup</td>
 <td>Vertex AI provides <a href="https://cloud.google.com/vertex-ai/docs/training/pre-built-containers" class="external-link">prebuilt
 containers</a> for common ML frameworks (PyTorch, XGBoost, TensorFlow);
 add extra packages via a <code>requirements</code> list, or bring your
 own Docker image for full control</td>
-</tr><tr class="even"><td><strong>Power &amp; cooling</strong></td>
+</tr><tr><td><strong>Power &amp; cooling</strong></td>
 <td>Paid for by the university; campus data centers often spend nearly
 as much energy on cooling as on the computers themselves</td>
 <td>Google’s data centers are roughly twice as energy-efficient as a
@@ -457,27 +457,27 @@ teaches the cloud side of that workflow.</p>
 <div class="section level3">
 <h3 id="when-does-model-size-justify-cloud-compute">When does model size justify cloud compute?<a class="anchor" aria-label="anchor" href="#when-does-model-size-justify-cloud-compute"></a></h3>
 <p>Not every model needs cloud hardware. Here’s a rough guide:</p>
-<table class="table"><colgroup><col width="24%"><col width="20%"><col width="29%"><col width="25%"></colgroup><thead><tr class="header"><th>Model scale</th>
+<table class="table"><colgroup><col width="24%"><col width="20%"><col width="29%"><col width="25%"></colgroup><thead><tr><th>Model scale</th>
 <th>Parameters</th>
 <th>Example models</th>
 <th>Where to run</th>
-</tr></thead><tbody><tr class="odd"><td>Small</td>
+</tr></thead><tbody><tr><td>Small</td>
 <td>&lt; 10M</td>
 <td>Logistic regression, small CNNs, XGBoost</td>
 <td>Laptop or HPC — cloud adds overhead without much benefit</td>
-</tr><tr class="even"><td>Medium</td>
+</tr><tr><td>Medium</td>
 <td>10M–500M</td>
 <td>ResNets, BERT-base, mid-sized transformers</td>
 <td>HPC with a single GPU (RTX 2080 Ti, L40) or cloud (T4, L4)</td>
-</tr><tr class="odd"><td>Large</td>
+</tr><tr><td>Large</td>
 <td>500M–10B</td>
 <td>GPT-2, LLaMA-7B, fine-tuning large transformers</td>
 <td>HPC with A100 (40/80 GB) or cloud — both work well</td>
-</tr><tr class="even"><td>Very large</td>
+</tr><tr><td>Very large</td>
 <td>10B–70B</td>
 <td>LLaMA-70B, Mixtral</td>
 <td>HPC with H100/H200 (80–141 GB) or cloud multi-GPU nodes</td>
-</tr><tr class="odd"><td>Frontier</td>
+</tr><tr><td>Frontier</td>
 <td>70B+</td>
 <td>GPT-4-scale, multi-expert models</td>
 <td>Cloud — requires multi-node clusters beyond what most HPC queues
@@ -566,29 +566,29 @@ like Gemini.</p>
 </section><section><h2 class="section-heading" id="how-the-pieces-fit-together-vertex-ai">How the pieces fit together: Vertex AI<a class="anchor" aria-label="anchor" href="#how-the-pieces-fit-together-vertex-ai"></a></h2>
 <hr class="half-width"><p>Google Cloud has many products and brand names. Here are the ones
 you’ll use in this workshop and how they relate:</p>
-<table class="table"><colgroup><col width="35%"><col width="64%"></colgroup><thead><tr class="header"><th>Term</th>
+<table class="table"><colgroup><col width="35%"><col width="64%"></colgroup><thead><tr><th>Term</th>
 <th>What it is</th>
-</tr></thead><tbody><tr class="odd"><td><strong>GCP</strong></td>
+</tr></thead><tbody><tr><td><strong>GCP</strong></td>
 <td>Google Cloud Platform — the overall cloud: compute, storage,
 networking.</td>
-</tr><tr class="even"><td><strong>Vertex AI</strong></td>
+</tr><tr><td><strong>Vertex AI</strong></td>
 <td>Google’s ML platform — notebooks, training jobs, tuning, model
 hosting. Everything below lives under this umbrella.</td>
-</tr><tr class="odd"><td><strong>Workbench</strong></td>
+</tr><tr><td><strong>Workbench</strong></td>
 <td>Managed Jupyter notebooks that run on a Compute Engine VM. Your
 interactive environment.</td>
-</tr><tr class="even"><td><strong>Training &amp; tuning jobs</strong></td>
+</tr><tr><td><strong>Training &amp; tuning jobs</strong></td>
 <td>How you run code on Vertex AI hardware. You submit a script and a
 machine spec; Vertex AI provisions the VM, runs it, and shuts it down.
 The SDK offers several flavors — <code>CustomTrainingJob</code> (Ep
 4–5), <code>HyperparameterTuningJob</code> (Ep 6) — and the CLI
 equivalent is <code>gcloud ai custom-jobs</code> (Ep 8).</td>
-</tr><tr class="odd"><td><strong>Cloud Storage (GCS)</strong></td>
+</tr><tr><td><strong>Cloud Storage (GCS)</strong></td>
 <td>Object storage for files. Similar to AWS S3.</td>
-</tr><tr class="even"><td><strong>Compute Engine</strong></td>
+</tr><tr><td><strong>Compute Engine</strong></td>
 <td>Virtual machines you configure with CPUs, GPUs, or TPUs. Workbench
 and training jobs run on Compute Engine under the hood.</td>
-</tr><tr class="odd"><td><strong>Gemini</strong></td>
+</tr><tr><td><strong>Gemini</strong></td>
 <td>Google’s family of large language models, accessed through the
 Vertex AI API.</td>
 </tr></tbody></table><p>For a full list of terms, see the <a href="reference.html">Glossary</a>.</p>
@@ -742,7 +742,7 @@ any links that you are not going to use.
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/01-Introduction.html",
   "dateCreated": "2025-08-26",
   "dateModified": "2026-03-04",
-  "datePublished": "2026-04-28"
+  "datePublished": "2026-05-05"
 }
 
   </script><script>

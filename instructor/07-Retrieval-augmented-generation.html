@@ -529,7 +529,7 @@ overlapping chunks of roughly 1,200 characters.</p>
 <span id="cb4-18"><a href="#cb4-18" tabindex="-1" aria-label="code-block-4-18"></a>    txt <span class="op">=</span> <span class="st">""</span></span>
 <span id="cb4-19"><a href="#cb4-19" tabindex="-1" aria-label="code-block-4-19"></a>    <span class="cf">for</span> page <span class="kw">in</span> PdfReader(<span class="bu">str</span>(pdf)).pages:</span>
 <span id="cb4-20"><a href="#cb4-20" tabindex="-1" aria-label="code-block-4-20"></a>        txt <span class="op">+=</span> page.extract_text() <span class="kw">or</span> <span class="st">""</span></span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1" aria-label="code-block-4-21"></a>    <span class="cf">for</span> i, chunk <span class="kw">in</span> <span class="bu">enumerate</span>(chunk_text(re.sub(<span class="vs">r"\s+"</span>, <span class="st">" "</span>, txt))):</span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1" aria-label="code-block-4-21"></a>    <span class="cf">for</span> i, chunk <span class="kw">in</span> <span class="bu">enumerate</span>(chunk_text(re.sub(<span class="vs">r"</span><span class="dv">\s</span><span class="op">+</span><span class="vs">"</span>, <span class="st">" "</span>, txt))):</span>
 <span id="cb4-22"><a href="#cb4-22" tabindex="-1" aria-label="code-block-4-22"></a>        rows.append({<span class="st">"doc"</span>: pdf.name, <span class="st">"chunk_id"</span>: i, <span class="st">"text"</span>: chunk})</span>
 <span id="cb4-23"><a href="#cb4-23" tabindex="-1" aria-label="code-block-4-23"></a></span>
 <span id="cb4-24"><a href="#cb4-24" tabindex="-1" aria-label="code-block-4-24"></a>corpus_df <span class="op">=</span> pd.DataFrame(rows)</span>
@@ -977,28 +977,28 @@ a definitive answer rather than generating marketing-style claims.</p>
 <hr class="half-width"><p>Understanding the cost of each pipeline component helps you decide
 where to optimize. For a small workshop with a handful of PDFs, total
 costs are typically well under <code>$1</code>.</p>
-<table class="table"><colgroup><col width="13%"><col width="24%"><col width="28%"><col width="33%"></colgroup><thead><tr class="header"><th>Step</th>
+<table class="table"><colgroup><col width="13%"><col width="24%"><col width="28%"><col width="33%"></colgroup><thead><tr><th>Step</th>
 <th>Resource</th>
 <th>Cost Driver</th>
 <th>Typical Range</th>
-</tr></thead><tbody><tr class="odd"><td>VM runtime</td>
+</tr></thead><tbody><tr><td>VM runtime</td>
 <td>Vertex AI Workbench (<code>n1-standard-4</code>)</td>
 <td>Uptime (hourly)</td>
 <td>~ <code>$0.20</code>/hr</td>
-</tr><tr class="even"><td>Embeddings</td>
+</tr><tr><td>Embeddings</td>
 <td><code>gemini-embedding-001</code></td>
 <td>Tokens embedded (one-time)</td>
 <td>~ <code>$0.10</code> / 1M tokens</td>
-</tr><tr class="odd"><td>Retrieval</td>
+</tr><tr><td>Retrieval</td>
 <td>Local <code>NearestNeighbors</code>
 </td>
 <td>CPU only</td>
 <td>Free</td>
-</tr><tr class="even"><td>Generation</td>
+</tr><tr><td>Generation</td>
 <td><code>gemini-2.5-pro</code></td>
 <td>Input + output tokens per query</td>
 <td>~ <code>$1.25</code>–<code>$10</code> / 1M tokens</td>
-</tr><tr class="odd"><td>Generation (alt)</td>
+</tr><tr><td>Generation (alt)</td>
 <td><code>gemini-2.5-flash</code></td>
 <td>Input + output tokens per query</td>
 <td>~ <code>$0.15</code>–<code>$0.60</code> / 1M tokens</td>
@@ -1245,7 +1245,7 @@ any links that you are not going to use.
   "identifier": "https://qualiaMachine.github.io/Intro_GCP_for_ML/instructor/07-Retrieval-augmented-generation.html",
   "dateCreated": "2025-08-26",
   "dateModified": "2026-03-05",
-  "datePublished": "2026-04-28"
+  "datePublished": "2026-05-05"
 }
 
   </script><script>
